@@ -1,0 +1,127 @@
+#include "Controls/Checkbox.hpp"
+#include "SFML/Graphics.hpp"
+#include "Time.hpp"
+#include "Window.hpp"
+#include "Cursor.hpp"
+#include "DebugLog.hpp"
+
+Checkbox::Checkbox(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture) : Element() {
+
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32));
+
+	_value = -1;
+	_textures.clear();
+	_hoverTextures.clear();
+
+	if (texture == nullptr) {
+		DebugError(L"Checkbox: texture is null");
+		return;
+	}
+	_textures.push_back(texture);
+
+	if (hoverTexture == nullptr) {
+		DebugError(L"Checkbox: hoverTexture is null");
+		return;
+	}
+	_hoverTextures.push_back(hoverTexture);
+
+	_state = CheckboxState::Idle;
+}
+
+Checkbox::~Checkbox() {
+}
+
+sf::Vector2i Checkbox::getSize() {
+	return _rect.size;
+}
+
+void Checkbox::setPosition(sf::Vector2i position) {
+	_rect.position = position;
+}
+
+void Checkbox::setValue(int value) {
+	_value = value;
+}
+
+void Checkbox::addValue(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture) {
+
+	_textures.push_back(texture);
+	_hoverTextures.push_back(hoverTexture);
+}
+
+void Checkbox::unclick() {
+	_state = CheckboxState::Idle;
+}
+
+void Checkbox::hover() {
+	_state = CheckboxState::Hover;
+
+}
+
+void Checkbox::click() {
+	_state = CheckboxState::Pressed;
+	_clickTime = currentTime;
+}
+
+void Checkbox::cursorHover() {
+
+	if (_value > -1) {
+		if (_rect.contains(cursor->_position)) {
+			GUI_manager->Element_hovered = this->shared_from_this();
+		}
+	}
+
+}
+
+void Checkbox::handleEvent(const sf::Event& event) {
+	
+
+	if (GUI_manager->Element_hovered.get() == this) {
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			GUI_manager->Element_pressed = this->shared_from_this();
+		}
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			if (GUI_manager->Element_pressed.get() == this) {
+				click();
+			}
+		}
+
+	}
+}
+
+void Checkbox::update() {
+
+	if (_state == CheckboxState::Pressed) {
+		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+
+			_value += 1;
+			if (_value >= _textures.size())
+				_value = 0;
+
+			if (_onclick_func) {
+				_onclick_func();
+			}
+
+			if (GUI_manager->Element_pressed.get() == this)
+				GUI_manager->Element_pressed = nullptr;
+			unclick();
+		}
+	}
+	else if (GUI_manager->Element_hovered.get() == this) {
+		hover();
+	}
+	else
+		unclick();
+}
+
+void Checkbox::draw() {	
+	if (_value > -1) {
+		
+		std::shared_ptr<Texture> tex = (_state == CheckboxState::Hover) ? _hoverTextures[_value] : _textures[_value];
+
+		sf::Sprite sprite(*tex->_texture);
+		sprite.setPosition(sf::Vector2f(_rect.position));
+		window->draw(sprite);
+	}
+}

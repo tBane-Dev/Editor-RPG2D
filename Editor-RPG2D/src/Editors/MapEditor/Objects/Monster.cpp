@@ -1,0 +1,134 @@
+#include "Editors/MapEditor/Objects/Monster.hpp"
+#include "Time.hpp"
+#include "Window.hpp"
+#include <iostream>
+#include "Editors/MapEditor/MapEditor.hpp"
+
+MonsterPrefab::MonsterPrefab(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, int stepSize) : GameObject(name, animations, origin) {
+	_stepSize = stepSize;
+}
+
+MonsterPrefab::~MonsterPrefab() {
+
+}
+
+Monster::Monster(std::shared_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
+
+	_state = MonsterState::Idle;
+
+	_basePosition = sf::Vector2i(0, 0);
+	_direction = Direction::Down;
+
+	_frame = rand()%_prefab->getAnimations()->_framesCount;
+	_animationTimer = currentTime;
+
+	_path = std::make_shared<Path>();
+	_path->setStartPoint(_position);
+	_path->setEndPoint(_position);
+	_path->generatePath();
+}
+
+Monster::~Monster() {
+
+}
+
+void Monster::setPosition(sf::Vector2i position) {
+	GameObjectOnMap::setPosition(position);
+
+	_basePosition = position;
+
+	_path->setStartPoint(_position);
+	_path->setEndPoint(_position);
+	_path->generatePath();
+}
+
+void Monster::update() {
+	
+	if((currentTime - _animationTimer).asSeconds() > 0.1f) {
+		if (_path->isEmpty() || _position == _path->getEndPoint()) {
+			_path->setStartPoint(_position);
+			sf::Vector2i endPoint = _basePosition;
+			int r = 8;
+			endPoint.x += (rand() % (2 * r + 1) - r) * Tile::tileSize;
+			endPoint.y += (rand() % (2 * r + 1) - r) * Tile::tileSize;
+			_path->setEndPoint(endPoint);
+			_path->generatePath();
+
+			_state = MonsterState::Moving;
+
+			_animationTimer = currentTime;
+			return;
+		}
+
+		if (_state == MonsterState::Moving) {
+			if (_position != _path->getEndPoint()) {
+
+				sf::Vector2i target = _path->getStartPoint();
+				int stepSize = std::dynamic_pointer_cast<MonsterPrefab>(_prefab)->_stepSize;
+
+				if (_position.y < target.y) {
+					_position.y += std::min(target.y - _position.y, stepSize);
+					_direction = Direction::Down;
+				}
+				else if (_position.y > target.y) {
+					_position.y -= std::min(_position.y - target.y, stepSize);
+					_direction = Direction::Up;
+				}
+				else if (_position.x < target.x) {
+					_position.x += std::min(target.x - _position.x, stepSize);
+					_direction = Direction::Right;
+				}
+				else if (_position.x > target.x) {
+					_position.x -= std::min(_position.x - target.x, stepSize);
+					_direction = Direction::Left;
+				}
+
+				if (_position == target) {
+					_path->nextPoint();
+				}
+			}
+		}
+
+		_frame++;
+		if(_frame >= _prefab->getAnimations()->_framesCount) {
+			_frame = 0;
+		}
+		_animationTimer = currentTime;
+	}
+}
+
+void Monster::draw() {
+
+	if (map_editor->_main_menu->_render_paths->_checkbox->_value == 1) {
+		_path->draw();
+	}
+		
+
+	if (map_editor->_main_menu->_render_colliders->_checkbox->_value == 1) {
+		sf::CircleShape collider(32);
+		collider.setFillColor(sf::Color(255, 0, 0, 128));
+		collider.setPosition(sf::Vector2f(_position));
+		collider.setOrigin(sf::Vector2f(32, 32));
+		window->draw(collider);
+	}
+	
+
+	std::shared_ptr<Animations> anim = _prefab->getAnimations();
+	sf::IntRect frameRect = anim->getFrameRect(int(_direction), _frame);
+
+	if (map_editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
+		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
+		outlineRect.setPosition(sf::Vector2f(_position));
+		outlineRect.setOrigin(sf::Vector2f(_prefab->getOrigin()));
+		outlineRect.setFillColor(sf::Color::Transparent);
+		outlineRect.setOutlineThickness(2);
+		outlineRect.setOutlineColor(sf::Color::Red);
+		window->draw(outlineRect);
+	}
+
+	sf::Sprite sprite(*anim->getTexture()->_texture);
+	sprite.setPosition(sf::Vector2f(_position));
+	sprite.setOrigin(sf::Vector2f(_prefab->getOrigin()));
+	sprite.setTextureRect(frameRect);
+	window->draw(sprite);
+}
