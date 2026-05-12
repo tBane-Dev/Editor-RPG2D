@@ -7,10 +7,10 @@
 class MapEditorMainMenu : public MainMenu {
 public:
 
-	std::shared_ptr<MenuButton> file;
-	std::shared_ptr<MenuButton> render;
-	std::shared_ptr<MenuButton> tools;
-	std::shared_ptr<MenuButton> settings;
+	std::shared_ptr<MenuButton> _file;
+	std::shared_ptr<MenuButton> _render;
+	std::shared_ptr<MenuButton> _tools;
+	std::shared_ptr<MenuButton> _settings;
 
 	// FILE
 	std::shared_ptr<OptionWithIcon> _file_new_project;
@@ -23,7 +23,12 @@ public:
 	std::shared_ptr<OptionWithCheckbox> _render_colliders;
 	std::shared_ptr<OptionWithCheckbox> _render_paths;
 	std::shared_ptr<OptionWithCheckbox> _render_meshes;
+
+	// TOOLS
+	std::shared_ptr<OptionWithCheckbox> _tool_palette;
 	
 	MapEditorMainMenu();
 	~MapEditorMainMenu();
+
+	void handleEvent(const sf::Event& event);
 };

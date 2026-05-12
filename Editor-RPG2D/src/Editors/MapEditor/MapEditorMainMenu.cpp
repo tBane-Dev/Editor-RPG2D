@@ -2,15 +2,15 @@
 #include "Components/MainMenu/MenuButton.hpp"
 
 MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
-	file = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"File");
-	render = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"Render");
-	tools = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"Tools");
-	settings = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"Settings");
+	_file = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"File");
+	_render = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"Render");
+	_tools = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"Tools");
+	_settings = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"Settings");
 	
-	_menu_boxes.push_back(file);
-	_menu_boxes.push_back(render);
-	_menu_boxes.push_back(tools);
-	_menu_boxes.push_back(settings);
+	_menu_boxes.push_back(_file);
+	_menu_boxes.push_back(_render);
+	_menu_boxes.push_back(_tools);
+	_menu_boxes.push_back(_settings);
 
 	for(auto& mb : _menu_boxes) {
 		mb->_onclick_func = [this, mb]() {
@@ -42,9 +42,9 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 		L"Ctrl+S"
 	);
 
-	file->addOption(_file_new_project);
-	file->addOption(_file_open_project);
-	file->addOption(_file_save_project);
+	_file->addOption(_file_new_project);
+	_file->addOption(_file_open_project);
+	_file->addOption(_file_save_project);
 
 	// RENDER
 
@@ -63,11 +63,18 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 	_render_meshes = std::make_shared<OptionWithCheckbox>(L"Meshes", textures_manager->getTexture(L"assets\\tex\\unchecked.png"), textures_manager->getTexture(L"assets\\tex\\unchecked_hover.png"));
 	_render_meshes->addValue(textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
 
-	render->addOption(_render_chunks_info);
-	render->addOption(_render_sprites_outline);
-	render->addOption(_render_colliders);
-	render->addOption(_render_paths);
-	render->addOption(_render_meshes);
+	_render->addOption(_render_chunks_info);
+	_render->addOption(_render_sprites_outline);
+	_render->addOption(_render_colliders);
+	_render->addOption(_render_paths);
+	_render->addOption(_render_meshes);
+
+	// TOOLS
+
+	_tool_palette = std::make_shared<OptionWithCheckbox>(L"Palette", textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
+	_tool_palette->addValue(textures_manager->getTexture(L"assets\\tex\\unchecked.png"), textures_manager->getTexture(L"assets\\tex\\unchecked_hover.png"));
+
+	_tools->addOption(_tool_palette);
 
 	// POSITIONING
 
@@ -76,4 +83,20 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 
 MapEditorMainMenu::~MapEditorMainMenu() {
 	
+}
+
+void MapEditorMainMenu::handleEvent(const sf::Event& event) {
+	
+	
+
+	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
+		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
+		if (kp->code == sf::Keyboard::Key::B) {
+			_tool_palette->_checkbox->_value = (_tool_palette->_checkbox->_value == 0) ? 1 : 0;
+			return;
+		}
+	}
+
+	MainMenu::handleEvent(event);
+
 }

@@ -5,11 +5,12 @@
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 #include "Editors/MapEditor/MapEditorMainMenu.hpp"
+#include "Components/Palette.hpp"
 
 class MapEditor : public Editor {
 public:
 	std::shared_ptr<MapEditorMainMenu> _main_menu;
-	//std::shared_ptr<Palette> _palette;
+	std::shared_ptr<Palette> _palette;
 
 	std::shared_ptr<Tileset> _tileset;
 	std::shared_ptr<Map> _map;
@@ -24,6 +25,7 @@ public:
 	void createGameObjects();
 	void createCamera();
 	void createMainMenu();
+	void createPalette();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

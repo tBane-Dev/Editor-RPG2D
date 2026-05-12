@@ -124,35 +124,29 @@ void Path::nextPoint() {
 void Path::draw() {
 	if (_pathPoints.empty()) return;
 
-	std::shared_ptr<MapEditor> map_editor = std::dynamic_pointer_cast<MapEditor>(editor_manager->get_back());
-	if (!map_editor) return;
-
-	std::shared_ptr<Map> mapa = map_editor->_map;
-	if (mapa == nullptr) return;
-
 	int radius = 4;
 	int edgeRadius = radius + 4;
 
+	sf::IntRect map_rect = map_editor->_map->getRect();
+
 	// path points
+	sf::CircleShape pointShape((float)radius, 8);
+	pointShape.setOrigin(sf::Vector2f((float)radius, (float)radius));
+	pointShape.setFillColor(sf::Color::Red);
+
 	for(auto& point : _pathPoints) {
-		sf::CircleShape pointShape((float)radius);
-		pointShape.setOrigin(sf::Vector2f((float)radius, (float)radius));
-		pointShape.setFillColor(sf::Color::Red);
-		pointShape.setPosition(sf::Vector2f(mapa->getRect().position) + sf::Vector2f(point));
+		pointShape.setPosition(sf::Vector2f(map_rect.position) + sf::Vector2f(point));
 		window->draw(pointShape);
 	}
 
-	// start point
-	sf::CircleShape startPointShape((float)edgeRadius);
-	startPointShape.setOrigin(sf::Vector2f((float)edgeRadius, (float)edgeRadius));
-	startPointShape.setFillColor(sf::Color::Blue);
-	startPointShape.setPosition(sf::Vector2f(mapa->getRect().position) + sf::Vector2f(_startPoint));
-	window->draw(startPointShape);
+	// edge points
+	sf::CircleShape edgePointShape((float)edgeRadius,8);
+	edgePointShape.setOrigin(sf::Vector2f((float)edgeRadius, (float)edgeRadius));
+	edgePointShape.setFillColor(sf::Color::Blue);
 
-	// end point
-	sf::CircleShape endPointShape((float)edgeRadius);
-	endPointShape.setOrigin(sf::Vector2f((float)edgeRadius, (float)edgeRadius));
-	endPointShape.setFillColor(sf::Color::Blue);
-	endPointShape.setPosition(sf::Vector2f(mapa->getRect().position) + sf::Vector2f(_endPoint));
-	window->draw(endPointShape);
+	edgePointShape.setPosition(sf::Vector2f(map_rect.position) + sf::Vector2f(_startPoint));
+	window->draw(edgePointShape);
+
+	edgePointShape.setPosition(sf::Vector2f(map_rect.position) + sf::Vector2f(_endPoint));
+	window->draw(edgePointShape);
 }

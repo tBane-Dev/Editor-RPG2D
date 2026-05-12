@@ -82,30 +82,33 @@ void MapEditor::createCamera() {
 
 void MapEditor::createMainMenu() {
 	_main_menu = std::make_shared<MapEditorMainMenu>();
+}
 
-	
-	
+void MapEditor::createPalette() {
+	_palette = std::make_shared<Palette>();
 }
 
 void MapEditor::cursorHover() {
 	_main_menu->cursorHover();
+	_palette->cursorHover();
 }
 
 void MapEditor::handleEvent(const sf::Event& event) {
 	_camera->handleEvent(event);
 	_main_menu->handleEvent(event);
+	_palette->handleEvent(event);
 	
 }
 
 void MapEditor::update() {
-
-	
 
 	_game_objects->update();
 
 	_game_objects->sort();
 
 	_main_menu->update();
+	_palette->update();
+
 	_camera->update();
 
 }
@@ -118,6 +121,7 @@ void MapEditor::draw() {
 
 	GUI_manager->setView();
 	_main_menu->draw();
+	_palette->draw();
 }
 
 std::shared_ptr<MapEditor> map_editor = nullptr;

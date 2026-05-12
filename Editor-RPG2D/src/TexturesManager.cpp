@@ -61,6 +61,12 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\checked_hover.png");
         texturePaths.push_back(L"assets\\tex\\unchecked.png");
         texturePaths.push_back(L"assets\\tex\\unchecked_hover.png");
+
+        // palette
+        texturePaths.push_back(L"assets\\tex\\palette\\slot.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\slot_hover.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\slot_press.png");
+
         // tileset
         texturePaths.push_back(L"assets\\tex\\tileset.png");
         

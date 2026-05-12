@@ -56,6 +56,7 @@ int main()
 	map_editor->createGameObjects();
 	map_editor->createCamera();
     map_editor->createMainMenu();
+    map_editor->createPalette();
     editor_manager->push_back(map_editor);
 
     // init FPS clock
