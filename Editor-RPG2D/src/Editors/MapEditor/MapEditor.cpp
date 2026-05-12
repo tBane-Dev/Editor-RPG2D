@@ -29,6 +29,10 @@ void MapEditor::createMap(int width, int height) {
 
 }
 
+void MapEditor::createCursorOnMap() {
+	_cursor_on_map = std::make_shared<CursorOnMap>();
+}
+
 void MapEditor::createGameObjects() {
 	_game_objects = std::make_shared<GameObjectsOnMap>();
 
@@ -97,6 +101,7 @@ void MapEditor::handleEvent(const sf::Event& event) {
 	_camera->handleEvent(event);
 	_main_menu->handleEvent(event);
 	_palette->handleEvent(event);
+	_cursor_on_map->handleEvent(event);
 	
 }
 
@@ -110,6 +115,7 @@ void MapEditor::update() {
 	_palette->update();
 
 	_camera->update();
+	_cursor_on_map->update();
 
 }
 
@@ -118,6 +124,7 @@ void MapEditor::draw() {
 	_camera->setView();
 	_map->draw();
 	_game_objects->draw();
+	_cursor_on_map->draw();
 
 	GUI_manager->setView();
 	_main_menu->draw();

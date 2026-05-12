@@ -1,4 +1,4 @@
-# Editor-RPG2D v0.03
+# Editor-RPG2D v0.04
 
 ## Contents
 - [Description](#description)

@@ -1,6 +1,7 @@
 #include "DebugLog.hpp"
 #include "Editors/MapEditor/Objects/Monster.hpp"
 #include "Editors/MapEditor/MapEditor.hpp"
+#include <typeinfo>
 
 GameObjectsOnMap::GameObjectsOnMap() {
 	_gameObjectsOnMap.clear();
@@ -11,6 +12,7 @@ GameObjectsOnMap::~GameObjectsOnMap() {
 }
 
 void GameObjectsOnMap::addGameObject(std::shared_ptr<GameObjectOnMap> gameObjectOnMap) {
+
 	_gameObjectsOnMap.push_back(gameObjectOnMap);
 }
 

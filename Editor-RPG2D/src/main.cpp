@@ -54,7 +54,8 @@ int main()
 	map_editor->createTileset();
     map_editor->createMap(5, 3);
 	map_editor->createGameObjects();
-	map_editor->createCamera();
+    map_editor->createCamera();
+    map_editor->createCursorOnMap();
     map_editor->createMainMenu();
     map_editor->createPalette();
     editor_manager->push_back(map_editor);

@@ -4,17 +4,17 @@
 #include "Editors/MapEditor/Map/Map.hpp"
 #include "Editors/Editor.hpp"
 #include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Objects/GameObject.hpp"
+#include "Editors/MapEditor/Objects/Monster.hpp"
+#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include <typeinfo>
 
 CursorOnMap::CursorOnMap() {
 
-	std::shared_ptr<MapEditor> map_editor = std::dynamic_pointer_cast<MapEditor>(editor_manager->get_back());
-	if (!map_editor) return;
-
-	std::shared_ptr<CameraOnMap> camera = map_editor->_camera;
-    if (!camera) return;
-
-    window->setView(camera->_view);
+    window->setView(map_editor->_camera->_view);
     _position = sf::Vector2i(window->mapPixelToCoords(cursor->_position));
+
+	_object = nullptr;
 }
 
 CursorOnMap::~CursorOnMap() {
@@ -23,78 +23,92 @@ CursorOnMap::~CursorOnMap() {
 
 void CursorOnMap::update() {
 
-    std::shared_ptr<MapEditor> map_editor = std::dynamic_pointer_cast<MapEditor>(editor_manager->get_back());
-    if (!map_editor) return;
 
-    std::shared_ptr<CameraOnMap> camera = map_editor->_camera;
-    if (!camera) return;
-
-    window->setView(camera->_view);
+    window->setView(map_editor->_camera->_view);
     _position = sf::Vector2i(window->mapPixelToCoords(cursor->_position));
 }
 
 void CursorOnMap::handleEvent(const sf::Event& event) {
+	if (_object != nullptr) {
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
+			_object = nullptr;
+		}
 
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+
+			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
+
+			std::shared_ptr<Animations> anim = prefab->getAnimations();
+			sf::IntRect frameRect = anim->getFrameRect(0, _frame);
+
+			float frameWidth = (float)(anim->getTexture()->getSize().x / anim->_framesCount);
+			float frameHeight = (float)(anim->getTexture()->getSize().y / anim->_animationsCount);
+
+			// position of object on the map, aligning to the grid
+			sf::Vector2i position;
+			position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
+			position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
+
+			if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
+				position.x += prefab->getOrigin().x;
+				position.y += prefab->getOrigin().y;
+			}
+
+			// create object on map by type 
+			std::shared_ptr<GameObjectOnMap> objectOnMap;
+			
+			if(dynamic_pointer_cast<MonsterPrefab>(prefab)) objectOnMap = std::make_shared<Monster>(prefab);
+			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
+
+
+			// positioning and adding object to map
+			objectOnMap->setPosition(position);
+			map_editor->_game_objects->addGameObject(objectOnMap);
+		}
+
+	}
 }
 
 void CursorOnMap::draw()
 {
-	std::shared_ptr<MapEditor> map_editor = std::dynamic_pointer_cast<MapEditor>(editor_manager->get_back());
-	if (!map_editor) return;
 	
-    std::shared_ptr<Map> mapa = map_editor->_map;
-	if (mapa == nullptr) return;
+    if(_object == nullptr)
+		return;
 
-	std::shared_ptr<CameraOnMap> camera = map_editor->_camera;
-	if (camera == nullptr) return;
+	if(!(GUI_manager->Element_hovered == map_editor->_map || GUI_manager->Element_hovered == nullptr))
+		return;
 
-    if (GUI_manager->Element_hovered != mapa) return;
+	window->setView(map_editor->_camera->_view);
 
-    window->setView(camera->_view);
+	if(dynamic_pointer_cast<GameObject>(_object) != nullptr) {
 
-    int r = 5;
-    sf::Color color(255, 0, 0, 127);
+		std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
+		std::shared_ptr<Animations> anim = prefab->getAnimations();
+		sf::IntRect frameRect = anim->getFrameRect(0, _frame);
 
-	std::shared_ptr<Chunk> hoveredChunk = mapa->getChunkByGlobalPosition();
-	if (!hoveredChunk) return;
+		float frameWidth = (float)(anim->getTexture()->getSize().x / anim->_framesCount);
+		float frameHeight = (float)(anim->getTexture()->getSize().y / anim->_animationsCount);
 
-	std::shared_ptr<Tile> hoveredTile = hoveredChunk->getTileByGlobalPosition();
-	if (!hoveredTile) return;
+		sf::Vector2i position;
+		position.x = (_position.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
+		position.y = (_position.y - (int)frameHeight/2) / Tile::tileSize * Tile::tileSize;
 
-    float bw = Tile::borderWidth;
+		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
+		outlineRect.setPosition(sf::Vector2f(position));
+		outlineRect.setFillColor(sf::Color::Transparent);
+		outlineRect.setOutlineThickness(2);
+		outlineRect.setOutlineColor(sf::Color::Green);
+		window->draw(outlineRect);
 
-    sf::VertexArray vertexArray(sf::PrimitiveType::Triangles);
+		sf::Sprite sprite(*anim->getTexture()->_texture);
+		sprite.setTextureRect(frameRect);
 
-    for (int yy = -r / 2; yy <= r / 2; yy++) {
-        for (int xx = -r / 2; xx <= r / 2; xx++) {
-            int tx = hoveredTile->_coords.x + xx;
-            int ty = hoveredTile->_coords.y + yy;
+		sprite.setPosition(sf::Vector2f(position));
+		window->draw(sprite);
+		return;
+	}
 
-			std::shared_ptr<Chunk> chunk = mapa->getChunkByTileGlobalCoords(tx, ty);
-			if (!chunk) continue;
 
-            std::shared_ptr<Tile> tile = chunk->getTileByTileGlobalCoords(tx, ty);
-            if (!tile) continue;
-
-            float x = (float)(tx * Tile::tileSize);
-            float y = (float)(ty * Tile::tileSize);
-
-            sf::Vertex v1({ x + bw, y + bw }, color);
-            sf::Vertex v2({ x + bw, y + Tile::tileSize - bw }, color);
-            sf::Vertex v3({ x + Tile::tileSize - bw, y + Tile::tileSize - bw }, color);
-            sf::Vertex v4({ x + Tile::tileSize - bw, y + bw }, color);
-
-            vertexArray.append(v1);
-            vertexArray.append(v2);
-            vertexArray.append(v3);
-
-            vertexArray.append(v1);
-            vertexArray.append(v3);
-            vertexArray.append(v4);
-        }
-    }
-
-	window->draw(vertexArray);
 }
 
 std::shared_ptr<CursorOnMap> cursorOnMap;

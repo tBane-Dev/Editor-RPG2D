@@ -12,8 +12,9 @@ public:
     
 	void addGameObject(std::shared_ptr<GameObjectOnMap> gameObjectOnMap);
     void sort();
-    void update();
-    void draw();
+
+    virtual void update();
+    virtual void draw();
 };
 
 

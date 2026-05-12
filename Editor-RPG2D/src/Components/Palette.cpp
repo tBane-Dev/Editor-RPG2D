@@ -5,6 +5,8 @@
 
 #include "Window.hpp"
 #include <Cursor.hpp>
+#include "Editors/MapEditor/Map/CursorOnMap.hpp"
+
 
 Slot::Slot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
 	_object = nullptr;
@@ -132,8 +134,12 @@ Palette::Palette() : Element() {
 		int doubles = 4;
 		if (i / doubles < prefabs.size()) {
 			slot->setObject(prefabs[i++ / doubles]);
+			slot->_onclick_func = [this, slot]() {
+				map_editor->_cursor_on_map->_object = slot->_object;
+				};
 		}
 	}
+
 }
 
 Palette::~Palette() {
