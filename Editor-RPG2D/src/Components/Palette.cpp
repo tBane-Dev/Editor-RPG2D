@@ -10,7 +10,7 @@
 
 Slot::Slot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
 	_object = nullptr;
-	_frame = 0;
+	_animator = nullptr;
 }
 
 Slot::~Slot() {
@@ -19,79 +19,40 @@ Slot::~Slot() {
 
 void Slot::setObject(std::shared_ptr<Object> object) {
 	_object = object;
-	_frame = 0;
 
-	_sprite = nullptr;
-	_animationTimer = currentTime;
-
-	if (dynamic_pointer_cast<MonsterPrefab>(_object) != nullptr) {
-
-		std::shared_ptr<MonsterPrefab> monsterPrefab = std::dynamic_pointer_cast<MonsterPrefab>(_object);
-		std::shared_ptr<Animations> anim = monsterPrefab->getAnimations();
-		sf::IntRect frameRect = anim->getFrameRect(0, _frame);
-
-		_texture = anim->getTexture();
-
-		_sprite = std::make_shared<sf::Sprite>(*_texture->_texture);
-		_sprite->setTextureRect(frameRect);
-
-		float frameWidth = (float)(_texture->getSize().x / anim->_framesCount);
-		float frameHeight = (float)(_texture->getSize().y / anim->_animationsCount);
-
-		_sprite->setScale(sf::Vector2f(80.f / frameWidth, 80.f / frameHeight));
-		_sprite->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(40, 40));
-		_sprite->setOrigin(sf::Vector2f(frameWidth / 2.f, frameHeight / 2.f));
+	if(dynamic_pointer_cast<GameObject>(_object) != nullptr) {
+		_animator = std::make_shared<Animator>(dynamic_pointer_cast<GameObject>(_object)->getAnimations(), 0.2f);
+		_animator->setRandFrame();
+		_animator->play();
 		return;
 	}
-
-	if (dynamic_pointer_cast<GameObject>(_object) != nullptr) {
-
-		std::shared_ptr<GameObject> objectPrefab = std::dynamic_pointer_cast<GameObject>(_object);
-		std::shared_ptr<Animations> anim = objectPrefab->getAnimations();
-		sf::IntRect frameRect = anim->getFrameRect(0, _frame);
-
-		_texture = anim->getTexture();
-
-		_sprite = std::make_shared<sf::Sprite>(*_texture->_texture);
-		_sprite->setTextureRect(frameRect);
-
-		float frameWidth = (float)(_texture->getSize().x / anim->_framesCount);
-		float frameHeight = (float)(_texture->getSize().y / anim->_animationsCount);
-
-		_sprite->setScale(sf::Vector2f(80.f / frameWidth, 80.f / frameHeight));
-		_sprite->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(40, 40));
-		_sprite->setOrigin(sf::Vector2f(frameWidth / 2.f, frameHeight / 2.f));
-		return;
-	}
-}
-
-void Slot::animate() {
-	if (_object == nullptr)
-		return;
-
-	if(!((currentTime - _animationTimer).asSeconds() > 0.1f)) {
-		return;
-	}
-
-
-	if (dynamic_pointer_cast<MonsterPrefab>(_object) != nullptr) {
-		std::shared_ptr<MonsterPrefab> monsterPrefab = std::dynamic_pointer_cast<MonsterPrefab>(_object);
-		std::shared_ptr<Animations> anim = monsterPrefab->getAnimations();
-		sf::IntRect frameRect = anim->getFrameRect(0, _frame);
-		if (_sprite != nullptr) {
-			_sprite->setTextureRect(frameRect);
-		}
-
-		_frame += 1;
-		_frame = _frame % anim->_framesCount;
-	}
-
-	_animationTimer = currentTime;
+	
 }
 
 void Slot::update() {
+
 	ButtonWithSprite::update();
-	animate();
+
+	if (_animator != nullptr) {
+
+		_animator->update();
+
+		std::shared_ptr<Animations> animations = _animator->getAnimations();
+		sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
+
+		_texture = animations->getTexture();
+
+		_sprite = std::make_shared<sf::Sprite>(*_texture->_texture);
+		_sprite->setTextureRect(frameRect);
+
+		float frameWidth = (float)(_texture->getSize().x / animations->_framesCount);
+		float frameHeight = (float)(_texture->getSize().y / animations->_animationsCount);
+
+		_sprite->setScale(sf::Vector2f(80.f / frameWidth, 80.f / frameHeight));
+		_sprite->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(40, 40));
+		_sprite->setOrigin(sf::Vector2f(frameWidth / 2.f, frameHeight / 2.f));
+		return;
+	}
 }
 
 void Slot::draw() {

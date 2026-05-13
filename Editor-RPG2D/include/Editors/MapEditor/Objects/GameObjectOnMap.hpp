@@ -1,12 +1,13 @@
 #pragma once
 #include "Editors/MapEditor/Objects/Object.hpp"
 #include "Editors/MapEditor/Objects/GameObject.hpp"
+#include "Animator.hpp"
 
 class GameObjectOnMap : public Object {
 public:
 	std::shared_ptr<GameObject> _prefab;
+	std::shared_ptr<Animator> _animator;
     sf::Vector2i _position;
-	int _frame;
 
 	GameObjectOnMap(std::shared_ptr<GameObject> prefab);
 	~GameObjectOnMap();

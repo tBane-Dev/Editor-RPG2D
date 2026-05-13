@@ -2,11 +2,13 @@
 #include "Editors/MapEditor/Objects/GameObjectOnMap.hpp"
 #include "Window.hpp"
 #include "Editors/MapEditor/MapEditor.hpp"
+#include "DebugLog.hpp"
+#include "Animator.hpp"
 
 GameObjectOnMap::GameObjectOnMap(std::shared_ptr<GameObject> prefab) : Object() {
 	_prefab = prefab;
+	_animator = std::make_shared<Animator>(prefab->getAnimations(), 0.1f);
 	_position = sf::Vector2i(0, 0);
-	_frame = 0;
 }
 
 GameObjectOnMap::~GameObjectOnMap() {
@@ -18,7 +20,7 @@ void GameObjectOnMap::setPosition(sf::Vector2i position) {
 }
 
 void GameObjectOnMap::update() {
-	
+	_animator->update();
 }
 
 void GameObjectOnMap::draw() {
@@ -31,8 +33,8 @@ void GameObjectOnMap::draw() {
 		window->draw(collider);
 	}
 
-	std::shared_ptr<Animations> anim = _prefab->getAnimations();
-	sf::IntRect frameRect = anim->getFrameRect(0,0);
+	std::shared_ptr<Animations> animations = _animator->getAnimations();
+	sf::IntRect frameRect = animations->getFrameRect(0,0);
 
 	if (map_editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
@@ -43,7 +45,7 @@ void GameObjectOnMap::draw() {
 		window->draw(outlineRect);
 	}
 
-	sf::Sprite sprite(*anim->getTexture()->_texture);
+	sf::Sprite sprite(*animations->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setTextureRect(frameRect);
 	window->draw(sprite);

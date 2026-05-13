@@ -14,13 +14,13 @@ MonsterPrefab::~MonsterPrefab() {
 
 Monster::Monster(std::shared_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 
-	_state = MonsterState::Idle;
+
+	_state = MonsterState::Moving;
 
 	_basePosition = sf::Vector2i(0, 0);
 	_direction = Direction::Down;
 
-	_frame = rand()%_prefab->getAnimations()->_framesCount;
-	_animationTimer = currentTime;
+	_animator->setRandFrame();
 
 	_path = std::make_shared<Path>();
 	_path->setStartPoint(_position);
@@ -44,23 +44,26 @@ void Monster::setPosition(sf::Vector2i position) {
 
 void Monster::update() {
 	
-	if((currentTime - _animationTimer).asSeconds() > 0.1f) {
-		if (_path->isEmpty() || _position == _path->getEndPoint()) {
-			_path->setStartPoint(_position);
-			sf::Vector2i endPoint = _basePosition;
-			int r = 8;
-			endPoint.x += (rand() % (2 * r + 1) - r) * Tile::tileSize;
-			endPoint.y += (rand() % (2 * r + 1) - r) * Tile::tileSize;
-			_path->setEndPoint(endPoint);
-			_path->generatePath();
+	if (_state == MonsterState::Moving) {
+		_animator->_timer += deltaTime.asSeconds();
 
-			_state = MonsterState::Moving;
+		if (_animator->_timer >= _animator->_interval) {
 
-			_animationTimer = currentTime;
-			return;
-		}
+			_animator->_timer = 0.0f;
 
-		if (_state == MonsterState::Moving) {
+			if (_path->isEmpty() || _position == _path->getEndPoint()) {
+				_path->setStartPoint(_position);
+				sf::Vector2i endPoint = _basePosition;
+				int r = 8;
+				endPoint.x += (rand() % (2 * r + 1) - r) * Tile::tileSize;
+				endPoint.y += (rand() % (2 * r + 1) - r) * Tile::tileSize;
+				_path->setEndPoint(endPoint);
+				_path->generatePath();
+
+				_state = MonsterState::Moving;
+				return;
+			}
+
 			if (_position != _path->getEndPoint()) {
 
 				sf::Vector2i target = _path->getStartPoint();
@@ -86,15 +89,17 @@ void Monster::update() {
 				if (_position == target) {
 					_path->nextPoint();
 				}
-			}
-		}
 
-		_frame++;
-		if(_frame >= _prefab->getAnimations()->_framesCount) {
-			_frame = 0;
+			}
+
+			if ((int)_direction != _animator->_animation)
+				_animator->setAnimation((int)_direction);
+
+			_animator->nextFrame();
+
 		}
-		_animationTimer = currentTime;
 	}
+	
 }
 
 void Monster::draw() {
@@ -113,8 +118,8 @@ void Monster::draw() {
 	}
 	
 
-	std::shared_ptr<Animations> anim = _prefab->getAnimations();
-	sf::IntRect frameRect = anim->getFrameRect(int(_direction), _frame);
+	std::shared_ptr<Animations> anim = _animator->getAnimations();
+	sf::IntRect frameRect = anim->getFrameRect(_animator->_animation, _animator->_frame);
 
 	if (map_editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));

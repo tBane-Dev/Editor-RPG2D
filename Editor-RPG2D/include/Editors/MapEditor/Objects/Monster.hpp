@@ -1,6 +1,7 @@
 #pragma once
 #include "Editors/MapEditor/Objects/GameObjectOnMap.hpp"
 #include "Editors/MapEditor/Map/Path.hpp"
+#include "Animator.hpp"
 
 enum class MonsterState { Idle, Moving, Attacking };
 enum class Direction { Down, Left, Right, Up };
@@ -15,14 +16,12 @@ public:
 
 class Monster : public GameObjectOnMap {
 public:
-	
+
 	MonsterState _state;
 	sf::Vector2i _basePosition;
 	Direction _direction;
 
 	std::shared_ptr<Path> _path;
-	int _frame;
-	sf::Time _animationTimer;
 
 	Monster(std::shared_ptr<GameObject> prefab);
 	~Monster();

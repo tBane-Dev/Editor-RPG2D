@@ -8,6 +8,8 @@
 #include "Editors/MapEditor/Objects/Monster.hpp"
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 #include <typeinfo>
+#include "Animator.hpp"
+
 
 CursorOnMap::CursorOnMap() {
 
@@ -37,12 +39,11 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
 			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
+			std::shared_ptr<Animations> animations = prefab->getAnimations();
+			sf::IntRect frameRect = animations->getFrameRect(0, _frame);
 
-			std::shared_ptr<Animations> anim = prefab->getAnimations();
-			sf::IntRect frameRect = anim->getFrameRect(0, _frame);
-
-			float frameWidth = (float)(anim->getTexture()->getSize().x / anim->_framesCount);
-			float frameHeight = (float)(anim->getTexture()->getSize().y / anim->_animationsCount);
+			float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
+			float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
 
 			// position of object on the map, aligning to the grid
 			sf::Vector2i position;
@@ -83,11 +84,11 @@ void CursorOnMap::draw()
 	if(dynamic_pointer_cast<GameObject>(_object) != nullptr) {
 
 		std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
-		std::shared_ptr<Animations> anim = prefab->getAnimations();
-		sf::IntRect frameRect = anim->getFrameRect(0, _frame);
+		std::shared_ptr<Animations> animations = prefab->getAnimations();
+		sf::IntRect frameRect = animations->getFrameRect(0, _frame);
 
-		float frameWidth = (float)(anim->getTexture()->getSize().x / anim->_framesCount);
-		float frameHeight = (float)(anim->getTexture()->getSize().y / anim->_animationsCount);
+		float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
+		float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
 
 		sf::Vector2i position;
 		position.x = (_position.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
@@ -100,7 +101,7 @@ void CursorOnMap::draw()
 		outlineRect.setOutlineColor(sf::Color::Green);
 		window->draw(outlineRect);
 
-		sf::Sprite sprite(*anim->getTexture()->_texture);
+		sf::Sprite sprite(*animations->getTexture()->_texture);
 		sprite.setTextureRect(frameRect);
 
 		sprite.setPosition(sf::Vector2f(position));
