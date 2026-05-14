@@ -6,6 +6,7 @@
 #include "Editors/MapEditor/MapEditor.hpp"
 #include "Editors/MapEditor/Objects/GameObject.hpp"
 #include "Editors/MapEditor/Objects/Monster.hpp"
+#include "Editors/MapEditor/Objects/Nature.hpp"
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 #include <typeinfo>
 #include "Animator.hpp"
@@ -58,7 +59,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			// create object on map by type 
 			std::shared_ptr<GameObjectOnMap> objectOnMap;
 			
-			if(dynamic_pointer_cast<MonsterPrefab>(prefab)) objectOnMap = std::make_shared<Monster>(prefab);
+			if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
+			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
 			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
 
 

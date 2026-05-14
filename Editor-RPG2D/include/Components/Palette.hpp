@@ -22,16 +22,34 @@ public:
 	void draw();
 };
 
+class GroupButton : public ButtonWithSprite {
+public:
+	std::shared_ptr<Texture> _groupTexture;
+	ObjectType _group;
+
+	GroupButton(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, ObjectType group, std::shared_ptr<Texture> groupTexture);
+	~GroupButton();
+
+	void cursorHover();
+	void handleEvent(const sf::Event& event);
+	void draw();
+};
+
 class Palette : public Element {
 public:
 
 	sf::IntRect _rect;
+
+	std::shared_ptr<ButtonWithSprite> _prev, _next;
+	std::vector<std::shared_ptr<GroupButton>> _groups;
+	std::shared_ptr<GroupButton> _currentGroup = nullptr;
 	std::vector<std::shared_ptr<Slot>> _slots;
 
 	Palette();
 	~Palette();
 
 	sf::Vector2i getSize();
+	void setGroup(std::shared_ptr<GroupButton> group);
 	void setPosition(sf::Vector2i position);
 
 	void cursorHover();

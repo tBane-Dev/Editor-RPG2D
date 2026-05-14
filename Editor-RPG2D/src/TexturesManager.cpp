@@ -63,6 +63,20 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\unchecked_hover.png");
 
         // palette
+        texturePaths.push_back(L"assets\\tex\\palette\\prev.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\prev_hover.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\next.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\next_hover.png");
+
+        texturePaths.push_back(L"assets\\tex\\palette\\group.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\group_hover.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\group_selected.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\group_selected_hover.png");
+
+        texturePaths.push_back(L"assets\\tex\\palette\\terrain.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\natures.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\monsters.png");
+
         texturePaths.push_back(L"assets\\tex\\palette\\slot.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slot_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slot_press.png");
@@ -74,7 +88,9 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\monsters\\golem.png");
         texturePaths.push_back(L"assets\\tex\\monsters\\dziobak.png");
         texturePaths.push_back(L"assets\\tex\\monsters\\goblin.png");
-		texturePaths.push_back(L"assets\\tex\\tree.png");
+		texturePaths.push_back(L"assets\\tex\\tree_1.png");
+		texturePaths.push_back(L"assets\\tex\\boulder_1.png");
+		texturePaths.push_back(L"assets\\tex\\boulder_2.png");
 
 
         // load all textures

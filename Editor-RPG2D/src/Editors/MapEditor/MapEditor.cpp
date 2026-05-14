@@ -52,10 +52,13 @@ void MapEditor::createGameObjects() {
 	dziobak1->setPosition(sf::Vector2i(576 - 128, 320 + 64));
 	goblin1->setPosition(sf::Vector2i(576 + 128, 320 + 64));
 
-	std::shared_ptr<GameObjectOnMap> tree1 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree"));
-	std::shared_ptr<GameObjectOnMap> tree2 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree"));
-	std::shared_ptr<GameObjectOnMap> tree3 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree"));
-	std::shared_ptr<GameObjectOnMap> tree4 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree"));
+	std::shared_ptr<GameObjectOnMap> tree1 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+	std::shared_ptr<GameObjectOnMap> tree2 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+	std::shared_ptr<GameObjectOnMap> tree3 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+	std::shared_ptr<GameObjectOnMap> tree4 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+
+	std::shared_ptr<GameObjectOnMap> boulder1 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"boulder_1"));
+	std::shared_ptr<GameObjectOnMap> boulder2 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"boulder_2"));
 
 	sf::IntRect rect = _map->getRect();
 		
@@ -63,6 +66,9 @@ void MapEditor::createGameObjects() {
 	tree2->setPosition(sf::Vector2i(rect.position.x + rect.size.x - 256, 0));
 	tree3->setPosition(sf::Vector2i(0, rect.position.y + rect.size.y - 256));
 	tree4->setPosition(sf::Vector2i(rect.position.x + rect.size.x - 256, rect.position.y + rect.size.y - 256));
+
+	boulder1->setPosition(sf::Vector2i(rect.position.x + rect.size.x / 2 - 128, rect.position.y + rect.size.y / 2 - 128));
+	boulder2->setPosition(sf::Vector2i(rect.position.x + rect.size.x / 2 + 128, rect.position.y + rect.size.y / 2 - 128));
 
 	_game_objects->addGameObject(golem1);
 	_game_objects->addGameObject(golem2);
@@ -74,6 +80,8 @@ void MapEditor::createGameObjects() {
 	_game_objects->addGameObject(tree2);
 	_game_objects->addGameObject(tree3);
 	_game_objects->addGameObject(tree4);
+	_game_objects->addGameObject(boulder1);
+	_game_objects->addGameObject(boulder2);
 }
 
 void MapEditor::createCamera() {

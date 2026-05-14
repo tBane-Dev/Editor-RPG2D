@@ -5,6 +5,7 @@
 #include "Editors/MapEditor/MapEditor.hpp"
 
 MonsterPrefab::MonsterPrefab(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, int stepSize) : GameObject(name, animations, origin) {
+	_type = ObjectType::Monster;
 	_stepSize = stepSize;
 }
 
@@ -14,6 +15,7 @@ MonsterPrefab::~MonsterPrefab() {
 
 Monster::Monster(std::shared_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 
+	_type = ObjectType::Monster;
 
 	_state = MonsterState::Moving;
 
