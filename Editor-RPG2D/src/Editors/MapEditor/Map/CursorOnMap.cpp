@@ -10,7 +10,7 @@
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 #include <typeinfo>
 #include "Animator.hpp"
-
+#include "DebugLog.hpp"
 
 CursorOnMap::CursorOnMap() {
 
@@ -39,38 +39,100 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
-			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
-			std::shared_ptr<Animations> animations = prefab->getAnimations();
-			sf::IntRect frameRect = animations->getFrameRect(0, _frame);
+			if (GUI_manager->Element_pressed == map_editor->_map) {
+				std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
+				std::shared_ptr<Animations> animations = prefab->getAnimations();
+				sf::IntRect frameRect = animations->getFrameRect(0, _frame);
 
-			float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
-			float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
+				float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
+				float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
 
-			// position of object on the map, aligning to the grid
-			sf::Vector2i position;
-			position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
-			position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
+				// position of object on the map, aligning to the grid
+				sf::Vector2i position;
+				position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
+				position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
 
-			if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
-				position.x += prefab->getOrigin().x;
-				position.y += prefab->getOrigin().y;
+				if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
+					position.x += prefab->getOrigin().x;
+					position.y += prefab->getOrigin().y;
+				}
+
+				// create object on map by type 
+				std::shared_ptr<GameObjectOnMap> objectOnMap;
+
+				if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
+				else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
+				else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
+
+
+				// positioning and adding object to map
+				objectOnMap->setPosition(position);
+				map_editor->_game_objects->addGameObject(objectOnMap);
+				return;
+			}
+			
+		}
+	}
+	else {
+		bool conditionToDraw = false;
+
+		const auto* mv = event.getIf<sf::Event::MouseMoved>();
+		const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
+
+		if ((mv || mbp) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			conditionToDraw = true;
+
+		if (conditionToDraw) {
+
+			std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(map_editor->_map);
+
+			std::shared_ptr<Chunk> hoveredChunk = mapa->getChunkByGlobalPosition();
+			if (!hoveredChunk) return;
+
+			std::shared_ptr<Tile> hoveredTile = hoveredChunk->getTileByGlobalPosition();
+			if (!hoveredTile) return;
+
+			int r = 5;
+			int type = 1;
+
+			std::set<std::shared_ptr<Chunk>> chunksToEdit;
+			for (int yy = -r / 2; yy <= r / 2; yy++) {
+				for (int xx = -r / 2; xx <= r / 2; xx++) {
+
+					std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(hoveredTile->_coords.x + xx, hoveredTile->_coords.y + yy);
+					if (!c) continue;
+
+					std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(hoveredTile->_coords.x + xx, hoveredTile->_coords.y + yy);
+					if (!t) continue;
+
+					t->_type = type;
+					chunksToEdit.insert(c);
+
+					if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1));
+					if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1));
+					if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1));
+
+					if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y));
+					if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y));
+
+					if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1));
+					if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1));
+					if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1));
+				}
 			}
 
-			// create object on map by type 
-			std::shared_ptr<GameObjectOnMap> objectOnMap;
-			
-			if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
-			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
-			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
-
-
-			// positioning and adding object to map
-			objectOnMap->setPosition(position);
-			map_editor->_game_objects->addGameObject(objectOnMap);
+			for (auto& c : chunksToEdit)
+				c->generateVertexArray(
+					mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1), mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1),
+					mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y),
+					mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)
+				);
 		}
-
 	}
+
+	
 }
+
 
 void CursorOnMap::draw()
 {
@@ -113,5 +175,3 @@ void CursorOnMap::draw()
 
 
 }
-
-std::shared_ptr<CursorOnMap> cursorOnMap;

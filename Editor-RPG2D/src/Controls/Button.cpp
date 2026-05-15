@@ -113,6 +113,12 @@ void Button::setTooltip(std::wstring title, std::wstring description) {
 }
 
 void Button::cursorHover() {
+
+	if (GUI_manager->Element_pressed != nullptr) {
+		if(GUI_manager->Element_pressed.get() != this)
+			return;
+	}
+
 	if (!_isActive)
 		return;
 
@@ -124,8 +130,6 @@ void Button::cursorHover() {
 
 void Button::handleEvent(const sf::Event& event) {
 
-	if (!_isActive)
-		return;
 
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (GUI_manager->Element_pressed.get() == this) {

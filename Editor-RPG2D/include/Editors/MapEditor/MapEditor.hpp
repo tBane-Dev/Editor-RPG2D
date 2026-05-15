@@ -6,7 +6,7 @@
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 #include "Editors/MapEditor/MapEditorMainMenu.hpp"
-#include "Components/Palette.hpp"
+#include "Components/Palette/Palette.hpp"
 
 class MapEditor : public Editor {
 public:

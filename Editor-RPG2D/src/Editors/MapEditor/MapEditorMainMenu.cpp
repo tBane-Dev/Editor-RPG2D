@@ -1,5 +1,6 @@
 #include "Editors/MapEditor/MapEditorMainMenu.hpp"
 #include "Components/MainMenu/MenuButton.hpp"
+#include "Editors/PrefabsEditor/PrefabsEditor.hpp"
 
 MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 	_file = std::make_shared<MenuButton>(std::make_shared<MainMenu>(*this), L"File");
@@ -74,7 +75,22 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 	_tool_palette = std::make_shared<OptionWithCheckbox>(L"Palette", textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
 	_tool_palette->addValue(textures_manager->getTexture(L"assets\\tex\\unchecked.png"), textures_manager->getTexture(L"assets\\tex\\unchecked_hover.png"));
 
+	_tool_prefabs_editor = std::make_shared<OptionWithIcon>(
+		L"Prefabs editor",
+		nullptr,
+		nullptr
+	);
+	_tool_prefabs_editor->_onclick_func = []() {
+		if (prefabs_editor == nullptr) {
+			prefabs_editor = std::make_shared<PrefabsEditor>();
+			prefabs_editor->createMainMenu();
+			prefabs_editor->createPalette();
+			editor_manager->push_back(prefabs_editor);
+		}
+		};
+
 	_tools->addOption(_tool_palette);
+	_tools->addOption(_tool_prefabs_editor);
 
 	// POSITIONING
 

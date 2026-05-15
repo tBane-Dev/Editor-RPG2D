@@ -6,7 +6,7 @@
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
 #include "Editors/Editor.hpp"
 #include "Editors/MapEditor/MapEditor.hpp"
-
+#include "DebugLog.hpp"
 
 
 Tile::Tile() {
@@ -56,9 +56,9 @@ std::shared_ptr<Tile> Chunk::getTileByGlobalPosition() {
 	rect.size.x = tilesCols * Tile::tileSize;
 	rect.size.y = tilesRows * Tile::tileSize;
 
-	if (rect.contains(cursorOnMap->_position)) {
-		int x = cursorOnMap->_position.x / Tile::tileSize;
-		int y = cursorOnMap->_position.y / Tile::tileSize;
+	if (rect.contains(map_editor->_cursor_on_map->_position)) {
+		int x = map_editor->_cursor_on_map->_position.x / Tile::tileSize;
+		int y = map_editor->_cursor_on_map->_position.y / Tile::tileSize;
 		return getTileByTileGlobalCoords(x, y);
 	}
 
@@ -396,8 +396,8 @@ std::shared_ptr<Chunk> Map::getChunkByTileGlobalCoords(int x, int y) {
 
 std::shared_ptr<Chunk> Map::getChunkByGlobalPosition() {
 
-	int x = cursorOnMap->_position.x / Tile::tileSize;
-	int y = cursorOnMap->_position.y / Tile::tileSize;
+	int x = map_editor->_cursor_on_map->_position.x / Tile::tileSize;
+	int y = map_editor->_cursor_on_map->_position.y / Tile::tileSize;
 
 	return getChunkByTileGlobalCoords(x, y);
 }
@@ -441,7 +441,7 @@ sf::IntRect Map::getRect() {
 
 void Map::cursorHover() {
 
-	if (getRect().contains(cursorOnMap->_position)) {
+	if (map_editor->_cursor_on_map != nullptr && getRect().contains(map_editor->_cursor_on_map->_position)) {
 		GUI_manager->Element_hovered = shared_from_this();
 	}
 }
@@ -449,70 +449,17 @@ void Map::cursorHover() {
 void Map::handleEvent(const sf::Event& event) {
 
 	if (GUI_manager->Element_hovered.get() == this) {
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			GUI_manager->Element_pressed = shared_from_this();
+		}
+			
 	}
 
-	if (GUI_manager->Element_pressed.get() == this) {
+	else if (GUI_manager->Element_pressed.get() == this) {
 		if (!(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)))
 			GUI_manager->Element_pressed = nullptr;
 	}
 
-
-	if (!((GUI_manager->Element_hovered.get() == this && GUI_manager->Element_pressed == nullptr) || GUI_manager->Element_pressed.get() == this)) return;
-
-	bool conditionToDraw = false;
-
-	const auto* mv = event.getIf<sf::Event::MouseMoved>();
-	const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
-
-	if ((mv || mbp) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-		conditionToDraw = true;
-
-	if (conditionToDraw) {
-
-		std::shared_ptr<Chunk> hoveredChunk = getChunkByGlobalPosition();
-		if (!hoveredChunk) return;
-
-		std::shared_ptr<Tile> hoveredTile = hoveredChunk->getTileByGlobalPosition();
-		if (!hoveredTile) return;
-
-		int r = 5;
-		int type = 1;
-
-		std::set<std::shared_ptr<Chunk>> chunksToEdit;
-		for (int yy = -r / 2; yy <= r / 2; yy++) {
-			for (int xx = -r / 2; xx <= r / 2; xx++) {
-
-				std::shared_ptr<Chunk> c = getChunkByTileGlobalCoords(hoveredTile->_coords.x + xx, hoveredTile->_coords.y + yy);
-				if (!c) continue;
-
-				std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(hoveredTile->_coords.x + xx, hoveredTile->_coords.y + yy);
-				if (!t) continue;
-
-				t->_type = type;
-				chunksToEdit.insert(c);
-
-				if (getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1)) chunksToEdit.insert(getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1));
-				if (getChunkByCoords(c->_coords.x, c->_coords.y - 1)) chunksToEdit.insert(getChunkByCoords(c->_coords.x, c->_coords.y - 1));
-				if (getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1)) chunksToEdit.insert(getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1));
-
-				if (getChunkByCoords(c->_coords.x - 1, c->_coords.y)) chunksToEdit.insert(getChunkByCoords(c->_coords.x - 1, c->_coords.y));
-				if (getChunkByCoords(c->_coords.x + 1, c->_coords.y)) chunksToEdit.insert(getChunkByCoords(c->_coords.x + 1, c->_coords.y));
-
-				if (getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1)) chunksToEdit.insert(getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1));
-				if (getChunkByCoords(c->_coords.x, c->_coords.y + 1)) chunksToEdit.insert(getChunkByCoords(c->_coords.x, c->_coords.y + 1));
-				if (getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)) chunksToEdit.insert(getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1));
-			}
-		}
-
-		for (auto& c : chunksToEdit)
-			c->generateVertexArray(
-				getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1), getChunkByCoords(c->_coords.x, c->_coords.y - 1), getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1),
-				getChunkByCoords(c->_coords.x - 1, c->_coords.y), getChunkByCoords(c->_coords.x + 1, c->_coords.y),
-				getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1), getChunkByCoords(c->_coords.x, c->_coords.y + 1), getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)
-			);
-	}
 }
 
 void Map::draw() {

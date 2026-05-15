@@ -15,5 +15,3 @@ public:
 	void handleEvent(const sf::Event& event);
 	void draw();
 };
-
-extern std::shared_ptr<CursorOnMap> cursorOnMap;

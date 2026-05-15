@@ -97,6 +97,7 @@ void MenuButton::cursorHover() {
 }
 
 void MenuButton::handleEvent(const sf::Event& event) {
+
 	if (GUI_manager->Element_hovered.get() == this) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
@@ -110,12 +111,25 @@ void MenuButton::handleEvent(const sf::Event& event) {
 			_state = ButtonState::Pressed;
 			_isSelected = true;
 			return;
+		}if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			if (GUI_manager->Element_pressed.get() == this) {
+				GUI_manager->Element_pressed = nullptr;
+				_isSelected = true;
+			}
+
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if(GUI_manager->Element_pressed.get() == this)
+		if (GUI_manager->Element_pressed.get() == this) {
 			GUI_manager->Element_pressed = nullptr;
+			_state = ButtonState::Idle;
+			_isSelected = false;
+			return;
+		}
+			
 	}
+
+	
 
 	if (_isSelected) {
 		for (auto& option : _options)

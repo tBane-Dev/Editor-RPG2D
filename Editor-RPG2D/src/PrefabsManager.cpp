@@ -28,6 +28,18 @@ std::vector<std::shared_ptr<GameObject>>& PrefabsManager::getAllPrefabs() {
 	return _prefabs;
 }
 
+std::vector<std::shared_ptr<GameObject>> PrefabsManager::getPrefabs(ObjectType type) {
+	std::vector<std::shared_ptr<GameObject>> prefabsOfType;
+
+    for (auto& prefab : _prefabs) {
+        if(prefab->_type == type) {
+            prefabsOfType.push_back(prefab);
+			}
+    }
+
+    return prefabsOfType;
+}
+
 void PrefabsManager::loadPrefabs() {
 	
     {
@@ -87,5 +99,15 @@ void PrefabsManager::loadPrefabs() {
         addPrefab(prefab);
     }
     
+
+    std::vector<std::shared_ptr<GameObject>> p;
+    int doubles = 49;
+    for (auto& prefab : _prefabs) {
+        for (int i = 0; i < doubles; i++) {
+            p.push_back(prefab);
+        }
+    }
+
+    _prefabs = p;
 }
 std::shared_ptr<PrefabsManager> prefabs_manager = nullptr;

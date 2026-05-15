@@ -1,0 +1,34 @@
+﻿#pragma once
+#include "GUIManager.hpp"
+#include "Controls/ButtonWithSprite.hpp"
+#include "Editors/MapEditor/Objects/Object.hpp"
+#include "Animator.hpp"
+#include "Controls/Scrollbar.hpp"
+#include "Components/Palette/Categories.hpp"
+#include "Components/Palette/Tools.hpp"
+#include "Components/Palette/Slots.hpp"
+
+class Palette : public Element {
+public:
+
+	sf::IntRect _rect;
+	std::shared_ptr<Categories> _categories;
+	std::shared_ptr<Tools> _tools;
+	std::shared_ptr<Slots> _slots;
+
+	int _minBrushSize = 1;
+	int _maxBrushSize = 4;
+	int _brushSize = 1;
+
+	Palette();
+	~Palette();
+
+	sf::Vector2i getSize();
+	void loadAll(std::shared_ptr<CategoryButton> category, ObjectType type);
+	void setPosition(sf::Vector2i position);
+
+	void cursorHover();
+	void handleEvent(const sf::Event& event);
+	void update();
+	void draw();
+};

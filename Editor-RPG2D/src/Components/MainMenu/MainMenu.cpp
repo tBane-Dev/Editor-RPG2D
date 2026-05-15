@@ -89,7 +89,7 @@ void MainMenu::cursorHover() {
 
 void MainMenu::handleEvent(const sf::Event& event) {
 
-	// TO-DO - to delete
+	// TO-DO: add shortcuts for menu options
 	//if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
 	//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
 	//		if(kp->code == sf::Keyboard::Key::N) {
@@ -120,57 +120,29 @@ void MainMenu::handleEvent(const sf::Event& event) {
 	//	}
 	//}
 
-	bool clicked_in_menu = false;
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
+		mbp && mbp->button == sf::Mouse::Button::Left) {
 
-	for (auto& mb : _menu_boxes) {
-		mb->handleEvent(event);
-		if (GUI_manager->Element_pressed == mb) {
-			clicked_in_menu = true;
-		}
-
-		if (mb->_isSelected) {
-			for (auto& op : mb->_options) {
-				op->handleEvent(event);
-				if (op->_rect.contains(cursor->_position)) {
-					clicked_in_menu = true;
-				}
+		if (_state == MainMenuStates::Opened) {
+			if (!cursorOnAnyMenuButton()) {
+				closeMenu();
+				return;
 			}
 		}
 	}
 
+	for (auto& mb : _menu_boxes)
+		mb->handleEvent(event);
+
 	if (_state == MainMenuStates::Opened) {
-		
-		std::shared_ptr<MenuButton> hoverBox = std::dynamic_pointer_cast<MenuButton>(GUI_manager->Element_hovered);
+		std::shared_ptr<MenuButton> hoverBox =
+			std::dynamic_pointer_cast<MenuButton>(GUI_manager->Element_hovered);
+
 		if (hoverBox != nullptr && _open_menu_button != hoverBox) {
 			hideMenu();
 			openMenuButton(hoverBox);
 		}
 	}
-
-	if (_state == MainMenuStates::Closing) {
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			if (!clicked_in_menu) {
-				hideMenu();
-				return;
-			}
-		}
-
-		
-	}
-	
-	if (_state == MainMenuStates::Opened) {
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			if (!clicked_in_menu) {
-				hideMenu();
-			}
-		}
-	}
-
-	if(!clicked_in_menu)
-		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			_state = MainMenuStates::Closed;
-		}
-		
 }
 
 void MainMenu::update() {

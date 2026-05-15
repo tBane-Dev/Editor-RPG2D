@@ -93,6 +93,7 @@ int main()
             } 
 
             editor_manager->handleEvent(*event);
+  
         }
 
         editor_manager->update();

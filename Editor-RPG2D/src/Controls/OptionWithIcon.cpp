@@ -37,7 +37,9 @@ void OptionWithIcon::draw() {
 			break;
 	};
 
-	sf::Sprite sprite(*texture->_texture);
-	sprite.setPosition(sf::Vector2f(_rect.position));
-	window->draw(sprite);
+	if (texture) {
+		sf::Sprite sprite(*texture->_texture);
+		sprite.setPosition(sf::Vector2f(_rect.position));
+		window->draw(sprite);
+	}
 }

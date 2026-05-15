@@ -101,15 +101,19 @@ void MapEditor::createPalette() {
 }
 
 void MapEditor::cursorHover() {
+	
 	_main_menu->cursorHover();
+	_map->cursorHover();
 	_palette->cursorHover();
 }
 
 void MapEditor::handleEvent(const sf::Event& event) {
 	_camera->handleEvent(event);
 	_main_menu->handleEvent(event);
-	_palette->handleEvent(event);
+	_map->handleEvent(event);
 	_cursor_on_map->handleEvent(event);
+	_palette->handleEvent(event);
+	
 	
 }
 
@@ -124,6 +128,7 @@ void MapEditor::update() {
 
 	_camera->update();
 	_cursor_on_map->update();
+	_map->update();
 
 }
 
