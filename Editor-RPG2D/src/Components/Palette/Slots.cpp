@@ -1,9 +1,12 @@
 ﻿#include "Components/Palette/Slots.hpp"
 #include "Editors/MapEditor/Objects/GameObject.hpp"
+#include "Editors/MapEditor/Objects/Terrain.hpp"
 #include "PrefabsManager.hpp"
 #include "Window.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
+#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Map/Tileset.hpp"
 
 Slot::Slot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
 	_object = nullptr;
@@ -33,6 +36,27 @@ void Slot::update() {
 void Slot::draw() {
 
 	ButtonWithSprite::draw();
+
+	if (_object == nullptr)
+		return;
+
+	if(_object->_type == ObjectType::Terrain) {
+		
+		std::shared_ptr<Terrain> terrain = std::dynamic_pointer_cast<Terrain>(_object);
+		if(terrain != nullptr) {
+			_objectTexture = textures_manager->getTexture(L"assets\\tex\\tileset.png");
+
+			sf::IntRect rect(sf::Vector2i(0, terrain->_id*64), sf::Vector2i(16, 16));
+			_objectSprite = std::make_shared<sf::Sprite>(*_objectTexture->_texture);
+			_objectSprite->setTextureRect(rect);
+			_objectSprite->setScale(sf::Vector2f(64.0f / 16.0f, 64.0f / 16.0f));
+			_objectSprite->setPosition(sf::Vector2f(_rect.position + sf::Vector2i(8,8)));
+			window->draw(*_objectSprite);
+			
+		}
+
+		return;
+	}
 
 	if (_animator != nullptr) {
 
@@ -127,6 +151,27 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 }
 
 void Slots::loadObjects() {
+
+	if (_type == ObjectType::Terrain) {
+
+		std::vector<std::shared_ptr<Terrain>> terrains;
+		for(int i=0;i<map_editor->_tileset->groups.size(); i++) {
+			terrains.emplace_back(std::make_shared<Terrain>(i));
+		}
+
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i < terrains.size()) {
+				_slots[i]->_object = terrains[i];
+				_slots[i]->_animator = nullptr;
+			}
+			else {
+				_slots[i]->_object = nullptr;
+				_slots[i]->_animator = nullptr;
+			}
+		}
+
+		return;
+	}
 
 	std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(_type);
 

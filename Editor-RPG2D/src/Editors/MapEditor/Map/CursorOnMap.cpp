@@ -8,6 +8,7 @@
 #include "Editors/MapEditor/Objects/Monster.hpp"
 #include "Editors/MapEditor/Objects/Nature.hpp"
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include "Editors/MapEditor/Objects/Terrain.hpp"
 #include <typeinfo>
 #include "Animator.hpp"
 #include "DebugLog.hpp"
@@ -32,48 +33,11 @@ void CursorOnMap::update() {
 }
 
 void CursorOnMap::handleEvent(const sf::Event& event) {
-	if (_object != nullptr) {
-		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
-			_object = nullptr;
-		}
+	
+	if(_object == nullptr)
+		return;
 
-		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-
-			if (GUI_manager->Element_pressed == map_editor->_map) {
-				std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
-				std::shared_ptr<Animations> animations = prefab->getAnimations();
-				sf::IntRect frameRect = animations->getFrameRect(0, _frame);
-
-				float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
-				float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
-
-				// position of object on the map, aligning to the grid
-				sf::Vector2i position;
-				position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
-				position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
-
-				if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
-					position.x += prefab->getOrigin().x;
-					position.y += prefab->getOrigin().y;
-				}
-
-				// create object on map by type 
-				std::shared_ptr<GameObjectOnMap> objectOnMap;
-
-				if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
-				else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
-				else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
-
-
-				// positioning and adding object to map
-				objectOnMap->setPosition(position);
-				map_editor->_game_objects->addGameObject(objectOnMap);
-				return;
-			}
-			
-		}
-	}
-	else {
+	if (_object->_type == ObjectType::Terrain) {
 		bool conditionToDraw = false;
 
 		const auto* mv = event.getIf<sf::Event::MouseMoved>();
@@ -93,7 +57,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			if (!hoveredTile) return;
 
 			int r = 5;
-			int type = 1;
+			int type = std::dynamic_pointer_cast<Terrain>(map_editor->_cursor_on_map->_object)->_id;
 
 			std::set<std::shared_ptr<Chunk>> chunksToEdit;
 			for (int yy = -r / 2; yy <= r / 2; yy++) {
@@ -128,9 +92,50 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 					mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)
 				);
 		}
+
+		return;
 	}
 
-	
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
+		_object = nullptr;
+	}
+
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+
+		if (GUI_manager->Element_pressed == map_editor->_map) {
+			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
+			std::shared_ptr<Animations> animations = prefab->getAnimations();
+			sf::IntRect frameRect = animations->getFrameRect(0, _frame);
+
+			float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
+			float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
+
+			// position of object on the map, aligning to the grid
+			sf::Vector2i position;
+			position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
+			position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
+
+			if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
+				position.x += prefab->getOrigin().x;
+				position.y += prefab->getOrigin().y;
+			}
+
+			// create object on map by type 
+			std::shared_ptr<GameObjectOnMap> objectOnMap;
+
+			if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
+			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
+			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
+
+
+			// positioning and adding object to map
+			objectOnMap->setPosition(position);
+			map_editor->_game_objects->addGameObject(objectOnMap);
+			return;
+		}
+
+	}
+
 }
 
 

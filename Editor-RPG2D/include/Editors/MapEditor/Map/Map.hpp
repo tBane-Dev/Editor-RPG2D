@@ -8,7 +8,6 @@
 #include "Time.hpp"
 #include "GUIManager.hpp"
 
-
 class Tile {
 public:
 	const static int tileSize = 16;
@@ -23,7 +22,7 @@ public:
 
 sf::Vector2i worldToTile(sf::Vector2i position);
 
-class Chunk {
+class Chunk : public std::enable_shared_from_this<Chunk> {
 public:
 	const static int tilesCols = 16;
 	const static int tilesRows = 16;
@@ -37,18 +36,6 @@ public:
 	bool operator<(const Chunk& other) const;
 	std::shared_ptr<Tile> getTileByTileGlobalCoords(int x, int y);
 	std::shared_ptr<Tile> getTileByGlobalPosition();
-
-	int getNeighbourTypeLocal(
-		int nx, int ny,
-		const std::shared_ptr<Chunk>& leftTopChunk,
-		const std::shared_ptr<Chunk>& topChunk,
-		const std::shared_ptr<Chunk>& rightTopChunk,
-		const std::shared_ptr<Chunk>& leftChunk,
-		const std::shared_ptr<Chunk>& rightChunk,
-		const std::shared_ptr<Chunk>& leftBottomChunk,
-		const std::shared_ptr<Chunk>& bottomChunk,
-		const std::shared_ptr<Chunk>& rightBottomChunk
-	) const;
 
 	void generateVertexArray(
 		std::shared_ptr<Chunk> leftTopChunk,
@@ -86,3 +73,31 @@ public:
 	void handleEvent(const sf::Event& event);
 	void draw();
 };
+
+
+int getNeighbourTypeLocal(
+	int nx, int ny,
+	const std::shared_ptr<Chunk>& chunk,
+	const std::shared_ptr<Chunk>& leftTopChunk,
+	const std::shared_ptr<Chunk>& topChunk,
+	const std::shared_ptr<Chunk>& rightTopChunk,
+	const std::shared_ptr<Chunk>& leftChunk,
+	const std::shared_ptr<Chunk>& rightChunk,
+	const std::shared_ptr<Chunk>& leftBottomChunk,
+	const std::shared_ptr<Chunk>& bottomChunk,
+	const std::shared_ptr<Chunk>& rightBottomChunk
+);
+
+int getTileType(
+	int type,
+	int x, int y,
+	std::shared_ptr<Chunk> chunk,
+	std::shared_ptr<Chunk> leftTopChunk,
+	std::shared_ptr<Chunk> topChunk,
+	std::shared_ptr<Chunk> rightTopChunk,
+	std::shared_ptr<Chunk> leftChunk,
+	std::shared_ptr<Chunk> rightChunk,
+	std::shared_ptr<Chunk> leftBottomChunk,
+	std::shared_ptr<Chunk> bottomChunk,
+	std::shared_ptr<Chunk> rightBottomChunk
+);

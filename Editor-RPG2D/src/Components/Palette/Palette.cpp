@@ -107,12 +107,14 @@ Palette::Palette() : Element() {
 	_maxBrushSize = 4;
 	_brushSize = 1;
 	
+	setPosition(sf::Vector2i(_rect.position));
+
+
 	// set the active group
 	loadAll(_categories->_categories[0], ObjectType::Terrain); // TO-DO - must be - selectCategory
 	_tools->setTool(_tools->_tools[0], ToolType::None);
-	setPosition(sf::Vector2i(_rect.position));
-
-	_slots->setCategory(ObjectType::Terrain);
+	
+	//_slots->setCategory(ObjectType::Terrain);
 }
 
 Palette::~Palette() {

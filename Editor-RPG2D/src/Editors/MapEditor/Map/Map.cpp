@@ -9,6 +9,7 @@
 #include "DebugLog.hpp"
 
 
+
 Tile::Tile() {
 	_type = 0;
 }
@@ -65,54 +66,6 @@ std::shared_ptr<Tile> Chunk::getTileByGlobalPosition() {
 	return nullptr;
 }
 
-int Chunk::getNeighbourTypeLocal(
-	int nx, int ny,
-	const std::shared_ptr<Chunk>& leftTopChunk,
-	const std::shared_ptr<Chunk>& topChunk,
-	const std::shared_ptr<Chunk>& rightTopChunk,
-	const std::shared_ptr<Chunk>& leftChunk,
-	const std::shared_ptr<Chunk>& rightChunk,
-	const std::shared_ptr<Chunk>& leftBottomChunk,
-	const std::shared_ptr<Chunk>& bottomChunk,
-	const std::shared_ptr<Chunk>& rightBottomChunk
-) const
-{
-	constexpr int EMPTY_TYPE = -1;
-
-	if (nx >= 0 && nx < tilesCols && ny >= 0 && ny < tilesRows) {
-		return _tiles[ny * tilesCols + nx]->_type;
-	}
-
-	const int dx = (nx < 0) ? -1 : (nx >= tilesCols ? 1 : 0);
-	const int dy = (ny < 0) ? -1 : (ny >= tilesRows ? 1 : 0);
-
-	std::shared_ptr<Chunk> c = nullptr;
-
-	if (dx == -1 && dy == -1) c = leftTopChunk;
-	else if (dx == 0 && dy == -1) c = topChunk;
-	else if (dx == 1 && dy == -1) c = rightTopChunk;
-
-	else if (dx == -1 && dy == 0) c = leftChunk;
-	else if (dx == 1 && dy == 0) c = rightChunk;
-
-	else if (dx == -1 && dy == 1) c = leftBottomChunk;
-	else if (dx == 0 && dy == 1) c = bottomChunk;
-	else if (dx == 1 && dy == 1) c = rightBottomChunk;
-
-	if (!c) return EMPTY_TYPE;
-
-	int lx = nx;
-	int ly = ny;
-
-	if (lx < 0) lx += tilesCols;
-	else if (lx >= tilesCols) lx -= tilesCols;
-
-	if (ly < 0) ly += tilesRows;
-	else if (ly >= tilesRows) ly -= tilesRows;
-
-	return c->_tiles[ly * tilesCols + lx]->_type;
-}
-
 void Chunk::generateVertexArray(
 	std::shared_ptr<Chunk> leftTopChunk,
 	std::shared_ptr<Chunk> topChunk,
@@ -145,111 +98,13 @@ void Chunk::generateVertexArray(
 
 			int tileType = 5;
 			int type = getTileByTileGlobalCoords(tx, ty)->_type;
-			// Sprawdzanie sąsiadów z uwzględnieniem krawędzi
-			bool hasLeft = areFriends(type, getNeighbourTypeLocal(
-				x - 1, y,
+			
+			tileType = getTileType(
+				type, x, y, shared_from_this(),
 				leftTopChunk, topChunk, rightTopChunk,
 				leftChunk, rightChunk,
 				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-
-			bool hasRight = areFriends(type, getNeighbourTypeLocal(
-				x + 1, y,
-				leftTopChunk, topChunk, rightTopChunk,
-				leftChunk, rightChunk,
-				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-
-			bool hasTop = areFriends(type, getNeighbourTypeLocal(
-				x, y - 1,
-				leftTopChunk, topChunk, rightTopChunk,
-				leftChunk, rightChunk,
-				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-
-			bool hasBottom = areFriends(type, getNeighbourTypeLocal(
-				x, y + 1,
-				leftTopChunk, topChunk, rightTopChunk,
-				leftChunk, rightChunk,
-				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-
-			// Narożniki:
-			bool hasTopLeft = areFriends(type, getNeighbourTypeLocal(
-				x - 1, y - 1,
-				leftTopChunk, topChunk, rightTopChunk,
-				leftChunk, rightChunk,
-				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-
-			bool hasTopRight = areFriends(type, getNeighbourTypeLocal(
-				x + 1, y - 1,
-				leftTopChunk, topChunk, rightTopChunk,
-				leftChunk, rightChunk,
-				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-
-			bool hasBottomLeft = areFriends(type, getNeighbourTypeLocal(
-				x - 1, y + 1,
-				leftTopChunk, topChunk, rightTopChunk,
-				leftChunk, rightChunk,
-				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-
-			bool hasBottomRight = areFriends(type, getNeighbourTypeLocal(
-				x + 1, y + 1,
-				leftTopChunk, topChunk, rightTopChunk,
-				leftChunk, rightChunk,
-				leftBottomChunk, bottomChunk, rightBottomChunk
-			));
-			// Logika dobierania odpowiedniego fragmentu
-			if (!hasTop && !hasLeft) {
-				if (hasRight && hasBottom && !hasBottomRight) {
-					tileType = 13; // wewnętrzny lewo-góra
-				}
-				else {
-					tileType = 1; // standardowy lewo-góra
-				}
-			}
-			else if (!hasTop && !hasRight) {
-				tileType = 3; // prawo-góra
-			}
-			else if (!hasBottom && !hasLeft) {
-				tileType = 7; // lewo-dół
-			}
-			else if (!hasBottom && !hasRight) {
-				tileType = 9; // prawo-dół
-			}
-			else if (!hasTop) {
-				tileType = 2; // góra
-			}
-			else if (!hasLeft) {
-				tileType = 4; // lewo
-			}
-			else if (!hasRight) {
-				tileType = 6; // prawo
-			}
-			else if (!hasBottom) {
-				tileType = 8; // dół
-			}
-			else {
-				// Dla pełnego otoczenia - sprawdź wewnętrzne narożniki
-				if (!hasTopLeft && hasTop && hasLeft) {
-					tileType = 11; // wewnętrzny lewo-góra dla środka
-				}
-				else if (!hasTopRight && hasTop && hasRight) {
-					tileType = 12; // wewnętrzny prawo-góra dla środka
-				}
-				else if (!hasBottomLeft && hasBottom && hasLeft) {
-					tileType = 13; // wewnętrzny lewo-dół dla środka
-				}
-				else if (!hasBottomRight && hasBottom && hasRight) {
-					tileType = 14; // wewnętrzny prawo-dół dla środka
-				}
-				else {
-					tileType = 5; // środek
-				}
-			}
+			);
 
 			std::shared_ptr<Tile> t = getTileByTileGlobalCoords(tx, ty);
 			Tileset::Tile tile = tileset->groups[t->_type]->tiles[tileType];
@@ -512,4 +367,177 @@ void Map::draw() {
 
 
 	}
+}
+
+int getNeighbourTypeLocal(
+	int nx, int ny,
+	const std::shared_ptr<Chunk>& chunk,
+	const std::shared_ptr<Chunk>& leftTopChunk,
+	const std::shared_ptr<Chunk>& topChunk,
+	const std::shared_ptr<Chunk>& rightTopChunk,
+	const std::shared_ptr<Chunk>& leftChunk,
+	const std::shared_ptr<Chunk>& rightChunk,
+	const std::shared_ptr<Chunk>& leftBottomChunk,
+	const std::shared_ptr<Chunk>& bottomChunk,
+	const std::shared_ptr<Chunk>& rightBottomChunk
+)
+{
+	constexpr int EMPTY_TYPE = -1;
+
+	if (nx >= 0 && nx < chunk->tilesCols && ny >= 0 && ny < chunk->tilesRows) {
+		return chunk->_tiles[ny * chunk->tilesCols + nx]->_type;
+	}
+
+	const int dx = (nx < 0) ? -1 : (nx >= chunk->tilesCols ? 1 : 0);
+	const int dy = (ny < 0) ? -1 : (ny >= chunk->tilesRows ? 1 : 0);
+
+	std::shared_ptr<Chunk> c = nullptr;
+
+	if (dx == -1 && dy == -1) c = leftTopChunk;
+	else if (dx == 0 && dy == -1) c = topChunk;
+	else if (dx == 1 && dy == -1) c = rightTopChunk;
+
+	else if (dx == -1 && dy == 0) c = leftChunk;
+	else if (dx == 1 && dy == 0) c = rightChunk;
+
+	else if (dx == -1 && dy == 1) c = leftBottomChunk;
+	else if (dx == 0 && dy == 1) c = bottomChunk;
+	else if (dx == 1 && dy == 1) c = rightBottomChunk;
+
+	if (!c) return EMPTY_TYPE;
+
+	int lx = nx;
+	int ly = ny;
+
+	if (lx < 0) lx += chunk->tilesCols;
+	else if (lx >= chunk->tilesCols) lx -= chunk->tilesCols;
+
+	if (ly < 0) ly += chunk->tilesRows;
+	else if (ly >= chunk->tilesRows) ly -= chunk->tilesRows;
+	return c->_tiles[ly * chunk->tilesCols + lx]->_type;
+}
+
+int getTileType(
+	int type,
+	int x, int y,
+	std::shared_ptr<Chunk> chunk,
+	std::shared_ptr<Chunk> leftTopChunk,
+	std::shared_ptr<Chunk> topChunk,
+	std::shared_ptr<Chunk> rightTopChunk,
+	std::shared_ptr<Chunk> leftChunk,
+	std::shared_ptr<Chunk> rightChunk,
+	std::shared_ptr<Chunk> leftBottomChunk,
+	std::shared_ptr<Chunk> bottomChunk,
+	std::shared_ptr<Chunk> rightBottomChunk) {
+
+	int tileType = 5; // domyślnie środek
+
+	// Sprawdzanie sąsiadów z uwzględnieniem krawędzi
+	bool hasLeft = areFriends(type, getNeighbourTypeLocal(
+		x - 1, y, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	bool hasRight = areFriends(type, getNeighbourTypeLocal(
+		x + 1, y, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	bool hasTop = areFriends(type, getNeighbourTypeLocal(
+		x, y - 1, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	bool hasBottom = areFriends(type, getNeighbourTypeLocal(
+		x, y + 1, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	// Narożniki:
+	bool hasTopLeft = areFriends(type, getNeighbourTypeLocal(
+		x - 1, y - 1, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	bool hasTopRight = areFriends(type, getNeighbourTypeLocal(
+		x + 1, y - 1, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	bool hasBottomLeft = areFriends(type, getNeighbourTypeLocal(
+		x - 1, y + 1, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	bool hasBottomRight = areFriends(type, getNeighbourTypeLocal(
+		x + 1, y + 1, chunk,
+		leftTopChunk, topChunk, rightTopChunk,
+		leftChunk, rightChunk,
+		leftBottomChunk, bottomChunk, rightBottomChunk
+	));
+
+	// Logika dobierania odpowiedniego fragmentu
+	if (!hasTop && !hasLeft) {
+		if (hasRight && hasBottom && !hasBottomRight) {
+			tileType = 13; // wewnętrzny lewo-góra
+		}
+		else {
+			tileType = 1; // standardowy lewo-góra
+		}
+	}
+	else if (!hasTop && !hasRight) {
+		tileType = 3; // prawo-góra
+	}
+	else if (!hasBottom && !hasLeft) {
+		tileType = 7; // lewo-dół
+	}
+	else if (!hasBottom && !hasRight) {
+		tileType = 9; // prawo-dół
+	}
+	else if (!hasTop) {
+		tileType = 2; // góra
+	}
+	else if (!hasLeft) {
+		tileType = 4; // lewo
+	}
+	else if (!hasRight) {
+		tileType = 6; // prawo
+	}
+	else if (!hasBottom) {
+		tileType = 8; // dół
+	}
+	else {
+		// Dla pełnego otoczenia - sprawdź wewnętrzne narożniki
+		if (!hasTopLeft && hasTop && hasLeft) {
+			tileType = 11; // wewnętrzny lewo-góra dla środka
+		}
+		else if (!hasTopRight && hasTop && hasRight) {
+			tileType = 12; // wewnętrzny prawo-góra dla środka
+		}
+		else if (!hasBottomLeft && hasBottom && hasLeft) {
+			tileType = 13; // wewnętrzny lewo-dół dla środka
+		}
+		else if (!hasBottomRight && hasBottom && hasRight) {
+			tileType = 14; // wewnętrzny prawo-dół dla środka
+		}
+		else {
+			tileType = 5; // środek
+		}
+	}
+
+	return tileType;
 }
