@@ -180,12 +180,16 @@ void Slots::setCategory(ObjectType type) {
 	int rowsVisible = _slotsCount.y;
 	int rowHeight = 80 + _inner_margin;	
 	int scrollbarValue = 0;
-	int scrollbarMaxValue = (rowsTotal - rowsVisible) * rowHeight;
+	int scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
 	int scrollbarSliderSize = _slotsCount.y * (80 + _inner_margin);
-	DebugLog(L"Scrollbar wmax value: " + std::to_wstring(scrollbarMaxValue));
-	DebugLog(L"Scrollbar slider size: " + std::to_wstring(scrollbarSliderSize));
-	DebugLog(L"Scrollbar value: " + std::to_wstring(scrollbarValue));
+
 	_scrollbar = std::make_shared<Scrollbar>(scrollbarPosition.x, scrollbarPosition.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMaxValue, scrollbarSliderSize, scrollbarValue);
+
+	_scrollbar->setScrollArea(std::make_shared<sf::IntRect>(
+		sf::Vector2i(_rect.position.x + _outer_margin, _rect.position.y + _main_margin + _top_margin + 2 * _inner_margin),
+		sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _inner_margin)), 
+		(80 + _inner_margin)/4);
+
 	_scrollbar->_func = [this]() {
 		int i = 0;
 		for (auto& slot : _slots) {
