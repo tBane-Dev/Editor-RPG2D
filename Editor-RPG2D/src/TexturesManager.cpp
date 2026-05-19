@@ -121,6 +121,9 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_press.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_hover.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_press.png");
 
         // tileset
         texturePaths.push_back(L"assets\\tex\\tileset.png");

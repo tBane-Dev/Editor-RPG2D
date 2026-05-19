@@ -74,7 +74,15 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\circle.png"),
-		[this]() { _tools->setTool(_tools->_tools[1], ToolType::Circle); }
+		[this]() { 
+			_tools->setTool(_tools->_tools[1], ToolType::Circle); 
+			if (_slots->_selectedSlot == nullptr) {
+				if(_slots->_slots.size() > 2) {
+					_slots->selectSlot(_slots->_slots[2]);
+					map_editor->_cursor_on_map->_object = _slots->_slots[2]->_object;
+				}
+			}
+		}
 	);
 
 	_tools->addTool(
@@ -82,29 +90,37 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\rect.png"),
-		[this]() { _tools->setTool(_tools->_tools[2], ToolType::Rect); }
+		[this]() { _tools->setTool(
+			_tools->_tools[2], ToolType::Rect); 
+			if (_slots->_selectedSlot == nullptr) {
+				if (_slots->_slots.size() > 2) {
+					_slots->selectSlot(_slots->_slots[2]);
+					map_editor->_cursor_on_map->_object = _slots->_slots[2]->_object;
+				}
+			}
+		}
 	);
 
 	_tools->addTool(
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\rect.png"),
-		[this]() { _tools->setTool(_tools->_tools[3], ToolType::Rect); }
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\decrease.png"),
+		[this]() { map_editor->_palette->_brushSize = std::clamp(map_editor->_palette->_brushSize - 1, map_editor->_palette->_minBrushSize, map_editor->_palette->_maxBrushSize); }
 	);
 
 	_tools->addTool(
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\rect.png"),
-		[this]() { _tools->setTool(_tools->_tools[4], ToolType::Rect); }
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\increase.png"),
+		[this]() { map_editor->_palette->_brushSize = std::clamp(map_editor->_palette->_brushSize + 1, map_editor->_palette->_minBrushSize, map_editor->_palette->_maxBrushSize); }
 	);
 
 	_slots = std::make_shared<Slots>();
 
-	_minBrushSize = 1;
-	_maxBrushSize = 4;
+	_minBrushSize = 0;
+	_maxBrushSize = 5;
 	_brushSize = 1;
 	
 	setPosition(sf::Vector2i(_rect.position));
@@ -138,20 +154,20 @@ void Palette::loadAll(std::shared_ptr<CategoryButton> category, ObjectType type)
 
 	if(_categories->_selectedType == ObjectType::Terrain) {
 		_slots->setFunction(
-			[this](std::shared_ptr<Object> object) {
-				
-				if(!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
+			[this](std::shared_ptr<Slot> slot) {
+				if (!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
 					_tools->setTool(_tools->_tools[1], ToolType::Circle);
-	
-				map_editor->_cursor_on_map->_object = object;
+				_slots->selectSlot(slot);
+				map_editor->_cursor_on_map->_object = slot->_object;
 
 			}
 		);
 	}
 	else {
 		_slots->setFunction(
-			[this](std::shared_ptr<Object> object) {
-				map_editor->_cursor_on_map->_object = object;
+			[this](std::shared_ptr<Slot> slot) {
+				_slots->selectSlot(slot);
+				map_editor->_cursor_on_map->_object = slot->_object;
 			}
 		);
 	}

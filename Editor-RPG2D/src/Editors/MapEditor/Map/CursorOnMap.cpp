@@ -166,6 +166,19 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 	if(_object == nullptr)
 		return;
 
+    if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
+        if (map_editor->_palette->_tools->_selectedTool != nullptr) {
+			map_editor->_palette->_tools->setTool(map_editor->_palette->_tools->_tools[0], ToolType::None);
+        }
+
+        if (map_editor->_palette->_slots->_selectedSlot != nullptr) {
+			map_editor->_palette->_slots->selectSlot(nullptr);
+        }
+
+        _object = nullptr;
+        return;
+    }
+
 	if (_object->_type == ObjectType::Terrain) {
 		bool conditionToDraw = false;
 
@@ -239,10 +252,6 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 		}
 
 		return;
-	}
-
-	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
-		_object = nullptr;
 	}
 
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {

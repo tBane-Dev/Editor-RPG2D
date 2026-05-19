@@ -49,8 +49,8 @@ void Slot::draw() {
 			sf::IntRect rect(sf::Vector2i(0, terrain->_id*64), sf::Vector2i(16, 16));
 			_objectSprite = std::make_shared<sf::Sprite>(*_objectTexture->_texture);
 			_objectSprite->setTextureRect(rect);
-			_objectSprite->setScale(sf::Vector2f(64.0f / 16.0f, 64.0f / 16.0f));
-			_objectSprite->setPosition(sf::Vector2f(_rect.position + sf::Vector2i(8,8)));
+			_objectSprite->setScale(sf::Vector2f(56.0f / 16.0f, 56.0f / 16.0f));
+			_objectSprite->setPosition(sf::Vector2f(_rect.position + sf::Vector2i(12,12)));
 			window->draw(*_objectSprite);
 			
 		}
@@ -250,18 +250,36 @@ void Slots::setCategory(ObjectType type) {
 	loadObjects();
 }
 
-void Slots::setFunction(std::function<void(std::shared_ptr<Object> object)> function) {
+void Slots::setFunction(std::function<void(std::shared_ptr<Slot> slot)> function) {
 
 	for (auto& slot : _slots) {
 
 		slot->_onclick_func = [slot, function]() {
 
 			if (slot->_object != nullptr) {
-				function(slot->_object);
+				function(slot);
 			}
 
 		};
 	}
+}
+
+void Slots::selectSlot(std::shared_ptr<Slot> slot) {
+
+	if (_selectedSlot != nullptr) {
+		_selectedSlot->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot.png");
+		_selectedSlot->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_hover.png");
+		_selectedSlot->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_press.png");
+	}
+
+	_selectedSlot = slot;
+
+	if (_selectedSlot != nullptr) {
+		_selectedSlot->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected.png");
+		_selectedSlot->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_hover.png");
+		_selectedSlot->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_press.png");
+	}
+	
 }
 
 sf::FloatRect Slots::getSlotsRect() {
