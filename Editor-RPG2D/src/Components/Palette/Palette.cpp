@@ -196,7 +196,7 @@ void Palette::cursorHover() {
 		return;
 
 	if (_rect.contains(cursor->_position)) {
-		GUI_manager->Element_hovered = this->shared_from_this();
+		GUI_manager->Element_hovered = shared_from_this();
 	}
 	
 	_categories->cursorHover();
@@ -212,6 +212,18 @@ void Palette::handleEvent(const sf::Event& event) {
 
 	if (map_editor->_main_menu->_tool_palette->_checkbox->_value != 0)
 		return;
+
+	if (GUI_manager->Element_hovered.get() == this) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			GUI_manager->Element_pressed = shared_from_this();
+		}
+	}
+
+	if (GUI_manager->Element_pressed.get() == this) {
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			GUI_manager->Element_pressed = nullptr;
+		}
+	}
 
 	_categories->handleEvent(event);
 

@@ -179,6 +179,9 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
         return;
     }
 
+    if (GUI_manager->Element_pressed != map_editor->_map)
+        return;
+
 	if (_object->_type == ObjectType::Terrain) {
 		bool conditionToDraw = false;
 

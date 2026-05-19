@@ -46,12 +46,17 @@ void Slot::draw() {
 		if(terrain != nullptr) {
 			_objectTexture = textures_manager->getTexture(L"assets\\tex\\tileset.png");
 
-			sf::IntRect rect(sf::Vector2i(0, terrain->_id*64), sf::Vector2i(16, 16));
+			sf::RenderStates states;
+			states.shader = &*shader;
+			shader->setUniform("resolution", sf::Vector2f(window->getSize()));
+			shader->setUniform("time", currentTime.asSeconds());
+			shader->setUniform("startPos", sf::Vector2f(_rect.position));
+
 			_objectSprite = std::make_shared<sf::Sprite>(*_objectTexture->_texture);
-			_objectSprite->setTextureRect(rect);
+			_objectSprite->setTextureRect(terrain->_textureRect);
 			_objectSprite->setScale(sf::Vector2f(56.0f / 16.0f, 56.0f / 16.0f));
 			_objectSprite->setPosition(sf::Vector2f(_rect.position + sf::Vector2i(12,12)));
-			window->draw(*_objectSprite);
+			window->draw(*_objectSprite, states);
 			
 		}
 
@@ -156,7 +161,37 @@ void Slots::loadObjects() {
 
 		std::vector<std::shared_ptr<Terrain>> terrains;
 		for(int i=0;i<map_editor->_tileset->groups.size(); i++) {
-			terrains.emplace_back(std::make_shared<Terrain>(i));
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(8 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(12 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(12 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(4 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(10 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(5 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(10 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(5 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(2 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(3 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(3 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(1 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			for (int x = 0; x < _slotsCount.x; x++)
+				terrains.emplace_back(nullptr);
 		}
 
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
@@ -189,9 +224,63 @@ void Slots::loadObjects() {
 }
 
 void Slots::updateObjects() {
-	std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(_type);
 
 	int startIndex = _scrollbar->getValue() / (80 + _inner_margin) * _slotsCount.x;
+
+	if (_type == ObjectType::Terrain) {
+
+		std::vector<std::shared_ptr<Terrain>> terrains;
+		for (int i = 0; i < map_editor->_tileset->groups.size(); i++) {
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(8 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(12 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(12 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(4 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(10 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(5 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(10 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(5 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			terrains.emplace_back(nullptr);
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(2 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(3 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(3 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(1 * 64, i * 64), sf::Vector2i(16, 16))));
+			terrains.emplace_back(nullptr);
+
+			for (int x = 0; x < _slotsCount.x; x++)
+				terrains.emplace_back(nullptr);
+		}
+
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i+startIndex < terrains.size()) {
+				_slots[i]->_object = terrains[i+startIndex];
+				_slots[i]->_animator = nullptr;
+			}
+			else {
+				_slots[i]->_object = nullptr;
+				_slots[i]->_animator = nullptr;
+			}
+		}
+
+		return;
+	}
+
+	std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(_type);
+
+	
 	for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y+1); i++) {
 		if (i + startIndex < prefabs.size()) {
 			_slots[i]->_object = prefabs[i + startIndex];
@@ -221,7 +310,13 @@ void Slots::setCategory(ObjectType type) {
 
 	sf::Vector2i scrollbarPosition = sf::Vector2i(_rect.position.x + _rect.size.x - 32 - _outer_margin, _rect.position.y + _main_margin + _top_margin + 2 * _inner_margin);
 	sf::Vector2i scrollbarSize = sf::Vector2i(32, _rect.size.y - 2 * _main_margin - _top_margin - _inner_margin);
-	int rowsTotal = (int)std::ceil((float)prefabs_manager->getPrefabs(_type).size() / (float)_slotsCount.x);
+	
+	int rowsTotal;
+	if (_type == ObjectType::Terrain)
+		rowsTotal = (4+1) * map_editor->_tileset->groups.size();
+	else
+		rowsTotal = (int)std::ceil((float)prefabs_manager->getPrefabs(_type).size() / (float)_slotsCount.x);
+	
 	int rowsVisible = _slotsCount.y;
 	int rowHeight = 80 + _inner_margin;	
 	int scrollbarValue = 0;

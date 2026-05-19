@@ -98,7 +98,6 @@ int main()
 
         editor_manager->update();
 
-
         window->clear(sf::Color(47, 47, 47));
 		editor_manager->draw();
         window->display();
