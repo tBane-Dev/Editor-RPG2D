@@ -316,13 +316,25 @@ void CursorOnMap::draw()
 		if (map_editor->_palette->_tools->_toolType == ToolType::Circle)
             brush = circle_brushes[brushSize];
 
+		std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(map_editor->_map);
+
         for(int yy = 0; yy < brush.size(); yy++) {
             for(int xx = 0; xx < brush[yy].size(); xx++) {
                 if (brush[yy][xx]) {
+
+					int tx = _position.x / Tile::tileSize + (xx - brush[yy].size() / 2);
+					int ty = _position.y / Tile::tileSize + (yy - brush.size() / 2);
+
+                    std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(tx, ty);
+                    if (!c) continue;
+
+                    std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(tx, ty);
+                    if (!t) continue;
+
                     sf::RectangleShape outlineRect(sf::Vector2f(Tile::tileSize, Tile::tileSize));
                     outlineRect.setPosition(sf::Vector2f(
-                        (_position.x/Tile::tileSize + (xx - brush[yy].size() / 2))*Tile::tileSize,
-                        (_position.y/Tile::tileSize + (yy - brush.size() / 2))*Tile::tileSize
+                        tx * Tile::tileSize,
+                        ty * Tile::tileSize
                     ));
                     outlineRect.setFillColor(sf::Color(255, 47, 47, 127));
                     //outlineRect.setOutlineThickness(2);
