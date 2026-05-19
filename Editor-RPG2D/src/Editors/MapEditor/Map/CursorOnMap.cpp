@@ -13,6 +13,135 @@
 #include "Animator.hpp"
 #include "DebugLog.hpp"
 
+std::vector<std::vector<std::vector<bool>>> circle_brushes = {
+
+    // 0 - 1x1
+    {
+        {1}
+    },
+
+    // 1 - 3x3
+    {
+        {0, 1, 0},
+        {1, 1, 1},
+        {0, 1, 0}
+    },
+
+    // 2 - 5x5
+    {
+        {0, 1, 1, 1, 0},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {0, 1, 1, 1, 0}
+    },
+
+    // 3 - 7x7
+    {
+        {0, 0, 1, 1, 1, 0, 0},
+        {0, 1, 1, 1, 1, 1, 0},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {0, 1, 1, 1, 1, 1, 0},
+        {0, 0, 1, 1, 1, 0, 0}
+    },
+
+    // 4 - 9x9
+    {
+        {0, 0, 0, 1, 1, 1, 0, 0, 0},
+        {0, 0, 1, 1, 1, 1, 1, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 1, 1, 1, 1, 1, 0, 0},
+        {0, 0, 0, 1, 1, 1, 0, 0, 0}
+    },
+
+    // 5 - 11x11
+    {
+        {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
+        {0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
+        {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
+
+    }
+};
+
+std::vector<std::vector<std::vector<bool>>> square_brushes = {
+
+    // 0 - 1x1
+    {
+        {1}
+    },
+
+    // 1 - 3x3
+    {
+        {1, 1, 1},
+        {1, 1, 1},
+        {1, 1, 1}
+    },
+
+    // 2 - 5x5
+    {
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1}
+    },
+
+    // 3 - 7x7
+    {
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1}
+    },
+
+    // 4 - 9x9
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1}
+    },
+
+    // 5 - 11x11
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+
+    }
+};
+
+
 CursorOnMap::CursorOnMap() {
 
     window->setView(map_editor->_camera->_view);
@@ -43,7 +172,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 		const auto* mv = event.getIf<sf::Event::MouseMoved>();
 		const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
 
-		if ((mv || mbp) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		if ((mv || mbp) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && 
+            (map_editor->_palette->_tools->_toolType == ToolType::Circle || map_editor->_palette->_tools->_toolType == ToolType::Rect))
 			conditionToDraw = true;
 
 		if (conditionToDraw) {
@@ -56,34 +186,49 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			std::shared_ptr<Tile> hoveredTile = hoveredChunk->getTileByGlobalPosition();
 			if (!hoveredTile) return;
 
-			int r = 5;
 			int type = std::dynamic_pointer_cast<Terrain>(map_editor->_cursor_on_map->_object)->_id;
 
 			std::set<std::shared_ptr<Chunk>> chunksToEdit;
-			for (int yy = -r / 2; yy <= r / 2; yy++) {
-				for (int xx = -r / 2; xx <= r / 2; xx++) {
 
-					std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(hoveredTile->_coords.x + xx, hoveredTile->_coords.y + yy);
-					if (!c) continue;
+            int brushSize = map_editor->_palette->_brushSize;
+            std::vector<std::vector<bool>> brush;
+            
+            if (map_editor->_palette->_tools->_toolType == ToolType::Rect)
+                brush = square_brushes[brushSize];
 
-					std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(hoveredTile->_coords.x + xx, hoveredTile->_coords.y + yy);
-					if (!t) continue;
+            if (map_editor->_palette->_tools->_toolType == ToolType::Circle)
+                brush = circle_brushes[brushSize];
+           
 
-					t->_type = type;
-					chunksToEdit.insert(c);
+            for (int yy = 0; yy < brush.size(); yy++) {
+                for (int xx = 0; xx < brush[yy].size(); xx++) {
+                    if (brush[yy][xx]) {
 
-					if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1));
-					if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1));
-					if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1));
+						int tileX = hoveredTile->_coords.x + (xx - brush[yy].size() / 2);
+						int tileY = hoveredTile->_coords.y + (yy - brush.size() / 2);
 
-					if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y));
-					if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y));
+                        std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(tileX, tileY);
+                        if (!c) continue;
 
-					if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1));
-					if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1));
-					if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1));
-				}
-			}
+                        std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(tileX, tileY);
+                        if (!t) continue;
+
+                        t->_type = type;
+                        chunksToEdit.insert(c);
+
+                        if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1));
+                        if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1));
+                        if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1));
+
+                        if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y));
+                        if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y));
+
+                        if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1));
+                        if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1));
+                        if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1));
+                    }
+                }
+            }
 
 			for (auto& c : chunksToEdit)
 				c->generateVertexArray(
@@ -149,6 +294,37 @@ void CursorOnMap::draw()
 		return;
 
 	window->setView(map_editor->_camera->_view);
+
+    if (_object->_type == ObjectType::Terrain) {
+
+		int brushSize = map_editor->_palette->_brushSize;
+		
+        std::vector<std::vector<bool>> brush;
+
+        if (map_editor->_palette->_tools->_toolType == ToolType::Rect)
+            brush = square_brushes[brushSize];
+        
+		if (map_editor->_palette->_tools->_toolType == ToolType::Circle)
+            brush = circle_brushes[brushSize];
+
+        for(int yy = 0; yy < brush.size(); yy++) {
+            for(int xx = 0; xx < brush[yy].size(); xx++) {
+                if (brush[yy][xx]) {
+                    sf::RectangleShape outlineRect(sf::Vector2f(Tile::tileSize, Tile::tileSize));
+                    outlineRect.setPosition(sf::Vector2f(
+                        (_position.x/Tile::tileSize + (xx - brush[yy].size() / 2))*Tile::tileSize,
+                        (_position.y/Tile::tileSize + (yy - brush.size() / 2))*Tile::tileSize
+                    ));
+                    outlineRect.setFillColor(sf::Color(255, 47, 47, 127));
+                    //outlineRect.setOutlineThickness(2);
+                    //outlineRect.setOutlineColor(sf::Color::Green);
+                    window->draw(outlineRect);
+                }
+            }
+		}
+
+        return;
+    }
 
 	if(dynamic_pointer_cast<GameObject>(_object) != nullptr) {
 

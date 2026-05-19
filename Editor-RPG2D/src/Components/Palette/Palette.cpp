@@ -136,11 +136,25 @@ void Palette::loadAll(std::shared_ptr<CategoryButton> category, ObjectType type)
 	_slots->setPosition(slotsPosition);
 	_slots->setCategory(type);
 
-	_slots->setFunction(
-		[this](std::shared_ptr<Object> object) {
-			map_editor->_cursor_on_map->_object = object;
-		}
-	);
+	if(_categories->_selectedType == ObjectType::Terrain) {
+		_slots->setFunction(
+			[this](std::shared_ptr<Object> object) {
+				
+				if(!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
+					_tools->setTool(_tools->_tools[1], ToolType::Circle);
+	
+				map_editor->_cursor_on_map->_object = object;
+
+			}
+		);
+	}
+	else {
+		_slots->setFunction(
+			[this](std::shared_ptr<Object> object) {
+				map_editor->_cursor_on_map->_object = object;
+			}
+		);
+	}
 }
 
 void Palette::setPosition(sf::Vector2i position) {
