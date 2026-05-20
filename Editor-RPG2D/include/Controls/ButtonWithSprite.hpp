@@ -11,6 +11,6 @@ public:
 	ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithSprite();
 
-	void draw();
+	virtual void draw();
 
 };

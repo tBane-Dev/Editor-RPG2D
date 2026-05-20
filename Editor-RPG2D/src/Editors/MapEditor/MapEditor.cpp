@@ -23,9 +23,9 @@ void MapEditor::createMap(int width, int height) {
 
 	_map->create(width, height);
 
-	_map->drawCircle(sf::Vector2i(24, 28), 16, 4);
-	_map->drawCircle(sf::Vector2i(48, 16), 16, 4);
-	_map->drawCircle(sf::Vector2i(42, 28), 16, 4);
+	//_map->drawCircle(sf::Vector2i(24, 28), 16, 4);
+	//_map->drawCircle(sf::Vector2i(48, 16), 16, 4);
+	//_map->drawCircle(sf::Vector2i(42, 28), 16, 4);
 
 }
 
@@ -70,18 +70,18 @@ void MapEditor::createGameObjects() {
 	boulder1->setPosition(sf::Vector2i(rect.position.x + rect.size.x / 2 - 128, rect.position.y + rect.size.y / 2 - 128));
 	boulder2->setPosition(sf::Vector2i(rect.position.x + rect.size.x / 2 + 128, rect.position.y + rect.size.y / 2 - 128));
 
-	_game_objects->addGameObject(golem1);
-	_game_objects->addGameObject(golem2);
-	_game_objects->addGameObject(golem3);
-	_game_objects->addGameObject(golem4);
-	_game_objects->addGameObject(dziobak1);
-	_game_objects->addGameObject(goblin1);
-	_game_objects->addGameObject(tree1);
-	_game_objects->addGameObject(tree2);
-	_game_objects->addGameObject(tree3);
-	_game_objects->addGameObject(tree4);
-	_game_objects->addGameObject(boulder1);
-	_game_objects->addGameObject(boulder2);
+	//_game_objects->addGameObject(golem1);
+	//_game_objects->addGameObject(golem2);
+	//_game_objects->addGameObject(golem3);
+	//_game_objects->addGameObject(golem4);
+	//_game_objects->addGameObject(dziobak1);
+	//_game_objects->addGameObject(goblin1);
+	//_game_objects->addGameObject(tree1);
+	//_game_objects->addGameObject(tree2);
+	//_game_objects->addGameObject(tree3);
+	//_game_objects->addGameObject(tree4);
+	//_game_objects->addGameObject(boulder1);
+	//_game_objects->addGameObject(boulder2);
 }
 
 void MapEditor::createCamera() {

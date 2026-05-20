@@ -77,9 +77,9 @@ Palette::Palette() : Element() {
 		[this]() { 
 			_tools->setTool(_tools->_tools[1], ToolType::Circle); 
 			if (_slots->_selectedSlot == nullptr) {
-				if(_slots->_slots.size() > 2) {
-					_slots->selectSlot(2);
-					map_editor->_cursor_on_map->_object = _slots->_slots[2]->_object;
+				if(_slots->_slots.size() > 0) {
+					_slots->selectSlot(1);
+					map_editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 				}
 			}
 		}
@@ -93,9 +93,9 @@ Palette::Palette() : Element() {
 		[this]() { _tools->setTool(
 			_tools->_tools[2], ToolType::Rect); 
 			if (_slots->_selectedSlot == nullptr) {
-				if (_slots->_slots.size() > 2) {
-					_slots->selectSlot(2);
-					map_editor->_cursor_on_map->_object = _slots->_slots[2]->_object;
+				if (_slots->_slots.size() > 0) {
+					_slots->selectSlot(1);
+					map_editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 				}
 			}
 		}
