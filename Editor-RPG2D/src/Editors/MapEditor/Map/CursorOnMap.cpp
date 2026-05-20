@@ -172,7 +172,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
         }
 
         if (map_editor->_palette->_slots->_selectedSlot != nullptr) {
-			map_editor->_palette->_slots->selectSlot(nullptr);
+			map_editor->_palette->_slots->selectSlot(-1);
         }
 
         _object = nullptr;

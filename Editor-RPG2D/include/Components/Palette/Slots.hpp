@@ -36,6 +36,7 @@ public:
 	sf::Vector2i _slotsCount;
 	std::vector<std::shared_ptr<Slot>> _slots;
 	std::shared_ptr<Scrollbar> _scrollbar;
+	int _selectedSlotId = -1;
 	std::shared_ptr<Slot> _selectedSlot = nullptr;
 
 	Slots();
@@ -48,8 +49,8 @@ public:
 	void loadObjects();
 	void updateObjects();
 	void setCategory(ObjectType type);
-	void setFunction(std::function<void(std::shared_ptr<Slot> slot)> function);
-	void selectSlot(std::shared_ptr<Slot> slot);
+	void setFunction(std::function<void(std::shared_ptr<Slot> slot, int selectedSlotId)> function);
+	void selectSlot(int selectedSlotId);
 	sf::FloatRect getSlotsRect();
 
 	void cursorHover();

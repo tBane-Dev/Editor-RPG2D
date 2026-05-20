@@ -100,6 +100,10 @@ Slots::Slots() {
 
 	_scrollbar = nullptr;
 
+	_selectedSlotId = -1;
+	_selectedSlot = nullptr;
+
+
 	_type = ObjectType::None;
 	setCategory(_type);
 
@@ -156,6 +160,8 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 }
 
 void Slots::loadObjects() {
+
+	selectSlot(_selectedSlotId);
 
 	if (_type == ObjectType::Terrain) {
 
@@ -226,6 +232,8 @@ void Slots::loadObjects() {
 void Slots::updateObjects() {
 
 	int startIndex = _scrollbar->getValue() / (80 + _inner_margin) * _slotsCount.x;
+
+	selectSlot(_selectedSlotId);
 
 	if (_type == ObjectType::Terrain) {
 
@@ -345,21 +353,23 @@ void Slots::setCategory(ObjectType type) {
 	loadObjects();
 }
 
-void Slots::setFunction(std::function<void(std::shared_ptr<Slot> slot)> function) {
+void Slots::setFunction(std::function<void(std::shared_ptr<Slot> slot, int selectedSlotId)> function) {
 
-	for (auto& slot : _slots) {
 
-		slot->_onclick_func = [slot, function]() {
+	for (int i = 0; i < _slots.size(); i++) {
+
+		std::shared_ptr<Slot> slot = _slots[i];
+
+		slot->_onclick_func = [this, slot, i, function]() {
 
 			if (slot->_object != nullptr) {
-				function(slot);
+				int startIndex = _scrollbar->getValue() / (80 + _inner_margin) * _slotsCount.x;
+				function(slot, i + startIndex);
 			}
-
-		};
+			};
 	}
 }
-
-void Slots::selectSlot(std::shared_ptr<Slot> slot) {
+void Slots::selectSlot(int selectedSlotId) {
 
 	if (_selectedSlot != nullptr) {
 		_selectedSlot->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot.png");
@@ -367,14 +377,23 @@ void Slots::selectSlot(std::shared_ptr<Slot> slot) {
 		_selectedSlot->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_press.png");
 	}
 
-	_selectedSlot = slot;
+	_selectedSlotId = selectedSlotId;
+
+	int startIndex = _scrollbar->getValue() / (80 + _inner_margin) * _slotsCount.x;
+	int localSlotId = selectedSlotId - startIndex;
+
+	if (localSlotId < 0 || localSlotId >= _slots.size()) {
+		_selectedSlot = nullptr;
+		return;
+	}
+
+	_selectedSlot = _slots[localSlotId];
 
 	if (_selectedSlot != nullptr) {
 		_selectedSlot->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected.png");
 		_selectedSlot->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_hover.png");
 		_selectedSlot->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_press.png");
 	}
-	
 }
 
 sf::FloatRect Slots::getSlotsRect() {

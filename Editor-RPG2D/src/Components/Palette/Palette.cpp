@@ -78,7 +78,7 @@ Palette::Palette() : Element() {
 			_tools->setTool(_tools->_tools[1], ToolType::Circle); 
 			if (_slots->_selectedSlot == nullptr) {
 				if(_slots->_slots.size() > 2) {
-					_slots->selectSlot(_slots->_slots[2]);
+					_slots->selectSlot(2);
 					map_editor->_cursor_on_map->_object = _slots->_slots[2]->_object;
 				}
 			}
@@ -94,7 +94,7 @@ Palette::Palette() : Element() {
 			_tools->_tools[2], ToolType::Rect); 
 			if (_slots->_selectedSlot == nullptr) {
 				if (_slots->_slots.size() > 2) {
-					_slots->selectSlot(_slots->_slots[2]);
+					_slots->selectSlot(2);
 					map_editor->_cursor_on_map->_object = _slots->_slots[2]->_object;
 				}
 			}
@@ -154,20 +154,20 @@ void Palette::loadAll(std::shared_ptr<CategoryButton> category, ObjectType type)
 
 	if(_categories->_selectedType == ObjectType::Terrain) {
 		_slots->setFunction(
-			[this](std::shared_ptr<Slot> slot) {
+			[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
 				if (!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
 					_tools->setTool(_tools->_tools[1], ToolType::Circle);
-				_slots->selectSlot(slot);
 				map_editor->_cursor_on_map->_object = slot->_object;
+				_slots->selectSlot(selectedSlotId);
 
 			}
 		);
 	}
 	else {
 		_slots->setFunction(
-			[this](std::shared_ptr<Slot> slot) {
-				_slots->selectSlot(slot);
+			[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
 				map_editor->_cursor_on_map->_object = slot->_object;
+				_slots->selectSlot(selectedSlotId);
 			}
 		);
 	}
