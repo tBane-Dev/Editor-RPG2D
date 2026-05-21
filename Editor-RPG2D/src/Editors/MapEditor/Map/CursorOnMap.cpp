@@ -179,28 +179,20 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
         return;
     }
 
-    if (GUI_manager->Element_pressed != map_editor->_map)
+    if (!(GUI_manager->Element_pressed == nullptr || GUI_manager->Element_pressed == map_editor->_map))
         return;
 
 	if (_object->_type == ObjectType::Terrain) {
-		bool conditionToDraw = false;
 
-		const auto* mv = event.getIf<sf::Event::MouseMoved>();
-		const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
-
-		if ((mv || mbp) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && 
-            (map_editor->_palette->_tools->_toolType == ToolType::Circle || map_editor->_palette->_tools->_toolType == ToolType::Rect))
-			conditionToDraw = true;
+        bool conditionToDraw = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && (map_editor->_palette->_tools->_toolType == ToolType::Circle || map_editor->_palette->_tools->_toolType == ToolType::Rect);
 
 		if (conditionToDraw) {
 
 			std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(map_editor->_map);
 
-			std::shared_ptr<Chunk> hoveredChunk = mapa->getChunkByGlobalPosition();
-			if (!hoveredChunk) return;
-
-			std::shared_ptr<Tile> hoveredTile = hoveredChunk->getTileByGlobalPosition();
-			if (!hoveredTile) return;
+            sf::Vector2i tileCoords;
+			tileCoords.x = (_position.x - mapa->getRect().position.x) / Tile::tileSize;
+			tileCoords.y = (_position.y - mapa->getRect().position.y) / Tile::tileSize;
 
 			int type = std::dynamic_pointer_cast<Terrain>(map_editor->_cursor_on_map->_object)->_id;
 
@@ -220,12 +212,12 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 for (int xx = 0; xx < brush[yy].size(); xx++) {
                     if (brush[yy][xx]) {
 
-						int tileX = hoveredTile->_coords.x + (xx - brush[yy].size() / 2);
-						int tileY = hoveredTile->_coords.y + (yy - brush.size() / 2);
+						int tileX = tileCoords.x + (xx - brush[yy].size() / 2);
+						int tileY = tileCoords.y + (yy - brush.size() / 2);
 
                         std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(tileX, tileY);
                         if (!c) continue;
-
+               
                         std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(tileX, tileY);
                         if (!t) continue;
 
