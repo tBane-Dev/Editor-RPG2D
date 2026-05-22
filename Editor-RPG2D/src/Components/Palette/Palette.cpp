@@ -78,7 +78,7 @@ Palette::Palette() : Element() {
 			_tools->setTool(_tools->_tools[1], ToolType::Circle); 
 			if (_slots->_selectedSlot == nullptr) {
 				if(_slots->_slots.size() > 0) {
-					_slots->selectSlot(1);
+					_slots->selectSlot(0);
 					map_editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 				}
 			}
@@ -94,7 +94,7 @@ Palette::Palette() : Element() {
 			_tools->_tools[2], ToolType::Rect); 
 			if (_slots->_selectedSlot == nullptr) {
 				if (_slots->_slots.size() > 0) {
-					_slots->selectSlot(1);
+					_slots->selectSlot(0);
 					map_editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 				}
 			}
@@ -121,7 +121,7 @@ Palette::Palette() : Element() {
 
 	_minBrushSize = 0;
 	_maxBrushSize = 5;
-	_brushSize = 1;
+	_brushSize = 2;
 	
 	setPosition(sf::Vector2i(_rect.position));
 

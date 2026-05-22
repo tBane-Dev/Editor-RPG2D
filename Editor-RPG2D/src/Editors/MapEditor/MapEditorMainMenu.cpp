@@ -85,6 +85,9 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 			prefabs_editor = std::make_shared<PrefabsEditor>();
 			prefabs_editor->createMainMenu();
 			prefabs_editor->createPalette();
+			prefabs_editor->createMainPanel();
+			prefabs_editor->createPreviewPanel();
+			prefabs_editor->createColliderPanel();
 			editor_manager->push_back(prefabs_editor);
 		}
 		};

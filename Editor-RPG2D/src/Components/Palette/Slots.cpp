@@ -200,7 +200,8 @@ void Slots::updateObjects() {
 
 void Slots::setCategory(ObjectType type) {
 	_type = type;
-
+	selectSlot(-1);
+	map_editor->_cursor_on_map->_object = nullptr;
 
 	// +1 because scrollbar takes one slot space
 	if(_type == ObjectType::Terrain) {
@@ -315,6 +316,9 @@ void Slots::selectSlot(int selectedSlotId) {
 	}
 
 	_selectedSlotId = selectedSlotId;
+
+	if (_selectedSlotId < 0)
+		return;
 
 	int startIndex = _scrollbar->getValue() / ((_type == ObjectType::Terrain) ? (160 + _inner_margin) : (80 + _inner_margin)) * _slotsCount.x;
 	int localSlotId = selectedSlotId - startIndex;
