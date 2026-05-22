@@ -54,7 +54,6 @@ public:
 class Map : public Element {
 public:
 	std::vector<std::shared_ptr<Chunk>> _chunks;
-	sf::Shader grid_shader;
 
 	Map();
 	~Map();

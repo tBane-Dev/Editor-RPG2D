@@ -7,7 +7,7 @@
 #include "Editors/Editor.hpp"
 #include "Editors/MapEditor/MapEditor.hpp"
 #include "DebugLog.hpp"
-
+#include "ShaderManager.hpp"
 
 
 Tile::Tile() {
@@ -132,16 +132,16 @@ void Chunk::draw() {
 
 	sf::RenderStates states;
 	std::shared_ptr<Texture> texture = textures_manager->getTexture(L"assets\\tex\\tileset.png");
-	shader->setUniform("resolution", sf::Vector2f(window->getSize()));
-	shader->setUniform("time", currentTime.asSeconds());
-	shader->setUniform("startPos", sf::Vector2f(0, 0));
+	terrain_shader->setUniform("resolution", sf::Vector2f(window->getSize()));
+	terrain_shader->setUniform("time", currentTime.asSeconds());
+	terrain_shader->setUniform("startPos", sf::Vector2f(0, 0));
 	states.texture = &*texture->_texture;
-	states.shader = &*shader;
+	states.shader = &*terrain_shader;
 	window->draw(_vertexArray, states);
 }
 
 Map::Map() {
-	grid_shader = sf::Shader(L"assets\\shr\\vertex.vert", L"assets\\shr\\grid.frag");
+	
 }
 
 Map::~Map() {
@@ -350,15 +350,15 @@ void Map::draw() {
 		mapStart.x = (float)map_editor->_map->getRect().position.x;
 		mapStart.y = (float)map_editor->_map->getRect().position.y;
 		
-		grid_shader.setUniform("rectPosition", mapStart);
-		grid_shader.setUniform("gridSize", 16.f);
-		grid_shader.setUniform("chunkSize", 16.0f);
-		grid_shader.setUniform("gridWidth", gridWidth);
-		grid_shader.setUniform("gridMainColor", sf::Glsl::Vec4(sf::Color(7, 7, 7, 255)));
-		grid_shader.setUniform("gridSecondColor", sf::Glsl::Vec4(sf::Color(47, 47, 47, 255)));
+		grid_shader->setUniform("rectPosition", mapStart);
+		grid_shader->setUniform("gridSize", 16.f);
+		grid_shader->setUniform("chunkSize", 16.0f);
+		grid_shader->setUniform("gridWidth", gridWidth);
+		grid_shader->setUniform("gridMainColor", sf::Glsl::Vec4(sf::Color(7, 7, 7, 255)));
+		grid_shader->setUniform("gridSecondColor", sf::Glsl::Vec4(sf::Color(47, 47, 47, 255)));
 
 		sf::RenderStates rs;
-		rs.shader = &grid_shader;
+		rs.shader = &*grid_shader;
 
 		sf::RectangleShape rect(size_rect);
 		rect.setPosition(position_rect);

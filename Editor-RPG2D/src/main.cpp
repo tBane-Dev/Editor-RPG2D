@@ -43,7 +43,7 @@ int main()
 
     prefabs_manager->loadPrefabs();
 
-    shader = std::make_shared<sf::Shader>(L"assets\\shr\\vertex.vert", L"assets\\shr\\water.frag");
+    loadShaders();
 
     cursor = std::make_shared<Cursor>();
 	GUI_manager = std::make_shared<GUIManager>();

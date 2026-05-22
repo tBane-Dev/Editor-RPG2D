@@ -39,7 +39,7 @@ void PrefabsEditor::cursorHover() {
 	_main_menu->cursorHover();
 	_palette->cursorHover();
 
-	_main_menu->cursorHover();
+	_main_panel->cursorHover();
 	_preview_panel->cursorHover();
 	_collider_panel->cursorHover();
 }
@@ -48,7 +48,7 @@ void PrefabsEditor::handleEvent(const sf::Event& event) {
 	_main_menu->handleEvent(event);
 	_palette->handleEvent(event);
 
-	_main_menu->handleEvent(event);
+	_main_panel->handleEvent(event);
 	_preview_panel->handleEvent(event);
 	_collider_panel->handleEvent(event);
 }
@@ -58,7 +58,7 @@ void PrefabsEditor::update() {
 	_main_menu->update();
 	_palette->update();
 
-	_main_menu->update();
+	_main_panel->update();
 	_preview_panel->update();
 	_collider_panel->update();
 }

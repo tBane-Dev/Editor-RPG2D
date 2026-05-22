@@ -12,8 +12,8 @@ public:
 	sf::Vector2i getSize();
 	void setPosition(sf::Vector2i position);
 
-	void cursorHover();
-	void handleEvent(const sf::Event& event);
-	void update();
-	void draw();
+	virtual void cursorHover();
+	virtual void handleEvent(const sf::Event& event);
+	virtual void update();
+	virtual void draw();
 };

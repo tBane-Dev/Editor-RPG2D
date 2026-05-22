@@ -54,12 +54,11 @@ void TerrainSlot::draw() {
 	
 
 	sf::RenderStates states;
-	states.shader = &*shader;
+	states.shader = &*terrain_shader;
 
-	shader->setUniform("resolution", sf::Vector2f(window->getSize()));
-	shader->setUniform("time", currentTime.asSeconds());
-	shader->setUniform("startPos", sf::Vector2f(_rect.position));
-
+	terrain_shader->setUniform("resolution", sf::Vector2f(window->getSize()));
+	terrain_shader->setUniform("time", currentTime.asSeconds());
+	terrain_shader->setUniform("startPos", sf::Vector2f(_rect.position));
 	std::shared_ptr<Texture> texture = textures_manager->getTexture(L"assets\\tex\\tileset.png");
 
 	sf::Vector2f size(132.f, 132.f);
