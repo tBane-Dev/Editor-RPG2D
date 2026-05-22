@@ -8,7 +8,7 @@
 #include "Editors/MapEditor/MapEditor.hpp"
 #include "DebugLog.hpp"
 #include "ShaderManager.hpp"
-
+#include "Theme.hpp"
 
 Tile::Tile() {
 	_type = 0;
@@ -23,8 +23,19 @@ sf::Vector2i worldToTile(sf::Vector2i position) {
 }
 
 
-Chunk::Chunk() {
+Chunk::Chunk(int x, int y) {
+
+	_coords.x = x;
+	_coords.y = y;
+
 	_vertexArray = sf::VertexArray(sf::PrimitiveType::Triangles);
+
+	std::wstring text = std::to_wstring(_coords.x) + L"x" + std::to_wstring(_coords.y);
+	float padding = 8.0f;
+	_coordsText = std::make_unique<sf::Text>(basicFont, text, 24);
+	_coordsText->setFillColor(basic_text_color);
+	_coordsText->setPosition(sf::Vector2f(_coords.x * tilesCols * Tile::tileSize + padding, _coords.y * tilesRows * Tile::tileSize + padding));
+
 }
 
 Chunk::~Chunk() {
@@ -128,6 +139,10 @@ void Chunk::generateVertexArray(
 	}
 }
 
+void Chunk::drawCoords() {
+	window->draw(*_coordsText);
+}
+
 void Chunk::draw() {
 
 	sf::RenderStates states;
@@ -138,6 +153,7 @@ void Chunk::draw() {
 	states.texture = &*texture->_texture;
 	states.shader = &*terrain_shader;
 	window->draw(_vertexArray, states);
+	
 }
 
 Map::Map() {
@@ -154,10 +170,7 @@ void Map::create(int width, int height) {
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
-
-			chunk->_coords.x = x;
-			chunk->_coords.y = y;
+			std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>(x,y);
 
 			for (int ty = 0; ty < Chunk::tilesRows; ty++) {
 				for (int tx = 0; tx < Chunk::tilesCols; tx++) {
@@ -365,7 +378,9 @@ void Map::draw() {
 		rect.setFillColor(sf::Color(127, 47, 47, 127));
 		window->draw(rect, rs);
 
-
+		for (auto& chunk : _chunks) {
+			chunk->drawCoords();
+		}
 	}
 }
 

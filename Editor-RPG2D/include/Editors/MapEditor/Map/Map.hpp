@@ -29,8 +29,9 @@ public:
 	sf::Vector2i _coords;
 	std::vector<std::shared_ptr<Tile>> _tiles;
 	sf::VertexArray _vertexArray;
+	std::unique_ptr<sf::Text> _coordsText;
 
-	Chunk();
+	Chunk(int x, int y);
 	~Chunk();
 
 	bool operator<(const Chunk& other) const;
@@ -48,6 +49,7 @@ public:
 		std::shared_ptr<Chunk> rightBottomChunk
 	);
 
+	void drawCoords();
 	void draw();
 };
 
