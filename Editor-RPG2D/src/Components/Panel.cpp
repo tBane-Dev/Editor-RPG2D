@@ -23,6 +23,10 @@ void Panel::setPosition(sf::Vector2i position) {
 	_rect.position = position + sf::Vector2i(_margin, _margin);
 }
 
+sf::Vector2i Panel::getPosition() {
+	return _rect.position - sf::Vector2i(_margin, _margin);
+}
+
 void Panel::cursorHover() {
 
 	if (_rect.contains(cursor->_position)) {

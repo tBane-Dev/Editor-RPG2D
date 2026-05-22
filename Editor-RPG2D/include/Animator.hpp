@@ -17,7 +17,10 @@ public:
 	
 	void setAnimation(int animation);
 	void setFrame(int frame);
+	void firstFrame();
+	void prevFrame();
 	void nextFrame();
+	void lastFrame();
 	void setRandFrame();
 	void play();
 	void stop();

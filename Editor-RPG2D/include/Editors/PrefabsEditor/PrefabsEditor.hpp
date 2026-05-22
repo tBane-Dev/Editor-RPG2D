@@ -5,6 +5,7 @@
 #include "Editors/PrefabsEditor/MainPanel.hpp"
 #include "Editors/PrefabsEditor/PreviewPanel.hpp"
 #include "Editors/PrefabsEditor/ColliderPanel.hpp"
+#include "PrefabsManager.hpp"
 
 class PrefabsEditor : public Editor {
 public:
@@ -14,6 +15,9 @@ public:
 
 	std::shared_ptr<MainMenu> _main_menu;
 	std::shared_ptr<Palette> _palette;
+
+	std::shared_ptr<GameObject> _object;
+
 	std::shared_ptr<MainPanel> _main_panel;
 	std::shared_ptr<PreviewPanel> _preview_panel;
 	std::shared_ptr<ColliderPanel> _collider_panel;

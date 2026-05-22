@@ -33,11 +33,27 @@ void Animator::setFrame(int frame) {
 	_timer = 0.0f;
 }
 
+void Animator::firstFrame() {
+	_frame = 0;
+	_timer = 0.0f;
+}
+
+void Animator::prevFrame() {
+	_frame--;
+	if (_frame < 0)
+		_frame = _animations->_framesCount - 1;
+}
+
 void Animator::nextFrame() {
 
 	_frame++;
 	if (_frame >= _animations->_framesCount)
 		_frame = 0;
+}
+
+void Animator::lastFrame() {
+	_frame = _animations->_framesCount - 1;
+	_timer = 0.0f;
 }
 
 void Animator::setRandFrame() {

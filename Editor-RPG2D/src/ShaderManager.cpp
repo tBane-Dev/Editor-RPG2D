@@ -7,5 +7,5 @@ std::shared_ptr<sf::Shader> checkerboard_shader;
 void loadShaders() {
 	terrain_shader = std::make_shared<sf::Shader>(L"assets\\shr\\vertex.vert", L"assets\\shr\\water.frag");
 	grid_shader = std::make_shared<sf::Shader>(L"assets\\shr\\vertex.vert", L"assets\\shr\\grid.frag");
-	checkerboard_shader = std::make_shared<sf::Shader>(L"assets\\shr\\vertex.vert", L"assets\\shr\\water.frag");
+	checkerboard_shader = std::make_shared<sf::Shader>(L"assets\\shr\\vertex.vert", L"assets\\shr\\checkerboard.frag");
 }

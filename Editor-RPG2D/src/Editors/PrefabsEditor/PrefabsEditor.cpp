@@ -2,13 +2,14 @@
 #include "DebugLog.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
-
 PrefabsEditor::PrefabsEditor() {
 	_margin = sf::Vector2i(32, 64);
 
 	_title = std::make_unique<sf::Text>(basicFont, L"Prefabs Editor", 28);
 	_title->setFillColor(basic_text_color);
 	_title->setPosition(sf::Vector2f(32, 48));
+
+	_object = prefabs_manager->getPrefab(L"golem");
 }
 
 PrefabsEditor::~PrefabsEditor() {

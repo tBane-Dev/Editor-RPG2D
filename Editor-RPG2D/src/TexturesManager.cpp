@@ -71,21 +71,6 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\unchecked_hover.png");
 
         // palette
-        texturePaths.push_back(L"assets\\tex\\palette\\tool.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\tool_hover.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\tool_press.png");
-
-        texturePaths.push_back(L"assets\\tex\\palette\\tools\\cursor.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\tools\\circle.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\tools\\rect.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\tools\\decrease.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\tools\\increase.png");
-
-        texturePaths.push_back(L"assets\\tex\\palette\\slot.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\slot_hover.png");
-        texturePaths.push_back(L"assets\\tex\\palette\\slot_press.png");
-
-        // palette new
         texturePaths.push_back(L"assets\\tex\\palette\\categories\\prev.png");
         texturePaths.push_back(L"assets\\tex\\palette\\categories\\prev_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\categories\\prev_press.png");
@@ -117,6 +102,8 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\palette\\tools\\cursor.png");
         texturePaths.push_back(L"assets\\tex\\palette\\tools\\circle.png");
         texturePaths.push_back(L"assets\\tex\\palette\\tools\\rect.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\tools\\decrease.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\tools\\increase.png");
         
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_80.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_80_hover.png");
@@ -132,10 +119,30 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_press.png");
 
+        // preview panel
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\first.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\first_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\first_press.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\prev.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\prev_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\prev_press.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\play.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\play_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\play_press.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\pause.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\pause_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\pause_press.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\next.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\next_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\next_press.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\last.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\last_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\last_press.png");
+
         // tileset
         texturePaths.push_back(L"assets\\tex\\tileset.png");
         
-        // prefas
+        // prefabs
         texturePaths.push_back(L"assets\\tex\\monsters\\golem.png");
         texturePaths.push_back(L"assets\\tex\\monsters\\dziobak.png");
         texturePaths.push_back(L"assets\\tex\\monsters\\goblin.png");
