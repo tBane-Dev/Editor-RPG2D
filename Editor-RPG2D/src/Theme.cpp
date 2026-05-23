@@ -46,9 +46,9 @@ void loadTheme() {
 	basic_text_rect_height = 20;
 
 	//main menu
-	menu_height = 28;
+	menu_height = 32;
 	menu_horizontal_margin = 8;
-	menu_font_size = 17;
+	menu_font_size = 20;
 	menu_bar_color = sf::Color(15, 15, 15);
 	menu_text_color = sf::Color(191, 191, 191);
 	menu_text_inactive_color = sf::Color(127, 127, 127);
@@ -58,8 +58,8 @@ void loadTheme() {
 	menubox_hover_color = sf::Color(47, 47, 47);
 	menubox_press_color = sf::Color(39, 39, 39);
 
-	optionbox_height = 24;
-	optionbox_font_size = 14;
+	optionbox_height = 32;
+	optionbox_font_size = 20;
 	optionbox_left_margin = 2;
 	optionbox_right_margin = 2;
 	optionbox_spacing = 48;

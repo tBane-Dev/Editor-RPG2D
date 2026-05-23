@@ -17,7 +17,7 @@ PrefabsEditor::~PrefabsEditor() {
 }
 
 void PrefabsEditor::createMainMenu() {
-	_main_menu = std::make_shared<MainMenu>();
+	_main_menu = std::make_shared<PrefabsEditorMainMenu>();
 }
 
 void PrefabsEditor::createPalette() {
@@ -70,12 +70,12 @@ void PrefabsEditor::draw() {
 
 	window->draw(*_title);
 
-	_main_menu->draw();
-	_palette->draw();
-
 	_main_panel->draw();
 	_preview_panel->draw();
 	_collider_panel->draw();
+
+	_palette->draw();
+	_main_menu->draw();
 }
 
 std::shared_ptr<PrefabsEditor> prefabs_editor = nullptr;

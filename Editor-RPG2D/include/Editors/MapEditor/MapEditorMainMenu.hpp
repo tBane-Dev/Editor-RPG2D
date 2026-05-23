@@ -16,6 +16,7 @@ public:
 	std::shared_ptr<OptionWithIcon> _file_new_project;
 	std::shared_ptr<OptionWithIcon> _file_open_project;
 	std::shared_ptr<OptionWithIcon> _file_save_project;
+	std::shared_ptr<OptionWithIcon> _file_exit;
 
 	// RENDER
 	std::shared_ptr<OptionWithCheckbox> _render_chunks_info;

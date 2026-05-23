@@ -41,19 +41,24 @@ PreviewPanel::PreviewPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 700), 
 		textures_manager->getTexture(L"assets\\tex\\preview_panel\\last_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\preview_panel\\last_press.png"));
 
-	int total_width = _rect.size.x-20;
-	int margin_between_buttons = (total_width)/5;
+	int padding = 10;
+	int total_width = _rect.size.x - padding * 2;
+	int btn_w = 64;
+	int buttons_count = 5;
+	int buttons_width = buttons_count * btn_w;
+	int margin_between_buttons = (total_width - buttons_width) / buttons_count / 4;
+	int all_width = buttons_width + margin_between_buttons * (buttons_count-1);
 
 	sf::Vector2f startPosition;
-	startPosition.x = _rect.position.x + 10;
-	startPosition.y = _rect.position.y + _title->getFont().getLineSpacing(20) + 24 + 16 + 256 + 16;
+	startPosition.x = _rect.position.x + padding + (total_width - all_width) / 2;
+	startPosition.y = _rect.position.y +_title->getFont().getLineSpacing(20) + 24 + 16 + 256 + 16;
 
 	_first->setPosition(sf::Vector2i(startPosition.x, startPosition.y));
-	_prev->setPosition(sf::Vector2i(_first->getPosition().x + margin_between_buttons, _first->getPosition().y));
-	_play->setPosition(sf::Vector2i(_prev->getPosition().x + margin_between_buttons, _prev->getPosition().y));
+	_prev->setPosition(sf::Vector2i(_first->getPosition().x + btn_w + margin_between_buttons, _first->getPosition().y));
+	_play->setPosition(sf::Vector2i(_prev->getPosition().x + btn_w + margin_between_buttons, _prev->getPosition().y));
 	_pause->setPosition(sf::Vector2i(_play->getPosition().x, _play->getPosition().y));
-	_next->setPosition(sf::Vector2i(_pause->getPosition().x + margin_between_buttons, _pause->getPosition().y));
-	_last->setPosition(sf::Vector2i(_next->getPosition().x + margin_between_buttons, _next->getPosition().y));
+	_next->setPosition(sf::Vector2i(_pause->getPosition().x + btn_w + margin_between_buttons, _pause->getPosition().y));
+	_last->setPosition(sf::Vector2i(_next->getPosition().x + btn_w + margin_between_buttons, _next->getPosition().y));
 
 	_first->_onclick_func = [this]() {
 		if (_animator)

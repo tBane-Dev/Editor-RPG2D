@@ -1,6 +1,6 @@
 #pragma once
 #include "Editors/Editor.hpp"
-#include "Components/MainMenu/MainMenu.hpp"
+#include "Editors/PrefabsEditor/PrefabsEditorMainMenu.hpp"
 #include "Components/Palette/Palette.hpp"
 #include "Editors/PrefabsEditor/MainPanel.hpp"
 #include "Editors/PrefabsEditor/PreviewPanel.hpp"
@@ -13,7 +13,7 @@ public:
 	std::unique_ptr<sf::Text> _title;
 	sf::Vector2i _margin;
 
-	std::shared_ptr<MainMenu> _main_menu;
+	std::shared_ptr<PrefabsEditorMainMenu> _main_menu;
 	std::shared_ptr<Palette> _palette;
 
 	std::shared_ptr<GameObject> _object;
