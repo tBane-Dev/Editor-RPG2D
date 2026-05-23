@@ -6,6 +6,7 @@
 #include "Editors/PrefabsEditor/PreviewPanel.hpp"
 #include "Editors/PrefabsEditor/ColliderPanel.hpp"
 #include "PrefabsManager.hpp"
+#include "Controls/ButtonWithTextAndSprite.hpp"
 
 class PrefabsEditor : public Editor {
 public:
@@ -22,15 +23,21 @@ public:
 	std::shared_ptr<PreviewPanel> _preview_panel;
 	std::shared_ptr<ColliderPanel> _collider_panel;
 	
+	std::shared_ptr<ButtonWithTextAndSprite> _add_prefab;
+	std::shared_ptr<ButtonWithTextAndSprite> _duplicate_prefab;
+	std::shared_ptr<ButtonWithTextAndSprite> _remove_prefab;
+
 
 	PrefabsEditor();
 	~PrefabsEditor();
 
+	void init();
 	void createMainMenu();
 	void createPalette();
 	void createMainPanel();
 	void createPreviewPanel();
 	void createColliderPanel();
+	void createButtons();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

@@ -139,6 +139,10 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\preview_panel\\last_hover.png");
         texturePaths.push_back(L"assets\\tex\\preview_panel\\last_press.png");
 
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton_press.png");
+
         // tileset
         texturePaths.push_back(L"assets\\tex\\tileset.png");
         

@@ -41,9 +41,9 @@ void loadTheme() {
 	}
 
 	// text
-	basic_text_size = 13;
+	basic_text_size = 20;
 	basic_text_color = sf::Color(191, 191, 191);
-	basic_text_rect_height = 20;
+	basic_text_rect_height = 32;
 
 	//main menu
 	menu_height = 32;
