@@ -2,6 +2,7 @@
 #include "DebugLog.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
+
 PrefabsEditor::PrefabsEditor() {
 	_margin = sf::Vector2i(32, 64);
 
@@ -20,8 +21,9 @@ void PrefabsEditor::init() {
 	createMainMenu();
 	createPalette();
 	createMainPanel();
-	createPreviewPanel();
+	createAnimationPanel();
 	createColliderPanel();
+	createMeshPanel();
 	createButtons();
 }
 
@@ -37,12 +39,16 @@ void PrefabsEditor::createMainPanel() {
 	_main_panel = std::make_shared<MainPanel>(_margin);
 }
 
-void PrefabsEditor::createPreviewPanel() {
-	_preview_panel = std::make_shared<PreviewPanel>(_margin);
+void PrefabsEditor::createAnimationPanel() {
+	_animation_panel = std::make_shared<AnimationPanel>(_margin);
 }
 
 void PrefabsEditor::createColliderPanel() {
 	_collider_panel = std::make_shared<ColliderPanel>(_margin);
+}
+
+void PrefabsEditor::createMeshPanel() {
+	_mesh_panel = std::make_shared<MeshPanel>(_margin);
 }
 
 void PrefabsEditor::createButtons() {
@@ -82,8 +88,9 @@ void PrefabsEditor::cursorHover() {
 	_palette->cursorHover();
 
 	_main_panel->cursorHover();
-	_preview_panel->cursorHover();
+	_animation_panel->cursorHover();
 	_collider_panel->cursorHover();
+	_mesh_panel->cursorHover();
 
 	_add_prefab->cursorHover();
 	_duplicate_prefab->cursorHover();
@@ -95,8 +102,9 @@ void PrefabsEditor::handleEvent(const sf::Event& event) {
 	_palette->handleEvent(event);
 
 	_main_panel->handleEvent(event);
-	_preview_panel->handleEvent(event);
+	_animation_panel->handleEvent(event);
 	_collider_panel->handleEvent(event);
+	_mesh_panel->handleEvent(event);
 
 	_add_prefab->handleEvent(event);
 	_duplicate_prefab->handleEvent(event);
@@ -109,8 +117,9 @@ void PrefabsEditor::update() {
 	_palette->update();
 
 	_main_panel->update();
-	_preview_panel->update();
+	_animation_panel->update();
 	_collider_panel->update();
+	_mesh_panel->update();
 
 	_add_prefab->update();
 	_duplicate_prefab->update();
@@ -124,8 +133,9 @@ void PrefabsEditor::draw() {
 	window->draw(*_title);
 
 	_main_panel->draw();
-	_preview_panel->draw();
+	_animation_panel->draw();
 	_collider_panel->draw();
+	_mesh_panel->draw();
 
 	_add_prefab->draw();
 	_duplicate_prefab->draw();

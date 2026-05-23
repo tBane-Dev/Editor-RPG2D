@@ -3,8 +3,9 @@
 #include "Editors/PrefabsEditor/PrefabsEditorMainMenu.hpp"
 #include "Components/Palette/Palette.hpp"
 #include "Editors/PrefabsEditor/MainPanel.hpp"
-#include "Editors/PrefabsEditor/PreviewPanel.hpp"
+#include "Editors/PrefabsEditor/AnimationPanel.hpp"
 #include "Editors/PrefabsEditor/ColliderPanel.hpp"
+#include "Editors/PrefabsEditor/MeshPanel.hpp"
 #include "PrefabsManager.hpp"
 #include "Controls/ButtonWithTextAndSprite.hpp"
 
@@ -20,8 +21,9 @@ public:
 	std::shared_ptr<GameObject> _object;
 
 	std::shared_ptr<MainPanel> _main_panel;
-	std::shared_ptr<PreviewPanel> _preview_panel;
+	std::shared_ptr<AnimationPanel> _animation_panel;
 	std::shared_ptr<ColliderPanel> _collider_panel;
+	std::shared_ptr<MeshPanel> _mesh_panel;
 	
 	std::shared_ptr<ButtonWithTextAndSprite> _add_prefab;
 	std::shared_ptr<ButtonWithTextAndSprite> _duplicate_prefab;
@@ -35,8 +37,9 @@ public:
 	void createMainMenu();
 	void createPalette();
 	void createMainPanel();
-	void createPreviewPanel();
+	void createAnimationPanel();
 	void createColliderPanel();
+	void createMeshPanel();
 	void createButtons();
 
 	void cursorHover();

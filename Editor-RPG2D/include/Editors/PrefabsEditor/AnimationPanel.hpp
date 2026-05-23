@@ -3,7 +3,7 @@
 #include "Controls/ButtonWithSprite.hpp"
 #include "Animator.hpp"
 
-class PreviewPanel : public Panel {
+class AnimationPanel : public Panel {
 public:
 
 	std::unique_ptr<sf::Text> _title;
@@ -17,8 +17,8 @@ public:
 	std::shared_ptr<ButtonWithSprite> _next;
 	std::shared_ptr<ButtonWithSprite> _last;
 
-	PreviewPanel(sf::Vector2i margin);
-	~PreviewPanel();
+	AnimationPanel(sf::Vector2i margin);
+	~AnimationPanel();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

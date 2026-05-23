@@ -1,10 +1,10 @@
-#include "Editors/PrefabsEditor/PreviewPanel.hpp"
+#include "Editors/PrefabsEditor/AnimationPanel.hpp"
 #include "Editors/PrefabsEditor/PrefabsEditor.hpp"
 #include "Theme.hpp"
 #include "ShaderManager.hpp"
 #include "Window.hpp"
 
-PreviewPanel::PreviewPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 700), sf::Vector2i(420 + margin.x, prefabs_editor->_main_menu->getSize().y + margin.y)) {
+AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 800), sf::Vector2i(420 + margin.x, prefabs_editor->_main_menu->getSize().y + margin.y)) {
 	_title = std::make_unique<sf::Text>(basicFont, L"Preview", 20);
 	_title->setFillColor(basic_text_color);
 	_title->setPosition(sf::Vector2f(_rect.position.x + 16, _rect.position.y + 16));
@@ -92,11 +92,11 @@ PreviewPanel::PreviewPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 700), 
 		};
 }
 
-PreviewPanel::~PreviewPanel() {
+AnimationPanel::~AnimationPanel() {
 
 }
 
-void PreviewPanel::cursorHover() {
+void AnimationPanel::cursorHover() {
 	Panel::cursorHover();
 
 	_first->cursorHover();
@@ -107,7 +107,7 @@ void PreviewPanel::cursorHover() {
 
 }
 
-void PreviewPanel::handleEvent(const sf::Event& event) {
+void AnimationPanel::handleEvent(const sf::Event& event) {
 	Panel::handleEvent(event);
 
 	_first->handleEvent(event);
@@ -117,7 +117,7 @@ void PreviewPanel::handleEvent(const sf::Event& event) {
 	_last->handleEvent(event);
 }
 
-void PreviewPanel::update() {
+void AnimationPanel::update() {
 	Panel::update();
 
 	_first->update();
@@ -130,7 +130,7 @@ void PreviewPanel::update() {
 	_animator->update();
 }
 
-void PreviewPanel::draw() {
+void AnimationPanel::draw() {
 	Panel::draw();
 
 	window->draw(*_title);
