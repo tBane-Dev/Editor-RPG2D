@@ -4,7 +4,7 @@
 #include "Window.hpp"
 #include "DebugLog.hpp"
 
-MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 800), sf::Vector2i(margin.x, prefabs_editor->_main_menu->getSize().y + margin.y)) {
+MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Vector2i(margin.x, prefabs_editor->_main_menu->getSize().y + margin.y)) {
 
 	_nameText = std::make_unique<sf::Text>(basicFont, L"Name", 20);
 	_nameText->setFillColor(basic_text_color);

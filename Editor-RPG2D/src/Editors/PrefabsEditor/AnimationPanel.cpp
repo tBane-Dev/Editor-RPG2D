@@ -4,7 +4,7 @@
 #include "ShaderManager.hpp"
 #include "Window.hpp"
 
-AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 800), sf::Vector2i(420 + margin.x, prefabs_editor->_main_menu->getSize().y + margin.y)) {
+AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Vector2i(420 + margin.x, prefabs_editor->_main_menu->getSize().y + margin.y)) {
 	_title = std::make_unique<sf::Text>(basicFont, L"Animation", 20);
 	_title->setFillColor(basic_text_color);
 	_title->setPosition(sf::Vector2f(_rect.position.x + 16, _rect.position.y + 16));
@@ -42,6 +42,16 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 80
 		textures_manager->getTexture(L"assets\\tex\\preview_panel\\last_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\preview_panel\\last_press.png"));
 
+	_anim_prev = std::make_shared<ButtonWithSprite>(
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_prev.png"),
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_prev_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_prev_press.png"));
+
+	_anim_next = std::make_shared<ButtonWithSprite>(
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_next.png"),
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_next_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_next_press.png"));
+
 	int padding = 10;
 	int total_width = _rect.size.x - padding * 2;
 	int btn_w = 64;
@@ -60,6 +70,9 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 80
 	_pause->setPosition(sf::Vector2i(_play->getPosition().x, _play->getPosition().y));
 	_next->setPosition(sf::Vector2i(_pause->getPosition().x + btn_w + margin_between_buttons, _pause->getPosition().y));
 	_last->setPosition(sf::Vector2i(_next->getPosition().x + btn_w + margin_between_buttons, _next->getPosition().y));
+
+	_anim_prev->setPosition(sf::Vector2i(_first->getPosition().x, _first->getPosition().y + btn_w + margin_between_buttons));
+	_anim_next->setPosition(sf::Vector2i(_last->getPosition().x + btn_w - 80, _anim_prev->getPosition().y));
 
 	_first->_onclick_func = [this]() {
 		if (_animator)
@@ -92,25 +105,56 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 80
 			_animator->lastFrame();
 		};
 
+	_anim_prev->_onclick_func = [this]() {
+		if (_animator)
+			_animator->prevAnimation();
+		};
+
+	_anim_next->_onclick_func = [this]() {
+		if (_animator)
+			_animator->nextAnimation();
+		};
+
 	// stats rect
 	int m = 8;
 	_statsRect = sf::IntRect(
 		sf::Vector2i(
-			_first->getPosition().x-16,
-			_first->getPosition().y + _first->getSize().y + 16
+			_anim_prev->getPosition().x-16,
+			_anim_prev->getPosition().y + _anim_prev->getSize().y + 16
 		),
 		sf::Vector2i(
-			_last->getPosition().x + _last->getSize().x - _first->getPosition().x + 32,
+			_anim_next->getPosition().x + _anim_next->getSize().x - _anim_prev->getPosition().x + 32,
 			6 * (basicFont.getLineSpacing(basic_text_size)+m) + m)
 	);
 
-	_animations_name = std::make_unique<sf::Text>(basicFont, L"Name", basic_text_size);
-	_animations_current = std::make_unique<sf::Text>(basicFont, L"Current Anim", basic_text_size);
-	_animations_count = std::make_unique<sf::Text>(basicFont, L"Anim Count", basic_text_size);
-	_frame = std::make_unique<sf::Text>(basicFont, L"Current Frame", basic_text_size);
-	_frames_count = std::make_unique<sf::Text>(basicFont, L"Frames Count", basic_text_size);
-	_frame_size = std::make_unique<sf::Text>(basicFont, L"Frame Size", basic_text_size);
+	_animations_name_label = std::make_unique<sf::Text>(basicFont, L"Name", basic_text_size);
+	_animations_current_label = std::make_unique<sf::Text>(basicFont, L"Current Anim", basic_text_size);
+	_animations_count_label = std::make_unique<sf::Text>(basicFont, L"Anim Count", basic_text_size);
+	_frame_label = std::make_unique<sf::Text>(basicFont, L"Current Frame", basic_text_size);
+	_frames_count_label = std::make_unique<sf::Text>(basicFont, L"Frames Count", basic_text_size);
+	_frame_size_label = std::make_unique<sf::Text>(basicFont, L"Frame Size", basic_text_size);
 
+	_animations_name_label->setFillColor(basic_text_color);
+	_animations_current_label->setFillColor(basic_text_color);
+	_animations_count_label->setFillColor(basic_text_color);
+	_frame_label->setFillColor(basic_text_color);
+	_frames_count_label->setFillColor(basic_text_color);
+	_frame_size_label->setFillColor(basic_text_color);
+
+	_animations_name_label->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m));
+	_animations_current_label->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + basicFont.getLineSpacing(basic_text_size) + m));
+	_animations_count_label->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 2 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frame_label->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frames_count_label->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frame_size_label->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 5 * (basicFont.getLineSpacing(basic_text_size) + m)));
+
+	_animations_name = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
+	_animations_current = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
+	_animations_count = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
+	_frame = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
+	_frames_count = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
+	_frame_size = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
+	
 	_animations_name->setFillColor(basic_text_color);
 	_animations_current->setFillColor(basic_text_color);
 	_animations_count->setFillColor(basic_text_color);
@@ -118,36 +162,23 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 80
 	_frames_count->setFillColor(basic_text_color);
 	_frame_size->setFillColor(basic_text_color);
 
-	_animations_name->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m));
-	_animations_current->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + basicFont.getLineSpacing(basic_text_size) + m));
-	_animations_count->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 2 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frame->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frames_count->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frame_size->setPosition(sf::Vector2f(_statsRect.position.x + m, _statsRect.position.y + m + 5 * (basicFont.getLineSpacing(basic_text_size) + m)));
-
-	_animations_name_value = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
-	_animations_current_value = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
-	_animations_count_value = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
-	_frame_value = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
-	_frames_count_value = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
-	_frame_size_value = std::make_unique<sf::Text>(basicFont, L"--", basic_text_size);
-
-	_animations_name_value->setFillColor(basic_text_color);
-	_animations_current_value->setFillColor(basic_text_color);
-	_animations_count_value->setFillColor(basic_text_color);
-	_frame_value->setFillColor(basic_text_color);
-	_frames_count_value->setFillColor(basic_text_color);
-	_frame_size_value->setFillColor(basic_text_color);
-
 	int s = _statsRect.position.x + _statsRect.size.x;
-	_animations_name_value->setPosition(sf::Vector2f(s - _animations_name_value->getGlobalBounds().size.x - m, _statsRect.position.y + m));
-	_animations_current_value->setPosition(sf::Vector2f(s - _animations_current_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + basicFont.getLineSpacing(basic_text_size) + m));
-	_animations_count_value->setPosition(sf::Vector2f(s - _animations_count_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 2 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frame_value->setPosition(sf::Vector2f(s - _frames_count_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frames_count_value->setPosition(sf::Vector2f(s - _frames_count_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frame_size_value->setPosition(sf::Vector2f(s - _frame_size_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 5 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_animations_name->setPosition(sf::Vector2f(s - _animations_name->getGlobalBounds().size.x - m, _statsRect.position.y + m));
+	_animations_current->setPosition(sf::Vector2f(s - _animations_current->getGlobalBounds().size.x - m, _statsRect.position.y + m + basicFont.getLineSpacing(basic_text_size) + m));
+	_animations_count->setPosition(sf::Vector2f(s - _animations_count->getGlobalBounds().size.x - m, _statsRect.position.y + m + 2 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frame->setPosition(sf::Vector2f(s - _frames_count->getGlobalBounds().size.x - m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frames_count->setPosition(sf::Vector2f(s - _frames_count->getGlobalBounds().size.x - m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frame_size->setPosition(sf::Vector2f(s - _frame_size->getGlobalBounds().size.x - m, _statsRect.position.y + m + 5 * (basicFont.getLineSpacing(basic_text_size) + m)));
 
 	loadStatsValues();
+
+	_set_animation = std::make_shared<ButtonWithTextAndSprite>(
+		L"Set Animation",
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton.png"),
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton_press.png"),
+		sf::Vector2i(_statsRect.position.x + _statsRect.size.x/2 - 192/2, _statsRect.position.y + _statsRect.size.y + 32)
+	);
 }
 
 AnimationPanel::~AnimationPanel() {
@@ -160,26 +191,26 @@ void AnimationPanel::loadStatsValues() {
 
 	std::wstring name = animations->_path;
 	name = name.substr(name.find_first_of(L"\\/") + 1);
-	_animations_name_value->setString(name);
+	_animations_name->setString(name);
 
-	_animations_current_value->setString(std::to_wstring(_animator->_animation));
-	_animations_count_value->setString(std::to_wstring(animations->_animationsCount));
+	_animations_current->setString(std::to_wstring(_animator->_animation));
+	_animations_count->setString(std::to_wstring(animations->_animationsCount));
 
-	_frame_value->setString(std::to_wstring(_animator->_frame));
-	_frames_count_value->setString(std::to_wstring(animations->_framesCount));
+	_frame->setString(std::to_wstring(_animator->_frame));
+	_frames_count->setString(std::to_wstring(animations->_framesCount));
 
 	sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
-	_frame_size_value->setString(std::to_wstring(frameRect.size.x) + L" x " + std::to_wstring(frameRect.size.y));
+	_frame_size->setString(std::to_wstring(frameRect.size.x) + L" x " + std::to_wstring(frameRect.size.y));
 	
 	int m = 8;
 	int s = _statsRect.position.x + _statsRect.size.x;
 
-	_animations_name_value->setPosition(sf::Vector2f(s - _animations_name_value->getGlobalBounds().size.x - m, _statsRect.position.y + m));
-	_animations_current_value->setPosition(sf::Vector2f(s - _animations_current_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + basicFont.getLineSpacing(basic_text_size) + m));
-	_animations_count_value->setPosition(sf::Vector2f(s - _animations_count_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 2 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frame_value->setPosition(sf::Vector2f(s - _frame_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frames_count_value->setPosition(sf::Vector2f(s - _frames_count_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
-	_frame_size_value->setPosition(sf::Vector2f(s - _frame_size_value->getGlobalBounds().size.x - m, _statsRect.position.y + m + 5 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_animations_name->setPosition(sf::Vector2f(s - _animations_name->getGlobalBounds().size.x - m, _statsRect.position.y + m));
+	_animations_current->setPosition(sf::Vector2f(s - _animations_current->getGlobalBounds().size.x - m, _statsRect.position.y + m + basicFont.getLineSpacing(basic_text_size) + m));
+	_animations_count->setPosition(sf::Vector2f(s - _animations_count->getGlobalBounds().size.x - m, _statsRect.position.y + m + 2 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frame->setPosition(sf::Vector2f(s - _frame->getGlobalBounds().size.x - m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frames_count->setPosition(sf::Vector2f(s - _frames_count->getGlobalBounds().size.x - m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
+	_frame_size->setPosition(sf::Vector2f(s - _frame_size->getGlobalBounds().size.x - m, _statsRect.position.y + m + 5 * (basicFont.getLineSpacing(basic_text_size) + m)));
 }
 
 void AnimationPanel::cursorHover() {
@@ -191,6 +222,10 @@ void AnimationPanel::cursorHover() {
 	_next->cursorHover();
 	_last->cursorHover();
 
+	_anim_prev->cursorHover();
+	_anim_next->cursorHover();
+
+	_set_animation->cursorHover();
 }
 
 void AnimationPanel::handleEvent(const sf::Event& event) {
@@ -202,6 +237,11 @@ void AnimationPanel::handleEvent(const sf::Event& event) {
 	_next->handleEvent(event);
 	_last->handleEvent(event);
 
+	_anim_prev->handleEvent(event);
+	_anim_next->handleEvent(event);
+
+
+	_set_animation->handleEvent(event);
 }
 
 void AnimationPanel::update() {
@@ -214,8 +254,14 @@ void AnimationPanel::update() {
 	_next->update();
 	_last->update();
 
+	_anim_prev->update();
+	_anim_next->update();
+
+
 	_animator->update();
 	loadStatsValues();
+
+	_set_animation->update();
 }
 
 void AnimationPanel::draw() {
@@ -241,7 +287,7 @@ void AnimationPanel::draw() {
 
 	sf::Sprite sprite(*animations->getTexture()->_texture);
 	sprite.setTextureRect(frameRect);
-	sprite.setScale(sf::Vector2f(256.f / (float)frameRect.size.x, 256.f / (float)frameRect.size.y));
+	sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
 	sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
 	window->draw(sprite);
 
@@ -252,6 +298,9 @@ void AnimationPanel::draw() {
 	_next->draw();
 	_last->draw();
 
+	_anim_prev->draw();
+	_anim_next->draw();
+
 	// draw stats rect
 	int m = 2;
 	sf::RectangleShape statsRectShape(sf::Vector2f(_statsRect.size + sf::Vector2i(2*m, 2*m)));
@@ -261,6 +310,15 @@ void AnimationPanel::draw() {
 	statsRectShape.setOutlineColor(sf::Color(0, 0, 0, 255));
 	window->draw(statsRectShape);
 
+	// texts labels
+	window->draw(*_animations_name_label);
+	window->draw(*_animations_current_label);
+	window->draw(*_animations_count_label);
+	window->draw(*_frame_label);
+	window->draw(*_frames_count_label);
+	window->draw(*_frame_size_label);
+
+	// text inputs
 	window->draw(*_animations_name);
 	window->draw(*_animations_current);
 	window->draw(*_animations_count);
@@ -268,10 +326,6 @@ void AnimationPanel::draw() {
 	window->draw(*_frames_count);
 	window->draw(*_frame_size);
 
-	window->draw(*_animations_name_value);
-	window->draw(*_animations_current_value);
-	window->draw(*_animations_count_value);
-	window->draw(*_frame_value);
-	window->draw(*_frames_count_value);
-	window->draw(*_frame_size_value);
+	// set animation button
+	_set_animation->draw();
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include "Components/Panel.hpp"
-#include "Controls/ButtonWithSprite.hpp"
 #include "Animator.hpp"
+#include "Controls/ButtonWithSprite.hpp"
+#include "Controls/ButtonWithTextAndSprite.hpp"
+
 
 class AnimationPanel : public Panel {
 public:
@@ -16,8 +18,17 @@ public:
 	std::shared_ptr<ButtonWithSprite> _pause;
 	std::shared_ptr<ButtonWithSprite> _next;
 	std::shared_ptr<ButtonWithSprite> _last;
+	std::shared_ptr<ButtonWithSprite> _anim_prev;
+	std::shared_ptr<ButtonWithSprite> _anim_next;
 
 	sf::IntRect _statsRect;
+	std::unique_ptr<sf::Text> _animations_name_label;
+	std::unique_ptr<sf::Text> _animations_current_label;
+	std::unique_ptr<sf::Text> _animations_count_label;
+	std::unique_ptr<sf::Text> _frame_label;
+	std::unique_ptr<sf::Text> _frames_count_label;
+	std::unique_ptr<sf::Text> _frame_size_label;
+
 	std::unique_ptr<sf::Text> _animations_name;
 	std::unique_ptr<sf::Text> _animations_current;
 	std::unique_ptr<sf::Text> _animations_count;
@@ -25,12 +36,7 @@ public:
 	std::unique_ptr<sf::Text> _frames_count;
 	std::unique_ptr<sf::Text> _frame_size;
 
-	std::unique_ptr<sf::Text> _animations_name_value;
-	std::unique_ptr<sf::Text> _animations_current_value;
-	std::unique_ptr<sf::Text> _animations_count_value;
-	std::unique_ptr<sf::Text> _frame_value;
-	std::unique_ptr<sf::Text> _frames_count_value;
-	std::unique_ptr<sf::Text> _frame_size_value;
+	std::shared_ptr<ButtonWithTextAndSprite> _set_animation;
 
 	AnimationPanel(sf::Vector2i margin);
 	~AnimationPanel();

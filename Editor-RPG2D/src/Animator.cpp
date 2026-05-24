@@ -33,6 +33,18 @@ void Animator::setFrame(int frame) {
 	_timer = 0.0f;
 }
 
+void Animator::prevAnimation() {
+	_animation--;
+	if (_animation < 0)
+		_animation = _animations->_animationsCount - 1;
+}
+
+void Animator::nextAnimation() {
+	_animation++;
+	if (_animation >= _animations->_animationsCount)
+		_animation = 0;
+}
+
 void Animator::firstFrame() {
 	_frame = 0;
 	_timer = 0.0f;

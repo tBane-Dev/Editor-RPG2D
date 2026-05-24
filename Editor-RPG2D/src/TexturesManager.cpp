@@ -138,6 +138,12 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\preview_panel\\last.png");
         texturePaths.push_back(L"assets\\tex\\preview_panel\\last_hover.png");
         texturePaths.push_back(L"assets\\tex\\preview_panel\\last_press.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_prev.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_prev_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_prev_press.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_next.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_next_hover.png");
+        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_next_press.png");
 
         texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton.png");
         texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton_hover.png");
