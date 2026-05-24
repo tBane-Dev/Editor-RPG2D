@@ -120,34 +120,38 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_press.png");
 
         // preview panel
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\first.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\first_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\first_press.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\prev.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\prev_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\prev_press.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\play.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\play_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\play_press.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\pause.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\pause_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\pause_press.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\next.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\next_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\next_press.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\last.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\last_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\last_press.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_prev.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_prev_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_prev_press.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_next.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_next_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\anim_next_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\first.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\first_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\first_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\prev.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\prev_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\prev_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\play.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\play_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\play_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\pause.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\pause_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\pause_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\next.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\next_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\next_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\last.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\last_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\last_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\anim_prev.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\anim_prev_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\anim_prev_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\anim_next.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\anim_next_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\anim_next_press.png");
 
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton_hover.png");
-        texturePaths.push_back(L"assets\\tex\\preview_panel\\bottomButton_press.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\bottomButton.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\bottomButton_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\bottomButton_press.png");
+
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\largeButton.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\largeButton_hover.png");
+        texturePaths.push_back(L"assets\\tex\\prefabs_editor\\largeButton_press.png");
 
         // tileset
         texturePaths.push_back(L"assets\\tex\\tileset.png");

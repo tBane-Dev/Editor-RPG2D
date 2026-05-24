@@ -13,18 +13,23 @@ ColliderPanel::ColliderPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 475)
 	// text inputs
 	_type = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"type", 24, 18);
 	_type->setPosition(sf::Vector2i(_rect.position.x + 84, _rect.position.y + margin.y + 192 + 16));
+	_type->setText(L"");
 
 	_x = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"x", 24, 18);
 	_x->setPosition(sf::Vector2i(_rect.position.x + 84, _type->getPosition().y + _type->getSize().y + 8));
+	_x->setText(L"95");
 
 	_y = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"y", 24, 18);
 	_y->setPosition(sf::Vector2i(_rect.position.x + 84, _x->getPosition().y + _x->getSize().y + 8));
+	_y->setText(L"145");
 
 	_w = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"width", 24, 18);
 	_w->setPosition(sf::Vector2i(_rect.position.x + 84, _y->getPosition().y + _y->getSize().y + 8));
+	_w->setText(L"100");
 
 	_h = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"height", 24, 18);
 	_h->setPosition(sf::Vector2i(_rect.position.x + 84, _w->getPosition().y + _w->getSize().y + 8));
+	_h->setText(L"70");
 
 	// texts labels
 	int x = _x->getPosition().x - 32;
@@ -103,6 +108,14 @@ void ColliderPanel::draw() {
 	// draw animation
 	std::shared_ptr<Animator>& animator = prefabs_editor->_animation_panel->_animator;
 	if (animator) {
+		
+		sf::CircleShape circle(std::stoi(_w->getText())/2);
+		circle.setFillColor(sf::Color(255, 0, 0, 128));
+		circle.setScale(sf::Vector2f(1, (float)std::stoi(_h->getText()) / (float)std::stoi(_w->getText())));
+		circle.setOrigin(sf::Vector2f(std::stoi(_w->getText()) / 2, std::stoi(_w->getText()) / 2));
+		circle.setPosition(sf::Vector2f(rect.getPosition().x + std::stoi(_x->getText()), rect.getPosition().y + std::stoi(_y->getText())));	
+		window->draw(circle);
+
 		std::shared_ptr<Animations> animations = animator->getAnimations();
 		sf::IntRect frameRect = animations->getFrameRect(0, 0);
 

@@ -13,44 +13,44 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 85
 
 	// buttons
 	_first = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\first.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\first_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\first_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\first.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\first_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\first_press.png"));
 
 	_prev = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\prev.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\prev_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\prev_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\prev.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\prev_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\prev_press.png"));
 	
 	_play = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\play.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\play_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\play_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\play.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\play_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\play_press.png"));
 	
 	_pause = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\pause.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\pause_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\pause_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\pause.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\pause_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\pause_press.png"));
 	
 	_next = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\next.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\next_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\next_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\next.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\next_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\next_press.png"));
 	
 	_last = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\last.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\last_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\last_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\last.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\last_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\last_press.png"));
 
 	_anim_prev = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_prev.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_prev_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_prev_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_prev.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_prev_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_prev_press.png"));
 
 	_anim_next = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_next.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_next_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\anim_next_press.png"));
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_next.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_next_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_next_press.png"));
 
 	int padding = 10;
 	int total_width = _rect.size.x - padding * 2;
@@ -174,9 +174,9 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 85
 
 	_set_animation = std::make_shared<ButtonWithTextAndSprite>(
 		L"Set Animation",
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton_press.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton_press.png"),
 		sf::Vector2i(_statsRect.position.x + _statsRect.size.x/2 - 192/2, _statsRect.position.y + _statsRect.size.y + 32)
 	);
 }

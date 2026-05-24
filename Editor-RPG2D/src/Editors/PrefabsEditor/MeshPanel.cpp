@@ -12,9 +12,9 @@ MeshPanel::MeshPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 375), sf::Ve
 
 	_set_mesh = std::make_shared<ButtonWithTextAndSprite>(
 		L"Set Mesh",
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\preview_panel\\bottomButton_press.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton_press.png"),
 		sf::Vector2i(_rect.position.x + _rect.size.x / 2 - 192 / 2, _rect.position.y + margin.y + 192 + 16)
 	);
 

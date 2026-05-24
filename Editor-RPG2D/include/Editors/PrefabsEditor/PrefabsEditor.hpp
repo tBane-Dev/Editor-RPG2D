@@ -25,11 +25,6 @@ public:
 	std::shared_ptr<ColliderPanel> _collider_panel;
 	std::shared_ptr<MeshPanel> _mesh_panel;
 	
-	std::shared_ptr<ButtonWithTextAndSprite> _add_prefab;
-	std::shared_ptr<ButtonWithTextAndSprite> _duplicate_prefab;
-	std::shared_ptr<ButtonWithTextAndSprite> _remove_prefab;
-
-
 	PrefabsEditor();
 	~PrefabsEditor();
 
@@ -40,7 +35,6 @@ public:
 	void createAnimationPanel();
 	void createColliderPanel();
 	void createMeshPanel();
-	void createButtons();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
