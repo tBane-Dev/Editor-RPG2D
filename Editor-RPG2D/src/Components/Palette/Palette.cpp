@@ -50,18 +50,18 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\monsters.png"),
-		ObjectType::Monster,
-		[this]() { loadAll(ObjectType::Monster); } // TO-DO - must be - selectCategory
+		nullptr,
+		ObjectType::None,
+		[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
 	);
 
 	_categories->addCategory(
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\monsters.png"),
-		ObjectType::Monster,
-		[this]() { loadAll(ObjectType::Monster); } // TO-DO - must be - selectCategory
+		nullptr, 
+		ObjectType::None,
+		[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
 	);
 
 	_tools = std::make_shared<Tools>();

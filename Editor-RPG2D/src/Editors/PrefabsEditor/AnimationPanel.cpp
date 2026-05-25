@@ -185,24 +185,37 @@ AnimationPanel::~AnimationPanel() {
 
 void AnimationPanel::loadStatsValues() {
 
-	if (!prefabs_editor)
-		return;
+	if (!prefabs_editor) return;
 
 	std::shared_ptr<Animator> animator = prefabs_editor->_animator;
-	std::shared_ptr<Animations> animations = animator->getAnimations();
 
-	std::wstring name = animations->_path;
-	name = name.substr(name.find_first_of(L"\\/") + 1);
-	_animations_name->setString(name);
+	if (!animator) {
+		_animations_name->setString(L"--");
+		_animations_current->setString(L"--");
+		_animations_count->setString(L"--");
+		_frame->setString(L"--");
+		_frames_count->setString(L"--");
+		_frame_size->setString(L"--");
+	}
+	else {
+		
+		std::shared_ptr<Animations> animations = animator->getAnimations();
 
-	_animations_current->setString(std::to_wstring(animator->_animation));
-	_animations_count->setString(std::to_wstring(animations->_animationsCount));
+		std::wstring name = animations->_path;
+		name = name.substr(name.find_first_of(L"\\/") + 1);
+		_animations_name->setString(name);
 
-	_frame->setString(std::to_wstring(animator->_frame));
-	_frames_count->setString(std::to_wstring(animations->_framesCount));
+		_animations_current->setString(std::to_wstring(animator->_animation));
+		_animations_count->setString(std::to_wstring(animations->_animationsCount));
 
-	sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);
-	_frame_size->setString(std::to_wstring(frameRect.size.x) + L" x " + std::to_wstring(frameRect.size.y));
+		_frame->setString(std::to_wstring(animator->_frame));
+		_frames_count->setString(std::to_wstring(animations->_framesCount));
+
+		sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);
+		_frame_size->setString(std::to_wstring(frameRect.size.x) + L" x " + std::to_wstring(frameRect.size.y));
+	}
+
+	
 	
 	int m = 8;
 	int s = _statsRect.position.x + _statsRect.size.x;

@@ -36,6 +36,10 @@ MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Ve
 	);
 
 	_add_prefab->_onclick_func = [this]() {
+
+		if (!prefabs_editor->_object)
+			return;
+
 		std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(
 			_name->getText(),
 			prefabs_editor->_animator->getAnimations(),
@@ -44,7 +48,7 @@ MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Ve
 		);
 
 		prefabs_manager->addPrefab(prefab);
-
+		prefabs_editor->_object = prefab;
 		prefabs_editor->_palette->loadAll(prefab->_type);
 		prefabs_editor->_palette->_slots->selectLastSlot();
 		prefabs_editor->_palette->_slots->_scrollbar->setValue(prefabs_editor->_palette->_slots->_scrollbar->_max_value);
@@ -67,6 +71,35 @@ MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Ve
 		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_press.png"),
 		sf::Vector2i(startPosition.x, _duplicate_prefab->getPosition().y + _duplicate_prefab->getSize().y + distance_between_buttons)
 	);
+
+	_remove_prefab->_onclick_func = [this]() {
+
+		if (prefabs_editor->_object == nullptr) {
+			return;
+		}
+
+		int selectedSlotId = prefabs_editor->_palette->_slots->_selectedSlotId;
+		int scrollbarValue = prefabs_editor->_palette->_slots->_scrollbar->getValue();
+
+		prefabs_manager->removePrefab(prefabs_editor->_object);
+		prefabs_editor->_object = nullptr;
+		prefabs_editor->_palette->loadAll(prefabs_editor->_palette->_categories->_selectedType);
+		prefabs_editor->_palette->_slots->_scrollbar->setValue(scrollbarValue);
+
+		selectedSlotId -= 1;
+
+		prefabs_editor->_palette->_slots->selectSlot(selectedSlotId);
+
+		if (prefabs_editor->_palette->_slots->_selectedSlotId >= 0) {
+			prefabs_editor->_object = std::dynamic_pointer_cast<GameObject>(prefabs_editor->_palette->_slots->_selectedSlot->_object);
+		}
+
+		prefabs_editor->_palette->_slots->updateObjects();
+		prefabs_editor->_animator = nullptr;
+
+		if (prefabs_editor->_object)
+			prefabs_editor->_animator = std::make_shared<Animator>(prefabs_editor->_object->_animations, 0.2f);
+		};
 }
 
 MainPanel::~MainPanel() {

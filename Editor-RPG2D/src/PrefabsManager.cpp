@@ -15,6 +15,10 @@ void PrefabsManager::addPrefab(std::shared_ptr<GameObject> prefab) {
 	_prefabs.push_back(prefab);
 }
 
+void PrefabsManager::removePrefab(std::shared_ptr<GameObject> prefab) {
+    _prefabs.erase(std::remove(_prefabs.begin(), _prefabs.end(), prefab), _prefabs.end());
+}
+
 std::shared_ptr<GameObject> PrefabsManager::getPrefab(std::wstring path) {
 	for (auto& prefab : _prefabs) {
 		if (prefab->_name == path) {
@@ -101,11 +105,8 @@ void PrefabsManager::loadPrefabs() {
     
 
     std::vector<std::shared_ptr<GameObject>> p;
-    int doubles = 49;
     for (auto& prefab : _prefabs) {
-        for (int i = 0; i < doubles; i++) {
-            p.push_back(prefab);
-        }
+        p.push_back(prefab);
     }
 
     _prefabs = p;

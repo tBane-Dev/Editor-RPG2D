@@ -11,6 +11,7 @@ public:
     ~PrefabsManager();
     
 	void addPrefab(std::shared_ptr<GameObject> prefab);
+    void removePrefab(std::shared_ptr<GameObject> prefab);
     std::shared_ptr<GameObject> getPrefab(std::wstring path);
 	std::vector<std::shared_ptr<GameObject>>& getAllPrefabs();
 	std::vector<std::shared_ptr<GameObject>> getPrefabs(ObjectType type);
