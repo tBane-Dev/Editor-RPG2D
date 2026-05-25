@@ -21,6 +21,7 @@ void PrefabsEditor::init() {
 	createMainMenu();
 	createPalette();
 	createMainPanel();
+	createAnimator();
 	createAnimationPanel();
 	createColliderPanel();
 	createMeshPanel();
@@ -36,6 +37,11 @@ void PrefabsEditor::createPalette() {
 
 void PrefabsEditor::createMainPanel() {
 	_main_panel = std::make_shared<MainPanel>(_margin);
+}
+
+void PrefabsEditor::createAnimator() {
+	if(_object)
+		_animator = std::make_shared<Animator>(_object->getAnimations(), 0.2f);
 }
 
 void PrefabsEditor::createAnimationPanel() {

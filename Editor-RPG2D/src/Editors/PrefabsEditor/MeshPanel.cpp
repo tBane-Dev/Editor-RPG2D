@@ -59,7 +59,7 @@ void MeshPanel::draw() {
 	window->draw(rect, states);
 
 	// draw animation
-	std::shared_ptr<Animator>& animator = prefabs_editor->_animation_panel->_animator;
+	std::shared_ptr<Animator>& animator = prefabs_editor->_animator;
 	if (animator) {
 		std::shared_ptr<Animations> animations = animator->getAnimations();
 		sf::IntRect frameRect = animations->getFrameRect(0, 0);

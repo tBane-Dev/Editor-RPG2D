@@ -106,7 +106,7 @@ void ColliderPanel::draw() {
 	window->draw(rect, states);
 
 	// draw animation
-	std::shared_ptr<Animator>& animator = prefabs_editor->_animation_panel->_animator;
+	std::shared_ptr<Animator>& animator = prefabs_editor->_animator;
 	if (animator) {
 		
 		sf::CircleShape circle(std::stoi(_w->getText())/2);

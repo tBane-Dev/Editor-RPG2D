@@ -222,7 +222,8 @@ void TextInput::handleEvent(const sf::Event& event) {
 				setText(_textStr);
 				return;
 			}
-
+			
+			// TO-DO - noAlt function because event active when Alt+A
 			bool noAlt = !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RAlt);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && noAlt && kp->code == sf::Keyboard::Key::A) {
 				_selectionStart = 0;

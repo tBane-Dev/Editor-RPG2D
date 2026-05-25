@@ -19,6 +19,7 @@ public:
 	std::shared_ptr<Palette> _palette;
 
 	std::shared_ptr<GameObject> _object;
+	std::shared_ptr<Animator> _animator;
 
 	std::shared_ptr<MainPanel> _main_panel;
 	std::shared_ptr<AnimationPanel> _animation_panel;
@@ -32,6 +33,7 @@ public:
 	void createMainMenu();
 	void createPalette();
 	void createMainPanel();
+	void createAnimator();
 	void createAnimationPanel();
 	void createColliderPanel();
 	void createMeshPanel();

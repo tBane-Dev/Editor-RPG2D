@@ -9,8 +9,6 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 85
 	_title->setFillColor(basic_text_color);
 	_title->setPosition(sf::Vector2f(_rect.position.x + 16, _rect.position.y + 16));
 
-	_animator = std::make_shared<Animator>(prefabs_editor->_object->getAnimations(), 0.2f);
-
 	// buttons
 	_first = std::make_shared<ButtonWithSprite>(
 		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\first.png"),
@@ -75,44 +73,44 @@ AnimationPanel::AnimationPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 85
 	_anim_next->setPosition(sf::Vector2i(_last->getPosition().x + btn_w - 80, _anim_prev->getPosition().y));
 
 	_first->_onclick_func = [this]() {
-		if (_animator)
-			_animator->setFrame(0);
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->setFrame(0);
 		};
 
 	_prev->_onclick_func = [this]() {
-		if (_animator)
-			_animator->prevFrame();
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->prevFrame();
 		};
 
 
 	_play->_onclick_func = [this]() {
-		if (_animator)
-			_animator->play();
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->play();
 	};
 
 	_pause->_onclick_func = [this]() {
-		if (_animator)
-			_animator->pause();
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->pause();
 		};
 
 	_next->_onclick_func = [this]() {
-		if (_animator)
-			_animator->nextFrame();
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->nextFrame();
 		};
 
 	_last->_onclick_func = [this]() {
-		if (_animator)
-			_animator->lastFrame();
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->lastFrame();
 		};
 
 	_anim_prev->_onclick_func = [this]() {
-		if (_animator)
-			_animator->prevAnimation();
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->prevAnimation();
 		};
 
 	_anim_next->_onclick_func = [this]() {
-		if (_animator)
-			_animator->nextAnimation();
+		if (prefabs_editor->_animator)
+			prefabs_editor->_animator->nextAnimation();
 		};
 
 	// stats rect
@@ -187,19 +185,23 @@ AnimationPanel::~AnimationPanel() {
 
 void AnimationPanel::loadStatsValues() {
 
-	std::shared_ptr<Animations> animations = _animator->getAnimations();
+	if (!prefabs_editor)
+		return;
+
+	std::shared_ptr<Animator> animator = prefabs_editor->_animator;
+	std::shared_ptr<Animations> animations = animator->getAnimations();
 
 	std::wstring name = animations->_path;
 	name = name.substr(name.find_first_of(L"\\/") + 1);
 	_animations_name->setString(name);
 
-	_animations_current->setString(std::to_wstring(_animator->_animation));
+	_animations_current->setString(std::to_wstring(animator->_animation));
 	_animations_count->setString(std::to_wstring(animations->_animationsCount));
 
-	_frame->setString(std::to_wstring(_animator->_frame));
+	_frame->setString(std::to_wstring(animator->_frame));
 	_frames_count->setString(std::to_wstring(animations->_framesCount));
 
-	sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
+	sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);
 	_frame_size->setString(std::to_wstring(frameRect.size.x) + L" x " + std::to_wstring(frameRect.size.y));
 	
 	int m = 8;
@@ -218,7 +220,7 @@ void AnimationPanel::cursorHover() {
 
 	_first->cursorHover();
 	_prev->cursorHover();
-	(_animator == nullptr || _animator->_isPlaying) ? _pause->cursorHover() : _play->cursorHover();
+	(prefabs_editor->_animator == nullptr || prefabs_editor->_animator->_isPlaying) ? _pause->cursorHover() : _play->cursorHover();
 	_next->cursorHover();
 	_last->cursorHover();
 
@@ -233,7 +235,7 @@ void AnimationPanel::handleEvent(const sf::Event& event) {
 
 	_first->handleEvent(event);
 	_prev->handleEvent(event);
-	(_animator == nullptr || _animator->_isPlaying) ? _pause->handleEvent(event) : _play->handleEvent(event);
+	(prefabs_editor->_animator == nullptr || prefabs_editor->_animator->_isPlaying) ? _pause->handleEvent(event) : _play->handleEvent(event);
 	_next->handleEvent(event);
 	_last->handleEvent(event);
 
@@ -245,6 +247,9 @@ void AnimationPanel::handleEvent(const sf::Event& event) {
 }
 
 void AnimationPanel::update() {
+	if (!prefabs_editor)
+		return;
+
 	Panel::update();
 
 	_first->update();
@@ -257,8 +262,9 @@ void AnimationPanel::update() {
 	_anim_prev->update();
 	_anim_next->update();
 
+	if(prefabs_editor->_animator)
+		prefabs_editor->_animator->update();
 
-	_animator->update();
 	loadStatsValues();
 
 	_set_animation->update();
@@ -282,19 +288,22 @@ void AnimationPanel::draw() {
 	window->draw(rect, states);
 
 	// draw animation
-	std::shared_ptr<Animations> animations = _animator->getAnimations();
-	sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
+	std::shared_ptr<Animator> animator = prefabs_editor->_animator;
+	if (animator) {
+		std::shared_ptr<Animations> animations = animator->getAnimations();
+		sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);
 
-	sf::Sprite sprite(*animations->getTexture()->_texture);
-	sprite.setTextureRect(frameRect);
-	sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
-	sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
-	window->draw(sprite);
+		sf::Sprite sprite(*animations->getTexture()->_texture);
+		sprite.setTextureRect(frameRect);
+		sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
+		sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
+		window->draw(sprite);
+	}
 
 	// draw buttons
 	_first->draw();
 	_prev->draw();
-	(_animator == nullptr || _animator->_isPlaying)? _pause->draw() : _play->draw();
+	(animator == nullptr || animator->_isPlaying)? _pause->draw() : _play->draw();
 	_next->draw();
 	_last->draw();
 
