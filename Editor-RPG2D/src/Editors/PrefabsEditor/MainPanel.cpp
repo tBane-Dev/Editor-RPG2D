@@ -3,6 +3,8 @@
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "DebugLog.hpp"
+#include "Editors/MapEditor/Objects/Monster.hpp"
+#include "PrefabsManager.hpp"
 
 MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Vector2i(margin.x, prefabs_editor->_main_menu->getSize().y + margin.y)) {
 
@@ -32,6 +34,23 @@ MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Ve
 		textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_press.png"),
 		sf::Vector2i(startPosition.x, startPosition.y)
 	);
+
+	_add_prefab->_onclick_func = [this]() {
+		std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(
+			_name->getText(),
+			prefabs_editor->_animator->getAnimations(),
+			sf::Vector2i(std::stoi(prefabs_editor->_collider_panel->_x->getText()), std::stoi(prefabs_editor->_collider_panel->_y->getText())),
+			4
+		);
+
+		prefabs_manager->addPrefab(prefab);
+
+		prefabs_editor->_palette->loadAll(prefab->_type);
+		prefabs_editor->_palette->_slots->selectLastSlot();
+		prefabs_editor->_palette->_slots->_scrollbar->setValue(prefabs_editor->_palette->_slots->_scrollbar->_max_value);
+		prefabs_editor->_palette->_slots->updateObjects();
+
+		};
 
 	_duplicate_prefab = std::make_shared<ButtonWithTextAndSprite>(
 		L"Duplicate prefab",

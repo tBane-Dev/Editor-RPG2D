@@ -27,11 +27,13 @@ public:
 	sf::Vector2i getSize();
 	void setPosition(sf::Vector2i position);
 	void createSlots(sf::Vector2i slotsCount);
+	void generateScrollbar();
 	void loadObjects();
 	void updateObjects();
 	void setCategory(ObjectType type);
 	void setFunction(std::function<void(std::shared_ptr<Slot> slot, int selectedSlotId)> function);
 	void selectSlot(int selectedSlotId);
+	void selectLastSlot();
 	sf::FloatRect getSlotsRect();
 
 	void cursorHover();

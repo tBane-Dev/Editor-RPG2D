@@ -24,7 +24,7 @@ public:
 	~Palette();
 
 	sf::Vector2i getSize();
-	void loadAll(std::shared_ptr<CategoryButton> category, ObjectType type);
+	void loadAll(ObjectType type);
 	void setPosition(sf::Vector2i position);
 
 	void cursorHover();

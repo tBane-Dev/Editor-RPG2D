@@ -21,8 +21,9 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\terrain.png"),
+		ObjectType::Terrain,
 		[this]() { 
-			loadAll(_categories->_categories[0], ObjectType::Terrain); // TO-DO - must be - selectCategory
+			loadAll(ObjectType::Terrain); // TO-DO - must be - selectCategory
 		}
 	);
 
@@ -31,7 +32,8 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\natures.png"),
-		[this]() { loadAll(_categories->_categories[1], ObjectType::Nature); } // TO-DO - must be - selectCategory
+		ObjectType::Nature,
+		[this]() { loadAll(ObjectType::Nature); } // TO-DO - must be - selectCategory
 	);
 
 
@@ -40,7 +42,8 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\monsters.png"),
-		[this]() { loadAll(_categories->_categories[2], ObjectType::Monster); } // TO-DO - must be - selectCategory
+		ObjectType::Monster,
+		[this]() { loadAll(ObjectType::Monster); } // TO-DO - must be - selectCategory
 	);
 
 	_categories->addCategory(
@@ -48,7 +51,8 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\monsters.png"),
-		[this]() { loadAll(_categories->_categories[3], ObjectType::Monster); } // TO-DO - must be - selectCategory
+		ObjectType::Monster,
+		[this]() { loadAll(ObjectType::Monster); } // TO-DO - must be - selectCategory
 	);
 
 	_categories->addCategory(
@@ -56,7 +60,8 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\monsters.png"),
-		[this]() { loadAll(_categories->_categories[4], ObjectType::Monster); } // TO-DO - must be - selectCategory
+		ObjectType::Monster,
+		[this]() { loadAll(ObjectType::Monster); } // TO-DO - must be - selectCategory
 	);
 
 	_tools = std::make_shared<Tools>();
@@ -127,7 +132,7 @@ Palette::Palette() : Element() {
 
 
 	// set the active group
-	loadAll(_categories->_categories[0], ObjectType::Terrain); // TO-DO - must be - selectCategory
+	loadAll(ObjectType::Terrain); // TO-DO - must be - selectCategory
 	_tools->setTool(_tools->_tools[0], ToolType::None);
 	
 	//_slots->setCategory(ObjectType::Terrain);
@@ -142,8 +147,8 @@ sf::Vector2i Palette::getSize() {
 	return _rect.size;
 }
 
-void Palette::loadAll(std::shared_ptr<CategoryButton> category, ObjectType type) {
-	_categories->setCategory(category, type);
+void Palette::loadAll(ObjectType type) {
+	_categories->setCategory(type);
 
 	sf::Vector2i slotsPosition = sf::Vector2i(_rect.position.x, _categories->getPosition().y + _categories->getSize().y);
 	if(_categories->_selectedType == ObjectType::Terrain) {

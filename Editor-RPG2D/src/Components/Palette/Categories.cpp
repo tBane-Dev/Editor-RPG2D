@@ -3,7 +3,8 @@
 #include "Theme.hpp"
 #include "DebugLog.hpp"
 
-CategoryButton::CategoryButton(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
+CategoryButton::CategoryButton(ObjectType type, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
+	_type = type;
 	_categoryTexture = categoryTexture;
 }
 
@@ -76,13 +77,21 @@ sf::Vector2i Categories::getSize() {
 	return _rect.size;
 }
 
-void Categories::addCategory(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, std::function<void()> function) {
-	std::shared_ptr<CategoryButton> categoryButton = std::make_shared<CategoryButton>(texture, hoverTexture, pressTexture, categoryTexture);
+void Categories::addCategory(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, ObjectType type, std::function<void()> function) {
+	std::shared_ptr<CategoryButton> categoryButton = std::make_shared<CategoryButton>(type, texture, hoverTexture, pressTexture, categoryTexture);
 	categoryButton->_onclick_func = function;
 	_categories.push_back(categoryButton);
 }
 
-void Categories::setCategory(std::shared_ptr<CategoryButton> button, ObjectType type) {
+std::shared_ptr<CategoryButton> Categories::getCategory(ObjectType type) {
+	for (auto& category : _categories) {
+		if(category->_type == type)
+			return category;
+	}
+	return nullptr;
+}
+
+void Categories::setCategory(ObjectType type) {
 
 	if (_selectedCategory) {
 		_selectedCategory->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png");
@@ -93,10 +102,10 @@ void Categories::setCategory(std::shared_ptr<CategoryButton> button, ObjectType 
 	_selectedType = type;
 	
 	for (auto& category : _categories) {
-		category->setSelect(category == button);
+		category->setSelect(category->_type == type);
 	}
 	
-	_selectedCategory = button;
+	_selectedCategory = getCategory(type);
 
 	_selectedCategory->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected.png");
 	_selectedCategory->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected_hover.png");

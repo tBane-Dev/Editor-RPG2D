@@ -5,8 +5,9 @@
 class CategoryButton : public ButtonWithSprite {
 public:
 	std::shared_ptr<Texture> _categoryTexture;
+	ObjectType _type;
 
-	CategoryButton(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, sf::Vector2i position = sf::Vector2i(0, 0));
+	CategoryButton(ObjectType type, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~CategoryButton();
 
 	void cursorHover();
@@ -35,8 +36,9 @@ public:
 
 	sf::Vector2i getPosition();
 	sf::Vector2i getSize();
-	void addCategory(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, std::function<void()> function);
-	void setCategory(std::shared_ptr<CategoryButton> button, ObjectType type);
+	void addCategory(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, ObjectType type, std::function<void()> function);
+	std::shared_ptr<CategoryButton> getCategory(ObjectType type);
+	void setCategory(ObjectType type);
 	void setPosition(sf::Vector2i position);
 
 	void cursorHover();

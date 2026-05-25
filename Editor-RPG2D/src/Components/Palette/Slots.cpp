@@ -107,6 +107,63 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 	}
 }
 
+void Slots::generateScrollbar() {
+	sf::Vector2i scrollbarPosition = sf::Vector2i(_rect.position.x + _rect.size.x - 32 - _outer_margin, _rect.position.y + _main_margin + _top_margin + 2 * _inner_margin);
+	sf::Vector2i scrollbarSize = sf::Vector2i(32, _rect.size.y - 2 * _main_margin - _top_margin - _inner_margin);
+
+	int rowsTotal;
+	if (_type == ObjectType::Terrain)
+		rowsTotal = (int)std::ceil(map_editor->_tileset->groups.size() / _slotsCount.x);
+	else
+		rowsTotal = (int)std::ceil((float)prefabs_manager->getPrefabs(_type).size() / (float)_slotsCount.x);
+
+	int rowsVisible = _slotsCount.y;
+	int rowHeight = (_type == ObjectType::Terrain) ? 160 + _inner_margin : 80 + _inner_margin;
+	int scrollbarValue = 0;
+	int scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
+	int scrollbarSliderSize = (_type == ObjectType::Terrain) ? _slotsCount.y * (160 + _inner_margin) : _slotsCount.y * (80 + _inner_margin);
+
+	if (_type == ObjectType::Terrain) {
+		_scrollbar = std::make_shared<Scrollbar>(scrollbarPosition.x, scrollbarPosition.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMaxValue, scrollbarSliderSize, scrollbarValue);
+		_scrollbar->setScrollArea(std::make_shared<sf::IntRect>(
+			sf::Vector2i(_rect.position.x + _outer_margin, _rect.position.y + _main_margin + _top_margin + _outer_margin),
+			sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _outer_margin)),
+			(160 + _inner_margin) / 4);
+	}
+	else {
+		_scrollbar = std::make_shared<Scrollbar>(scrollbarPosition.x, scrollbarPosition.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMaxValue, scrollbarSliderSize, scrollbarValue);
+		_scrollbar->setScrollArea(std::make_shared<sf::IntRect>(
+			sf::Vector2i(_rect.position.x + _outer_margin, _rect.position.y + _main_margin + _top_margin + _outer_margin),
+			sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _outer_margin)),
+			(80 + _inner_margin) / 4);
+	}
+
+
+	_scrollbar->_func = [this]() {
+		int i = 0;
+		for (auto& slot : _slots) {
+			updateObjects();
+
+			sf::Vector2i position;
+			if (_type == ObjectType::Terrain) {
+				position = sf::Vector2i(
+					_rect.position.x + _outer_margin + (i % _slotsCount.x) * (160 + _inner_margin),
+					_rect.position.y + _main_margin + _top_margin + _outer_margin + (i / _slotsCount.x) * (160 + _inner_margin) - (_scrollbar->getValue() % (160 + _inner_margin))
+				);
+			}
+			else {
+				position = sf::Vector2i(
+					_rect.position.x + _outer_margin + (i % _slotsCount.x) * (80 + _inner_margin),
+					_rect.position.y + _main_margin + _top_margin + _outer_margin + (i / _slotsCount.x) * (80 + _inner_margin) - (_scrollbar->getValue() % (80 + _inner_margin))
+				);
+			}
+
+			slot->setPosition(position);
+			i += 1;
+		}
+		};
+}
+
 void Slots::loadObjects() {
 
 	selectSlot(_selectedSlotId);
@@ -199,9 +256,14 @@ void Slots::updateObjects() {
 }
 
 void Slots::setCategory(ObjectType type) {
-	_type = type;
-	selectSlot(-1);
-	map_editor->_cursor_on_map->_object = nullptr;
+
+	if (_type != type) {
+		_type = type;
+		selectSlot(-1);
+		map_editor->_cursor_on_map->_object = nullptr;
+	}
+
+	
 
 	// +1 because scrollbar takes one slot space
 	if(_type == ObjectType::Terrain) {
@@ -216,60 +278,7 @@ void Slots::setCategory(ObjectType type) {
 	}
 
 
-	sf::Vector2i scrollbarPosition = sf::Vector2i(_rect.position.x + _rect.size.x - 32 - _outer_margin, _rect.position.y + _main_margin + _top_margin + 2 * _inner_margin);
-	sf::Vector2i scrollbarSize = sf::Vector2i(32, _rect.size.y - 2 * _main_margin - _top_margin - _inner_margin);
-	
-	int rowsTotal;
-	if (_type == ObjectType::Terrain)
-		rowsTotal = (int)std::ceil(map_editor->_tileset->groups.size()/_slotsCount.x);
-	else
-		rowsTotal = (int)std::ceil((float)prefabs_manager->getPrefabs(_type).size() / (float)_slotsCount.x);
-	
-	int rowsVisible = _slotsCount.y;
-	int rowHeight = (_type == ObjectType::Terrain)? 160 + _inner_margin : 80 + _inner_margin;	
-	int scrollbarValue = 0;
-	int scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
-	int scrollbarSliderSize = (_type == ObjectType::Terrain)? _slotsCount.y * (160 + _inner_margin) : _slotsCount.y * (80 + _inner_margin);
-
-	_scrollbar = std::make_shared<Scrollbar>(scrollbarPosition.x, scrollbarPosition.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMaxValue, scrollbarSliderSize, scrollbarValue);
-
-	if (_type == ObjectType::Terrain) {
-		_scrollbar->setScrollArea(std::make_shared<sf::IntRect>(
-			sf::Vector2i(_rect.position.x + _outer_margin, _rect.position.y + _main_margin + _top_margin + _outer_margin),
-			sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _outer_margin)),
-			(160 + _inner_margin) / 4);
-	}
-	else {
-		_scrollbar->setScrollArea(std::make_shared<sf::IntRect>(
-			sf::Vector2i(_rect.position.x + _outer_margin, _rect.position.y + _main_margin + _top_margin + _outer_margin),
-			sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _outer_margin)),
-			(80 + _inner_margin) / 4);
-	}
-	
-
-	_scrollbar->_func = [this]() {
-		int i = 0;
-		for (auto& slot : _slots) {
-			updateObjects();
-
-			sf::Vector2i position; 
-			if (_type == ObjectType::Terrain) {
-				position = sf::Vector2i(
-					_rect.position.x + _outer_margin + (i % _slotsCount.x) * (160 + _inner_margin),
-					_rect.position.y + _main_margin + _top_margin + _outer_margin + (i / _slotsCount.x) * (160 + _inner_margin) - (_scrollbar->getValue() % (160 + _inner_margin))
-				);
-			}
-			else {
-				position = sf::Vector2i(
-					_rect.position.x + _outer_margin + (i % _slotsCount.x) * (80 + _inner_margin),
-					_rect.position.y + _main_margin + _top_margin + _outer_margin + (i / _slotsCount.x) * (80 + _inner_margin) - (_scrollbar->getValue() % (80 + _inner_margin))
-				);
-			}
-			
-			slot->setPosition(position);
-			i += 1;
-		}
-		};
+	generateScrollbar();
 	loadObjects();
 }
 
@@ -353,6 +362,13 @@ void Slots::selectSlot(int selectedSlotId) {
 		_selectedSlot->_hoverTexture = slotHoverTexture;
 		_selectedSlot->_pressTexture = slotPressTexture;
 	}
+}
+
+void Slots::selectLastSlot() {
+
+	std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(_type);
+	_selectedSlotId = prefabs.size() - 1;
+	selectSlot(_selectedSlotId);
 }
 
 sf::FloatRect Slots::getSlotsRect() {

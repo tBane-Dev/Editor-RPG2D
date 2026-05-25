@@ -12,6 +12,7 @@ public:
 	
 	int _min_value;
 	int _max_value;
+	int _unit;
 	int _slider_size;
 	int _value;
 
