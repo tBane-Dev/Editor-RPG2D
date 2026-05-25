@@ -37,8 +37,8 @@ PrefabsEditorMainMenu::PrefabsEditorMainMenu() : MainMenu() {
 
 	_file_exit = std::make_shared<OptionWithIcon>(
 		L"Exit",
-		textures_manager->getTexture(L"assets\\tex\\main_menu\\new_project.png"), // TO-DO
-		textures_manager->getTexture(L"assets\\tex\\main_menu\\new_project.png") // TO-DO
+		textures_manager->getTexture(L"assets\\tex\\main_menu\\exit.png"), // TO-DO
+		textures_manager->getTexture(L"assets\\tex\\main_menu\\exit.png") // TO-DO
 	);
 
 	_file->addOption(_file_back_to_map_editor);

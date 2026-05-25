@@ -223,7 +223,8 @@ void TextInput::handleEvent(const sf::Event& event) {
 				return;
 			}
 
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::A) {
+			bool noAlt = !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LAlt) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RAlt);
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && noAlt && kp->code == sf::Keyboard::Key::A) {
 				_selectionStart = 0;
 				_selectionEnd = (int)_textStr.length();
 				_cursorPosition = _selectionEnd;

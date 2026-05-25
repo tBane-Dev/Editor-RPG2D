@@ -35,7 +35,7 @@ sf::Color optionbox_press_color;
 
 void loadTheme() {
 
-	if (!basicFont.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+	if (!basicFont.openFromFile("C:/Windows/Fonts/consola.ttf")) {
 		DebugError(L"Failed to load basic font");
 		exit(0);
 	}

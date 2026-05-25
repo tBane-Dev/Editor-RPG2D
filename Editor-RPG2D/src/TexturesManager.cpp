@@ -61,6 +61,7 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\main_menu\\new_project.png");
         texturePaths.push_back(L"assets\\tex\\main_menu\\open_project.png");
         texturePaths.push_back(L"assets\\tex\\main_menu\\save_project.png");
+        texturePaths.push_back(L"assets\\tex\\main_menu\\exit.png");
         texturePaths.push_back(L"assets\\tex\\main_menu\\undo.png");
         texturePaths.push_back(L"assets\\tex\\main_menu\\redo.png");
         

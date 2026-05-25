@@ -45,8 +45,8 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 
 	_file_exit = std::make_shared<OptionWithIcon>(
 		L"Exit",
-		textures_manager->getTexture(L"assets\\tex\\main_menu\\save_project.png"), // TO-DO
-		textures_manager->getTexture(L"assets\\tex\\main_menu\\save_project.png")  // TO-DO
+		textures_manager->getTexture(L"assets\\tex\\main_menu\\exit.png"), // TO-DO
+		textures_manager->getTexture(L"assets\\tex\\main_menu\\exit.png")  // TO-DO
 	);
 
 	_file->addOption(_file_new_project);
