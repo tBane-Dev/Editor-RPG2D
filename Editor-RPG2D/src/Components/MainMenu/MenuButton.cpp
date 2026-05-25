@@ -153,8 +153,10 @@ void MenuButton::update() {
 	else
 		unclick();
 
-	for (auto& option : _options)
+	for (auto& option : _options) {
 		option->update();
+	}
+		
 }
 
 void MenuButton::draw() {

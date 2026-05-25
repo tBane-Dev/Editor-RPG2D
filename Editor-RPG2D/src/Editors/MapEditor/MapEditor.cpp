@@ -23,9 +23,9 @@ void MapEditor::createMap(int width, int height) {
 
 	_map->create(width, height);
 
-	//_map->drawCircle(sf::Vector2i(24, 28), 16, 4);
-	//_map->drawCircle(sf::Vector2i(48, 16), 16, 4);
-	//_map->drawCircle(sf::Vector2i(42, 28), 16, 4);
+	_map->drawCircle(sf::Vector2i(24, 28), 16, 4);
+	_map->drawCircle(sf::Vector2i(48, 16), 16, 4);
+	_map->drawCircle(sf::Vector2i(42, 28), 16, 4);
 
 }
 

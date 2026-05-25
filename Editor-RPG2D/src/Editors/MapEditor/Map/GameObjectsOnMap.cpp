@@ -2,9 +2,30 @@
 #include "Editors/MapEditor/Objects/Monster.hpp"
 #include "Editors/MapEditor/MapEditor.hpp"
 #include <typeinfo>
-
+#include "PrefabsManager.hpp"
 GameObjectsOnMap::GameObjectsOnMap() {
 	_gameObjectsOnMap.clear();
+	 
+	std::shared_ptr<Map> map = map_editor->_map;
+	sf::IntRect mapRect = map->getRect();
+	sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations()->getTexture()->_texture->getSize());
+
+	std::shared_ptr<GameObjectOnMap> tree_1 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+	tree_1->setPosition(sf::Vector2i(0, 0));
+	addGameObject(tree_1);
+	
+	std::shared_ptr<GameObjectOnMap> tree_2 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+	tree_2->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, 0));
+	addGameObject(tree_2);
+
+	std::shared_ptr<GameObjectOnMap> tree_3 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+	tree_3->setPosition(sf::Vector2i(0, mapRect.size.y-texSize.y));
+	addGameObject(tree_3);
+
+	std::shared_ptr<GameObjectOnMap> tree_4 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+	tree_4->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, mapRect.size.y - texSize.y));
+	addGameObject(tree_4);
+
 }
 
 GameObjectsOnMap::~GameObjectsOnMap() {

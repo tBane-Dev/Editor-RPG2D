@@ -88,8 +88,9 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 		nullptr,
 		nullptr
 	);
-	_tool_animations_editor->_onclick_func = []() {
+	_tool_animations_editor->_onclick_func = [this]() {
 		if (animations_editor == nullptr) {
+			closeMenu();
 			animations_editor = std::make_shared<AnimationsEditor>();
 			animations_editor->init();
 			editor_manager->push_back(animations_editor);
@@ -101,8 +102,9 @@ MapEditorMainMenu::MapEditorMainMenu() : MainMenu() {
 		nullptr,
 		nullptr
 	);
-	_tool_prefabs_editor->_onclick_func = []() {
+	_tool_prefabs_editor->_onclick_func = [this]() {
 		if (prefabs_editor == nullptr) {
+			closeMenu();
 			prefabs_editor = std::make_shared<PrefabsEditor>();
 			prefabs_editor->init();
 			editor_manager->push_back(prefabs_editor);
