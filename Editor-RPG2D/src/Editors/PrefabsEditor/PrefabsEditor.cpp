@@ -10,6 +10,7 @@ PrefabsEditor::PrefabsEditor() {
 	_title->setFillColor(basic_text_color);
 	_title->setPosition(sf::Vector2f(32, 48));
 
+	_object = prefabs_manager->getPrefab(L"golem");
 }
 
 PrefabsEditor::~PrefabsEditor() {
@@ -32,7 +33,8 @@ void PrefabsEditor::createMainMenu() {
 
 void PrefabsEditor::createPalette() {
 	_palette = std::make_shared<Palette>();
-	_object = _palette->_slots->_selectedSlot ? std::dynamic_pointer_cast<GameObject>(_palette->_slots->_selectedSlot->_object) : nullptr;
+	// TO-DO - must be 
+	//_object = _palette->_slots->_selectedSlot ? std::dynamic_pointer_cast<GameObject>(_palette->_slots->_selectedSlot->_object) : nullptr;
 }
 
 void PrefabsEditor::createMainPanel() {

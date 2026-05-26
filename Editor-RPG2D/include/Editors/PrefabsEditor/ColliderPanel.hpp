@@ -1,6 +1,7 @@
 #pragma once
 #include "Components/Panel.hpp"
 #include "Controls/TextInput.hpp"
+#include "Editors/MapEditor/Objects/Collider.hpp"
 
 class ColliderPanel : public Panel {
 public:
@@ -14,6 +15,8 @@ public:
 	std::unique_ptr<sf::Text> _hLabel;
 
 	std::shared_ptr<TextInput> _type;
+	std::shared_ptr<Collider> _collider;
+
 	std::shared_ptr<TextInput> _x;
 	std::shared_ptr<TextInput> _y;
 	std::shared_ptr<TextInput> _w;

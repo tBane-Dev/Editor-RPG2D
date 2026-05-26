@@ -40,11 +40,20 @@ MainPanel::MainPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 850), sf::Ve
 		if (!prefabs_editor->_object)
 			return;
 
+		std::shared_ptr<Collider> collider;
+		if (prefabs_editor->_collider_panel->_type->getText() == L"Rectangular") {
+			collider = std::make_shared<RectangularCollider>(std::stoi(prefabs_editor->_collider_panel->_x->getText()), std::stoi(prefabs_editor->_collider_panel->_y->getText()), std::stoi(prefabs_editor->_collider_panel->_w->getText()), std::stoi(prefabs_editor->_collider_panel->_h->getText()));
+		}
+		else if (prefabs_editor->_collider_panel->_type->getText() == L"Circular") {
+			collider = std::make_shared<CircularCollider>(std::stoi(prefabs_editor->_collider_panel->_x->getText()), std::stoi(prefabs_editor->_collider_panel->_y->getText()), std::stoi(prefabs_editor->_collider_panel->_w->getText()) / 2, std::stoi(prefabs_editor->_collider_panel->_h->getText()) / 2);
+		}
+
 		std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(
 			_name->getText(),
 			prefabs_editor->_animator->getAnimations(),
 			sf::Vector2i(std::stoi(prefabs_editor->_collider_panel->_x->getText()), std::stoi(prefabs_editor->_collider_panel->_y->getText())),
-			4
+			4,
+			collider
 		);
 
 		prefabs_manager->addPrefab(prefab);

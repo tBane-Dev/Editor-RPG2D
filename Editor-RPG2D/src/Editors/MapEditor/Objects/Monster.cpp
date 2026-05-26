@@ -4,7 +4,7 @@
 #include <iostream>
 #include "Editors/MapEditor/MapEditor.hpp"
 
-MonsterPrefab::MonsterPrefab(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, int stepSize) : GameObject(name, animations, origin) {
+MonsterPrefab::MonsterPrefab(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider) : GameObject(name, animations, origin, collider) {
 	_type = ObjectType::Monster;
 	_stepSize = stepSize;
 }
@@ -112,11 +112,7 @@ void Monster::draw() {
 		
 
 	if (map_editor->_main_menu->_render_colliders->_checkbox->_value == 1) {
-		sf::CircleShape collider(32);
-		collider.setFillColor(sf::Color(255, 0, 0, 128));
-		collider.setPosition(sf::Vector2f(_position));
-		collider.setOrigin(sf::Vector2f(32, 32));
-		window->draw(collider);
+		_prefab->getCollider()->draw(_position);
 	}
 	
 

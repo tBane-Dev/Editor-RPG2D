@@ -161,6 +161,7 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\monsters\\golem.png");
         texturePaths.push_back(L"assets\\tex\\monsters\\dziobak.png");
         texturePaths.push_back(L"assets\\tex\\monsters\\goblin.png");
+        texturePaths.push_back(L"assets\\tex\\monsters\\bies.png");
 		texturePaths.push_back(L"assets\\tex\\tree_1.png");
 		texturePaths.push_back(L"assets\\tex\\boulder_1.png");
 		texturePaths.push_back(L"assets\\tex\\boulder_2.png");

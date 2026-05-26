@@ -75,12 +75,16 @@ void AnimationsManager::loadAllAnimations() {
 		    _framesCount = framesCount;
 		}
 	};
-        std::vector<Data> datas;
+        
+		
+		// textures
+		std::vector<Data> datas;
 
-        // logos
         datas.emplace_back(L"assets\\tex\\monsters\\golem.png", 4, 4);
         datas.emplace_back(L"assets\\tex\\monsters\\dziobak.png", 4, 4);
         datas.emplace_back(L"assets\\tex\\monsters\\goblin.png", 4, 4);
+        datas.emplace_back(L"assets\\tex\\monsters\\bies.png", 4, 4);
+
         datas.emplace_back(L"assets\\tex\\tree_1.png", 1, 1);
         datas.emplace_back(L"assets\\tex\\boulder_1.png", 1, 1);
         datas.emplace_back(L"assets\\tex\\boulder_2.png", 1, 1);

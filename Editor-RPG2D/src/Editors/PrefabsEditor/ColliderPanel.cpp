@@ -13,15 +13,15 @@ ColliderPanel::ColliderPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 475)
 	// text inputs
 	_type = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"type", 24, 18);
 	_type->setPosition(sf::Vector2i(_rect.position.x + 84, _rect.position.y + margin.y + 192 + 16));
-	_type->setText(L"");
+	_type->setText(L"Circular");
 
 	_x = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"x", 24, 18);
 	_x->setPosition(sf::Vector2i(_rect.position.x + 84, _type->getPosition().y + _type->getSize().y + 8));
-	_x->setText(L"95");
+	_x->setText(L"45");
 
 	_y = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"y", 24, 18);
 	_y->setPosition(sf::Vector2i(_rect.position.x + 84, _x->getPosition().y + _x->getSize().y + 8));
-	_y->setText(L"145");
+	_y->setText(L"110");
 
 	_w = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"width", 24, 18);
 	_w->setPosition(sf::Vector2i(_rect.position.x + 84, _y->getPosition().y + _y->getSize().y + 8));
@@ -29,7 +29,7 @@ ColliderPanel::ColliderPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 475)
 
 	_h = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"height", 24, 18);
 	_h->setPosition(sf::Vector2i(_rect.position.x + 84, _w->getPosition().y + _w->getSize().y + 8));
-	_h->setText(L"70");
+	_h->setText(L"65");
 
 	// texts labels
 	int x = _x->getPosition().x - 32;
@@ -109,12 +109,25 @@ void ColliderPanel::draw() {
 	std::shared_ptr<Animator>& animator = prefabs_editor->_animator;
 	if (animator) {
 		
-		sf::CircleShape circle(std::stoi(_w->getText())/2);
-		circle.setFillColor(sf::Color(255, 0, 0, 128));
-		circle.setScale(sf::Vector2f(1, (float)std::stoi(_h->getText()) / (float)std::stoi(_w->getText())));
-		circle.setOrigin(sf::Vector2f(std::stoi(_w->getText()) / 2, std::stoi(_w->getText()) / 2));
-		circle.setPosition(sf::Vector2f(rect.getPosition().x + std::stoi(_x->getText()), rect.getPosition().y + std::stoi(_y->getText())));	
-		window->draw(circle);
+		// TO-DO - must be in update
+		if (_type->getText() == L"Rectangular") {
+
+			std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()),std::stoi(_y->getText()),std::stoi(_w->getText()),std::stoi(_h->getText()));
+			_collider = rectCollider;
+			sf::Vector2f spriteSize = sf::Vector2f(animator->getAnimations()->getFrameRect(0, 0).size);
+			sf::Vector2f scale((float)rect.getSize().x / spriteSize.x, (float)rect.getSize().y / spriteSize.y);
+			sf::Vector2i colliderPosition(rect.getPosition().x + (float)rectCollider->_rect.position.x * scale.x, rect.getPosition().y + (float)rectCollider->_rect.position.y * scale.y);
+			_collider->draw(colliderPosition, scale);
+		}
+		else if (_type->getText() == L"Circular") {
+
+			std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()),std::stoi(_y->getText()),std::stoi(_w->getText()) / 2,std::stoi(_h->getText()) / 2);
+			_collider = circularCollider;
+			sf::Vector2f spriteSize = sf::Vector2f(animator->getAnimations()->getFrameRect(0, 0).size);
+			sf::Vector2f scale((float)rect.getSize().x / spriteSize.x, (float)rect.getSize().y / spriteSize.y);
+			sf::Vector2i colliderPosition(rect.getPosition().x + (int)((float)circularCollider->_x * scale.x), rect.getPosition().y + (int)((float)circularCollider->_y * scale.y));
+			_collider->draw(colliderPosition, scale);
+		}
 
 		std::shared_ptr<Animations> animations = animator->getAnimations();
 		sf::IntRect frameRect = animations->getFrameRect(0, 0);

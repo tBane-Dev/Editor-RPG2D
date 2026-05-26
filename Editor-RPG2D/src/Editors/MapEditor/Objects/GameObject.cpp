@@ -1,11 +1,14 @@
 #pragma once
 #include "Editors/MapEditor/Objects/GameObject.hpp"
+#include "Window.hpp"
+#include "Editors/MapEditor/Objects/Collider.hpp"
 
-GameObject::GameObject(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin) : Object()
+GameObject::GameObject(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider) : Object()
 {
 	_name = name;
 	_animations = animations;
 	_origin = origin;
+	_collider = collider;
 }
 
 GameObject::~GameObject() {
@@ -22,4 +25,8 @@ sf::Vector2i GameObject::getOrigin() {
 
 std::shared_ptr<Animations> GameObject::getAnimations() {
 	return _animations;
+}
+
+std::shared_ptr<Collider> GameObject::getCollider() {
+	return _collider;
 }
