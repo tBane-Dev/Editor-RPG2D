@@ -9,6 +9,10 @@ Collider::~Collider() {
 
 }
 
+bool Collider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale) {
+	return false;
+}
+
 void Collider::draw(sf::Vector2i position, sf::Vector2f scale) {
 
 }
@@ -23,6 +27,18 @@ RectangularCollider::RectangularCollider(int x, int y, int w, int h) : Collider(
 
 RectangularCollider::~RectangularCollider() {
 
+}
+
+bool RectangularCollider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale) {
+	sf::IntRect rect;
+
+	rect.position.x = position.x + (int)((float)_rect.position.x * scale.x);
+	rect.position.y = position.y + (int)((float)_rect.position.y * scale.y);
+
+	rect.size.x = (int)((float)_rect.size.x * scale.x);
+	rect.size.y = (int)((float)_rect.size.y * scale.y);
+
+	return rect.contains(cursorPosition);
 }
 
 void RectangularCollider::draw(sf::Vector2i position, sf::Vector2f scale) {
@@ -42,6 +58,19 @@ CircularCollider::CircularCollider(int x, int y, int radiusX, int radiusY) : Col
 
 CircularCollider::~CircularCollider() {
 
+}
+
+bool CircularCollider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale) {
+	float centerX = (float)position.x + (float)_x * scale.x;
+	float centerY = (float)position.y + (float)_y * scale.y;
+
+	float radiusX = (float)_radiusX * scale.x;
+	float radiusY = (float)_radiusY * scale.y;
+
+	float dx = ((float)cursorPosition.x - centerX) / radiusX;
+	float dy = ((float)cursorPosition.y - centerY) / radiusY;
+
+	return dx * dx + dy * dy <= 1.f;
 }
 
 void CircularCollider::draw(sf::Vector2i position, sf::Vector2f scale) {

@@ -111,7 +111,9 @@ void Monster::draw() {
 	}
 		
 
-	if (map_editor->_main_menu->_render_colliders->_checkbox->_value == 1) {
+	bool renderAllColliders = map_editor->_main_menu->_render_colliders->_checkbox->_value == 1;
+
+	if (renderAllColliders || _prefab->_collider->cursorHover(map_editor->_cursor_on_map->_position + _prefab->getOrigin(), _position)) {
 		_prefab->getCollider()->draw(_position);
 	}
 	
