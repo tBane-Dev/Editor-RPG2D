@@ -86,6 +86,7 @@ void AnimationsManager::loadAllAnimations() {
         datas.emplace_back(L"assets\\tex\\monsters\\goblin.png", 4, 4);
         datas.emplace_back(L"assets\\tex\\monsters\\bies.png", 4, 4);
         datas.emplace_back(L"assets\\tex\\monsters\\hero.png", 4, 4);
+        datas.emplace_back(L"assets\\tex\\monsters\\monster.png", 1, 1);
 
         datas.emplace_back(L"assets\\tex\\tree_1.png", 1, 1);
         datas.emplace_back(L"assets\\tex\\boulder_1.png", 1, 1);

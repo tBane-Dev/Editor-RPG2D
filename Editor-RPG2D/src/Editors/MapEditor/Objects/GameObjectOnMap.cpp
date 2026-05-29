@@ -1,7 +1,7 @@
 #pragma once
 #include "Editors/MapEditor/Objects/GameObjectOnMap.hpp"
 #include "Window.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "Animator.hpp"
 
@@ -25,16 +25,16 @@ void GameObjectOnMap::update() {
 
 void GameObjectOnMap::draw() {
 
-	bool renderAllColliders = map_editor->_main_menu->_render_colliders->_checkbox->_value == 1;
+	bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
 
-	if (renderAllColliders || _prefab->_collider->cursorHover(map_editor->_cursor_on_map->_position, _position)) {
+	if (renderAllColliders || _prefab->_collider->cursorHover(MapEditor::editor->_cursor_on_map->_position, _position)) {
 		_prefab->getCollider()->draw(_position + _prefab->getOrigin());
 	}
 
 	std::shared_ptr<Animations> animations = _animator->getAnimations();
 	sf::IntRect frameRect = animations->getFrameRect(0,0);
 
-	if (map_editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
+	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
 		outlineRect.setPosition(sf::Vector2f(_position));
 		outlineRect.setFillColor(sf::Color::Transparent);

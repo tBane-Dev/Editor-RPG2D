@@ -1,5 +1,5 @@
 ﻿#include "Components/Palette/Palette.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 #include "Editors/MapEditor/Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
 #include "Window.hpp"
@@ -11,8 +11,8 @@
 Palette::Palette() : Element() {
 	sf::Vector2i size;
 	size.x = 600;
-	size.y = window->getSize().y - map_editor->_main_menu->getSize().y;
-	_rect = sf::IntRect(sf::Vector2i(window->getSize().x - size.x, map_editor->_main_menu->getSize().y), size);
+	size.y = window->getSize().y - MapEditor::editor->_main_menu->getSize().y;
+	_rect = sf::IntRect(sf::Vector2i(window->getSize().x - size.x, MapEditor::editor->_main_menu->getSize().y), size);
 
 	_categories = std::make_shared<Categories>();
 	
@@ -84,7 +84,7 @@ Palette::Palette() : Element() {
 			if (_slots->_selectedSlot == nullptr) {
 				if(_slots->_slots.size() > 0) {
 					_slots->selectSlot(0);
-					map_editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
+					MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 				}
 			}
 		}
@@ -100,7 +100,7 @@ Palette::Palette() : Element() {
 			if (_slots->_selectedSlot == nullptr) {
 				if (_slots->_slots.size() > 0) {
 					_slots->selectSlot(0);
-					map_editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
+					MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 				}
 			}
 		}
@@ -111,7 +111,7 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\decrease.png"),
-		[this]() { map_editor->_palette->_brushSize = std::clamp(map_editor->_palette->_brushSize - 1, map_editor->_palette->_minBrushSize, map_editor->_palette->_maxBrushSize); }
+		[this]() { MapEditor::editor->_palette->_brushSize = std::clamp(MapEditor::editor->_palette->_brushSize - 1, MapEditor::editor->_palette->_minBrushSize, MapEditor::editor->_palette->_maxBrushSize); }
 	);
 
 	_tools->addTool(
@@ -119,7 +119,7 @@ Palette::Palette() : Element() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\increase.png"),
-		[this]() { map_editor->_palette->_brushSize = std::clamp(map_editor->_palette->_brushSize + 1, map_editor->_palette->_minBrushSize, map_editor->_palette->_maxBrushSize); }
+		[this]() { MapEditor::editor->_palette->_brushSize = std::clamp(MapEditor::editor->_palette->_brushSize + 1, MapEditor::editor->_palette->_minBrushSize, MapEditor::editor->_palette->_maxBrushSize); }
 	);
 
 	_slots = std::make_shared<Slots>();
@@ -162,7 +162,7 @@ void Palette::loadAll(ObjectType type) {
 			[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
 				if (!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
 					_tools->setTool(_tools->_tools[1], ToolType::Circle);
-				map_editor->_cursor_on_map->_object = slot->_object;
+				MapEditor::editor->_cursor_on_map->_object = slot->_object;
 				_slots->selectSlot(selectedSlotId);
 
 			}
@@ -171,7 +171,7 @@ void Palette::loadAll(ObjectType type) {
 	else {
 		_slots->setFunction(
 			[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
-				map_editor->_cursor_on_map->_object = slot->_object;
+				MapEditor::editor->_cursor_on_map->_object = slot->_object;
 				_slots->selectSlot(selectedSlotId);
 			}
 		);
@@ -197,7 +197,7 @@ void Palette::setPosition(sf::Vector2i position) {
 }
 
 void Palette::cursorHover() {
-	if (map_editor->_main_menu->_tool_palette->_checkbox->_value != 0)
+	if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value != 0)
 		return;
 
 	if (_rect.contains(cursor->_position)) {
@@ -215,7 +215,7 @@ void Palette::cursorHover() {
 
 void Palette::handleEvent(const sf::Event& event) {
 
-	if (map_editor->_main_menu->_tool_palette->_checkbox->_value != 0)
+	if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value != 0)
 		return;
 
 	if (GUI_manager->Element_hovered.get() == this) {
@@ -251,7 +251,7 @@ void Palette::draw() {
 
 	GUI_manager->setView();
 
-	if (map_editor->_main_menu->_tool_palette->_checkbox->_value == 0) {
+	if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value == 0) {
 		sf::RectangleShape rect(sf::Vector2f(_rect.size));
 		rect.setFillColor(sf::Color(31, 31, 31));
 		rect.setPosition(sf::Vector2f(_rect.position));

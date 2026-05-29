@@ -1,75 +1,79 @@
 ﻿#pragma once
 #include "GUIManager.hpp"
 
-enum class MainMenuStates { Opened, Closing, Closed };
+namespace Components {
 
-class MenuButton;
+	enum class MainMenuStates { Opened, Closing, Closed };
 
-class MainMenu : public Element {
-public:
+	class MenuButton;
 
-	sf::IntRect _rect;
-	std::vector<std::shared_ptr<MenuButton>> _menu_boxes;
+	class MainMenu : public Element {
+	public:
 
-	MainMenuStates _state;
-	std::shared_ptr<MenuButton> _open_menu_button;
+		sf::IntRect _rect;
+		std::vector<std::shared_ptr<MenuButton>> _menu_boxes;
 
-	//// MAIN MENU BUTTONS
-	//std::shared_ptr<MenuButton> file;
-	//std::shared_ptr<MenuButton> edit;
-	//std::shared_ptr<MenuButton> tools;
-	//std::shared_ptr<MenuButton> select;
-	//std::shared_ptr<MenuButton> windows;
+		MainMenuStates _state;
+		std::shared_ptr<MenuButton> _open_menu_button;
 
-	//// FILE
-	//std::shared_ptr<OptionWithIcon> file_new;
-	//std::shared_ptr<OptionWithIcon> file_saveAs;
-	//std::shared_ptr<OptionWithIcon> file_load;
-	//std::shared_ptr<OptionWithIcon> file_export;
-	//std::shared_ptr<OptionWithIcon> file_import;
-	//
-	//// EDIT
-	//std::shared_ptr<OptionWithIcon> edit_undo;
-	//std::shared_ptr<OptionWithIcon> edit_redo;
-	//
-	//// TOOLS
-	//std::shared_ptr<Option> tools_resize;
-	//std::shared_ptr<Option> tools_rotation;
-	//std::shared_ptr<Option> tools_brightness_contrast;
-	//std::shared_ptr<Option> tools_hue_saturation;
-	//std::shared_ptr<Option> tools_sepia;
-	//std::shared_ptr<Option> tools_outline;
-	//std::shared_ptr<Option> tools_invert;
-	//std::shared_ptr<Option> tools_chessboard;
-	//std::shared_ptr<Option> tools_smoothing;
-	//
-	//// SELECT
-	//std::shared_ptr<Option> select_all;
-	//std::shared_ptr<Option> select_none;
-	//std::shared_ptr<Option> select_align_center;
-	//
-	//// WINDOWS
-	//std::shared_ptr<OptionWithCheckbox> canvas_repeating;
-	//std::shared_ptr<OptionWithCheckbox> select_language;
-	//std::shared_ptr<Option> window_animations;
-	//std::shared_ptr<Option> window_frames;
-	//std::shared_ptr<Option> window_layers;
-	//std::shared_ptr<Option> window_preview_animation;
+		//// MAIN MENU BUTTONS
+		//std::shared_ptr<MenuButton> file;
+		//std::shared_ptr<MenuButton> edit;
+		//std::shared_ptr<MenuButton> tools;
+		//std::shared_ptr<MenuButton> select;
+		//std::shared_ptr<MenuButton> windows;
+
+		//// FILE
+		//std::shared_ptr<OptionWithIcon> file_new;
+		//std::shared_ptr<OptionWithIcon> file_saveAs;
+		//std::shared_ptr<OptionWithIcon> file_load;
+		//std::shared_ptr<OptionWithIcon> file_export;
+		//std::shared_ptr<OptionWithIcon> file_import;
+		//
+		//// EDIT
+		//std::shared_ptr<OptionWithIcon> edit_undo;
+		//std::shared_ptr<OptionWithIcon> edit_redo;
+		//
+		//// TOOLS
+		//std::shared_ptr<Option> tools_resize;
+		//std::shared_ptr<Option> tools_rotation;
+		//std::shared_ptr<Option> tools_brightness_contrast;
+		//std::shared_ptr<Option> tools_hue_saturation;
+		//std::shared_ptr<Option> tools_sepia;
+		//std::shared_ptr<Option> tools_outline;
+		//std::shared_ptr<Option> tools_invert;
+		//std::shared_ptr<Option> tools_chessboard;
+		//std::shared_ptr<Option> tools_smoothing;
+		//
+		//// SELECT
+		//std::shared_ptr<Option> select_all;
+		//std::shared_ptr<Option> select_none;
+		//std::shared_ptr<Option> select_align_center;
+		//
+		//// WINDOWS
+		//std::shared_ptr<OptionWithCheckbox> canvas_repeating;
+		//std::shared_ptr<OptionWithCheckbox> select_language;
+		//std::shared_ptr<Option> window_animations;
+		//std::shared_ptr<Option> window_frames;
+		//std::shared_ptr<Option> window_layers;
+		//std::shared_ptr<Option> window_preview_animation;
 
 
-	MainMenu();
-	~MainMenu();
+		MainMenu();
+		~MainMenu();
 
-	sf::Vector2i getSize();
-	void resize();
-	void setPosition(sf::Vector2i position);
-	void hideMenu();	// hide menu - start closing animation - used when opening another menu
-	void closeMenu();	// immediately close menu - used when opening dialogs
-	void openMenuButton(std::shared_ptr<MenuButton> menuBox);
-	bool cursorOnAnyMenuButton();
+		sf::Vector2i getSize();
+		void resize();
+		void setPosition(sf::Vector2i position);
+		void hideMenu();	// hide menu - start closing animation - used when opening another menu
+		void closeMenu();	// immediately close menu - used when opening dialogs
+		void openMenuButton(std::shared_ptr<MenuButton> menuBox);
+		bool cursorOnAnyMenuButton();
 
-	void cursorHover();
-	void handleEvent(const sf::Event& event);
-	void update();
-	void draw();
-};
+		void cursorHover();
+		void handleEvent(const sf::Event& event);
+		void update();
+		void draw();
+	};
+
+}

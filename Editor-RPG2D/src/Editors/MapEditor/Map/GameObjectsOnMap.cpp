@@ -1,12 +1,13 @@
 #include "DebugLog.hpp"
 #include "Editors/MapEditor/Objects/Monster.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 #include <typeinfo>
 #include "PrefabsManager.hpp"
+
 GameObjectsOnMap::GameObjectsOnMap() {
 	_gameObjectsOnMap.clear();
 	 
-	std::shared_ptr<Map> map = map_editor->_map;
+	std::shared_ptr<Map> map = MapEditor::editor->_map;
 	sf::IntRect mapRect = map->getRect();
 	sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations()->getTexture()->_texture->getSize());
 
@@ -58,7 +59,7 @@ void GameObjectsOnMap::update() {
 
 void GameObjectsOnMap::draw() {
 
-	map_editor->_camera->setView();
+	MapEditor::editor->_camera->setView();
 
 	for (auto& object : _gameObjectsOnMap) {
 		object->draw();

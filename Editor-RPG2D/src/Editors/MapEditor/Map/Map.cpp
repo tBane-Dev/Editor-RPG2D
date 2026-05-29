@@ -5,7 +5,7 @@
 #include "Cursor.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
 #include "Editors/Editor.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "ShaderManager.hpp"
 #include "Theme.hpp"
@@ -68,9 +68,9 @@ std::shared_ptr<Tile> Chunk::getTileByGlobalPosition() {
 	rect.size.x = tilesCols * Tile::tileSize;
 	rect.size.y = tilesRows * Tile::tileSize;
 
-	if (rect.contains(map_editor->_cursor_on_map->_position)) {
-		int x = map_editor->_cursor_on_map->_position.x / Tile::tileSize;
-		int y = map_editor->_cursor_on_map->_position.y / Tile::tileSize;
+	if (rect.contains(MapEditor::editor->_cursor_on_map->_position)) {
+		int x = MapEditor::editor->_cursor_on_map->_position.x / Tile::tileSize;
+		int y = MapEditor::editor->_cursor_on_map->_position.y / Tile::tileSize;
 		return getTileByTileGlobalCoords(x, y);
 	}
 
@@ -91,7 +91,7 @@ void Chunk::generateVertexArray(
 	_vertexArray.clear();
 	_vertexArray.setPrimitiveType(sf::PrimitiveType::Triangles);
 
-	std::shared_ptr<Tileset> tileset = map_editor->_tileset;
+	std::shared_ptr<Tileset> tileset = MapEditor::editor->_tileset;
 	if (tileset == nullptr) return;
 
 	float borderWidth = float(Tile::borderWidth);
@@ -264,8 +264,8 @@ std::shared_ptr<Chunk> Map::getChunkByTileGlobalCoords(int x, int y) {
 
 std::shared_ptr<Chunk> Map::getChunkByGlobalPosition() {
 
-	int x = map_editor->_cursor_on_map->_position.x / Tile::tileSize;
-	int y = map_editor->_cursor_on_map->_position.y / Tile::tileSize;
+	int x = MapEditor::editor->_cursor_on_map->_position.x / Tile::tileSize;
+	int y = MapEditor::editor->_cursor_on_map->_position.y / Tile::tileSize;
 
 	return getChunkByTileGlobalCoords(x, y);
 }
@@ -309,7 +309,7 @@ sf::IntRect Map::getRect() {
 
 void Map::cursorHover() {
 
-	if (map_editor->_cursor_on_map != nullptr && getRect().contains(map_editor->_cursor_on_map->_position)) {
+	if (MapEditor::editor->_cursor_on_map != nullptr && getRect().contains(MapEditor::editor->_cursor_on_map->_position)) {
 		GUI_manager->Element_hovered = shared_from_this();
 	}
 }
@@ -332,7 +332,7 @@ void Map::handleEvent(const sf::Event& event) {
 
 void Map::draw() {
 
-	std::shared_ptr<MapEditor> map_editor = std::dynamic_pointer_cast<MapEditor>(editor_manager->get_back());
+	std::shared_ptr<MapEditor::Editor> map_editor = std::dynamic_pointer_cast<MapEditor::Editor>(Main::editor_manager->get_back());
 	if (!map_editor) return;
 
 	std::shared_ptr<CameraOnMap> camera = map_editor->_camera;

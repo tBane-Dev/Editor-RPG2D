@@ -1,6 +1,6 @@
 ﻿#include "Editors/MapEditor/Map/Tileset.hpp"
 #include "Editors/Editor.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 
 Tileset::Tileset() {
 
@@ -61,8 +61,8 @@ bool areFriends(int group1, int group2) {
 	if (group1 == -1 || group2 == -1) return true;
 	if (group1 == group2) return true;
 
-	for (auto& fr : map_editor->_tileset->groups[group1]->friends) {
-		if (fr == map_editor->_tileset->groups[group2])
+	for (auto& fr : MapEditor::editor->_tileset->groups[group1]->friends) {
+		if (fr == MapEditor::editor->_tileset->groups[group2])
 			return true;
 	}
 	return false;

@@ -5,199 +5,204 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Theme.hpp"
 
-MenuButton::MenuButton(std::shared_ptr<MainMenu> menu, std::wstring text) : Button() {
+namespace Components {
 
-	_menu = menu;
+	MenuButton::MenuButton(std::shared_ptr<MainMenu> menu, std::wstring text) : Button() {
 
-	_text = std::make_unique<sf::Text>(basicFont, L"", menu_font_size);
-	setText(text);
+		_menu = menu;
 
-	_rectIdleColor = menubox_idle_color;
-	_rectHoverColor = menubox_hover_color;
-	_rectPressColor = menubox_press_color;
-	_rectSelectColor = menubox_open_color;
+		_text = std::make_unique<sf::Text>(basicFont, L"", menu_font_size);
+		setText(text);
 
-	_state = ButtonState::Idle;
-	_isSelected = false;
-	_options.clear();
-}
+		_rectIdleColor = menubox_idle_color;
+		_rectHoverColor = menubox_hover_color;
+		_rectPressColor = menubox_press_color;
+		_rectSelectColor = menubox_open_color;
 
-MenuButton::~MenuButton() {
+		_state = ButtonState::Idle;
+		_isSelected = false;
+		_options.clear();
+	}
 
-}
+	MenuButton::~MenuButton() {
 
-void MenuButton::resizeOptions() {
-	int max_wdt = 0;
-	int max_shortcut_wdt = 0;
-	for (auto& o : _options) {
+	}
 
-		if (o->getTextWidth() > max_wdt)
-			max_wdt = o->getTextWidth();
+	void MenuButton::resizeOptions() {
+		int max_wdt = 0;
+		int max_shortcut_wdt = 0;
+		for (auto& o : _options) {
 
-		if (o->getShortcutTextWidth() > max_shortcut_wdt)
-			max_shortcut_wdt = o->getShortcutTextWidth();
+			if (o->getTextWidth() > max_wdt)
+				max_wdt = o->getTextWidth();
+
+			if (o->getShortcutTextWidth() > max_shortcut_wdt)
+				max_shortcut_wdt = o->getShortcutTextWidth();
+		}
+
+
+		sf::Vector2i size;
+		size.x = 32 + optionbox_left_margin + max_wdt + optionbox_right_margin + menu_horizontal_margin;
+		if (max_shortcut_wdt > 0)
+			size.x += optionbox_spacing + max_shortcut_wdt;
+		size.y = optionbox_height;
+
+		for (auto& o : _options) {
+			o->setSize(size);
+		}
+	}
+
+	void MenuButton::setText(std::wstring text) {
+		_text->setString(text);
+		_text->setFillColor(menu_text_color);
+
+		sf::Vector2i rectSize;
+		_rect.size.x = (int)(_text->getGlobalBounds().size.x + (float)(2 * menu_horizontal_margin));
+		_rect.size.y = menu_height;
+	}
+
+	void MenuButton::addOption(std::shared_ptr<Option> option) {
+		_options.push_back(option);
+		resizeOptions();
+	}
+
+	void MenuButton::setPosition(sf::Vector2i position) {
+		_rect.position = position;
+
+		sf::Vector2f textPos;
+		textPos.x = (float)(position.x + menu_horizontal_margin);
+		textPos.y = (float)(position.y) + ((float)(menu_height)-basicFont.getLineSpacing(menu_font_size)) / 2.0f;
+		_text->setPosition(textPos);
+
+		int max_wdt = 0;
+		for (auto& o : _options) {
+			if (o->getTextWidth() > max_wdt)
+				max_wdt = o->getTextWidth();
+		}
+
+		for (int i = 0; i < _options.size(); i++) {
+			sf::Vector2i optionPos;
+			optionPos.x = (int)(_rect.position.x);
+			optionPos.y = (int)(_rect.position.y + _rect.size.y) + i * optionbox_height;
+			_options[i]->setPosition(optionPos, max_wdt + optionbox_spacing);
+		}
 	}
 
 
-	sf::Vector2i size;
-	size.x = 32 + optionbox_left_margin + max_wdt + optionbox_right_margin + menu_horizontal_margin;
-	if (max_shortcut_wdt > 0)
-		size.x += optionbox_spacing + max_shortcut_wdt;
-	size.y = optionbox_height;
+	void MenuButton::cursorHover() {
+		Button::cursorHover();
 
-	for (auto& o : _options) {
-		o->setSize(size);
-	}
-}
-
-void MenuButton::setText(std::wstring text) {
-	_text->setString(text);
-	_text->setFillColor(menu_text_color);
-
-	sf::Vector2i rectSize;
-	_rect.size.x = (int)(_text->getGlobalBounds().size.x + (float)(2 * menu_horizontal_margin));
-	_rect.size.y = menu_height;
-}
-
-void MenuButton::addOption(std::shared_ptr<Option> option) {
-	_options.push_back(option);
-	resizeOptions();
-}
-
-void MenuButton::setPosition(sf::Vector2i position) {
-	_rect.position = position;
-
-	sf::Vector2f textPos;
-	textPos.x = (float)(position.x + menu_horizontal_margin);
-	textPos.y = (float)(position.y) + ((float)(menu_height) - basicFont.getLineSpacing(menu_font_size)) / 2.0f;
-	_text->setPosition(textPos);
-
-	int max_wdt = 0;
-	for (auto& o : _options) {
-		if (o->getTextWidth() > max_wdt)
-			max_wdt = o->getTextWidth();
+		if (_isSelected) {
+			for (auto& option : _options)
+				option->cursorHover();
+		}
 	}
 
-	for (int i = 0; i < _options.size(); i++) {
-		sf::Vector2i optionPos;
-		optionPos.x = (int)(_rect.position.x);
-		optionPos.y = (int)(_rect.position.y + _rect.size.y) + i * optionbox_height;
-		_options[i]->setPosition(optionPos, max_wdt + optionbox_spacing);
-	} 
-}
+	void MenuButton::handleEvent(const sf::Event& event) {
 
+		if (GUI_manager->Element_hovered.get() == this) {
 
-void MenuButton::cursorHover() {
-	Button::cursorHover();
+			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+				GUI_manager->Element_pressed = this->shared_from_this();
+				_state = ButtonState::Pressed;
+				_isSelected = true;
+				return;
 
-	if (_isSelected) {
-		for (auto& option : _options)
-			option->cursorHover();
-	}
-}
+			}
+			else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && _menu->_open_menu_button) {
+				GUI_manager->Element_pressed = this->shared_from_this();
+				_state = ButtonState::Pressed;
+				_isSelected = true;
+				return;
+			}if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+				if (GUI_manager->Element_pressed.get() == this) {
+					GUI_manager->Element_pressed = nullptr;
+					_isSelected = true;
+				}
 
-void MenuButton::handleEvent(const sf::Event& event) {
-
-	if (GUI_manager->Element_hovered.get() == this) {
-
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			GUI_manager->Element_pressed = this->shared_from_this();
-			_state = ButtonState::Pressed;
-			_isSelected = true;
-			return;
-
-		}else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && _menu->_open_menu_button) {
-			GUI_manager->Element_pressed = this->shared_from_this();
-			_state = ButtonState::Pressed;
-			_isSelected = true;
-			return;
-		}if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			}
+		}
+		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			if (GUI_manager->Element_pressed.get() == this) {
 				GUI_manager->Element_pressed = nullptr;
-				_isSelected = true;
+				_state = ButtonState::Idle;
+				_isSelected = false;
+				return;
 			}
 
 		}
-	}
-	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (GUI_manager->Element_pressed.get() == this) {
-			GUI_manager->Element_pressed = nullptr;
-			_state = ButtonState::Idle;
-			_isSelected = false;
-			return;
+
+
+
+		if (_isSelected) {
+			for (auto& option : _options)
+				option->handleEvent(event);
 		}
-			
 	}
 
-	
+	void MenuButton::update() {
+		if (_state == ButtonState::Pressed) {
+			if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+				if (_onclick_func) {
+					_onclick_func();
+				}
 
-	if (_isSelected) {
-		for (auto& option : _options)
-			option->handleEvent(event);
-	}
-}
-
-void MenuButton::update() {
-	if (_state == ButtonState::Pressed) {
-		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
-			if (_onclick_func) {
-				_onclick_func();
+				unclick();
 			}
-
+		}
+		else if (GUI_manager->Element_hovered.get() == this) {
+			hover();
+		}
+		else
 			unclick();
+
+		for (auto& option : _options) {
+			option->update();
 		}
+
 	}
-	else if (GUI_manager->Element_hovered.get() == this) {
-		hover();
-	}
-	else
-		unclick();
 
-	for (auto& option : _options) {
-		option->update();
-	}
-		
-}
+	void MenuButton::draw() {
 
-void MenuButton::draw() {
+		sf::Vector2f rectSize;
+		rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
+		rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
 
-	sf::Vector2f rectSize;
-	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
-	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
-
-	sf::RectangleShape rect(rectSize);
-	switch (_state) {
-	case ButtonState::Pressed:
-		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness((float)_rectBorderWidth);
-		rect.setOutlineColor(_rectPressBorderColor);
-		break;
-	case ButtonState::Hover:
-		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness((float)_rectBorderWidth);
-		rect.setOutlineColor(_rectHoverBorderColor);
-		break;
-	case ButtonState::Idle:
-		if (!_options.empty() && _isSelected) {
-			rect.setFillColor(_rectSelectColor);
+		sf::RectangleShape rect(rectSize);
+		switch (_state) {
+		case ButtonState::Pressed:
+			rect.setFillColor(_rectPressColor);
 			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectSelectBorderColor);
-		}
-		else {
-			rect.setFillColor(_rectIdleColor);
+			rect.setOutlineColor(_rectPressBorderColor);
+			break;
+		case ButtonState::Hover:
+			rect.setFillColor(_rectHoverColor);
 			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectIdleBorderColor);
+			rect.setOutlineColor(_rectHoverBorderColor);
+			break;
+		case ButtonState::Idle:
+			if (!_options.empty() && _isSelected) {
+				rect.setFillColor(_rectSelectColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectSelectBorderColor);
+			}
+			else {
+				rect.setFillColor(_rectIdleColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectIdleBorderColor);
+			};
+			break;
 		};
-		break;
-	};
 
-	sf::Vector2f rectPosition;
-	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
-	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
-	rect.setPosition(rectPosition);
-	window->draw(rect);
+		sf::Vector2f rectPosition;
+		rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+		rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+		rect.setPosition(rectPosition);
+		window->draw(rect);
 
-	window->draw(*_text);
+		window->draw(*_text);
 
-	
+
+	}
+
 }

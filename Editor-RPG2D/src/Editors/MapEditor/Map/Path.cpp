@@ -3,7 +3,7 @@
 #include "Editors/MapEditor/Map/Map.hpp"
 #include <iostream>
 #include "Editors/Editor.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 
 Path::Path() {
 	_startPoint = sf::Vector2i(0, 0);
@@ -38,7 +38,7 @@ sf::Vector2i Path::getEndPoint() {
 
 void Path::generatePath() {
 
-	std::shared_ptr<Map> mapa = map_editor->_map;
+	std::shared_ptr<Map> mapa = MapEditor::editor->_map;
 	if (mapa == nullptr) return;
 
 	enum Direction { Top, Bottom };
@@ -127,7 +127,7 @@ void Path::draw() {
 	int radius = 4;
 	int edgeRadius = radius + 4;
 
-	sf::IntRect map_rect = map_editor->_map->getRect();
+	sf::IntRect map_rect = MapEditor::editor->_map->getRect();
 
 	// path points
 	sf::CircleShape pointShape((float)radius, 8);

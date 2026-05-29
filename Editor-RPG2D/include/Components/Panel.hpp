@@ -1,20 +1,23 @@
 ﻿#pragma once
 #include "GUIManager.hpp"
 
-class Panel : public Element {
-public:
-	static int _margin;
-	sf::IntRect _rect;
+namespace Components {
 
-	Panel(sf::Vector2i size, sf::Vector2i position);
-	~Panel();
+	class Panel : public Element {
+	public:
+		static int _margin;
+		sf::IntRect _rect;
 
-	sf::Vector2i getSize();
-	void setPosition(sf::Vector2i position);
-	sf::Vector2i getPosition();
+		Panel(sf::Vector2i size, sf::Vector2i position);
+		~Panel();
 
-	virtual void cursorHover();
-	virtual void handleEvent(const sf::Event& event);
-	virtual void update();
-	virtual void draw();
-};
+		sf::Vector2i getSize();
+		void setPosition(sf::Vector2i position);
+		sf::Vector2i getPosition();
+
+		virtual void cursorHover();
+		virtual void handleEvent(const sf::Event& event);
+		virtual void update();
+		virtual void draw();
+	};
+}

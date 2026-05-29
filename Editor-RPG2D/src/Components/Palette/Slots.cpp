@@ -6,7 +6,7 @@
 #include "Window.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 #include "Editors/MapEditor/Map/Tileset.hpp"
 
 Slots::Slots() {
@@ -113,7 +113,7 @@ void Slots::generateScrollbar() {
 
 	int rowsTotal;
 	if (_type == ObjectType::Terrain)
-		rowsTotal = (int)std::ceil(map_editor->_tileset->groups.size() / _slotsCount.x);
+		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
 	else
 		rowsTotal = (int)std::ceil((float)prefabs_manager->getPrefabs(_type).size() / (float)_slotsCount.x);
 
@@ -171,7 +171,7 @@ void Slots::loadObjects() {
 	if (_type == ObjectType::Terrain) {
 
 		std::vector<std::shared_ptr<Terrain>> terrains;
-		for(int i=0;i<map_editor->_tileset->groups.size(); i++) {
+		for(int i=0;i<MapEditor::editor->_tileset->groups.size(); i++) {
 
 			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
 		}
@@ -219,7 +219,7 @@ void Slots::updateObjects() {
 	if (_type == ObjectType::Terrain) {
 
 		std::vector<std::shared_ptr<Terrain>> terrains;
-		for (int i = 0; i < map_editor->_tileset->groups.size(); i++) {
+		for (int i = 0; i < MapEditor::editor->_tileset->groups.size(); i++) {
 
 			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
 
@@ -260,7 +260,7 @@ void Slots::setCategory(ObjectType type) {
 	if (_type != type) {
 		_type = type;
 		selectSlot(-1);
-		map_editor->_cursor_on_map->_object = nullptr;
+		MapEditor::editor->_cursor_on_map->_object = nullptr;
 	}
 
 	

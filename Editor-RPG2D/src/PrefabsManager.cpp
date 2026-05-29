@@ -70,6 +70,17 @@ void PrefabsManager::loadPrefabs() {
 
     {
         std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(
+            L"monster",
+            animations_manager->getAnimations(L"assets\\tex\\monsters\\monster.png"),
+            sf::Vector2i(62, 96),
+            4,
+            std::make_shared<CircularCollider>(62, 96, 48, 32)
+        );
+        addPrefab(prefab);
+    }
+
+    {
+        std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(
             L"dziobak",
             animations_manager->getAnimations(L"assets\\tex\\monsters\\dziobak.png"),
             sf::Vector2i(62, 88),

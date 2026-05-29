@@ -3,7 +3,7 @@
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Editors/MapEditor/Map/Map.hpp"
 #include "Editors/Editor.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 #include "Editors/MapEditor/Objects/GameObject.hpp"
 #include "Editors/MapEditor/Objects/Monster.hpp"
 #include "Editors/MapEditor/Objects/Nature.hpp"
@@ -144,7 +144,7 @@ std::vector<std::vector<std::vector<bool>>> square_brushes = {
 
 CursorOnMap::CursorOnMap() {
 
-    window->setView(map_editor->_camera->_view);
+    window->setView(MapEditor::editor->_camera->_view);
     _position = sf::Vector2i(window->mapPixelToCoords(cursor->_position));
 
 	_object = nullptr;
@@ -157,7 +157,7 @@ CursorOnMap::~CursorOnMap() {
 void CursorOnMap::update() {
 
 
-    window->setView(map_editor->_camera->_view);
+    window->setView(MapEditor::editor->_camera->_view);
     _position = sf::Vector2i(window->mapPixelToCoords(cursor->_position));
 }
 
@@ -167,44 +167,44 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 		return;
 
     if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
-        if (map_editor->_palette->_tools->_selectedTool != nullptr) {
-			map_editor->_palette->_tools->setTool(map_editor->_palette->_tools->_tools[0], ToolType::None);
+        if (MapEditor::editor->_palette->_tools->_selectedTool != nullptr) {
+            MapEditor::editor->_palette->_tools->setTool(MapEditor::editor->_palette->_tools->_tools[0], ToolType::None);
         }
 
-        if (map_editor->_palette->_slots->_selectedSlot != nullptr) {
-			map_editor->_palette->_slots->selectSlot(-1);
+        if (MapEditor::editor->_palette->_slots->_selectedSlot != nullptr) {
+            MapEditor::editor->_palette->_slots->selectSlot(-1);
         }
 
         _object = nullptr;
         return;
     }
 
-    if (!(GUI_manager->Element_pressed == nullptr || GUI_manager->Element_pressed == map_editor->_map))
+    if (!(GUI_manager->Element_pressed == nullptr || GUI_manager->Element_pressed == MapEditor::editor->_map))
         return;
 
 	if (_object->_type == ObjectType::Terrain) {
 
-        bool conditionToDraw = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && (map_editor->_palette->_tools->_toolType == ToolType::Circle || map_editor->_palette->_tools->_toolType == ToolType::Rect);
+        bool conditionToDraw = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle || MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
 
 		if (conditionToDraw) {
 
-			std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(map_editor->_map);
+			std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
 
             sf::Vector2i tileCoords;
 			tileCoords.x = (_position.x - mapa->getRect().position.x) / Tile::tileSize;
 			tileCoords.y = (_position.y - mapa->getRect().position.y) / Tile::tileSize;
 
-			int type = std::dynamic_pointer_cast<Terrain>(map_editor->_cursor_on_map->_object)->_id;
+			int type = std::dynamic_pointer_cast<Terrain>(MapEditor::editor->_cursor_on_map->_object)->_id;
 
 			std::set<std::shared_ptr<Chunk>> chunksToEdit;
 
-            int brushSize = map_editor->_palette->_brushSize;
+            int brushSize = MapEditor::editor->_palette->_brushSize;
             std::vector<std::vector<bool>> brush;
             
-            if (map_editor->_palette->_tools->_toolType == ToolType::Rect)
+            if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
                 brush = square_brushes[brushSize];
 
-            if (map_editor->_palette->_tools->_toolType == ToolType::Circle)
+            if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
                 brush = circle_brushes[brushSize];
            
 
@@ -251,7 +251,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
-		if (GUI_manager->Element_pressed == map_editor->_map) {
+		if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
 			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
 			std::shared_ptr<Animations> animations = prefab->getAnimations();
 			sf::IntRect frameRect = animations->getFrameRect(0, _frame);
@@ -279,7 +279,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
 			// positioning and adding object to map
 			objectOnMap->setPosition(position);
-			map_editor->_game_objects->addGameObject(objectOnMap);
+            MapEditor::editor->_game_objects->addGameObject(objectOnMap);
 			return;
 		}
 
@@ -294,24 +294,24 @@ void CursorOnMap::draw()
     if(_object == nullptr)
 		return;
 
-	if(!(GUI_manager->Element_hovered == map_editor->_map || GUI_manager->Element_hovered == nullptr))
+	if(!(GUI_manager->Element_hovered == MapEditor::editor->_map || GUI_manager->Element_hovered == nullptr))
 		return;
 
-	window->setView(map_editor->_camera->_view);
+	window->setView(MapEditor::editor->_camera->_view);
 
     if (_object->_type == ObjectType::Terrain) {
 
-		int brushSize = map_editor->_palette->_brushSize;
+		int brushSize = MapEditor::editor->_palette->_brushSize;
 		
         std::vector<std::vector<bool>> brush;
 
-        if (map_editor->_palette->_tools->_toolType == ToolType::Rect)
+        if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
             brush = square_brushes[brushSize];
         
-		if (map_editor->_palette->_tools->_toolType == ToolType::Circle)
+		if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
             brush = circle_brushes[brushSize];
 
-		std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(map_editor->_map);
+		std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
 
         for(int yy = 0; yy < brush.size(); yy++) {
             for(int xx = 0; xx < brush[yy].size(); xx++) {

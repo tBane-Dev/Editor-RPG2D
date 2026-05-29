@@ -2,7 +2,7 @@
 #include "Time.hpp"
 #include "Window.hpp"
 #include <iostream>
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 
 MonsterPrefab::MonsterPrefab(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider) : GameObject(name, animations, origin, collider) {
 	_type = ObjectType::Monster;
@@ -106,14 +106,14 @@ void Monster::update() {
 
 void Monster::draw() {
 
-	if (map_editor->_main_menu->_render_paths->_checkbox->_value == 1) {
+	if (MapEditor::editor->_main_menu->_render_paths->_checkbox->_value == 1) {
 		_path->draw();
 	}
 		
 
-	bool renderAllColliders = map_editor->_main_menu->_render_colliders->_checkbox->_value == 1;
+	bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
 
-	if (renderAllColliders || _prefab->_collider->cursorHover(map_editor->_cursor_on_map->_position + _prefab->getOrigin(), _position)) {
+	if (renderAllColliders || _prefab->_collider->cursorHover(MapEditor::editor->_cursor_on_map->_position + _prefab->getOrigin(), _position)) {
 		_prefab->getCollider()->draw(_position);
 	}
 	
@@ -121,7 +121,7 @@ void Monster::draw() {
 	std::shared_ptr<Animations> anim = _animator->getAnimations();
 	sf::IntRect frameRect = anim->getFrameRect(_animator->_animation, _animator->_frame);
 
-	if (map_editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
+	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
 		outlineRect.setPosition(sf::Vector2f(_position));
 		outlineRect.setOrigin(sf::Vector2f(_prefab->getOrigin()));

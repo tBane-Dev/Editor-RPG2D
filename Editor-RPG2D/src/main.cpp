@@ -16,7 +16,7 @@
 #include "PrefabsManager.hpp"
 
 #include "Editors/Editor.hpp"
-#include "Editors/MapEditor/MapEditor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Editors/MapEditor/Map/Tileset.hpp"
@@ -48,17 +48,18 @@ int main()
     cursor = std::make_shared<Cursor>();
 	GUI_manager = std::make_shared<GUIManager>();
 
-    editor_manager = std::make_shared<EditorManager>();
+    Main::editor_manager = std::make_shared<Main::EditorManager>();
 
-	map_editor = std::make_shared<MapEditor>();
-	map_editor->createTileset();
-    map_editor->createMap(5, 3);
-	map_editor->createGameObjects();
-    map_editor->createCamera();
-    map_editor->createCursorOnMap();
-    map_editor->createMainMenu();
-    map_editor->createPalette();
-    editor_manager->push_back(map_editor);
+	MapEditor::editor = std::make_shared<MapEditor::Editor>();
+	MapEditor::editor->createTileset();
+    MapEditor::editor->createMap(5, 3);
+	MapEditor::editor->createGameObjects();
+    MapEditor::editor->createCamera();
+    MapEditor::editor->createCursorOnMap();
+    MapEditor::editor->createMainMenu();
+    MapEditor::editor->createPalette();
+
+    Main::editor_manager->push_back(MapEditor::editor);
 
     // init FPS clock
     sf::Clock FPSClock;
@@ -83,7 +84,7 @@ int main()
         }
 
 		GUI_manager->Element_hovered = nullptr;
-        editor_manager->cursorHover();
+        Main::editor_manager->cursorHover();
 
 		// Handle Events
         while (const std::optional event = window->pollEvent()) {
@@ -92,14 +93,14 @@ int main()
                 window->close();
             } 
 
-            editor_manager->handleEvent(*event);
+            Main::editor_manager->handleEvent(*event);
   
         }
 
-        editor_manager->update();
+        Main::editor_manager->update();
 
         window->clear(sf::Color(47, 47, 47));
-		editor_manager->draw();
+		Main::editor_manager->draw();
         window->display();
     }
 }
