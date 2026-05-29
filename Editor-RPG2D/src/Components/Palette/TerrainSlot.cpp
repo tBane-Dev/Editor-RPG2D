@@ -1,5 +1,5 @@
 ﻿#include "Components/Palette/TerrainSlot.hpp"
-#include "Editors/MapEditor/Objects/Terrain.hpp"
+#include "Objects/Terrain.hpp"
 #include "ShaderManager.hpp"
 #include "Time.hpp"
 #include "Window.hpp"

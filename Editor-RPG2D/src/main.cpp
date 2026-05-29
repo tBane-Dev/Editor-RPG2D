@@ -22,11 +22,10 @@
 #include "Editors/MapEditor/Map/Tileset.hpp"
 #include "Editors/MapEditor/Map/Map.hpp"
 
-#include "Editors/MapEditor/Objects/Object.hpp"
-#include "Editors/MapEditor/Objects/GameObject.hpp"
-#include "Editors/MapEditor/Objects/GameObjectOnMap.hpp"
-#include "Editors/MapEditor/Objects/Monster.hpp"
-
+#include "Objects/Object.hpp"
+#include "Objects/GameObject.hpp"
+#include "Objects/Monster.hpp"
+#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 
 
 int main()

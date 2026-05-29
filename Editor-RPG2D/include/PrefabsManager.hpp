@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Editors/MapEditor/Objects/GameObject.hpp"
+#include "Objects/GameObject.hpp"
 
 
 class PrefabsManager {

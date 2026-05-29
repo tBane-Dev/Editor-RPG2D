@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GUIManager.hpp"
 #include "Controls/ButtonWithSprite.hpp"
-#include "Editors/MapEditor/Objects/Object.hpp"
+#include "Objects/Object.hpp"
 #include "Animator.hpp"
 #include "Controls/Scrollbar.hpp"
 #include "Components/Palette/Categories.hpp"

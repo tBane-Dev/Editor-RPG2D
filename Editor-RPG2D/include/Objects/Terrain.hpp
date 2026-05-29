@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Editors/MapEditor/Objects/Object.hpp"
+#include "Objects/Object.hpp"
 
 class Terrain : public Object {
 public:

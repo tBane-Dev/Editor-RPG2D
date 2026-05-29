@@ -1,6 +1,6 @@
 #pragma once
-#include "Editors/MapEditor/Objects/Object.hpp"
-#include "Editors/MapEditor/Objects/GameObject.hpp"
+#include "Objects/Object.hpp"
+#include "Objects/GameObject.hpp"
 #include "Animator.hpp"
 
 class GameObjectOnMap : public Object {

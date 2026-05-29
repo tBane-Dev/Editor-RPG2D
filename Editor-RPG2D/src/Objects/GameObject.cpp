@@ -1,7 +1,7 @@
 #pragma once
-#include "Editors/MapEditor/Objects/GameObject.hpp"
+#include "Objects/GameObject.hpp"
 #include "Window.hpp"
-#include "Editors/MapEditor/Objects/Collider.hpp"
+#include "Objects/Collider.hpp"
 
 GameObject::GameObject(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider) : Object()
 {

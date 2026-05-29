@@ -1,5 +1,5 @@
 ﻿#include "Components/Palette/Slots.hpp"
-#include "Editors/MapEditor/Objects/Terrain.hpp"
+#include "Objects/Terrain.hpp"
 #include "Components/Palette/TerrainSlot.hpp"
 #include "Components/Palette/GameObjectSlot.hpp"
 #include "PrefabsManager.hpp"

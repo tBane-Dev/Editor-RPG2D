@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Components/Palette/Slot.hpp"
-#include "Editors/MapEditor/Objects/Object.hpp"
+#include "Objects/Object.hpp"
 
 class GameObjectSlot : public Slot {
 public:

@@ -1,5 +1,5 @@
 #pragma once
-#include "Editors/MapEditor/Objects/Object.hpp"
+#include "Objects/Object.hpp"
 
 
 

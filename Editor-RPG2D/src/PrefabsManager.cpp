@@ -1,7 +1,7 @@
 #include "PrefabsManager.hpp"
 #include "DebugLog.hpp"
-#include "Editors/MapEditor/Objects/Monster.hpp"
-#include "Editors/MapEditor/Objects/Nature.hpp"
+#include "Objects/Monster.hpp"
+#include "Objects/Nature.hpp"
 
 PrefabsManager::PrefabsManager() {
 	_prefabs.clear();

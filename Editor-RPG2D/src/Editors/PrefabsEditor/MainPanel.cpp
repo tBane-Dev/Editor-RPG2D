@@ -3,7 +3,7 @@
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "DebugLog.hpp"
-#include "Editors/MapEditor/Objects/Monster.hpp"
+#include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
 
 namespace PrefabsEditor {

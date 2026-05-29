@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Editors/MapEditor/Objects/GameObjectOnMap.hpp"
+#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 
 
 class GameObjectsOnMap {

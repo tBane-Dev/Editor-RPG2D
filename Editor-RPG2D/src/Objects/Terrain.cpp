@@ -1,5 +1,5 @@
 #pragma once
-#include "Editors/MapEditor/Objects/Terrain.hpp"
+#include "Objects/Terrain.hpp"
 
 Terrain::Terrain() {
 	_id = -1;

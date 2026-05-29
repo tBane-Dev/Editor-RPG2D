@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Controls/ButtonWithSprite.hpp"
-#include "Editors/MapEditor/Objects/Object.hpp"
+#include "Objects/Object.hpp"
 
 enum class ToolType { None, Circle, Rect };
 

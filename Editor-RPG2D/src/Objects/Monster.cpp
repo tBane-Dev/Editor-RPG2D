@@ -1,4 +1,4 @@
-#include "Editors/MapEditor/Objects/Monster.hpp"
+#include "Objects/Monster.hpp"
 #include "Time.hpp"
 #include "Window.hpp"
 #include <iostream>

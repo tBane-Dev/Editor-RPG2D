@@ -1,4 +1,4 @@
-#include "Editors/MapEditor/Objects/Collider.hpp"
+#include "Objects/Collider.hpp"
 #include "Window.hpp"
 
 Collider::Collider() {

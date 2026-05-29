@@ -1,6 +1,6 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
-#include "Editors/MapEditor/Objects/Monster.hpp"
+#include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
 
 namespace MapEditor {

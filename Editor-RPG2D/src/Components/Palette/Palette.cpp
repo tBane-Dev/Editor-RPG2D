@@ -1,6 +1,6 @@
 ﻿#include "Components/Palette/Palette.hpp"
 #include "Editors/MapEditor/Editor.hpp"
-#include "Editors/MapEditor/Objects/Monster.hpp"
+#include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
 #include "Window.hpp"
 #include <Cursor.hpp>

@@ -1,5 +1,5 @@
 #pragma once
-#include "Editors/MapEditor/Objects/GameObjectOnMap.hpp"
+#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 #include "Editors/MapEditor/Map/Path.hpp"
 #include "Animator.hpp"
 

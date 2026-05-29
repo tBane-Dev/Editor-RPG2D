@@ -1,7 +1,7 @@
 #pragma once
-#include "Editors/MapEditor/Objects/Object.hpp"
+#include "Objects/Object.hpp"
 #include "AnimationsManager.hpp"
-#include "Editors/MapEditor/Objects/Collider.hpp"
+#include "Objects/Collider.hpp"
 
 class GameObject : public Object {
 public:

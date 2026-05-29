@@ -1,7 +1,7 @@
 #pragma once
 #include "Components/Panel.hpp"
 #include "Controls/TextInput.hpp"
-#include "Editors/MapEditor/Objects/Collider.hpp"
+#include "Objects/Collider.hpp"
 
 namespace PrefabsEditor {
 	class ColliderPanel : public Components::Panel {
