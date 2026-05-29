@@ -118,7 +118,7 @@ namespace PrefabsEditor {
 	}
 
 	void MainPanel::cursorHover() {
-		Panel::cursorHover();
+		Components::Panel::cursorHover();
 
 		_name->cursorHover();
 		_type->cursorHover();
@@ -130,7 +130,7 @@ namespace PrefabsEditor {
 	}
 
 	void MainPanel::handleEvent(const sf::Event& event) {
-		Panel::handleEvent(event);
+		Components::Panel::handleEvent(event);
 
 		_name->handleEvent(event);
 		_type->handleEvent(event);
@@ -141,7 +141,7 @@ namespace PrefabsEditor {
 	}
 
 	void MainPanel::update() {
-		Panel::update();
+		Components::Panel::update();
 
 		_name->update();
 		_type->update();
@@ -152,7 +152,7 @@ namespace PrefabsEditor {
 	}
 
 	void MainPanel::draw() {
-		Panel::draw();
+		Components::Panel::draw();
 
 		window->draw(*_nameText);
 		_name->draw();

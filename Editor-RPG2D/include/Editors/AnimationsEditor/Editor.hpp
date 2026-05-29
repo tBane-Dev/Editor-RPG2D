@@ -1,7 +1,12 @@
 #pragma once
 #include "Editors/Editor.hpp"
 #include "Editors/AnimationsEditor/MainMenu.hpp"
-#include "Components/Palette/Palette.hpp"
+#include "Components/Panel.hpp"
+#include "AnimationsManager.hpp"
+#include "Editors/AnimationsEditor/NamePanel.hpp"
+#include "Editors/AnimationsEditor/ListPanel.hpp"
+#include "Editors/AnimationsEditor/SpriteSheetPanel.hpp"
+#include "Editors/AnimationsEditor/PreviewPanel.hpp"
 
 namespace AnimationsEditor {
 	class Editor : public Main::Editor {
@@ -12,11 +17,22 @@ namespace AnimationsEditor {
 
 		std::shared_ptr<MainMenu> _main_menu;
 
+		std::shared_ptr<Animations> _animations;
+
+		std::shared_ptr<NamePanel> _animation_name_panel;
+		std::shared_ptr<ListPanel> _list_panel;
+		std::shared_ptr<SpriteSheetPanel> _sprite_sheet_panel;
+		std::shared_ptr<PreviewPanel> _preview_panel;
+
 		Editor();
 		~Editor();
 
 		void init();
 		void createMainMenu();
+		void createListPanel();
+		void createNamePanel();
+		void createSpriteSheetPanel();
+		void createPreviewPanel();
 
 		void cursorHover();
 		void handleEvent(const sf::Event& event);

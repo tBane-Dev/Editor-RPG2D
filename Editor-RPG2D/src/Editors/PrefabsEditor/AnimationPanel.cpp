@@ -232,7 +232,7 @@ namespace PrefabsEditor {
 	}
 
 	void AnimationPanel::cursorHover() {
-		Panel::cursorHover();
+		Components::Panel::cursorHover();
 
 		_first->cursorHover();
 		_prev->cursorHover();
@@ -247,7 +247,7 @@ namespace PrefabsEditor {
 	}
 
 	void AnimationPanel::handleEvent(const sf::Event& event) {
-		Panel::handleEvent(event);
+		Components::Panel::handleEvent(event);
 
 		_first->handleEvent(event);
 		_prev->handleEvent(event);
@@ -266,7 +266,7 @@ namespace PrefabsEditor {
 		if (!PrefabsEditor::editor)
 			return;
 
-		Panel::update();
+		Components::Panel::update();
 
 		_first->update();
 		_prev->update();
@@ -287,7 +287,7 @@ namespace PrefabsEditor {
 	}
 
 	void AnimationPanel::draw() {
-		Panel::draw();
+		Components::Panel::draw();
 
 		window->draw(*_title);
 
@@ -298,9 +298,7 @@ namespace PrefabsEditor {
 
 		sf::RenderStates states;
 		states.shader = &*checkerboard_shader;
-
 		checkerboard_shader->setUniform("rectPos", rect.getPosition());
-
 		window->draw(rect, states);
 
 		// draw animation

@@ -60,7 +60,7 @@ namespace PrefabsEditor {
 	}
 
 	void ColliderPanel::cursorHover() {
-		Panel::cursorHover();
+		Components::Panel::cursorHover();
 
 		_type->cursorHover();
 		_x->cursorHover();
@@ -70,7 +70,7 @@ namespace PrefabsEditor {
 	}
 
 	void ColliderPanel::handleEvent(const sf::Event& event) {
-		Panel::handleEvent(event);
+		Components::Panel::handleEvent(event);
 
 		_type->handleEvent(event);
 		_x->handleEvent(event);
@@ -80,7 +80,7 @@ namespace PrefabsEditor {
 	}
 
 	void ColliderPanel::update() {
-		Panel::update();
+		Components::Panel::update();
 
 		_type->update();
 		_x->update();
@@ -90,7 +90,7 @@ namespace PrefabsEditor {
 	}
 
 	void ColliderPanel::draw() {
-		Panel::draw();
+		Components::Panel::draw();
 		window->draw(*_title);
 
 		// draw checkerboard

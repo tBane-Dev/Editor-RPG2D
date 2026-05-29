@@ -25,25 +25,25 @@ namespace PrefabsEditor {
 	}
 
 	void MeshPanel::cursorHover() {
-		Panel::cursorHover();
+		Components::Panel::cursorHover();
 
 		_set_mesh->cursorHover();
 	}
 
 	void MeshPanel::handleEvent(const sf::Event& event) {
-		Panel::handleEvent(event);
+		Components::Panel::handleEvent(event);
 
 		_set_mesh->handleEvent(event);
 	}
 
 	void MeshPanel::update() {
-		Panel::update();
+		Components::Panel::update();
 
 		_set_mesh->update();
 	}
 
 	void MeshPanel::draw() {
-		Panel::draw();
+		Components::Panel::draw();
 		window->draw(*_title);
 
 		// draw checkerboard
