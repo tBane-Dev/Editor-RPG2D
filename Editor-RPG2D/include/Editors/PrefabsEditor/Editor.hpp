@@ -1,7 +1,7 @@
 #pragma once
 #include "Editors/Editor.hpp"
 #include "Editors/PrefabsEditor/MainMenu.hpp"
-#include "Components/Palette/Palette.hpp"
+#include "Editors/PrefabsEditor/Palette.hpp"
 #include "Editors/PrefabsEditor/MainPanel.hpp"
 #include "Editors/PrefabsEditor/AnimationPanel.hpp"
 #include "Editors/PrefabsEditor/ColliderPanel.hpp"

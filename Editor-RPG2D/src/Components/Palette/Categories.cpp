@@ -107,9 +107,12 @@ void Categories::setCategory(ObjectType type) {
 	
 	_selectedCategory = getCategory(type);
 
-	_selectedCategory->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected.png");
-	_selectedCategory->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected_hover.png");
-	_selectedCategory->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected_press.png");
+	if (_selectedCategory) {
+		_selectedCategory->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected.png");
+		_selectedCategory->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected_hover.png");
+		_selectedCategory->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected_press.png");
+	}
+	
 }
 
 void Categories::setPosition(sf::Vector2i position) {

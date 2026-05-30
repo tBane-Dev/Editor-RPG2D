@@ -96,9 +96,11 @@ void Tools::setTool(std::shared_ptr<ToolButton> button, ToolType type) {
 		tool->setSelect(tool == button);
 	}
 
-	_selectedTool->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\selected.png");
-	_selectedTool->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\selected_hover.png");
-	_selectedTool->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\selected_press.png");
+	if (_selectedTool) {
+		_selectedTool->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\selected.png");
+		_selectedTool->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\selected_hover.png");
+		_selectedTool->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\selected_press.png");
+	}
 }
 
 void Tools::setPosition(sf::Vector2i position) {
