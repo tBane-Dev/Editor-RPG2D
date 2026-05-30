@@ -76,9 +76,20 @@ bool CircularCollider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i pos
 void CircularCollider::draw(sf::Vector2i position, sf::Vector2f scale) {
 
 	sf::CircleShape collider((float)_radiusX);
+
 	collider.setFillColor(sf::Color(255, 0, 0, 128));
-	collider.setScale(sf::Vector2f(scale.x, scale.y * ((float)_radiusY / (float)_radiusX)));
-	collider.setOrigin(sf::Vector2f((float)_radiusX, (float)_radiusX));
+
+	collider.setOrigin(sf::Vector2f(
+		(float)_radiusX,
+		(float)_radiusX
+	));
+
+	collider.setScale(sf::Vector2f(
+		scale.x,
+		scale.y * ((float)_radiusY / (float)_radiusX)
+	));
+
 	collider.setPosition(sf::Vector2f(position));
+
 	window->draw(collider);
 }

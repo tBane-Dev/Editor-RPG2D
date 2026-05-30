@@ -80,12 +80,40 @@ namespace PrefabsEditor {
 
 		_slots->setFunction(
 			[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
+				
+				_slots->selectSlot(selectedSlotId);
+
 				std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(slot->_object);
 				editor->_object = prefab;
 				editor->_animator = std::make_shared<Animator>(prefab->getAnimations(), 0.2f);
-				editor->_palette->loadAll(prefab->_type);
-				editor->_palette->_slots->updateObjects();
-				_slots->selectSlot(selectedSlotId);
+
+				editor->_main_panel->_name->setText(prefab->_name);
+
+				// TO-DO - start - must be - move to collider panel
+
+				if (prefab->_collider->_type == ColliderType::Rectangular) {
+					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(prefab->_collider);
+					editor->_collider_panel->_collider = collider;
+					editor->_collider_panel->_type->setText(L"Rectangular");
+					editor->_collider_panel->_x->setText(std::to_wstring(collider->_rect.position.x));
+					editor->_collider_panel->_y->setText(std::to_wstring(collider->_rect.position.y));
+					editor->_collider_panel->_w->setText(std::to_wstring(collider->_rect.size.x));
+					editor->_collider_panel->_h->setText(std::to_wstring(collider->_rect.size.y));
+					
+				}
+				else if (prefab->_collider->_type == ColliderType::Circular) {
+					std::shared_ptr<CircularCollider> collider = std::dynamic_pointer_cast<CircularCollider>(prefab->_collider);
+					editor->_collider_panel->_collider = collider;
+					editor->_collider_panel->_type->setText(L"Circular");
+					editor->_collider_panel->_x->setText(std::to_wstring(collider->_x));
+					editor->_collider_panel->_y->setText(std::to_wstring(collider->_y));
+					editor->_collider_panel->_w->setText(std::to_wstring(collider->_radiusX*2));
+					editor->_collider_panel->_h->setText(std::to_wstring(collider->_radiusY*2));
+				}
+
+				// TO-DO - end
+				
+
 			}
 		);
 	}

@@ -17,19 +17,19 @@ namespace PrefabsEditor {
 
 		_x = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"x", 24, 18);
 		_x->setPosition(sf::Vector2i(_rect.position.x + 84, _type->getPosition().y + _type->getSize().y + 8));
-		_x->setText(L"45");
+		_x->setText(L"0");
 
 		_y = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"y", 24, 18);
 		_y->setPosition(sf::Vector2i(_rect.position.x + 84, _x->getPosition().y + _x->getSize().y + 8));
-		_y->setText(L"110");
+		_y->setText(L"0");
 
 		_w = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"width", 24, 18);
 		_w->setPosition(sf::Vector2i(_rect.position.x + 84, _y->getPosition().y + _y->getSize().y + 8));
-		_w->setText(L"100");
+		_w->setText(L"0");
 
 		_h = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"height", 24, 18);
 		_h->setPosition(sf::Vector2i(_rect.position.x + 84, _w->getPosition().y + _w->getSize().y + 8));
-		_h->setText(L"65");
+		_h->setText(L"0");
 
 		// texts labels
 		int x = _x->getPosition().x - 32;
@@ -125,7 +125,11 @@ namespace PrefabsEditor {
 				_collider = circularCollider;
 				sf::Vector2f spriteSize = sf::Vector2f(animator->getAnimations()->getFrameRect(0, 0).size);
 				sf::Vector2f scale((float)rect.getSize().x / spriteSize.x, (float)rect.getSize().y / spriteSize.y);
-				sf::Vector2i colliderPosition(rect.getPosition().x + (int)((float)circularCollider->_x * scale.x), rect.getPosition().y + (int)((float)circularCollider->_y * scale.y));
+				sf::Vector2i colliderPosition(
+					rect.getPosition().x + (float)(circularCollider->_x) * scale.x,
+					rect.getPosition().y + (float)(circularCollider->_y) * scale.y
+				);
+
 				_collider->draw(colliderPosition, scale);
 			}
 

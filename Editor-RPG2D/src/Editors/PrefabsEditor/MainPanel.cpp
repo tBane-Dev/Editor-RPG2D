@@ -4,6 +4,7 @@
 #include "Window.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
+#include "Objects/Nature.hpp"
 #include "PrefabsManager.hpp"
 
 namespace PrefabsEditor {
@@ -50,11 +51,10 @@ namespace PrefabsEditor {
 				collider = std::make_shared<CircularCollider>(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()) / 2, std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()) / 2);
 			}
 
-			std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(
+			std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(
 				_name->getText(),
 				PrefabsEditor::editor->_animator->getAnimations(),
 				sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
-				4,
 				collider
 			);
 

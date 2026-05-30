@@ -135,11 +135,12 @@ void PrefabsManager::loadPrefabs() {
     }
 
     {
+
         std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(
             L"boulder_1",
             animations_manager->getAnimations(L"assets\\tex\\boulder_1.png"),
-            sf::Vector2i(61, 74),
-			std::make_shared<CircularCollider>(30, 37, 30, 37)
+            sf::Vector2i(61, 68),
+			std::make_shared<CircularCollider>(61, 68, 47, 36)
         );
         addPrefab(prefab);
     }
@@ -148,8 +149,8 @@ void PrefabsManager::loadPrefabs() {
         std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(
             L"boulder_2",
             animations_manager->getAnimations(L"assets\\tex\\boulder_2.png"),
-            sf::Vector2i(62, 74),
-			std::make_shared<CircularCollider>(31, 37, 31, 37)
+            sf::Vector2i(62, 70),
+			std::make_shared<CircularCollider>(62, 70, 47, 37)
         );
         addPrefab(prefab);
     }
