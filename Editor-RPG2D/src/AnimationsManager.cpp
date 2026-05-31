@@ -14,6 +14,13 @@ Animations::Animations(std::wstring path, int animationsCount, int framesCount, 
         }
 }
 
+Animations::Animations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount) {
+	_path = name;
+	_animationsCount = animationsCount;
+	_framesCount = framesCount;
+	_texture = texture;
+}
+
 Animations::~Animations() {
 	
 }
@@ -51,6 +58,39 @@ std::shared_ptr<Animations> AnimationsManager::getAnimations(std::wstring path) 
 	}
 	
 	return nullptr;
+}
+
+std::shared_ptr<Animations> AnimationsManager::getAnimations(int index) {
+	if (index >= 0 && index < (int)_animations.size()) {
+		return _animations[index];
+	}
+
+	return nullptr;
+}
+
+int AnimationsManager::getAnimationsID(std::wstring path) {
+	for (int i = 0; i < _animations.size(); i++) {
+		if (_animations[i]->_path == path) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void AnimationsManager::removeAnimations(int index) {
+	if (index >= 0 && index < (int)_animations.size()) {
+		_animations.erase(_animations.begin() + index);
+	}
+}
+
+int AnimationsManager::getAnimationsCount() {
+	return (int)_animations.size();
+}
+
+void AnimationsManager::addAnimations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount) {
+	std::shared_ptr<Animations> animations = std::make_shared<Animations>(name, texture, animationsCount, framesCount);
+	_animations.push_back(animations);
 }
 
 void AnimationsManager::loadAnimations(std::wstring path, int animationsCount, int framesCount) {

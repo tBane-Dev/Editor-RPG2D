@@ -15,10 +15,14 @@ public:
 	bool _activatedByEnter;
 
 	sf::Color _rectInactiveColor;
+
 	sf::Color _rectIdleColor;
 	sf::Color _rectHoverColor;
 	sf::Color _rectPressColor;
-	sf::Color _rectSelectColor;
+
+	sf::Color _rectSelectIdleColor;
+	sf::Color _rectSelectHoverColor;
+	sf::Color _rectSelectPressColor;
 
 	int _rectBorderWidth;
 	sf::Color _rectInactiveBorderColor;
@@ -39,8 +43,8 @@ public:
 	Button();
 	virtual ~Button();
 
-	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, sf::Color inactiveColor);
-	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, sf::Color inactiveColor, int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor, sf::Color inactiveBorderColor);
+	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectIdleColor, sf::Color selecHoverColor, sf::Color selectPressColor, sf::Color inactiveColor);
+	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectIdleColor, sf::Color selecHoverColor, sf::Color selectPressColor, sf::Color inactiveColor, int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor, sf::Color inactiveBorderColor);
 	
 	virtual void setSize(sf::Vector2i size);
 	virtual sf::Vector2i getSize();

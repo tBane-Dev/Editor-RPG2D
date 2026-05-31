@@ -9,6 +9,7 @@ public:
     int _animationsCount;
     int _framesCount;
     
+    Animations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount);
     Animations(std::wstring path, int animationsCount, int framesCount, bool& loadingStatus);
     ~Animations();
     
@@ -24,7 +25,13 @@ public:
     AnimationsManager();
     ~AnimationsManager();
     
+    void addAnimations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount);
     std::shared_ptr<Animations> getAnimations(std::wstring path);
+    std::shared_ptr<Animations> getAnimations(int index);
+    int getAnimationsID(std::wstring path);
+    void removeAnimations(int index);
+    int getAnimationsCount();
+
     void loadAnimations(std::wstring path, int animationsCount, int framesCount);
     void loadAllAnimations();
 };

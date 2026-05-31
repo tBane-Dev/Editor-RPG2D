@@ -8,7 +8,7 @@ extern int basic_text_size;
 extern sf::Color basic_text_color;
 extern int basic_text_rect_height;
 
-// main menu
+// menu boxes (main menu)
 extern int menu_height;
 extern int menu_horizontal_margin;
 extern int menu_padding;
@@ -21,6 +21,7 @@ extern sf::Color menubox_idle_color;
 extern sf::Color menubox_hover_color;
 extern sf::Color menubox_press_color;
 
+// option boxes (main menu)
 extern int optionbox_height;
 extern int optionbox_font_size;
 extern int optionbox_left_margin;
@@ -32,5 +33,16 @@ extern sf::Color optionbox_select_color;
 extern sf::Color optionbox_idle_color;
 extern sf::Color optionbox_hover_color;
 extern sf::Color optionbox_press_color;
+
+// buttons
+extern sf::Color button_inactive_color;
+extern sf::Color button_select_idle_color;
+extern sf::Color button_select_hover_color;
+extern sf::Color button_select_press_color;
+extern sf::Color button_idle_color;
+extern sf::Color button_hover_color;
+extern sf::Color button_press_color;
+extern sf::Color button_text_color;
+
 
 void loadTheme();

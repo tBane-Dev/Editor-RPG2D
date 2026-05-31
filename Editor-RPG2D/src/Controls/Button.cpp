@@ -13,7 +13,10 @@ Button::Button() : Element() {
 	_rectIdleColor = sf::Color::Transparent;
 	_rectHoverColor = sf::Color::Transparent;
 	_rectPressColor = sf::Color::Transparent;
-	_rectSelectColor = sf::Color::Transparent;
+
+	_rectSelectIdleColor = sf::Color::Transparent;
+	_rectSelectHoverColor = sf::Color::Transparent;
+	_rectSelectPressColor = sf::Color::Transparent;
 
 	_rectBorderWidth = 0;
 	_rectIdleBorderColor = sf::Color::Transparent;
@@ -40,20 +43,30 @@ Button::~Button() {
 
 }
 
-void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, sf::Color inactiveColor) {
+void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectIdleColor, sf::Color selectHoverColor, sf::Color selectPressColor, sf::Color inactiveColor) {
 	_rectIdleColor = idleColor;
 	_rectHoverColor = hoverColor;
 	_rectPressColor = pressColor;
-	_rectSelectColor = selectColor;
+
+	_rectSelectIdleColor = selectIdleColor;
+	_rectSelectHoverColor = selectHoverColor;
+	_rectSelectPressColor = selectPressColor;
+
 	_rectInactiveColor = inactiveColor;
 }
 
-void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, sf::Color inactiveColor,
+void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectIdleColor, sf::Color selectHoverColor, sf::Color selectPressColor, sf::Color inactiveColor,
+	
 	int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor, sf::Color inactiveBorderColor) {
+	
 	_rectIdleColor = idleColor;
 	_rectHoverColor = hoverColor;
 	_rectPressColor = pressColor;
-	_rectSelectColor = selectColor;
+
+	_rectSelectIdleColor = selectIdleColor;
+	_rectSelectHoverColor = selectHoverColor;
+	_rectSelectPressColor = selectPressColor;
+
 	_rectInactiveColor = inactiveColor;
 
 	_rectBorderWidth = borderWidth;
@@ -187,30 +200,44 @@ void Button::draw() {
 
 	sf::RectangleShape rect(rectSize);
 	if (_isActive) {
-		switch (_state) {
-		case ButtonState::Pressed:
-			rect.setFillColor(_rectPressColor);
-			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectPressBorderColor);
-			break;
-		case ButtonState::Hover:
-			rect.setFillColor(_rectHoverColor);
-			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectHoverBorderColor);
-			break;
-		case ButtonState::Idle:
-			if (_isSelected) {
-				rect.setFillColor(_rectSelectColor);
+		if (_isSelected) {
+			switch (_state) {
+			case ButtonState::Pressed:
+				rect.setFillColor(_rectSelectPressColor);
 				rect.setOutlineThickness((float)_rectBorderWidth);
 				rect.setOutlineColor(_rectSelectBorderColor);
-			}
-			else {
+				break;
+			case ButtonState::Hover:
+				rect.setFillColor(_rectSelectHoverColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectSelectBorderColor);
+				break;
+			case ButtonState::Idle:
+				rect.setFillColor(_rectSelectIdleColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectSelectBorderColor);
+				break;
+			};
+		}
+		else {
+			switch (_state) {
+			case ButtonState::Pressed:
+				rect.setFillColor(_rectPressColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectPressBorderColor);
+				break;
+			case ButtonState::Hover:
+				rect.setFillColor(_rectHoverColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectHoverBorderColor);
+				break;
+			case ButtonState::Idle:
 				rect.setFillColor(_rectIdleColor);
 				rect.setOutlineThickness((float)_rectBorderWidth);
 				rect.setOutlineColor(_rectIdleBorderColor);
+				break;
 			};
-			break;
-		};
+		}
 	}
 	else {
 		rect.setFillColor(_rectInactiveColor);

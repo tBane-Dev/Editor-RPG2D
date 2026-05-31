@@ -12,7 +12,7 @@ namespace PrefabsEditor {
 		_title->setFillColor(basic_text_color);
 		_title->setPosition(sf::Vector2f(32, 48));
 
-		_object = prefabs_manager->getPrefab(L"golem");
+		_object = nullptr;
 	}
 
 	Editor::~Editor() {

@@ -21,9 +21,11 @@ namespace AnimationsEditor {
 	void Editor::init() {
 		createMainMenu();
 
-		_animations = animations_manager->getAnimations(L"assets\\tex\\monsters\\golem.png");
+		//_animations = animations_manager->getAnimations(L"assets\\tex\\monsters\\golem.png");
+		//_animator = std::make_shared<Animator>(_animations, 0.2f);
 
 		createListPanel();
+		createActionsPanel();
 		createNamePanel();
 		createSpriteSheetPanel();
 		createPreviewPanel();
@@ -35,6 +37,10 @@ namespace AnimationsEditor {
 
 	void Editor::createListPanel() {
 		_list_panel = std::make_shared<ListPanel>(_margin);
+	}
+
+	void Editor::createActionsPanel() {
+		_actions_panel = std::make_shared<ActionsPanel>(_margin);
 	}
 
 	void Editor::createNamePanel() {
@@ -53,6 +59,7 @@ namespace AnimationsEditor {
 		_main_menu->cursorHover();
 		_animation_name_panel->cursorHover();
 		_list_panel->cursorHover();
+		_actions_panel->cursorHover();
 		_sprite_sheet_panel->cursorHover();
 		_preview_panel->cursorHover();
 
@@ -62,6 +69,7 @@ namespace AnimationsEditor {
 		_main_menu->handleEvent(event);
 		_animation_name_panel->handleEvent(event);
 		_list_panel->handleEvent(event);
+		_actions_panel->handleEvent(event);
 		_sprite_sheet_panel->handleEvent(event);
 		_preview_panel->handleEvent(event);
 
@@ -69,9 +77,14 @@ namespace AnimationsEditor {
 
 	void Editor::update() {
 
+		if (_animator) {
+			_animator->update();
+		}
+
 		_main_menu->update();
 		_animation_name_panel->update();
 		_list_panel->update();
+		_actions_panel->update();
 		_sprite_sheet_panel->update();
 		_preview_panel->update();
 
@@ -84,6 +97,7 @@ namespace AnimationsEditor {
 		window->draw(*_title);
 		_animation_name_panel->draw();
 		_list_panel->draw();
+		_actions_panel->draw();
 		_sprite_sheet_panel->draw();
 		_preview_panel->draw();	
 

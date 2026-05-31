@@ -32,9 +32,9 @@ namespace PrefabsEditor {
 
 		_add_prefab = std::make_shared<ButtonWithTextAndSprite>(
 			L"Add prefab",
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
 			sf::Vector2i(startPosition.x, startPosition.y)
 		);
 
@@ -69,17 +69,17 @@ namespace PrefabsEditor {
 
 		_duplicate_prefab = std::make_shared<ButtonWithTextAndSprite>(
 			L"Duplicate prefab",
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
 			sf::Vector2i(startPosition.x, startPosition.y + _add_prefab->getSize().y + distance_between_buttons)
 		);
 
 		_remove_prefab = std::make_shared<ButtonWithTextAndSprite>(
 			L"Remove prefab",
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
 			sf::Vector2i(startPosition.x, _duplicate_prefab->getPosition().y + _duplicate_prefab->getSize().y + distance_between_buttons)
 		);
 

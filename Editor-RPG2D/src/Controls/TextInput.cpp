@@ -429,13 +429,13 @@ void TextInput::draw() {
 	sf::RectangleShape rect(rectSize);
 
 	if (_editState == TextInputEditState::TextEntered) {
-		rect.setFillColor(sf::Color(48,48,48));
+		rect.setFillColor(sf::Color(47,47,47));
 	}
 	else if(_state == TextInputState::Hover) {
-		rect.setFillColor(sf::Color(64,64,64));
+		rect.setFillColor(sf::Color(63,63,63));
 	}
 	else {
-		rect.setFillColor(sf::Color(24,24,24));
+		rect.setFillColor(sf::Color(23,23,23));
 	}
 	
 	rect.setOutlineThickness((float)_border);

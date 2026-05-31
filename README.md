@@ -8,13 +8,16 @@
 - [License](#license)
 
 ## Description
-**Editor-RPG2D** is advanced program to create games RPG 2D.
+**Editor-RPG2D** is simple program to create games RPG 2D.
 
 ## Screenshots
 ![Screenshot](screenshots/01.png)
 ![Screenshot](screenshots/02.png)
 ![Screenshot](screenshots/03.png)
 ![Screenshot](screenshots/04.png)
+![Screenshot](screenshots/05.png)
+![Screenshot](screenshots/06.png)
+![Screenshot](screenshots/07.png)
 
 ## Installation
 1. Download and install Visual Studio 2022

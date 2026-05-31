@@ -14,44 +14,44 @@ namespace PrefabsEditor {
 
 		// buttons
 		_first = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\first.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\first_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\first_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_press.png"));
 
 		_prev = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\prev.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\prev_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\prev_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_press.png"));
 
 		_play = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\play.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\play_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\play_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_press.png"));
 
 		_pause = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\pause.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\pause_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\pause_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_press.png"));
 
 		_next = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\next.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\next_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\next_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_press.png"));
 
 		_last = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\last.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\last_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\last_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_press.png"));
 
 		_anim_prev = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_prev.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_prev_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_prev_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_press.png"));
 
 		_anim_next = std::make_shared<ButtonWithSprite>(
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_next.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_next_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\anim_next_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_press.png"));
 
 		int padding = 10;
 		int total_width = _rect.size.x - padding * 2;
@@ -76,44 +76,44 @@ namespace PrefabsEditor {
 		_anim_next->setPosition(sf::Vector2i(_last->getPosition().x + btn_w - 80, _anim_prev->getPosition().y));
 
 		_first->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->setFrame(0);
+			if (editor->_animator)
+				editor->_animator->setFrame(0);
 			};
 
 		_prev->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->prevFrame();
+			if (editor->_animator)
+				editor->_animator->prevFrame();
 			};
 
 
 		_play->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->play();
+			if (editor->_animator)
+				editor->_animator->play();
 			};
 
 		_pause->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->pause();
+			if (editor->_animator)
+				editor->_animator->pause();
 			};
 
 		_next->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->nextFrame();
+			if (editor->_animator)
+				editor->_animator->nextFrame();
 			};
 
 		_last->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->lastFrame();
+			if (editor->_animator)
+				editor->_animator->lastFrame();
 			};
 
 		_anim_prev->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->prevAnimation();
+			if (editor->_animator)
+				editor->_animator->prevAnimation();
 			};
 
 		_anim_next->_onclick_func = [this]() {
-			if (PrefabsEditor::editor->_animator)
-				PrefabsEditor::editor->_animator->nextAnimation();
+			if (editor->_animator)
+				editor->_animator->nextAnimation();
 			};
 
 		// stats rect
@@ -175,9 +175,9 @@ namespace PrefabsEditor {
 
 		_set_animation = std::make_shared<ButtonWithTextAndSprite>(
 			L"Set Animation",
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\prefabs_editor\\bottomButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_press.png"),
 			sf::Vector2i(_statsRect.position.x + _statsRect.size.x / 2 - 192 / 2, _statsRect.position.y + _statsRect.size.y + 32)
 		);
 	}
@@ -188,9 +188,9 @@ namespace PrefabsEditor {
 
 	void AnimationPanel::loadStatsValues() {
 
-		if (!PrefabsEditor::editor) return;
+		if (!editor) return;
 
-		std::shared_ptr<Animator> animator = PrefabsEditor::editor->_animator;
+		std::shared_ptr<Animator> animator = editor->_animator;
 
 		if (!animator) {
 			_animations_name->setString(L"--");
@@ -236,7 +236,7 @@ namespace PrefabsEditor {
 
 		_first->cursorHover();
 		_prev->cursorHover();
-		(PrefabsEditor::editor->_animator == nullptr || PrefabsEditor::editor->_animator->_isPlaying) ? _pause->cursorHover() : _play->cursorHover();
+		(editor->_animator == nullptr || editor->_animator->_isPlaying) ? _pause->cursorHover() : _play->cursorHover();
 		_next->cursorHover();
 		_last->cursorHover();
 
@@ -251,7 +251,7 @@ namespace PrefabsEditor {
 
 		_first->handleEvent(event);
 		_prev->handleEvent(event);
-		(PrefabsEditor::editor->_animator == nullptr || PrefabsEditor::editor->_animator->_isPlaying) ? _pause->handleEvent(event) : _play->handleEvent(event);
+		(editor->_animator == nullptr || editor->_animator->_isPlaying) ? _pause->handleEvent(event) : _play->handleEvent(event);
 		_next->handleEvent(event);
 		_last->handleEvent(event);
 
@@ -263,7 +263,7 @@ namespace PrefabsEditor {
 	}
 
 	void AnimationPanel::update() {
-		if (!PrefabsEditor::editor)
+		if (!editor)
 			return;
 
 		Components::Panel::update();
@@ -278,8 +278,8 @@ namespace PrefabsEditor {
 		_anim_prev->update();
 		_anim_next->update();
 
-		if (PrefabsEditor::editor->_animator)
-			PrefabsEditor::editor->_animator->update();
+		if (editor->_animator)
+			editor->_animator->update();
 
 		loadStatsValues();
 
@@ -302,7 +302,7 @@ namespace PrefabsEditor {
 		window->draw(rect, states);
 
 		// draw animation
-		std::shared_ptr<Animator> animator = PrefabsEditor::editor->_animator;
+		std::shared_ptr<Animator> animator = editor->_animator;
 		if (animator) {
 			std::shared_ptr<Animations> animations = animator->getAnimations();
 			sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);

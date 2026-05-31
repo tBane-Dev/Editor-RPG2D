@@ -88,8 +88,9 @@ namespace PrefabsEditor {
 				editor->_animator = std::make_shared<Animator>(prefab->getAnimations(), 0.2f);
 
 				editor->_main_panel->_name->setText(prefab->_name);
-
-				// TO-DO - start - must be - move to collider panel
+				//editor->_main_panel->_type->setText(prefab->_type.toString()); // TO-DO - enum to string
+				
+				// TO-DO 2 - start - must be - move to collider panel
 
 				if (prefab->_collider->_type == ColliderType::Rectangular) {
 					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(prefab->_collider);
@@ -111,7 +112,7 @@ namespace PrefabsEditor {
 					editor->_collider_panel->_h->setText(std::to_wstring(collider->_radiusY*2));
 				}
 
-				// TO-DO - end
+				// TO-DO 2 - end
 				
 
 			}

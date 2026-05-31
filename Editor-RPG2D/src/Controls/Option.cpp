@@ -9,7 +9,10 @@ Option::Option(std::wstring text, std::wstring shortcut, sf::Vector2i position) 
 	_rectIdleColor = optionbox_idle_color;
 	_rectHoverColor = optionbox_hover_color;
 	_rectPressColor = optionbox_press_color;
-	_rectSelectColor = optionbox_select_color;
+
+	_rectSelectIdleColor = optionbox_select_color;
+	_rectSelectHoverColor = optionbox_select_color;
+	_rectSelectPressColor = optionbox_select_color;
 
 	_text = std::make_unique<sf::Text>(basicFont, text, optionbox_font_size);
 
@@ -67,31 +70,7 @@ int Option::getShortcutTextWidth() {
 void Option::draw() {
 
 	// draw rectangle
-	sf::Vector2f rectSize;
-	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
-	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
-	sf::RectangleShape rect(rectSize);
-	switch (_state) {
-	case ButtonState::Pressed:
-		rect.setFillColor(_rectPressColor);
-		break;
-	case ButtonState::Hover:
-		rect.setFillColor(_rectHoverColor);
-		break;
-	case ButtonState::Idle:
-		if (_isSelected) {
-			rect.setFillColor(_rectSelectColor);
-		}
-		else {
-			rect.setFillColor(_rectIdleColor);
-		};
-		break;
-	};
-	sf::Vector2f rectPosition;
-	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
-	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
-	rect.setPosition(rectPosition);
-	window->draw(rect);
+	Button::draw();
 
 	// draw text
 	sf::Color textColor = (_isActive) ? menu_text_color : menu_text_inactive_color;

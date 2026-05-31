@@ -8,7 +8,7 @@
 
 namespace AnimationsEditor {
 
-	NamePanel::NamePanel(sf::Vector2i margin) : Panel(sf::Vector2i(712, 128), sf::Vector2i(420 + margin.x, AnimationsEditor::editor->_main_menu->getSize().y + margin.y)) {
+	NamePanel::NamePanel(sf::Vector2i margin) : Panel(sf::Vector2i(912, 128), sf::Vector2i(420 + margin.x, AnimationsEditor::editor->_main_menu->getSize().y + margin.y)) {
 
 		_nameText = std::make_unique<sf::Text>(basicFont, L"Name", 20);
 		_nameText->setFillColor(basic_text_color);
@@ -20,10 +20,20 @@ namespace AnimationsEditor {
 		if(AnimationsEditor::editor->_animations) {
 			_name->setText(AnimationsEditor::editor->_animations->_path);
 		}
+
+		
 	}
 
 	NamePanel::~NamePanel() {
 
+	}
+
+	void NamePanel::loadAnimations() {
+
+		_name->setText(L"");
+
+		if(editor->_animations)
+			_name->setText(editor->_animations->_path);
 	}
 
 	void NamePanel::cursorHover() {

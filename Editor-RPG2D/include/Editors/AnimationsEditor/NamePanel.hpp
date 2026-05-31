@@ -9,10 +9,12 @@ namespace AnimationsEditor {
 
 		std::unique_ptr<sf::Text> _nameText;
 		std::shared_ptr<TextInput> _name;
+		std::shared_ptr<ButtonWithTextAndSprite> _loadBtn;
 
 		NamePanel(sf::Vector2i margin);
 		~NamePanel();
 
+		void loadAnimations();
 		void cursorHover();
 		void handleEvent(const sf::Event& event);
 		void update();

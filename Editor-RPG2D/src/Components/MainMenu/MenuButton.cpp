@@ -17,7 +17,9 @@ namespace Components {
 		_rectIdleColor = menubox_idle_color;
 		_rectHoverColor = menubox_hover_color;
 		_rectPressColor = menubox_press_color;
-		_rectSelectColor = menubox_open_color;
+		_rectSelectIdleColor = menubox_open_color;
+		_rectSelectHoverColor = menubox_open_color;
+		_rectSelectPressColor = menubox_open_color;
 
 		_state = ButtonState::Idle;
 		_isSelected = false;
@@ -164,41 +166,7 @@ namespace Components {
 
 	void MenuButton::draw() {
 
-		sf::Vector2f rectSize;
-		rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
-		rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
-
-		sf::RectangleShape rect(rectSize);
-		switch (_state) {
-		case ButtonState::Pressed:
-			rect.setFillColor(_rectPressColor);
-			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectPressBorderColor);
-			break;
-		case ButtonState::Hover:
-			rect.setFillColor(_rectHoverColor);
-			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectHoverBorderColor);
-			break;
-		case ButtonState::Idle:
-			if (!_options.empty() && _isSelected) {
-				rect.setFillColor(_rectSelectColor);
-				rect.setOutlineThickness((float)_rectBorderWidth);
-				rect.setOutlineColor(_rectSelectBorderColor);
-			}
-			else {
-				rect.setFillColor(_rectIdleColor);
-				rect.setOutlineThickness((float)_rectBorderWidth);
-				rect.setOutlineColor(_rectIdleBorderColor);
-			};
-			break;
-		};
-
-		sf::Vector2f rectPosition;
-		rectPosition.x = float(_rect.position.x + _rectBorderWidth);
-		rectPosition.y = float(_rect.position.y + _rectBorderWidth);
-		rect.setPosition(rectPosition);
-		window->draw(rect);
+		Button::draw();
 
 		window->draw(*_text);
 
