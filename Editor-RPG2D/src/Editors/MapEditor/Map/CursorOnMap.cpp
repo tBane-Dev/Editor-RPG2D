@@ -254,6 +254,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 		if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
 			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
 			std::shared_ptr<Animations> animations = prefab->getAnimations();
+            if (!animations) return;
+
 			sf::IntRect frameRect = animations->getFrameRect(0, _frame);
 
 			float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
@@ -346,6 +348,10 @@ void CursorOnMap::draw()
 
 		std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
 		std::shared_ptr<Animations> animations = prefab->getAnimations();
+        
+        if (!animations)
+            return;
+
 		sf::IntRect frameRect = animations->getFrameRect(0, _frame);
 
 		float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);

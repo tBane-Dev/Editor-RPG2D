@@ -15,6 +15,7 @@ public:
     std::shared_ptr<GameObject> getPrefab(std::wstring path);
 	std::vector<std::shared_ptr<GameObject>>& getAllPrefabs();
 	std::vector<std::shared_ptr<GameObject>> getPrefabs(ObjectType type);
+    void removePrefabsByAnimations(int animationID);
     void loadPrefabs();
 };
 

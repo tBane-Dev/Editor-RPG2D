@@ -36,6 +36,10 @@ void GameObjectSlot::draw() {
 	if (_animator != nullptr) {
 
 		std::shared_ptr<Animations> animations = _animator->getAnimations();
+		
+		if (!animations)
+			return;
+
 		sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
 
 		_objectTexture = animations->getTexture();

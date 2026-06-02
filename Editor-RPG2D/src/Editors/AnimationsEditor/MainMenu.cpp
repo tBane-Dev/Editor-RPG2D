@@ -3,6 +3,7 @@
 #include "Controls/OptionWithIcon.hpp"
 #include "Editors/Editor.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 
 namespace AnimationsEditor {
 
@@ -36,6 +37,8 @@ namespace AnimationsEditor {
 		_file_back_to_map_editor->_onclick_func = []() {
 			Main::editor_manager->pop_back();
 			AnimationsEditor::editor = nullptr;
+			
+			MapEditor::editor->createPalette();
 			};
 
 		_file_exit = std::make_shared<OptionWithIcon>(

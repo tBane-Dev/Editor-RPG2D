@@ -9,9 +9,10 @@ Animations::Animations(std::wstring path, int animationsCount, int framesCount, 
 	_framesCount = framesCount;
 	
 	_texture = textures_manager->getTexture(path);
-        if (!_texture) {
-                loadingStatus = false;
-        }
+    
+	if (_texture.expired()) {
+        loadingStatus = false;
+    }
 }
 
 Animations::Animations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount) {
@@ -26,18 +27,30 @@ Animations::~Animations() {
 }
     
 sf::IntRect Animations::getFrameRect(int animation, int frame) {
-	sf::IntRect frameRect;
-	frameRect.size.x = _texture->getSize().x / _framesCount;
-	frameRect.size.y = _texture->getSize().y / _animationsCount;
 	
-	frameRect.position.x = frame * frameRect.size.x;
-	frameRect.position.y = animation * frameRect.size.y;
+	if (_texture.expired()) 
+		return sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
+
+	std::shared_ptr<Texture> texture = _texture.lock();
+
+	if (texture) {
+		sf::IntRect frameRect;
+
+		frameRect.size.x = texture->getSize().x / _framesCount;
+		frameRect.size.y = texture->getSize().y / _animationsCount;
+
+		frameRect.position.x = frame * frameRect.size.x;
+		frameRect.position.y = animation * frameRect.size.y;
+
+		return frameRect;
+	}
 	
-	return frameRect;
+	
+	
 }
 
 std::shared_ptr<Texture> Animations::getTexture() {
-	return _texture;
+	return _texture.lock();
 }
 
 AnimationsManager::AnimationsManager() {

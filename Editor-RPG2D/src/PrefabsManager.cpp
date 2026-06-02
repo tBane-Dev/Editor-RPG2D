@@ -44,6 +44,15 @@ std::vector<std::shared_ptr<GameObject>> PrefabsManager::getPrefabs(ObjectType t
     return prefabsOfType;
 }
 
+void PrefabsManager::removePrefabsByAnimations(int animationID) {
+
+	std::shared_ptr<Animations> animation = animations_manager->getAnimations(animationID);
+
+    std::erase_if(_prefabs, [&](const std::shared_ptr<GameObject>& prefab) 
+        { return prefab->_animations.lock() == animation; }
+    );
+}
+
 void PrefabsManager::loadPrefabs() {
 	
     {

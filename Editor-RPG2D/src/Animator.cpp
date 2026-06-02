@@ -1,7 +1,7 @@
 #include "Animator.hpp"
 #include "Time.hpp"
 
-Animator::Animator(std::shared_ptr<Animations> animations, float interval) {
+Animator::Animator(std::weak_ptr<Animations> animations, float interval) {
 	_animations = animations;
 	_animation = 0;
 	_frame = 0;
@@ -16,7 +16,7 @@ Animator::~Animator() {
 
 void Animator::setAnimation(int animation) {
 
-	if (animation < 0 || animation >= _animations->_animationsCount) 
+	if (animation < 0 || animation >= _animations.lock()->_animationsCount)
 		return;
 
 	_animation = animation;
@@ -26,7 +26,7 @@ void Animator::setAnimation(int animation) {
 
 void Animator::setFrame(int frame) {
 
-	if (frame < 0 || frame >= _animations->_framesCount) 
+	if (frame < 0 || frame >= _animations.lock()->_framesCount) 
 		return;
 
 	_frame = frame;
@@ -36,12 +36,12 @@ void Animator::setFrame(int frame) {
 void Animator::prevAnimation() {
 	_animation--;
 	if (_animation < 0)
-		_animation = _animations->_animationsCount - 1;
+		_animation = _animations.lock()->_animationsCount - 1;
 }
 
 void Animator::nextAnimation() {
 	_animation++;
-	if (_animation >= _animations->_animationsCount)
+	if (_animation >= _animations.lock()->_animationsCount)
 		_animation = 0;
 }
 
@@ -53,23 +53,23 @@ void Animator::firstFrame() {
 void Animator::prevFrame() {
 	_frame--;
 	if (_frame < 0)
-		_frame = _animations->_framesCount - 1;
+		_frame = _animations.lock()->_framesCount - 1;
 }
 
 void Animator::nextFrame() {
 
 	_frame++;
-	if (_frame >= _animations->_framesCount)
+	if (_frame >= _animations.lock()->_framesCount)
 		_frame = 0;
 }
 
 void Animator::lastFrame() {
-	_frame = _animations->_framesCount - 1;
+	_frame = _animations.lock()->_framesCount - 1;
 	_timer = 0.0f;
 }
 
 void Animator::setRandFrame() {
-	_frame = rand() % _animations->_framesCount;
+	_frame = rand() % _animations.lock()->_framesCount;
 	_timer = 0.0f;
 }
 
@@ -90,6 +90,7 @@ void Animator::stop() {
 
 void Animator::update() {
 	if (!_isPlaying) return;
+	if (_animations.expired()) return;
 
 	_timer += deltaTime.asSeconds();
 
@@ -98,12 +99,12 @@ void Animator::update() {
 		_timer = 0.0f;
 		_frame++;
 
-		if (_frame >= _animations->_framesCount) {
+		if (_frame >= _animations.lock()->_framesCount) {
 			_frame = 0;
 		}
 	}
 }
 
 std::shared_ptr<Animations> Animator::getAnimations() {
-	return _animations;
+	return _animations.lock();
 }

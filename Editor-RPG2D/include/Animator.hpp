@@ -4,14 +4,14 @@
 
 class Animator {
 public:
-	std::shared_ptr<Animations> _animations;
+	std::weak_ptr<Animations> _animations;
 	int _animation;
 	int _frame;
 	float _timer;
 	float _interval;
 	bool _isPlaying;
 
-	Animator(std::shared_ptr<Animations> animations, float interval);
+	Animator(std::weak_ptr<Animations> animations, float interval);
 	~Animator();
 
 	

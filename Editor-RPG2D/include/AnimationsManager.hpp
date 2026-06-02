@@ -5,7 +5,7 @@
 class Animations {
 public:
     std::wstring _path;
-    std::shared_ptr<Texture> _texture;
+    std::weak_ptr<Texture> _texture;
     int _animationsCount;
     int _framesCount;
     

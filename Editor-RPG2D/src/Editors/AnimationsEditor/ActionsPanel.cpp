@@ -5,6 +5,7 @@
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 
 namespace AnimationsEditor {
 	
@@ -74,7 +75,11 @@ namespace AnimationsEditor {
 
 			int animationID = editor->_list_panel->_selectedItemIndex;
 			if (animationID >= 0) {
+
+				MapEditor::editor->_game_objects->removePrefabsByAnimations(animationID);
+				prefabs_manager->removePrefabsByAnimations(animationID);
 				animations_manager->removeAnimations(animationID);
+
 				editor->_list_panel->loadAll();
 				int newID = editor->_list_panel->_selectedItemIndex;
 				if (newID >= animations_manager->getAnimationsCount()) newID = animations_manager->getAnimationsCount() - 1;
@@ -85,7 +90,6 @@ namespace AnimationsEditor {
 				editor->_animation_name_panel->loadAnimations();;
 				editor->_sprite_sheet_panel->loadAnimations();
 				editor->_preview_panel->loadAnimations();
-				
 			}
 			};
 	}

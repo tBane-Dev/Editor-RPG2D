@@ -24,7 +24,7 @@ sf::Vector2i GameObject::getOrigin() {
 }
 
 std::shared_ptr<Animations> GameObject::getAnimations() {
-	return _animations;
+	return _animations.lock();
 }
 
 std::shared_ptr<Collider> GameObject::getCollider() {

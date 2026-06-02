@@ -11,6 +11,7 @@ public:
     ~GameObjectsOnMap(); 
     
 	void addGameObject(std::shared_ptr<GameObjectOnMap> gameObjectOnMap);
+    void removeGameObjectsByAnimations(int animationID);
     void sort();
 
     virtual void update();

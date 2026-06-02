@@ -38,6 +38,15 @@ void GameObjectsOnMap::addGameObject(std::shared_ptr<GameObjectOnMap> gameObject
 	_gameObjectsOnMap.push_back(gameObjectOnMap);
 }
 
+void GameObjectsOnMap::removeGameObjectsByAnimations(int animationID) {
+
+	std::shared_ptr<Animations> animation = animations_manager->getAnimations(animationID);
+
+	std::erase_if(_gameObjectsOnMap, [&](const std::shared_ptr<GameObjectOnMap>& object)
+		{ return object->_prefab->_animations.lock() == animation; }
+	);
+}
+
 void GameObjectsOnMap::sort() {
 	std::sort(_gameObjectsOnMap.begin(), _gameObjectsOnMap.end(), [](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
 		
