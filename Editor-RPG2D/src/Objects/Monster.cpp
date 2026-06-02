@@ -119,16 +119,16 @@ void Monster::draw() {
 	
 
 	std::shared_ptr<Animations> anim = _animator->getAnimations();
+	
+	if (!anim) {
+		drawFrame();
+		return;
+	}
+
 	sf::IntRect frameRect = anim->getFrameRect(_animator->_animation, _animator->_frame);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
-		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
-		outlineRect.setPosition(sf::Vector2f(_position));
-		outlineRect.setOrigin(sf::Vector2f(_prefab->getOrigin()));
-		outlineRect.setFillColor(sf::Color::Transparent);
-		outlineRect.setOutlineThickness(2);
-		outlineRect.setOutlineColor(sf::Color::Red);
-		window->draw(outlineRect);
+		drawFrame();
 	}
 
 	sf::Sprite sprite(*anim->getTexture()->_texture);

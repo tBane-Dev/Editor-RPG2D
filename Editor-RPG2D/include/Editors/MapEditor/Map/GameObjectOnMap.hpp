@@ -11,6 +11,9 @@ public:
 
 	GameObjectOnMap(std::shared_ptr<GameObject> prefab);
 	~GameObjectOnMap();
+
+	void drawFrame();
+
 	virtual void setPosition(sf::Vector2i position);
 	virtual void update();
 	virtual void draw();

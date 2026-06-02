@@ -4,6 +4,7 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "Animator.hpp"
+#include "Theme.hpp"
 
 GameObjectOnMap::GameObjectOnMap(std::shared_ptr<GameObject> prefab) : Object() {
 	_prefab = prefab;
@@ -13,6 +14,92 @@ GameObjectOnMap::GameObjectOnMap(std::shared_ptr<GameObject> prefab) : Object() 
 
 GameObjectOnMap::~GameObjectOnMap() {
 
+}
+
+void GameObjectOnMap::drawFrame() {
+
+	int x, y, w, h;
+
+	if (_prefab->getAnimations()) {
+		w = _prefab->getAnimations()->getFrameRect(0, 0).size.x;
+		h = _prefab->getAnimations()->getFrameRect(0, 0).size.y;
+		x = _position.x;
+		y = _position.y;
+
+		if (_prefab->_type == ObjectType::Monster) {
+			x -= _prefab->getOrigin().x;
+			y -= _prefab->getOrigin().y;
+		}
+	}
+	else {
+
+		x = _position.x;
+		y = _position.y;
+		w = 96;
+		h = 96;
+
+		if (_prefab->getCollider()->_type == ColliderType::Circular) {
+			std::shared_ptr<CircularCollider> circularCollider = std::dynamic_pointer_cast<CircularCollider>(_prefab->getCollider());
+			w = circularCollider->_radiusX * 2;
+			w += circularCollider->_radiusY;
+			if (w < 96) w = 96;
+			h = w;
+			x = _position.x - w / 2;
+			y += circularCollider->_radiusY - h;
+		}
+		else {
+			std::shared_ptr<RectangularCollider> rectangularCollider = std::dynamic_pointer_cast<RectangularCollider>(_prefab->getCollider());
+			w = rectangularCollider->_rect.size.x;
+			w += rectangularCollider->_rect.size.y;
+			if (w < 96) w = 96;
+			h = w;
+			x = _position.x - w / 2;
+			y += rectangularCollider->_rect.size.y / 2 - h;
+		}
+	}
+
+	float thickness = 2.f;
+	float paddingLeft = 14.f;
+	float textPadding = 6.f;
+
+	sf::Color color = sf::Color(255, 30, 45);
+
+	sf::Text text(basicFont, _prefab->getName(), 14);
+	text.setFillColor(color);
+	text.setStyle(sf::Text::Bold);
+	text.setPosition(sf::Vector2f(x + paddingLeft, y - 10));
+
+	auto bounds = text.getLocalBounds();
+
+	float gapStart = paddingLeft - textPadding;
+	float gapEnd = paddingLeft + bounds.size.x + textPadding;
+
+	sf::RectangleShape topLeft(sf::Vector2f(gapStart, thickness));
+	topLeft.setPosition(sf::Vector2f(x, y));
+	topLeft.setFillColor(color);
+
+	sf::RectangleShape topRight(sf::Vector2f(w - gapEnd, thickness));
+	topRight.setPosition(sf::Vector2f(x + gapEnd, y));
+	topRight.setFillColor(color);
+
+	sf::RectangleShape left(sf::Vector2f(thickness, h));
+	left.setPosition(sf::Vector2f(x, y));
+	left.setFillColor(color);
+
+	sf::RectangleShape right(sf::Vector2f(thickness, h));
+	right.setPosition(sf::Vector2f(x + w - thickness, y));
+	right.setFillColor(color);
+
+	sf::RectangleShape bottom(sf::Vector2f(w, thickness));
+	bottom.setPosition(sf::Vector2f(x, y + h - thickness));
+	bottom.setFillColor(color);
+
+	window->draw(topLeft);
+	window->draw(topRight);
+	window->draw(left);
+	window->draw(right);
+	window->draw(bottom);
+	window->draw(text);
 }
 
 void GameObjectOnMap::setPosition(sf::Vector2i position) {
@@ -32,15 +119,11 @@ void GameObjectOnMap::draw() {
 	}
 
 	std::shared_ptr<Animations> animations = _animator->getAnimations();
+
 	sf::IntRect frameRect = animations->getFrameRect(0,0);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
-		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
-		outlineRect.setPosition(sf::Vector2f(_position));
-		outlineRect.setFillColor(sf::Color::Transparent);
-		outlineRect.setOutlineThickness(2);
-		outlineRect.setOutlineColor(sf::Color::Red);
-		window->draw(outlineRect);
+		drawFrame();
 	}
 
 	sf::Sprite sprite(*animations->getTexture()->_texture);

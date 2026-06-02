@@ -16,6 +16,9 @@ Animator::~Animator() {
 
 void Animator::setAnimation(int animation) {
 
+	if(_animations.expired())
+		return;
+
 	if (animation < 0 || animation >= _animations.lock()->_animationsCount)
 		return;
 
@@ -57,6 +60,9 @@ void Animator::prevFrame() {
 }
 
 void Animator::nextFrame() {
+
+	if (_animations.expired())
+		return;
 
 	_frame++;
 	if (_frame >= _animations.lock()->_framesCount)
