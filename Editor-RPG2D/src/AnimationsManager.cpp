@@ -104,9 +104,10 @@ int AnimationsManager::getAnimationsCount() {
 	return (int)_animations.size();
 }
 
-void AnimationsManager::addAnimations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount) {
+int AnimationsManager::addAnimations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount) {
 	std::shared_ptr<Animations> animations = std::make_shared<Animations>(name, texture, animationsCount, framesCount);
 	_animations.push_back(animations);
+	return _animations.size() - 1;
 }
 
 void AnimationsManager::loadAnimations(std::wstring path, int animationsCount, int framesCount) {

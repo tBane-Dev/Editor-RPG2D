@@ -51,13 +51,13 @@ namespace AnimationsEditor {
 			if (!editor->_animations)
 				return;
 
-			if(!editor->_animations->getTexture())
+			if (!editor->_animations->getTexture())
 				return;
 
-			if(editor->_sprite_sheet_panel->_w->getText().empty() || editor->_sprite_sheet_panel->_h->getText().empty())
+			if (editor->_sprite_sheet_panel->_w->getText().empty() || editor->_sprite_sheet_panel->_h->getText().empty())
 				return;
 
-			animations_manager->addAnimations(
+			int newID = animations_manager->addAnimations(
 				editor->_animation_name_panel->_name->getText(),
 				editor->_animations->getTexture(),
 				editor->_animations->_animationsCount,
@@ -65,8 +65,14 @@ namespace AnimationsEditor {
 			);
 
 			editor->_list_panel->loadAll();
-			editor->_list_panel->selectItem(animations_manager->getAnimationsCount() - 1);
-			};
+
+			if (newID >= std::floor((float)editor->_list_panel->_scrollbar->getValue() / (float)basic_text_rect_height) + editor->_list_panel->_items.size() - 2) {
+				editor->_list_panel->_scrollbar->setValue(editor->_list_panel->_scrollbar->_max_value);
+				editor->_list_panel->loadAll();
+			}
+
+			editor->_list_panel->selectItem(newID);
+		};
 
 		_removeBtn->_onclick_func = []() {
 			
@@ -91,7 +97,7 @@ namespace AnimationsEditor {
 				editor->_sprite_sheet_panel->loadAnimations();
 				editor->_preview_panel->loadAnimations();
 			}
-			};
+		};
 	}
 
 	ActionsPanel::~ActionsPanel() {

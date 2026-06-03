@@ -25,7 +25,7 @@ public:
     AnimationsManager();
     ~AnimationsManager();
     
-    void addAnimations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount);
+    int addAnimations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount);
     std::shared_ptr<Animations> getAnimations(std::wstring path);
     std::shared_ptr<Animations> getAnimations(int index);
     int getAnimationsID(std::wstring path);
