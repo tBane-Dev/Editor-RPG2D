@@ -75,6 +75,10 @@ void Animator::lastFrame() {
 }
 
 void Animator::setRandFrame() {
+
+	if (_animations.expired())
+		return;
+
 	_frame = rand() % _animations.lock()->_framesCount;
 	_timer = 0.0f;
 }

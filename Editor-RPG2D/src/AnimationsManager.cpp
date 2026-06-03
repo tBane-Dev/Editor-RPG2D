@@ -50,6 +50,9 @@ sf::IntRect Animations::getFrameRect(int animation, int frame) {
 }
 
 std::shared_ptr<Texture> Animations::getTexture() {
+	if (_texture.expired())
+		return nullptr;
+
 	return _texture.lock();
 }
 

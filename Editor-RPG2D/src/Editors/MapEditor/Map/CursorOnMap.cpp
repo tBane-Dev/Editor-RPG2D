@@ -254,12 +254,14 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 		if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
 			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
 			std::shared_ptr<Animations> animations = prefab->getAnimations();
-            if (!animations) return;
+            
+            float frameWidth = 128;
+            float frameHeight = 128;
 
-			sf::IntRect frameRect = animations->getFrameRect(0, _frame);
-
-			float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
-			float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
+            if (animations) {
+                frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
+                frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
+            }
 
 			// position of object on the map, aligning to the grid
 			sf::Vector2i position;
@@ -349,13 +351,15 @@ void CursorOnMap::draw()
 		std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
 		std::shared_ptr<Animations> animations = prefab->getAnimations();
         
-        if (!animations)
-            return;
+        float frameWidth = 128;
+        float frameHeight = 128;
+		sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
 
-		sf::IntRect frameRect = animations->getFrameRect(0, _frame);
-
-		float frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
-		float frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
+        if (animations) {
+            frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
+            frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
+			frameRect = animations->getFrameRect(0, 0);
+        }
 
 		sf::Vector2i position;
 		position.x = (_position.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
@@ -368,11 +372,13 @@ void CursorOnMap::draw()
 		outlineRect.setOutlineColor(sf::Color::Green);
 		window->draw(outlineRect);
 
-		sf::Sprite sprite(*animations->getTexture()->_texture);
-		sprite.setTextureRect(frameRect);
+        if (animations) {
+            sf::Sprite sprite(*animations->getTexture()->_texture);
+            sprite.setTextureRect(frameRect);
 
-		sprite.setPosition(sf::Vector2f(position));
-		window->draw(sprite);
+            sprite.setPosition(sf::Vector2f(position));
+            window->draw(sprite);
+        }
 		return;
 	}
 
