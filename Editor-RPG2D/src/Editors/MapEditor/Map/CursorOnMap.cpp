@@ -145,7 +145,7 @@ std::vector<std::vector<std::vector<bool>>> square_brushes = {
 CursorOnMap::CursorOnMap() {
 
     Main::render_window->setView(MapEditor::editor->_camera->_view);
-    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(cursor->_position));
+    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(Main::cursor->_position));
 
 	_object = nullptr;
 }
@@ -158,7 +158,7 @@ void CursorOnMap::update() {
 
 
     Main::render_window->setView(MapEditor::editor->_camera->_view);
-    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(cursor->_position));
+    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(Main::cursor->_position));
 }
 
 void CursorOnMap::handleEvent(const sf::Event& event) {

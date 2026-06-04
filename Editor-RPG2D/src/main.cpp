@@ -46,7 +46,7 @@ int main()
 
     loadShaders();
 
-    cursor = std::make_shared<Cursor>();
+    Main::cursor = std::make_shared<Main::Cursor>();
 	GUI_manager = std::make_shared<GUIManager>();
 
     Main::editor_manager = std::make_shared<Main::EditorsManager>();
@@ -72,7 +72,7 @@ int main()
 		currentTime = mainClock.getElapsedTime();
 		deltaTime = currentTime - prevTime;
 
-        cursor->update();
+        Main::cursor->update();
 
         // FPS timer
         float FPS = 1.0f / FPSClock.restart().asSeconds();

@@ -66,7 +66,7 @@ void Checkbox::click() {
 void Checkbox::cursorHover() {
 
 	if (_value > -1) {
-		if (_rect.contains(cursor->_position)) {
+		if (_rect.contains(Main::cursor->_position)) {
 			GUI_manager->Element_hovered = this->shared_from_this();
 		}
 	}

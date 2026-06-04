@@ -2,16 +2,18 @@
 #include <SFML/Graphics.hpp>
 #include "RenderWindow.hpp"
 
-class Cursor {
-public:
-	sf::Vector2i _position;
-	
-	Cursor();
-	~Cursor();
+namespace Main {
+	class Cursor {
+	public:
+		sf::Vector2i _position;
 
-	void update();
-	void handleEvent(const sf::Event& event);
-	void draw();
-};
+		Cursor();
+		~Cursor();
 
-extern std::shared_ptr<Cursor> cursor;
+		void update();
+		void handleEvent(const sf::Event& event);
+		void draw();
+	};
+
+	extern std::shared_ptr<Cursor> cursor;
+}
