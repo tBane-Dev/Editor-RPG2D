@@ -1,5 +1,5 @@
 ﻿#include "Components/Palette/Categories.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
 
@@ -33,7 +33,7 @@ void CategoryButton::draw() {
 	if (_categoryTexture) {
 		sf::Sprite sprite(*_categoryTexture->_texture);
 		sprite.setPosition(sf::Vector2f(_rect.position));
-		window->draw(sprite);
+		Main::render_window->draw(sprite);
 	}
 }
 
@@ -177,9 +177,9 @@ void Categories::draw() {
 	background.setFillColor(sf::Color(31, 31, 31));
 	background.setOutlineThickness(2);
 	background.setOutlineColor(sf::Color(63, 63, 63));
-	window->draw(background);
+	Main::render_window->draw(background);
 
-	window->draw(*_text);
+	Main::render_window->draw(*_text);
 
 	_prev->draw();
 	_next->draw();

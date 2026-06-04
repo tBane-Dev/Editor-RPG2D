@@ -1,6 +1,6 @@
 ﻿#include "Controls/TextInput.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Time.hpp"
 #include "SFML/Graphics.hpp"
 #include <iostream>
@@ -446,7 +446,7 @@ void TextInput::draw() {
 	rectPosition.y = (float)(_rect.position.y + _border);
 	rect.setPosition(rectPosition);
 
-	window->draw(rect);
+	Main::render_window->draw(rect);
 
 	if (!(_selectionStart == -1 && _selectionEnd == -1) && _selectionStart != _selectionEnd) {
 
@@ -468,16 +468,16 @@ void TextInput::draw() {
 		selectionRect.setPosition(selectionRectPosition);
 		selectionRect.setFillColor(sf::Color(31, 31, 127, 255));
 
-		window->draw(selectionRect);
+		Main::render_window->draw(selectionRect);
 
 	}
 
 	// draw text
 	if(_textStr.empty() && _editState != TextInputEditState::TextEntered) {
-		window->draw(*_defaultText);
+		Main::render_window->draw(*_defaultText);
 	}
 	else {
-		window->draw(*_text);
+		Main::render_window->draw(*_text);
 	}
 	
 
@@ -487,7 +487,7 @@ void TextInput::draw() {
 		sf::RectangleShape cursor(sf::Vector2f(2, basicFont.getLineSpacing(_characterSize)));
 		cursor.setFillColor(sf::Color::Red);
 		cursor.setPosition(_text->findCharacterPos(_cursorPosition));
-		window->draw(cursor);
+		Main::render_window->draw(cursor);
 	}
 		
 

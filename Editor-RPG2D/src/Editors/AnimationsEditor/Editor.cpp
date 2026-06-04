@@ -1,7 +1,7 @@
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 namespace AnimationsEditor {
 	Editor::Editor() {
@@ -94,7 +94,7 @@ namespace AnimationsEditor {
 
 		GUI_manager->setView();
 
-		window->draw(*_title);
+		Main::render_window->draw(*_title);
 		_animation_name_panel->draw();
 		_list_panel->draw();
 		_actions_panel->draw();

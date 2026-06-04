@@ -1,7 +1,7 @@
 #include "Editors/AnimationsEditor/NamePanel.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
@@ -58,7 +58,7 @@ namespace AnimationsEditor {
 	void NamePanel::draw() {
 		Components::Panel::draw();
 
-		window->draw(*_nameText);
+		Main::render_window->draw(*_nameText);
 		_name->draw();
 
 	}

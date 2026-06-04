@@ -3,7 +3,7 @@
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include <iostream>
 #include <memory>
 
@@ -249,5 +249,5 @@ void Button::draw() {
 	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
 	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
 	rect.setPosition(rectPosition);
-	window->draw(rect);
+	Main::render_window->draw(rect);
 }

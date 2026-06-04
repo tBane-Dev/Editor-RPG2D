@@ -2,7 +2,7 @@
 #include <unordered_set>
 #include "Editors/MapEditor/Map/Map.hpp"
 #include <iostream>
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
 Path::Path() {
@@ -136,7 +136,7 @@ void Path::draw() {
 
 	for(auto& point : _pathPoints) {
 		pointShape.setPosition(sf::Vector2f(map_rect.position) + sf::Vector2f(point));
-		window->draw(pointShape);
+		Main::render_window->draw(pointShape);
 	}
 
 	// edge points
@@ -145,8 +145,8 @@ void Path::draw() {
 	edgePointShape.setFillColor(sf::Color::Blue);
 
 	edgePointShape.setPosition(sf::Vector2f(map_rect.position) + sf::Vector2f(_startPoint));
-	window->draw(edgePointShape);
+	Main::render_window->draw(edgePointShape);
 
 	edgePointShape.setPosition(sf::Vector2f(map_rect.position) + sf::Vector2f(_endPoint));
-	window->draw(edgePointShape);
+	Main::render_window->draw(edgePointShape);
 }

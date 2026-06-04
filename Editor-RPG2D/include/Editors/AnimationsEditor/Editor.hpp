@@ -1,5 +1,5 @@
 #pragma once
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include "Editors/AnimationsEditor/MainMenu.hpp"
 #include "Components/Panel.hpp"
 #include "AnimationsManager.hpp"

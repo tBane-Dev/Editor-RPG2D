@@ -2,7 +2,7 @@
 #include "Objects/Terrain.hpp"
 #include "ShaderManager.hpp"
 #include "Time.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 sf::Vector2i TerrainSlot::tileRects[3][3] =
 {
@@ -56,7 +56,7 @@ void TerrainSlot::draw() {
 	sf::RenderStates states;
 	states.shader = &*terrain_shader;
 
-	terrain_shader->setUniform("resolution", sf::Vector2f(window->getSize()));
+	terrain_shader->setUniform("resolution", sf::Vector2f(Main::render_window->getSize()));
 	terrain_shader->setUniform("time", currentTime.asSeconds());
 	terrain_shader->setUniform("startPos", sf::Vector2f(_rect.position));
 	std::shared_ptr<Texture> texture = textures_manager->getTexture(L"assets\\tex\\tileset.png");
@@ -73,7 +73,7 @@ void TerrainSlot::draw() {
 			sprite.setPosition(sf::Vector2f(_rect.position) + offset + sf::Vector2f(x * tileSize.x, y * tileSize.y));
 			sprite.setTextureRect(sf::IntRect(sf::Vector2i(tileRects[y][x].x * 64, terrain->_id * 64), sf::Vector2i(16, 16)));
 
-			window->draw(sprite, states);
+			Main::render_window->draw(sprite, states);
 		}
 	}
 }

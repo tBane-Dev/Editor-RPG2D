@@ -2,7 +2,7 @@
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 Option::Option(std::wstring text, std::wstring shortcut, sf::Vector2i position) : Button() {
 
@@ -78,6 +78,6 @@ void Option::draw() {
 	_text->setFillColor(textColor);
 	_shortcut_text->setFillColor(textColor);
 
-	window->draw(*_text);
-	window->draw(*_shortcut_text);
+	Main::render_window->draw(*_text);
+	Main::render_window->draw(*_shortcut_text);
 }

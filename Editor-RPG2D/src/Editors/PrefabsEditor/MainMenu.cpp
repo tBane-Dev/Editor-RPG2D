@@ -1,7 +1,7 @@
 #include "Editors/PrefabsEditor/MainMenu.hpp"
 #include "Components/MainMenu/MenuButton.hpp"
 #include "Controls/OptionWithIcon.hpp"
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
 
 namespace PrefabsEditor {

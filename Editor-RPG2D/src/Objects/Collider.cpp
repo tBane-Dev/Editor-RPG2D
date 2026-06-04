@@ -1,5 +1,5 @@
 #include "Objects/Collider.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 Collider::Collider() {
 
@@ -45,7 +45,7 @@ void RectangularCollider::draw(sf::Vector2i position, sf::Vector2f scale) {
 	sf::RectangleShape collider(sf::Vector2f(_rect.size));
 	collider.setFillColor(sf::Color(255, 0, 0, 128));
 	collider.setPosition(sf::Vector2f(position));
-	window->draw(collider);
+	Main::render_window->draw(collider);
 }
 
 CircularCollider::CircularCollider(int x, int y, int radiusX, int radiusY) : Collider() {
@@ -91,5 +91,5 @@ void CircularCollider::draw(sf::Vector2i position, sf::Vector2f scale) {
 
 	collider.setPosition(sf::Vector2f(position));
 
-	window->draw(collider);
+	Main::render_window->draw(collider);
 }

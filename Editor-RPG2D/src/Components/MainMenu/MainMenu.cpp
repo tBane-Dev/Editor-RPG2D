@@ -1,7 +1,7 @@
 ﻿#include "Components/MainMenu/MainMenu.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "Components/MainMenu/MenuButton.hpp"
 #include "DebugLog.hpp"
@@ -19,7 +19,7 @@ namespace Components {
 
 	void MainMenu::resize() {
 		sf::Vector2i rectSize;
-		rectSize.x = (int)(window->getSize().x);
+		rectSize.x = (int)(Main::render_window->getSize().x);
 		rectSize.y = menu_height;
 
 		_rect.size = rectSize;
@@ -164,7 +164,7 @@ namespace Components {
 			rect.setPosition((sf::Vector2f)(_open_menu_button->_options.front()->getPosition()));
 			rect.setOutlineThickness((float)(optionbox_border_width));
 			rect.setOutlineColor(optionbox_border_color);
-			window->draw(rect);
+			Main::render_window->draw(rect);
 
 			for (auto& option : _open_menu_button->_options)
 				option->draw();
@@ -173,7 +173,7 @@ namespace Components {
 		sf::RectangleShape rect(sf::Vector2f(_rect.size));
 		rect.setFillColor(menu_bar_color);
 		rect.setPosition(sf::Vector2f(_rect.position));
-		window->draw(rect);
+		Main::render_window->draw(rect);
 
 		for (auto& mb : _menu_boxes)
 			mb->draw();

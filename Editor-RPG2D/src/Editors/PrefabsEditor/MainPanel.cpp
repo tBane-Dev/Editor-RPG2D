@@ -1,7 +1,7 @@
 #include "Editors/PrefabsEditor/MainPanel.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "Objects/Nature.hpp"
@@ -154,10 +154,10 @@ namespace PrefabsEditor {
 	void MainPanel::draw() {
 		Components::Panel::draw();
 
-		window->draw(*_nameText);
+		Main::render_window->draw(*_nameText);
 		_name->draw();
 
-		window->draw(*_typeText);
+		Main::render_window->draw(*_typeText);
 		_type->draw();
 
 		_add_prefab->draw();

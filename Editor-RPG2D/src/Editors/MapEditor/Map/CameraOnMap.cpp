@@ -1,5 +1,5 @@
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
@@ -11,7 +11,7 @@ const float CameraOnMap::moveSpeed = 512.0f;
 CameraOnMap::CameraOnMap() {
 
 	_view = sf::View();
-	_view.setSize(sf::Vector2f(window->getSize()));
+	_view.setSize(sf::Vector2f(Main::render_window->getSize()));
 	_view.setCenter(sf::Vector2f(0,0));
 }
 
@@ -24,7 +24,7 @@ void CameraOnMap::handleEvent(const sf::Event& event) {
 }
 
 void CameraOnMap::setView() {
-	window->setView(_view);
+	Main::render_window->setView(_view);
 }
 
 void CameraOnMap::update() {
@@ -45,6 +45,6 @@ void CameraOnMap::update() {
 		_position.x += moveSpeed * deltaTime.asSeconds();
 	}
 
-	_view.setSize(sf::Vector2f(window->getSize()));
+	_view.setSize(sf::Vector2f(Main::render_window->getSize()));
 	_view.setCenter(sf::Vector2f(_position));
 }

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 class Cursor {
 public:

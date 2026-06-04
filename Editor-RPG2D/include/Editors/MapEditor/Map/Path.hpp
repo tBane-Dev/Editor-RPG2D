@@ -1,4 +1,4 @@
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "SFML/Graphics.hpp"
 #include "Editors/MapEditor/Map/Map.hpp"
 

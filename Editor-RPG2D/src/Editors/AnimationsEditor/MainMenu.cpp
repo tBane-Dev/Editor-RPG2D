@@ -1,7 +1,7 @@
 #include "Editors/AnimationsEditor/MainMenu.hpp"
 #include "Components/MainMenu/MenuButton.hpp"
 #include "Controls/OptionWithIcon.hpp"
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 

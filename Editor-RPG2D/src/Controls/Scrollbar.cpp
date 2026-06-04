@@ -1,5 +1,5 @@
 ﻿#include "Controls/Scrollbar.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Cursor.hpp"
 #include <iostream>
 #include "TexturesManager.hpp"
@@ -194,28 +194,28 @@ void Scrollbar::draw() {
 	// textures 
 	sf::Sprite upArrow(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar\\up.png")->_texture);
 	upArrow.setPosition(sf::Vector2f(_rect.position.x, _rect.position.y));
-	window->draw(upArrow);
+	Main::render_window->draw(upArrow);
 
 	sf::Sprite downArrow(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar\\down.png")->_texture);
 	downArrow.setPosition(sf::Vector2f(_rect.position.x, _rect.position.y + _rect.size.y - 32));
-	window->draw(downArrow);
+	Main::render_window->draw(downArrow);
 
 	sf::Sprite center(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar\\center.png")->_texture);
 	center.setPosition(sf::Vector2f(_rect.position.x, _rect.position.y + 32));
 	center.setScale(sf::Vector2f(1, float(_rect.size.y - 64) / 32.f));
-	window->draw(center);
+	Main::render_window->draw(center);
 
 	sf::Sprite sliderTop(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar\\slider_top.png")->_texture);
 	sliderTop.setPosition(sf::Vector2f(_slider.position.x, _slider.position.y));
-	window->draw(sliderTop);
+	Main::render_window->draw(sliderTop);
 
 	sf::Sprite sliderCenter(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar\\slider_center.png")->_texture);
 	sliderCenter.setPosition(sf::Vector2f(_slider.position.x, _slider.position.y + 32));
 	sliderCenter.setScale(sf::Vector2f(1, float(_slider.size.y - 64) / 32.f));
-	window->draw(sliderCenter);
+	Main::render_window->draw(sliderCenter);
 
 	sf::Sprite sliderBottom(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar\\slider_bottom.png")->_texture);
 	sliderBottom.setPosition(sf::Vector2f(_slider.position.x, _slider.position.y + _slider.size.y - 32));
-	window->draw(sliderBottom);
+	Main::render_window->draw(sliderBottom);
 
 }

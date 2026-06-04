@@ -1,6 +1,6 @@
 #pragma once
 #include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "Animator.hpp"
@@ -94,12 +94,12 @@ void GameObjectOnMap::drawFrame() {
 	bottom.setPosition(sf::Vector2f(x, y + h - thickness));
 	bottom.setFillColor(color);
 
-	window->draw(topLeft);
-	window->draw(topRight);
-	window->draw(left);
-	window->draw(right);
-	window->draw(bottom);
-	window->draw(text);
+	Main::render_window->draw(topLeft);
+	Main::render_window->draw(topRight);
+	Main::render_window->draw(left);
+	Main::render_window->draw(right);
+	Main::render_window->draw(bottom);
+	Main::render_window->draw(text);
 }
 
 void GameObjectOnMap::setPosition(sf::Vector2i position) {
@@ -129,5 +129,5 @@ void GameObjectOnMap::draw() {
 	sf::Sprite sprite(*animations->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setTextureRect(frameRect);
-	window->draw(sprite);
+	Main::render_window->draw(sprite);
 }

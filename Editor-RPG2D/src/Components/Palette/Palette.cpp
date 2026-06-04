@@ -2,8 +2,8 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
-#include "Window.hpp"
-#include <Cursor.hpp>
+#include "RenderWindow.hpp"
+#include "Cursor.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
 #include "DebugLog.hpp"
 
@@ -12,8 +12,8 @@ namespace Components {
 	Palette::Palette() : Element() {
 		sf::Vector2i size;
 		size.x = 600;
-		size.y = window->getSize().y - MapEditor::editor->_main_menu->getSize().y;
-		_rect = sf::IntRect(sf::Vector2i(window->getSize().x - size.x, MapEditor::editor->_main_menu->getSize().y), size);
+		size.y = Main::render_window->getSize().y - MapEditor::editor->_main_menu->getSize().y;
+		_rect = sf::IntRect(sf::Vector2i(Main::render_window->getSize().x - size.x, MapEditor::editor->_main_menu->getSize().y), size);
 
 		_categories = std::make_shared<Categories>();
 		_tools = std::make_shared<Tools>();
@@ -184,7 +184,7 @@ namespace Components {
 			sf::RectangleShape rect(sf::Vector2f(_rect.size));
 			rect.setFillColor(sf::Color(31, 31, 31));
 			rect.setPosition(sf::Vector2f(_rect.position));
-			window->draw(rect);
+			Main::render_window->draw(rect);
 
 			_categories->draw();
 			if (_categories->_selectedType == ObjectType::Terrain)

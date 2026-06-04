@@ -1,5 +1,5 @@
 ﻿#include "Components/Palette/GameObjectSlot.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 GameObjectSlot::GameObjectSlot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : Slot(texture, hoverTexture, pressTexture, position) {
 	_object = nullptr;
@@ -54,6 +54,6 @@ void GameObjectSlot::draw() {
 		_objectSprite->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(40, 40));
 		_objectSprite->setOrigin(sf::Vector2f(frameWidth / 2.f, frameHeight / 2.f));
 
-		window->draw(*_objectSprite);
+		Main::render_window->draw(*_objectSprite);
 	}
 }

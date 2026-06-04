@@ -2,7 +2,7 @@
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 ButtonWithSprite::ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position)
 : Button() {
@@ -51,6 +51,6 @@ void ButtonWithSprite::draw() {
 
 	sf::Sprite sprite(*texture->_texture);
 	sprite.setPosition(sf::Vector2f(_rect.position));
-	window->draw(sprite);
+	Main::render_window->draw(sprite);
 
 }

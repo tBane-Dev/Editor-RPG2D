@@ -3,7 +3,7 @@
 #include "Editors/PrefabsEditor/Editor.hpp"
 #include "Theme.hpp"
 #include "ShaderManager.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 namespace PrefabsEditor {
 
@@ -289,7 +289,7 @@ namespace PrefabsEditor {
 	void AnimationPanel::draw() {
 		Components::Panel::draw();
 
-		window->draw(*_title);
+		Main::render_window->draw(*_title);
 
 		// draw checkerboard
 		sf::RectangleShape rect(sf::Vector2f(sf::Vector2f(256, 256)));
@@ -299,7 +299,7 @@ namespace PrefabsEditor {
 		sf::RenderStates states;
 		states.shader = &*checkerboard_shader;
 		checkerboard_shader->setUniform("rectPos", rect.getPosition());
-		window->draw(rect, states);
+		Main::render_window->draw(rect, states);
 
 		// draw animation
 		std::shared_ptr<Animator> animator = editor->_animator;
@@ -311,7 +311,7 @@ namespace PrefabsEditor {
 			sprite.setTextureRect(frameRect);
 			sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
 			sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
-			window->draw(sprite);
+			Main::render_window->draw(sprite);
 		}
 
 		// draw buttons
@@ -331,23 +331,23 @@ namespace PrefabsEditor {
 		statsRectShape.setFillColor(sf::Color(24, 24, 24, 255));
 		statsRectShape.setOutlineThickness(m);
 		statsRectShape.setOutlineColor(sf::Color(0, 0, 0, 255));
-		window->draw(statsRectShape);
+		Main::render_window->draw(statsRectShape);
 
 		// texts labels
-		window->draw(*_animations_name_label);
-		window->draw(*_animations_current_label);
-		window->draw(*_animations_count_label);
-		window->draw(*_frame_label);
-		window->draw(*_frames_count_label);
-		window->draw(*_frame_size_label);
+		Main::render_window->draw(*_animations_name_label);
+		Main::render_window->draw(*_animations_current_label);
+		Main::render_window->draw(*_animations_count_label);
+		Main::render_window->draw(*_frame_label);
+		Main::render_window->draw(*_frames_count_label);
+		Main::render_window->draw(*_frame_size_label);
 
 		// text inputs
-		window->draw(*_animations_name);
-		window->draw(*_animations_current);
-		window->draw(*_animations_count);
-		window->draw(*_frame);
-		window->draw(*_frames_count);
-		window->draw(*_frame_size);
+		Main::render_window->draw(*_animations_name);
+		Main::render_window->draw(*_animations_current);
+		Main::render_window->draw(*_animations_count);
+		Main::render_window->draw(*_frame);
+		Main::render_window->draw(*_frames_count);
+		Main::render_window->draw(*_frame_size);
 
 		// set animation button
 		_set_animation->draw();

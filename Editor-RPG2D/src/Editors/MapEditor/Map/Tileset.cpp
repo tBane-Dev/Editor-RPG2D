@@ -1,5 +1,5 @@
 ﻿#include "Editors/MapEditor/Map/Tileset.hpp"
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
 Tileset::Tileset() {

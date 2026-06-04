@@ -1,4 +1,4 @@
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include <iostream>
 
 namespace Main {
@@ -31,45 +31,45 @@ namespace Main {
 
 	}
 
-	EditorManager::EditorManager() {
+	EditorsManager::EditorsManager() {
 		_editors.clear();
 	}
 
-	EditorManager::~EditorManager() {
+	EditorsManager::~EditorsManager() {
 		_editors.clear();
 	}
 
-	void EditorManager::push_back(std::shared_ptr<Editor> editor) {
+	void EditorsManager::push_back(std::shared_ptr<Editor> editor) {
 		_editors.push_back(editor);
 	}
 
-	void EditorManager::pop_back() {
+	void EditorsManager::pop_back() {
 		_editors.pop_back();
 	}
 
-	std::shared_ptr<Editor> EditorManager::get_back() {
+	std::shared_ptr<Editor> EditorsManager::get_back() {
 		return _editors.back();
 	}
 
-	void EditorManager::cursorHover() {
+	void EditorsManager::cursorHover() {
 		if (get_back())
 			get_back()->cursorHover();
 	}
 
-	void EditorManager::handleEvent(const sf::Event& event) {
+	void EditorsManager::handleEvent(const sf::Event& event) {
 		if (get_back())
 			get_back()->handleEvent(event);
 	}
 
-	void EditorManager::update() {
+	void EditorsManager::update() {
 		if (get_back())
 			get_back()->update();
 	}
 
-	void EditorManager::draw() {
+	void EditorsManager::draw() {
 		if (get_back())
 			get_back()->draw();
 	}
 
-	std::shared_ptr<EditorManager> editor_manager = nullptr;
+	std::shared_ptr<EditorsManager> editor_manager = nullptr;
 }

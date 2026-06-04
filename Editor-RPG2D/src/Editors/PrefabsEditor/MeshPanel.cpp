@@ -2,7 +2,7 @@
 #include "Editors/PrefabsEditor/Editor.hpp"
 #include "ShaderManager.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 namespace PrefabsEditor {
 	MeshPanel::MeshPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 375), sf::Vector2i(840 + margin.x, PrefabsEditor::editor->_main_menu->getSize().y + margin.y + PrefabsEditor::editor->_collider_panel->getSize().y + 4)) {
@@ -44,7 +44,7 @@ namespace PrefabsEditor {
 
 	void MeshPanel::draw() {
 		Components::Panel::draw();
-		window->draw(*_title);
+		Main::render_window->draw(*_title);
 
 		// draw checkerboard
 		sf::RectangleShape rect(sf::Vector2f(sf::Vector2f(192, 192)));
@@ -56,7 +56,7 @@ namespace PrefabsEditor {
 
 		checkerboard_shader->setUniform("rectPos", rect.getPosition());
 
-		window->draw(rect, states);
+		Main::render_window->draw(rect, states);
 
 		// draw animation
 		std::shared_ptr<Animator>& animator = PrefabsEditor::editor->_animator;
@@ -68,7 +68,7 @@ namespace PrefabsEditor {
 			sprite.setTextureRect(frameRect);
 			sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
 			sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
-			window->draw(sprite);
+			Main::render_window->draw(sprite);
 		}
 
 		_set_mesh->draw();

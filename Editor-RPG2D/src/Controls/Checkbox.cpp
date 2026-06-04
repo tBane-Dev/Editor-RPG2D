@@ -1,7 +1,7 @@
 #include "Controls/Checkbox.hpp"
 #include "SFML/Graphics.hpp"
 #include "Time.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Cursor.hpp"
 #include "DebugLog.hpp"
 
@@ -122,6 +122,6 @@ void Checkbox::draw() {
 
 		sf::Sprite sprite(*tex->_texture);
 		sprite.setPosition(sf::Vector2f(_rect.position));
-		window->draw(sprite);
+		Main::render_window->draw(sprite);
 	}
 }

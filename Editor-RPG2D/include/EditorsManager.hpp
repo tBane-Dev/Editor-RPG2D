@@ -17,12 +17,12 @@ namespace Main {
 		virtual void draw();
 	};
 
-	class EditorManager {
+	class EditorsManager {
 	public:
 		std::vector<std::shared_ptr<Editor>> _editors;
 
-		EditorManager();
-		~EditorManager();
+		EditorsManager();
+		~EditorsManager();
 
 		void push_back(std::shared_ptr<Editor> editor);
 		void pop_back();
@@ -34,6 +34,6 @@ namespace Main {
 		void draw();
 	};
 
-	extern std::shared_ptr<EditorManager> editor_manager;
+	extern std::shared_ptr<EditorsManager> editor_manager;
 }
 

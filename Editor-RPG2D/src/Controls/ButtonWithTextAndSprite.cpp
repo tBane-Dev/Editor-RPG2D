@@ -1,6 +1,6 @@
 ﻿#include "Controls/ButtonWithTextAndSprite.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 ButtonWithTextAndSprite::ButtonWithTextAndSprite(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position)
 : ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
@@ -23,7 +23,7 @@ void ButtonWithTextAndSprite::draw() {
 	ButtonWithSprite::draw();
 
 	if (_text) {
-		window->draw(*_text);
+		Main::render_window->draw(*_text);
 	}
 
 }

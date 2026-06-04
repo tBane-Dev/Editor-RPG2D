@@ -1,6 +1,6 @@
 #include "Objects/Monster.hpp"
 #include "Time.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include <iostream>
 #include "Editors/MapEditor/Editor.hpp"
 
@@ -135,5 +135,5 @@ void Monster::draw() {
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setOrigin(sf::Vector2f(_prefab->getOrigin()));
 	sprite.setTextureRect(frameRect);
-	window->draw(sprite);
+	Main::render_window->draw(sprite);
 }

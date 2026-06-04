@@ -2,7 +2,7 @@
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 
 OptionWithCheckbox::OptionWithCheckbox(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::wstring shortcut, sf::Vector2i position) : Option(text, shortcut, position) {

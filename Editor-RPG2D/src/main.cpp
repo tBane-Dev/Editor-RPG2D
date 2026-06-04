@@ -5,7 +5,7 @@
 
 // includes :-) 
 #include <SFML/Graphics.hpp>
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Time.hpp"
 
@@ -15,7 +15,9 @@
 #include "ShaderManager.hpp"
 #include "PrefabsManager.hpp"
 
-#include "Editors/Editor.hpp"
+#include "RenderWindow.hpp"
+
+#include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
@@ -32,7 +34,7 @@ int main()
 {
     (void)_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
 
-    window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D");
+    Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D");
     
     loadTheme();
 
@@ -47,7 +49,7 @@ int main()
     cursor = std::make_shared<Cursor>();
 	GUI_manager = std::make_shared<GUIManager>();
 
-    Main::editor_manager = std::make_shared<Main::EditorManager>();
+    Main::editor_manager = std::make_shared<Main::EditorsManager>();
 
 	MapEditor::editor = std::make_shared<MapEditor::Editor>();
 	MapEditor::editor->createTileset();
@@ -64,7 +66,7 @@ int main()
     sf::Clock FPSClock;
     sf::Clock FPSClockUpdate;	// clock for show FPS in main loop of Editor
 
-    while (window->isOpen()) {
+    while (Main::render_window->isOpen()) {
     	
 		prevTime = currentTime;
 		currentTime = mainClock.getElapsedTime();
@@ -78,7 +80,7 @@ int main()
 
             std::ostringstream ss;
             ss << std::fixed << std::setprecision(2) << FPS << " FPS";
-            window->setTitle("Editor - RPG2D - " + ss.str());
+            Main::render_window->setTitle("Editor - RPG2D - " + ss.str());
             FPSClockUpdate.restart();
         }
 
@@ -86,20 +88,20 @@ int main()
         Main::editor_manager->cursorHover();
 
 		// Handle Events
-        while (const std::optional event = window->pollEvent()) {
+        while (const std::optional event = Main::render_window->pollEvent()) {
 
             if (event->is<sf::Event::Closed>()) {
-                window->close();
+                Main::render_window->close();
             } 
 
             Main::editor_manager->handleEvent(*event);
-  
+
         }
 
         Main::editor_manager->update();
 
-        window->clear(sf::Color(47, 47, 47));
+        Main::render_window->clear(sf::Color(47, 47, 47));
 		Main::editor_manager->draw();
-        window->display();
+        Main::render_window->display();
     }
 }

@@ -4,7 +4,7 @@
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Cursor.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "ShaderManager.hpp"
@@ -140,19 +140,19 @@ void Chunk::generateVertexArray(
 }
 
 void Chunk::drawCoords() {
-	window->draw(*_coordsText);
+	Main::render_window->draw(*_coordsText);
 }
 
 void Chunk::draw() {
 
 	sf::RenderStates states;
 	std::shared_ptr<Texture> texture = textures_manager->getTexture(L"assets\\tex\\tileset.png");
-	terrain_shader->setUniform("resolution", sf::Vector2f(window->getSize()));
+	terrain_shader->setUniform("resolution", sf::Vector2f(Main::render_window->getSize()));
 	terrain_shader->setUniform("time", currentTime.asSeconds());
 	terrain_shader->setUniform("startPos", sf::Vector2f(0, 0));
 	states.texture = &*texture->_texture;
 	states.shader = &*terrain_shader;
-	window->draw(_vertexArray, states);
+	Main::render_window->draw(_vertexArray, states);
 	
 }
 
@@ -338,7 +338,7 @@ void Map::draw() {
 	std::shared_ptr<CameraOnMap> camera = map_editor->_camera;
 	if (!camera) return;
 
-	window->setView(camera->_view);
+	Main::render_window->setView(camera->_view);
 
 	for (auto& chunk : _chunks) {
 		chunk->draw();
@@ -350,13 +350,13 @@ void Map::draw() {
 
 		// render grid
 		sf::Vector2f position_rect;
-		position_rect.x = std::max((float)map_editor->_map->getRect().position.x, map_editor->_camera->_position.x-(float)window->getSize().x/2);
-		position_rect.y = std::max((float)map_editor->_map->getRect().position.y, map_editor->_camera->_position.y-(float)window->getSize().y/2);
+		position_rect.x = std::max((float)map_editor->_map->getRect().position.x, map_editor->_camera->_position.x-(float)Main::render_window->getSize().x/2);
+		position_rect.y = std::max((float)map_editor->_map->getRect().position.y, map_editor->_camera->_position.y-(float)Main::render_window->getSize().y/2);
 		position_rect -= sf::Vector2f(gridWidth, gridWidth);
 
 		sf::Vector2f size_rect;
-		size_rect.x = std::min((float)window->getSize().x, (float)(map_editor->_map->getRect().position.x + map_editor->_map->getRect().size.x - position_rect.x));
-		size_rect.y = std::min((float)window->getSize().y, (float)(map_editor->_map->getRect().position.y + map_editor->_map->getRect().size.y - position_rect.y));
+		size_rect.x = std::min((float)Main::render_window->getSize().x, (float)(map_editor->_map->getRect().position.x + map_editor->_map->getRect().size.x - position_rect.x));
+		size_rect.y = std::min((float)Main::render_window->getSize().y, (float)(map_editor->_map->getRect().position.y + map_editor->_map->getRect().size.y - position_rect.y));
 		size_rect += sf::Vector2f(gridWidth, gridWidth);
 
 		sf::Vector2f mapStart;
@@ -376,7 +376,7 @@ void Map::draw() {
 		sf::RectangleShape rect(size_rect);
 		rect.setPosition(position_rect);
 		rect.setFillColor(sf::Color(127, 47, 47, 127));
-		window->draw(rect, rs);
+		Main::render_window->draw(rect, rs);
 
 		for (auto& chunk : _chunks) {
 			chunk->drawCoords();

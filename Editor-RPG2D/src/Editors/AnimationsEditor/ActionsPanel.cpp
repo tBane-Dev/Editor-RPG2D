@@ -1,7 +1,7 @@
 #include "Editors/AnimationsEditor/ListPanel.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
@@ -131,7 +131,7 @@ namespace AnimationsEditor {
 	void ActionsPanel::draw() {
 		Components::Panel::draw();
 
-		window->draw(*_title);
+		Main::render_window->draw(*_title);
 
 		_saveBtn->draw();
 		_addBtn->draw();

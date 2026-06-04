@@ -1,7 +1,7 @@
 ﻿#include "Components/MainMenu/MenuButton.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Theme.hpp"
 
@@ -168,7 +168,7 @@ namespace Components {
 
 		Button::draw();
 
-		window->draw(*_text);
+		Main::render_window->draw(*_text);
 
 
 	}

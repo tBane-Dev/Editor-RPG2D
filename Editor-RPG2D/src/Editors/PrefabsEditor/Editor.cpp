@@ -1,7 +1,7 @@
 #include "Editors/PrefabsEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 namespace PrefabsEditor {
 
@@ -98,7 +98,7 @@ namespace PrefabsEditor {
 
 		GUI_manager->setView();
 
-		window->draw(*_title);
+		Main::render_window->draw(*_title);
 
 		_main_panel->draw();
 		_animation_panel->draw();

@@ -1,7 +1,7 @@
 #include "Editors/AnimationsEditor/ListPanel.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
@@ -47,7 +47,7 @@ namespace AnimationsEditor {
 
 	void ListPanelItem::draw() {
 		Button::draw();
-		window->draw(*_text);
+		Main::render_window->draw(*_text);
 	}
 
 	ListPanel::ListPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 600), sf::Vector2i(margin.x, AnimationsEditor::editor->_main_menu->getSize().y + margin.y)) {
@@ -240,7 +240,7 @@ namespace AnimationsEditor {
 
 		Components::Panel::draw();
 
-		window->draw(*_title);
+		Main::render_window->draw(*_title);
 
 		// Draw list background
 		int border = 2;
@@ -251,7 +251,7 @@ namespace AnimationsEditor {
 		list_bg.setFillColor(sf::Color(23,23,23));
 		list_bg.setOutlineThickness((float)border);
 		list_bg.setOutlineColor(sf::Color(0, 0, 0));
-		window->draw(list_bg);
+		Main::render_window->draw(list_bg);
 
 		_scrollbar->draw();
 
@@ -271,7 +271,7 @@ namespace AnimationsEditor {
 		);
 
 		view.setViewport(vp);
-		window->setView(view);
+		Main::render_window->setView(view);
 
 		for (auto& item : _items) {
 			item->draw();

@@ -2,7 +2,7 @@
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 
 
 OptionWithIcon::OptionWithIcon(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::wstring shortcut, sf::Vector2i position) : Option(text, shortcut, position) {
@@ -40,6 +40,6 @@ void OptionWithIcon::draw() {
 	if (texture) {
 		sf::Sprite sprite(*texture->_texture);
 		sprite.setPosition(sf::Vector2f(_rect.position));
-		window->draw(sprite);
+		Main::render_window->draw(sprite);
 	}
 }

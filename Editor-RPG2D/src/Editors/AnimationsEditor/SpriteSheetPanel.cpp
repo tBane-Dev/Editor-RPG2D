@@ -1,7 +1,7 @@
 ﻿#include "Editors/AnimationsEditor/SpriteSheetPanel.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Theme.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
@@ -160,7 +160,7 @@ namespace AnimationsEditor {
 		Components::Panel::draw();
 		
 		// draw title
-		window->draw(*_title);
+		Main::render_window->draw(*_title);
 
 		// draw load button
 		_loadBtn->draw();
@@ -172,7 +172,7 @@ namespace AnimationsEditor {
 		sf::RenderStates states;
 		states.shader = &*checkerboard_shader;
 		checkerboard_shader->setUniform("rectPos", rect.getPosition());
-		window->draw(rect, states);
+		Main::render_window->draw(rect, states);
 
 		// draw sprite sheet
 		float scale = 1;
@@ -189,7 +189,7 @@ namespace AnimationsEditor {
 			sf::Sprite sprite(*editor->_animations->getTexture()->_texture);
 			sprite.setScale(sf::Vector2f(scale, scale));
 			sprite.setPosition(rect.getPosition());
-			window->draw(sprite);
+			Main::render_window->draw(sprite);
 		}
 
 		// draw grid
@@ -219,7 +219,7 @@ namespace AnimationsEditor {
 		sf::RectangleShape gridRect(size_rect);
 		gridRect.setPosition(position_rect);
 		gridRect.setFillColor(sf::Color(127, 47, 47, 127));
-		window->draw(gridRect, rs);
+		Main::render_window->draw(gridRect, rs);
 
 		// text inputs
 		_x->draw();
@@ -228,10 +228,10 @@ namespace AnimationsEditor {
 		_h->draw();
 
 		// text labels
-		window->draw(*_xLabel);
-		window->draw(*_yLabel);
-		window->draw(*_wLabel);
-		window->draw(*_hLabel);
+		Main::render_window->draw(*_xLabel);
+		Main::render_window->draw(*_yLabel);
+		Main::render_window->draw(*_wLabel);
+		Main::render_window->draw(*_hLabel);
 
 		
 	}

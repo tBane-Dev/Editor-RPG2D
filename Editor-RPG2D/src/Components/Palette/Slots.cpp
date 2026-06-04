@@ -3,7 +3,7 @@
 #include "Components/Palette/TerrainSlot.hpp"
 #include "Components/Palette/GameObjectSlot.hpp"
 #include "PrefabsManager.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
 #include "Editors/MapEditor/Editor.hpp"
@@ -416,9 +416,9 @@ void Slots::draw() {
 	background.setFillColor(sf::Color(31, 31, 31));
 	background.setOutlineThickness(2);
 	background.setOutlineColor(sf::Color(63, 63, 63));
-	window->draw(background);
+	Main::render_window->draw(background);
 
-	window->draw(*_text);
+	Main::render_window->draw(*_text);
 
 	_scrollbar->draw();
 
@@ -438,7 +438,7 @@ void Slots::draw() {
 	);
 
 	view.setViewport(vp);
-	window->setView(view);
+	Main::render_window->setView(view);
 
 	for (auto& slot : _slots) {
 		slot->draw();

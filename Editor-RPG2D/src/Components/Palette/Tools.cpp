@@ -1,5 +1,5 @@
 ﻿#include "Components/Palette/Tools.hpp"
-#include "Window.hpp"
+#include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
 
@@ -31,7 +31,7 @@ void ToolButton::draw() {
 	if (_toolTexture) {
 		sf::Sprite sprite(*_toolTexture->_texture);
 		sprite.setPosition(sf::Vector2f(_rect.position));
-		window->draw(sprite);
+		Main::render_window->draw(sprite);
 	}
 }
 
@@ -164,9 +164,9 @@ void Tools::draw() {
 	background.setFillColor(sf::Color(31, 31, 31));
 	background.setOutlineThickness(2);
 	background.setOutlineColor(sf::Color(63, 63, 63));
-	window->draw(background);
+	Main::render_window->draw(background);
 
-	window->draw(*_text);
+	Main::render_window->draw(*_text);
 
 	_prev->draw();
 	_next->draw();

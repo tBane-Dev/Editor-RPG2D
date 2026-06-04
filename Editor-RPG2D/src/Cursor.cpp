@@ -2,7 +2,7 @@
 
 
 Cursor::Cursor() {
-	_position = sf::Mouse::getPosition(*window);
+	_position = sf::Mouse::getPosition(*Main::render_window);
 	//_hoveredElementGUI = nullptr;
 }
 
@@ -11,7 +11,7 @@ Cursor::~Cursor() {
 }
 
 void Cursor::update() {
-	_position = sf::Mouse::getPosition(*window);
+	_position = sf::Mouse::getPosition(*Main::render_window);
 }
 
 void Cursor::handleEvent(const sf::Event& event) {

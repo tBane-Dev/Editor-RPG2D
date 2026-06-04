@@ -68,7 +68,7 @@ namespace Components {
 		background.setFillColor(sf::Color(31, 31, 31));
 		background.setOutlineThickness(2);
 		background.setOutlineColor(sf::Color(63, 63, 63));
-		window->draw(background);
+		Main::render_window->draw(background);
 	}
 
 }

@@ -2,7 +2,7 @@
 #include "Cursor.hpp"
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Editors/MapEditor/Map/Map.hpp"
-#include "Editors/Editor.hpp"
+#include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "Objects/GameObject.hpp"
 #include "Objects/Terrain.hpp"
@@ -144,8 +144,8 @@ std::vector<std::vector<std::vector<bool>>> square_brushes = {
 
 CursorOnMap::CursorOnMap() {
 
-    window->setView(MapEditor::editor->_camera->_view);
-    _position = sf::Vector2i(window->mapPixelToCoords(cursor->_position));
+    Main::render_window->setView(MapEditor::editor->_camera->_view);
+    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(cursor->_position));
 
 	_object = nullptr;
 }
@@ -157,8 +157,8 @@ CursorOnMap::~CursorOnMap() {
 void CursorOnMap::update() {
 
 
-    window->setView(MapEditor::editor->_camera->_view);
-    _position = sf::Vector2i(window->mapPixelToCoords(cursor->_position));
+    Main::render_window->setView(MapEditor::editor->_camera->_view);
+    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(cursor->_position));
 }
 
 void CursorOnMap::handleEvent(const sf::Event& event) {
@@ -301,7 +301,7 @@ void CursorOnMap::draw()
 	if(!(GUI_manager->Element_hovered == MapEditor::editor->_map || GUI_manager->Element_hovered == nullptr))
 		return;
 
-	window->setView(MapEditor::editor->_camera->_view);
+    Main::render_window->setView(MapEditor::editor->_camera->_view);
 
     if (_object->_type == ObjectType::Terrain) {
 
@@ -338,7 +338,7 @@ void CursorOnMap::draw()
                     outlineRect.setFillColor(sf::Color(255, 47, 47, 127));
                     //outlineRect.setOutlineThickness(2);
                     //outlineRect.setOutlineColor(sf::Color::Green);
-                    window->draw(outlineRect);
+                    Main::render_window->draw(outlineRect);
                 }
             }
 		}
@@ -370,14 +370,14 @@ void CursorOnMap::draw()
 		outlineRect.setFillColor(sf::Color::Transparent);
 		outlineRect.setOutlineThickness(2);
 		outlineRect.setOutlineColor(sf::Color::Green);
-		window->draw(outlineRect);
+        Main::render_window->draw(outlineRect);
 
         if (animations) {
             sf::Sprite sprite(*animations->getTexture()->_texture);
             sprite.setTextureRect(frameRect);
 
             sprite.setPosition(sf::Vector2f(position));
-            window->draw(sprite);
+            Main::render_window->draw(sprite);
         }
 		return;
 	}
