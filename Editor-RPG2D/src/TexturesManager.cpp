@@ -71,6 +71,11 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\unchecked.png");
         texturePaths.push_back(L"assets\\tex\\unchecked_hover.png");
 
+        // windows
+        texturePaths.push_back(L"assets\\tex\\windows\\close.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\close_hover.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\close_press.png");
+
         // palette
         texturePaths.push_back(L"assets\\tex\\palette\\categories\\prev.png");
         texturePaths.push_back(L"assets\\tex\\palette\\categories\\prev_hover.png");

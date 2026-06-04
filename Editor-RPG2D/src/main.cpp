@@ -16,7 +16,7 @@
 #include "PrefabsManager.hpp"
 
 #include "RenderWindow.hpp"
-
+#include "WindowsManager.hpp"
 #include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
@@ -30,31 +30,31 @@
 #include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 
 
-int main()
-{
+int main() {
     (void)_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
 
     Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D");
-    
+
     loadTheme();
 
     textures_manager = std::make_shared<TexturesManager>();
     animations_manager = std::make_shared<AnimationsManager>();
-	prefabs_manager = std::make_shared<PrefabsManager>();
+    prefabs_manager = std::make_shared<PrefabsManager>();
 
     prefabs_manager->loadPrefabs();
 
     loadShaders();
 
     Main::cursor = std::make_shared<Main::Cursor>();
-	GUI_manager = std::make_shared<GUIManager>();
+    GUI_manager = std::make_shared<GUIManager>();
 
+    Main::windows_manager = std::make_shared<Main::WindowsManager>();
     Main::editor_manager = std::make_shared<Main::EditorsManager>();
 
-	MapEditor::editor = std::make_shared<MapEditor::Editor>();
-	MapEditor::editor->createTileset();
+    MapEditor::editor = std::make_shared<MapEditor::Editor>();
+    MapEditor::editor->createTileset();
     MapEditor::editor->createMap(5, 3);
-	MapEditor::editor->createGameObjects();
+    MapEditor::editor->createGameObjects();
     MapEditor::editor->createCamera();
     MapEditor::editor->createCursorOnMap();
     MapEditor::editor->createMainMenu();
@@ -62,15 +62,18 @@ int main()
 
     Main::editor_manager->push_back(MapEditor::editor);
 
+    // test windows
+    Main::windows_manager->push_back(std::make_shared<Main::Window>(L"Test Window"));
+
     // init FPS clock
     sf::Clock FPSClock;
     sf::Clock FPSClockUpdate;	// clock for show FPS in main loop of Editor
 
     while (Main::render_window->isOpen()) {
-    	
-		prevTime = currentTime;
-		currentTime = mainClock.getElapsedTime();
-		deltaTime = currentTime - prevTime;
+
+        prevTime = currentTime;
+        currentTime = mainClock.getElapsedTime();
+        deltaTime = currentTime - prevTime;
 
         Main::cursor->update();
 
@@ -84,24 +87,31 @@ int main()
             FPSClockUpdate.restart();
         }
 
-		GUI_manager->Element_hovered = nullptr;
+        GUI_manager->Element_hovered = nullptr;
         Main::editor_manager->cursorHover();
+		Main::windows_manager->cursorHover();
 
-		// Handle Events
+        // handle events
         while (const std::optional event = Main::render_window->pollEvent()) {
 
             if (event->is<sf::Event::Closed>()) {
                 Main::render_window->close();
-            } 
+            }
 
             Main::editor_manager->handleEvent(*event);
+            Main::windows_manager->handleEvent(*event);
 
         }
 
+        // update
+        
         Main::editor_manager->update();
+        Main::windows_manager->update();
 
+        // draw
         Main::render_window->clear(sf::Color(47, 47, 47));
-		Main::editor_manager->draw();
+        Main::editor_manager->draw();
+        Main::windows_manager->draw();
         Main::render_window->display();
     }
 }

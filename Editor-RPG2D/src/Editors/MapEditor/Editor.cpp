@@ -104,9 +104,10 @@ namespace MapEditor {
 
 	void Editor::cursorHover() {
 
-		_main_menu->cursorHover();
 		_map->cursorHover();
 		_palette->cursorHover();
+		_main_menu->cursorHover();
+		
 	}
 
 	void Editor::handleEvent(const sf::Event& event) {
