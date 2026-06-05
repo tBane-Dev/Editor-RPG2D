@@ -8,6 +8,10 @@ extern int basic_text_size;
 extern sf::Color basic_text_color;
 extern int basic_text_rect_height;
 
+extern int small_text_size;
+extern sf::Color small_text_color;
+extern int small_text_rect_height;
+
 // menu boxes (main menu)
 extern int menu_height;
 extern int menu_horizontal_margin;

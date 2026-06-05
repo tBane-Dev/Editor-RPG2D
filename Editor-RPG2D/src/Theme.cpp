@@ -8,6 +8,11 @@ int basic_text_size;
 sf::Color basic_text_color;
 int basic_text_rect_height;
 
+int small_text_size;
+sf::Color small_text_color;
+int small_text_rect_height;
+
+
 // menu boxes (main menu)
 int menu_height;
 int menu_horizontal_margin;
@@ -55,6 +60,10 @@ void loadTheme() {
 	basic_text_size = 20;
 	basic_text_color = sf::Color(191, 191, 191);
 	basic_text_rect_height = 32;
+
+	small_text_size = 16;
+	small_text_color = sf::Color(191, 191, 191);
+	small_text_rect_height = 24;
 
 	//menu boxes (main menu)
 	menu_height = 32;

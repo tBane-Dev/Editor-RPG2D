@@ -75,6 +75,15 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\windows\\close.png");
         texturePaths.push_back(L"assets\\tex\\windows\\close_hover.png");
         texturePaths.push_back(L"assets\\tex\\windows\\close_press.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\button.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\button_hover.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\button_press.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\confirm.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\confirm_hover.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\confirm_press.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\cancel.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\cancel_hover.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\cancel_press.png");
 
         // palette
         texturePaths.push_back(L"assets\\tex\\palette\\categories\\prev.png");

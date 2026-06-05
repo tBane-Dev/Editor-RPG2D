@@ -6,6 +6,7 @@
 namespace Main {
 
 	int Window::border = 1;
+	int Window::padding = 12;
 
 	Window::Window(std::wstring title) : Element() {
 		_titleStr = title;
@@ -38,9 +39,36 @@ namespace Main {
 
 	}
 
-	void Window::init() {
+	void Window::setSize(sf::Vector2i size) {
 
+		_rect.size = size;
+
+		_titleRect.size = sf::Vector2i(
+			_rect.size.x - 2 * border,
+			basic_text_rect_height
+		);
+
+		_closeButton->setPosition(
+			_rect.position + sf::Vector2i(_rect.size.x - 32, border)
+		);
+
+		_contentRect.size = sf::Vector2i(
+			_rect.size.x - 2 * border,
+			_rect.size.y - 2 * border - basic_text_rect_height
+		);
+
+		setPosition(_rect.position);
 	}
+
+	sf::Vector2i Window::getContentPosition() {
+		return _contentRect.position;
+	}
+
+	sf::Vector2i Window::getContentSize() {
+		return _contentRect.size	;
+	}
+
+	
 
 	void Window::setPosition(sf::Vector2i position) {
 		_rect.position = position;
@@ -167,8 +195,8 @@ namespace Main {
 	}
 
 	void WindowsManager::draw() {
-		if (get_back())
-			get_back()->draw();
+		for(auto& window : _windows)
+			window->draw();
 	}
 
 	std::shared_ptr<WindowsManager> windows_manager = nullptr;

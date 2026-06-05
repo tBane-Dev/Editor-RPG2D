@@ -18,6 +18,15 @@ ButtonWithTextAndSprite::~ButtonWithTextAndSprite() {
 	
 }
 
+void ButtonWithTextAndSprite::setPosition(sf::Vector2i position) {
+	ButtonWithSprite::setPosition(position);
+
+	_text->setPosition(sf::Vector2f(
+		position.x + (getSize().x - _text->getLocalBounds().size.x) / 2,
+		position.y + (getSize().y - _text->getFont().getLineSpacing(_text->getCharacterSize())) / 2
+	));
+}
+
 void ButtonWithTextAndSprite::draw() {
 
 	ButtonWithSprite::draw();

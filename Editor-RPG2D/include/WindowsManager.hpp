@@ -12,6 +12,7 @@ namespace Main {
 	public:
 
 		static int border;
+		static int padding;
 
 		std::wstring _titleStr;
 		sf::IntRect _rect;
@@ -28,7 +29,9 @@ namespace Main {
 		Window(std::wstring title);
 		~Window();
 
-		virtual void init();
+		void setSize(sf::Vector2i size);
+		sf::Vector2i getContentPosition();
+		sf::Vector2i getContentSize();
 		virtual void setPosition(sf::Vector2i position);
 		virtual void cursorHover();
 		virtual void handleEvent(const sf::Event& event);

@@ -15,8 +15,8 @@
 #include "ShaderManager.hpp"
 #include "PrefabsManager.hpp"
 
-#include "RenderWindow.hpp"
 #include "WindowsManager.hpp"
+#include "Windows/ConfirmDialog.hpp"    // TO-DO - to delete
 #include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
@@ -63,7 +63,8 @@ int main() {
     Main::editor_manager->push_back(MapEditor::editor);
 
     // test windows
-    Main::windows_manager->push_back(std::make_shared<Main::Window>(L"Test Window"));
+    Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(L"Test Confirm Window", 
+        L"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua."));
 
     // init FPS clock
     sf::Clock FPSClock;
