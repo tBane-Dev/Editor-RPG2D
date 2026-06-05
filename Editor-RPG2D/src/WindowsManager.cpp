@@ -53,6 +53,9 @@ namespace Main {
 	}
 
 	void Window::cursorHover() {
+		
+		if (_rect.contains(Main::cursor->_position))
+			GUI_manager->Element_hovered = this->shared_from_this();
 
 		_closeButton->cursorHover();
 	}
