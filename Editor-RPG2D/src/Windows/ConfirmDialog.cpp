@@ -8,28 +8,28 @@ ConfirmDialog::ConfirmDialog(std::wstring title, std::wstring text) : Window(tit
 	_text->setFillColor(small_text_color);
 	_text->setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f(2*padding, padding));
 	
-	float textWidth = _text->getGlobalBounds().size.x;
 	float textHeight = _text->getGlobalBounds().size.y;
 
 	int distance_between_buttons = 32;
 	int buttonsWidth = 128 + distance_between_buttons + 128;
 
 	int contentWidth = std::max(
-		(int)textWidth + 4 * padding,
+		_rect.size.x,
 		buttonsWidth + 2 * padding
 	);
 
 	int contentHeight =
-		padding + 16 +
+		padding + 
+		16 +
 		(int)textHeight +
 		32 +
-		48 +
+		48 + // button height
 		16 +
 		16 +
 		padding;
 
 	setSize(sf::Vector2i(
-		contentWidth + 2 * border,
+		contentWidth,
 		contentHeight + 2 * border + basic_text_rect_height
 	));
 
@@ -46,8 +46,7 @@ ConfirmDialog::ConfirmDialog(std::wstring title, std::wstring text) : Window(tit
 	_confirmButton->_onclick_func = [this]() {
 		std::shared_ptr<ConfirmDialog> newDialog = std::make_shared<ConfirmDialog>(L"Test Confirm Window", L"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua.");
 		newDialog->setPosition(_rect.position + sf::Vector2i(rand()%80 - 40, rand()%80 - 40));
-		Main::windows_manager->push_back(newDialog);
-		
+		Main::windows_manager->push_back(newDialog);	
 		};
 
 	_cancelButton = std::make_shared<ButtonWithTextSpriteAndIcon>(

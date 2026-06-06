@@ -63,8 +63,8 @@ int main() {
     Main::editor_manager->push_back(MapEditor::editor);
 
     // test windows
-    Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(L"Test Confirm Window", 
-        L"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua."));
+    Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(L"Test Confirm Window", L"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua."));
+    Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(L"Test Confirm Window 2", L"Lorem ipsum dolor sit amet ..."));
 
     // init FPS clock
     sf::Clock FPSClock;
@@ -107,6 +107,7 @@ int main() {
         // update
         Main::editor_manager->update();
         Main::windows_manager->update();
+        DebugStat(L"I am The One ..");
 
         // draw
         Main::render_window->clear(sf::Color(47, 47, 47));
