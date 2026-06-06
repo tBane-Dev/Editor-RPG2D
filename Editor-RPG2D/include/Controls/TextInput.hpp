@@ -14,6 +14,11 @@ public:
 	int _border = 2;
 	int _marginLeft = 4;
 	
+	sf::Color _textEnteredColor;
+	sf::Color _hoverColor;
+	sf::Color _idleColor;
+	sf::Color _outlineColor;
+
 	int _characterSize;
 	int _limitCharacters;
 
@@ -35,6 +40,7 @@ public:
 	TextInput(sf::Vector2i size, std::wstring defaultText, int limitCharacters, int characterSize);
 	~TextInput();
 	
+	void setColors(sf::Color textEnteredColor, sf::Color hoverColor, sf::Color idleColor, sf::Color outlineColor);
 	void setPosition(sf::Vector2i position);
 	void setText(std::wstring text);
 	void setCursorOnEndText();

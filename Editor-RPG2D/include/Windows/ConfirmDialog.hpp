@@ -12,7 +12,7 @@ public:
 
 	std::unique_ptr<sf::Text> _bottomComment;
 
-	ConfirmDialog(std::wstring title, std::wstring text);
+	ConfirmDialog(std::wstring title, std::wstring text, sf::Vector2i size = sf::Vector2i(400,300), sf::Vector2i position = sf::Vector2i(100,100));
 	~ConfirmDialog();
 
 	virtual void setPosition(sf::Vector2i position);

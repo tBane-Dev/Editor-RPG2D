@@ -17,6 +17,7 @@
 
 #include "WindowsManager.hpp"
 #include "Windows/ConfirmDialog.hpp"    // TO-DO - to delete
+#include "Windows/FileDialog/FileDialog.hpp"    // TO-DO - to delete
 #include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
@@ -28,6 +29,10 @@
 #include "Objects/GameObject.hpp"
 #include "Objects/Monster.hpp"
 #include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+
+#include <windows.h>
+#include <commdlg.h>
+#include <iostream>
 
 
 int main() {
@@ -62,9 +67,32 @@ int main() {
 
     Main::editor_manager->push_back(MapEditor::editor);
 
-    // test windows
-    Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(L"Test Confirm Window", L"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua."));
-    Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(L"Test Confirm Window 2", L"Lorem ipsum dolor sit amet ..."));
+	// TO-DO - to delete (center the camera on the map at the start of the program)
+    sf::Vector2f camPos;
+	camPos.x = MapEditor::editor->_map->getRect().size.x / 2 + MapEditor::editor->_palette->getSize().x/2;
+    camPos.y = MapEditor::editor->_camera->_position.y;
+    MapEditor::editor->_camera->_position = camPos;
+    MapEditor::editor->_camera->update();
+    //
+    
+    // TO-DO - test windows
+    //Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(
+    //    L"Test Confirm Window",
+    //    L"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua.",
+    //    sf::Vector2i(400, 300),
+    //    sf::Vector2i(100, 100)
+    //));
+    //
+    //Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(
+    //    L"Test Confirm Window 2",
+    //    L"Lorem ipsum dolor sit amet ..",
+    //    sf::Vector2i(400, 300),
+    //    sf::Vector2i(100,100)
+    //));    
+    
+    Main::windows_manager->push_back(std::make_shared<FileDialog>(L"Test File Dialog Window 1"));
+
+	float timer = 0; // TO-DO - to delete because is used only for testing the system file dialog window
 
     // init FPS clock
     sf::Clock FPSClock;
@@ -75,6 +103,38 @@ int main() {
         prevTime = currentTime;
         currentTime = mainClock.getElapsedTime();
         deltaTime = currentTime - prevTime;
+
+        if(deltaTime.asSeconds() > 0.1f) {
+            deltaTime = sf::seconds(0.1f);
+		}
+
+		timer += deltaTime.asSeconds();  // TO-DO - to delete because is used only for testing the system file dialog window
+
+        if (timer > 10.0f) { // TO-DO - to delete because is used only for testing the system file dialog window
+            timer = 0;
+			// TO-DO - to delete
+            //wchar_t fileName[MAX_PATH] = L"";
+            //
+            //OPENFILENAMEW ofn = {};
+            //ofn.lStructSize = sizeof(ofn);
+            //ofn.hwndOwner = Main::render_window->getNativeHandle();
+            //ofn.lpstrFile = fileName;
+            //ofn.nMaxFile = MAX_PATH;
+            //
+            //ofn.lpstrFilter =
+            //    L"PNG Files (*.png)\0*.png\0"
+            //    L"All Files (*.*)\0*.*\0";
+            //
+            //ofn.nFilterIndex = 1;
+            //ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            //
+            //if (GetOpenFileNameW(&ofn)) {
+            //    std::wcout << L"Selected file: " << fileName << std::endl;
+            //}
+            //else {
+            //    std::wcout << L"Canceled." << std::endl;
+            //}
+        }
 
         Main::cursor->update();
 
@@ -107,12 +167,16 @@ int main() {
         // update
         Main::editor_manager->update();
         Main::windows_manager->update();
-        DebugStat(L"I am The One ..");
+
+        // I Am The One! .. B-)
+        //DebugStat(L"I am The One ..");
 
         // draw
         Main::render_window->clear(sf::Color(47, 47, 47));
         Main::editor_manager->draw();
         Main::windows_manager->draw();
         Main::render_window->display();
+
+        
     }
 }

@@ -11,9 +11,9 @@ namespace Main {
 	int Window::padding = 12;
 	sf::Music Window::errorSound;
 
-	Window::Window(std::wstring title) : Element() {
+	Window::Window(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Element() {
 		_titleStr = title;
-		_rect = sf::IntRect(sf::Vector2i(100, 100), sf::Vector2i(400, 300));
+		_rect = sf::IntRect(position, size);
 
 		// title rect
 		_titleRect = sf::IntRect(sf::Vector2i(_rect.position.x + border, _rect.position.y + border), sf::Vector2i(_rect.size.x - 2*border, basic_text_rect_height));
@@ -102,7 +102,7 @@ namespace Main {
 
 	void Window::handleEvent(const sf::Event& event) {
 
-		if ((event.getIf<sf::Event::MouseButtonReleased>() || event.getIf<sf::Event::MouseButtonPressed>()) && !_rect.contains(Main::cursor->_position)) {
+		if ((event.getIf<sf::Event::MouseButtonReleased>() || event.getIf<sf::Event::MouseButtonPressed>()) && GUI_manager->Element_pressed == nullptr && !_rect.contains(Main::cursor->_position)) {
 			_animationClickedOutside = true;
 			_animationStartTime = currentTime;
 			errorSound.play();

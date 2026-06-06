@@ -9,6 +9,11 @@
 
 TextInput::TextInput(sf::Vector2i size, std::wstring defaultText,int limitCharacters, int characterSize) : Element() {
 	
+	_textEnteredColor = sf::Color(47, 47, 47);
+	_hoverColor = sf::Color(63, 63, 63);
+	_idleColor = sf::Color(23, 23, 23);
+	_outlineColor = sf::Color(0, 0, 0);
+
 	_rect = sf::IntRect(sf::Vector2i(0,0), size);
 	
 	_limitCharacters = limitCharacters;
@@ -39,6 +44,13 @@ TextInput::TextInput(sf::Vector2i size, std::wstring defaultText,int limitCharac
 
 TextInput::~TextInput() {
 	
+}
+
+void TextInput::setColors(sf::Color textEnteredColor, sf::Color hoverColor, sf::Color idleColor, sf::Color outlineColor) {
+	_textEnteredColor = textEnteredColor;
+	_hoverColor = hoverColor;
+	_idleColor = idleColor;
+	_outlineColor = outlineColor;
 }
 
 void TextInput::setPosition(sf::Vector2i position) {
@@ -429,17 +441,17 @@ void TextInput::draw() {
 	sf::RectangleShape rect(rectSize);
 
 	if (_editState == TextInputEditState::TextEntered) {
-		rect.setFillColor(sf::Color(47,47,47));
+		rect.setFillColor(_textEnteredColor);
 	}
 	else if(_state == TextInputState::Hover) {
-		rect.setFillColor(sf::Color(63,63,63));
+		rect.setFillColor(_hoverColor);
 	}
 	else {
-		rect.setFillColor(sf::Color(23,23,23));
+		rect.setFillColor(_idleColor);
 	}
 	
 	rect.setOutlineThickness((float)_border);
-	rect.setOutlineColor(sf::Color(0,0,0));
+	rect.setOutlineColor(_outlineColor);
 
 	sf::Vector2f rectPosition;
 	rectPosition.x = (float)(_rect.position.x + _border);
@@ -479,8 +491,6 @@ void TextInput::draw() {
 	else {
 		Main::render_window->draw(*_text);
 	}
-	
-
 	
 	// draw cursor
 	if (_editState != TextInputEditState::None && int(currentTime.asSeconds() * 3) % 2 == 0) {
