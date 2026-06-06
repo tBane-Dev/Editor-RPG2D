@@ -2,6 +2,7 @@
 #include "DebugLog.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
+#include "WindowsManager.hpp"
 
 namespace PrefabsEditor {
 
@@ -61,18 +62,34 @@ namespace PrefabsEditor {
 	}
 
 	void Editor::cursorHover() {
-		_main_menu->cursorHover();
-		_palette->cursorHover();
 
-		_main_panel->cursorHover();
+		if(Main::windows_manager->get_back())
+			return;
+
+		if (_main_menu->_state != Components::MainMenuStates::Closed) {
+			_main_menu->cursorHover();
+			return;
+		}
+
 		_animation_panel->cursorHover();
 		_collider_panel->cursorHover();
 		_mesh_panel->cursorHover();
+		_palette->cursorHover();
+		_main_menu->cursorHover();
 
 	}
 
 	void Editor::handleEvent(const sf::Event& event) {
+
+		if (Main::windows_manager->get_back())
+			return;
+
 		_main_menu->handleEvent(event);
+
+		if (_main_menu->_state != Components::MainMenuStates::Closed) {
+			return;
+		}
+
 		_palette->handleEvent(event);
 
 		_main_panel->handleEvent(event);

@@ -2,6 +2,7 @@
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
+#include "WindowsManager.hpp"
 
 namespace MapEditor {
 
@@ -104,15 +105,30 @@ namespace MapEditor {
 
 	void Editor::cursorHover() {
 
+		if (Main::windows_manager->get_back())
+			return;
+
+		if (_main_menu->_state != Components::MainMenuStates::Closed) {
+			_main_menu->cursorHover();
+			return;
+		}
+			
 		_map->cursorHover();
 		_palette->cursorHover();
 		_main_menu->cursorHover();
-		
 	}
 
 	void Editor::handleEvent(const sf::Event& event) {
-		_camera->handleEvent(event);
+
+		if (Main::windows_manager->get_back())
+			return;
+
 		_main_menu->handleEvent(event);
+
+		if (_main_menu->_state != Components::MainMenuStates::Closed)
+			return;
+
+		_camera->handleEvent(event);
 		_map->handleEvent(event);
 		_cursor_on_map->handleEvent(event);
 		_palette->handleEvent(event);

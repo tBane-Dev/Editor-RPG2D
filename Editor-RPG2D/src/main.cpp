@@ -105,17 +105,6 @@ int main() {
         }
 
         // update
-
-        if(GUI_manager->Element_hovered) {
-            std::string className = typeid(*GUI_manager->Element_hovered).name();		// get class name
-            std::wstring wClassName(className.begin(), className.end());	// convert to wide_string
-            DebugLog(wClassName);
-            
-        }
-        else {
-            DebugLog(L"nullptr");
-        }
-        
         Main::editor_manager->update();
         Main::windows_manager->update();
 

@@ -2,6 +2,7 @@
 #include "DebugLog.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
+#include "WindowsManager.hpp"
 
 namespace AnimationsEditor {
 	Editor::Editor() {
@@ -56,17 +57,33 @@ namespace AnimationsEditor {
 	}
 
 	void Editor::cursorHover() {
-		_main_menu->cursorHover();
+		
+		if (Main::windows_manager->get_back())
+			return;
+
+		if (_main_menu->_state != Components::MainMenuStates::Closed) {
+			_main_menu->cursorHover();
+			return;
+		}
+			
 		_animation_name_panel->cursorHover();
 		_list_panel->cursorHover();
 		_actions_panel->cursorHover();
 		_sprite_sheet_panel->cursorHover();
 		_preview_panel->cursorHover();
+		_main_menu->cursorHover();
 
 	}
 
 	void Editor::handleEvent(const sf::Event& event) {
+		if (Main::windows_manager->get_back())
+			return;
+
 		_main_menu->handleEvent(event);
+
+		if (_main_menu->_state != Components::MainMenuStates::Closed)
+			return;
+
 		_animation_name_panel->handleEvent(event);
 		_list_panel->handleEvent(event);
 		_actions_panel->handleEvent(event);
