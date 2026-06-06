@@ -2,11 +2,14 @@
 #include "Theme.hpp"
 #include "Cursor.hpp"
 #include "RenderWindow.hpp"
+#include "Time.hpp"
+#include "DebugLog.hpp"
 
 namespace Main {
 
 	int Window::border = 1;
 	int Window::padding = 12;
+	sf::Music Window::errorSound;
 
 	Window::Window(std::wstring title) : Element() {
 		_titleStr = title;
@@ -33,6 +36,15 @@ namespace Main {
 
 		_state = WindowState::Idle;
 		_offset = sf::Vector2i(0, 0);
+
+		// animation when clicking outside the window
+		_animationClickedOutside = false;
+		_animationStartTime = currentTime;
+
+		if (!errorSound.openFromFile("C:\\Windows\\Media\\Windows Background.wav")) {
+			DebugError(L"Failed to load error sound");
+		}
+
 	}
 
 	Window::~Window() {
@@ -90,6 +102,13 @@ namespace Main {
 
 	void Window::handleEvent(const sf::Event& event) {
 
+		if ((event.getIf<sf::Event::MouseButtonReleased>() || event.getIf<sf::Event::MouseButtonPressed>()) && !_rect.contains(Main::cursor->_position)) {
+			_animationClickedOutside = true;
+			_animationStartTime = currentTime;
+			errorSound.play();
+			return;
+		}
+
 		if (_state == WindowState::Moving) {
 			if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
 				setPosition(Main::cursor->_position-_offset);
@@ -124,9 +143,27 @@ namespace Main {
 
 	void Window::update() {
 		_closeButton->update();
+
+		if (_animationClickedOutside) {
+			if ((currentTime - _animationStartTime).asSeconds() > 0.4f) {
+				_animationClickedOutside = false;
+			}
+		}
 	}
 
 	void Window::draw() {
+
+		int shadow_margin = 8;
+		int shadow_border = 8;
+		int cycles = 2;
+		int animation = (_animationClickedOutside) ? (int)((std::sin((currentTime - _animationStartTime).asSeconds() * (float)cycles * 3.14159265f * 2.0f) * 0.5f + 0.5f) * 40.0f) : 0;
+
+		sf::RectangleShape shadow_rect(sf::Vector2f(_rect.size) + sf::Vector2f(2 * shadow_margin, 2 * shadow_margin));
+		shadow_rect.setPosition(sf::Vector2f(_rect.position) - sf::Vector2f(shadow_margin, shadow_margin));
+		shadow_rect.setFillColor(sf::Color(0, 0, 0, 22 + animation));
+		shadow_rect.setOutlineThickness(shadow_border);
+		shadow_rect.setOutlineColor(sf::Color(0, 0, 0, 10 + animation));
+		Main::render_window->draw(shadow_rect);
 
 		sf::RectangleShape rect(sf::Vector2f(_rect.size - sf::Vector2i(2*border,2*border)));
 		rect.setOutlineThickness(border);
@@ -142,8 +179,12 @@ namespace Main {
 		title_rect.setFillColor(sf::Color(31, 31, 31));
 		Main::render_window->draw(title_rect);
 
+		// title text
+		sf::Color title_text_color = basic_text_color - sf::Color(0,0,0, animation*3);
+		_titleText->setFillColor(title_text_color);
 		Main::render_window->draw(*_titleText);
 
+		// close button
 		_closeButton->draw();
 
 		// content rect

@@ -3,6 +3,7 @@
 #include "SFML/Graphics.hpp"
 #include "GUIManager.hpp"
 #include "Controls/ButtonWithSprite.hpp"
+#include <SFML/Audio.hpp>
 
 namespace Main {
 
@@ -13,6 +14,7 @@ namespace Main {
 
 		static int border;
 		static int padding;
+		static sf::Music errorSound;
 
 		std::wstring _titleStr;
 		sf::IntRect _rect;
@@ -25,6 +27,9 @@ namespace Main {
 
 		WindowState _state;
 		sf::Vector2i _offset;	// to moving the window
+
+		bool _animationClickedOutside = false;
+		sf::Time _animationStartTime;
 
 		Window(std::wstring title);
 		~Window();
