@@ -2,7 +2,7 @@
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
 
-ConfirmDialog::ConfirmDialog(std::wstring title, std::wstring text) : Window(title) {
+ConfirmDialog::ConfirmDialog(std::wstring title, std::wstring text, sf::Vector2i size, sf::Vector2i position) : Window(title, size, position) {
 	
 	_text = std::make_unique<sf::Text>(basicFont, text, small_text_size);
 	_text->setFillColor(small_text_color);

@@ -7,6 +7,9 @@ enum class ScrollbarState { Idle, Dragging, Scrolled };
 class Scrollbar : public Element {
 public:
 
+	int _barSize = 16;      // scrollbar logicznie ma 16 px
+	int _textureSize = 32;  // sprite ma 32x32 px
+
 	sf::IntRect _rect;
 	sf::IntRect _slider;
 	

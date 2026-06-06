@@ -31,7 +31,7 @@ namespace Main {
 		bool _animationClickedOutside = false;
 		sf::Time _animationStartTime;
 
-		Window(std::wstring title);
+		Window(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(100,100));
 		~Window();
 
 		void setSize(sf::Vector2i size);
