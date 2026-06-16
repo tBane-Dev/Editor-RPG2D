@@ -7,10 +7,13 @@
 #include "Components/Palette/Categories.hpp"
 #include "Components/Palette/Tools.hpp"
 #include "Components/Palette/Slots.hpp"
+#include "Objects/Terrain.hpp"
 
 namespace Components {
 	class Palette : public Element {
 	public:
+
+		static std::vector<std::shared_ptr<Terrain>> terrains;
 
 		sf::IntRect _rect;
 		std::shared_ptr<Categories> _categories;
@@ -20,6 +23,8 @@ namespace Components {
 		int _minBrushSize = 1;
 		int _maxBrushSize = 4;
 		int _brushSize = 1;
+
+		
 
 		Palette();
 		~Palette();

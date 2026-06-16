@@ -17,8 +17,8 @@ namespace AnimationsEditor {
 		_name = std::make_shared<TextInput>(sf::Vector2i(384, 48), L"Type here", 32, 20);
 		_name->setPosition(sf::Vector2i(_rect.position.x + 16, _nameText->getGlobalBounds().position.y + 32));
 	
-		if(AnimationsEditor::editor->_animations) {
-			_name->setText(AnimationsEditor::editor->_animations->_path);
+		if(!AnimationsEditor::editor->_animations.expired()) {
+			_name->setText(AnimationsEditor::editor->_animations.lock()->_path);
 		}
 
 		
@@ -32,8 +32,8 @@ namespace AnimationsEditor {
 
 		_name->setText(L"");
 
-		if(editor->_animations)
-			_name->setText(editor->_animations->_path);
+		if(!editor->_animations.expired())
+			_name->setText(editor->_animations.lock()->_path);
 	}
 
 	void NamePanel::cursorHover() {

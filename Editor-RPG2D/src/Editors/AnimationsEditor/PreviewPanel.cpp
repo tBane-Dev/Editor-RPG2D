@@ -167,7 +167,7 @@ namespace AnimationsEditor {
 		_frames_count->setPosition(sf::Vector2f(s - _frames_count->getGlobalBounds().size.x - m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
 		_frame_size->setPosition(sf::Vector2f(s - _frame_size->getGlobalBounds().size.x - m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
 
-		if (editor->_animations) {
+		if (!editor->_animations.expired()) {
 			loadAnimations();
 		}
 	}
@@ -187,13 +187,13 @@ namespace AnimationsEditor {
 		if(editor->_animator == nullptr)
 			return;
 
-		if (editor->_animations == nullptr)
+		if (editor->_animations.expired())
 			return;
 
 		_animations_current->setString(std::to_wstring(editor->_animator->_animation));
-		_animations_count->setString(std::to_wstring(editor->_animations->_animationsCount));
+		_animations_count->setString(std::to_wstring(editor->_animations.lock()->_animationsCount));
 		_frame->setString(std::to_wstring(editor->_animator->_frame));
-		_frames_count->setString(std::to_wstring(editor->_animations->_framesCount));
+		_frames_count->setString(std::to_wstring(editor->_animations.lock()->_framesCount));
 		
 		sf::Vector2i frameSize;
 		frameSize.x = std::stoi(editor->_sprite_sheet_panel->_w->getText());  
@@ -282,11 +282,11 @@ namespace AnimationsEditor {
 		// draw animation
 		std::shared_ptr<Animator> animator = editor->_animator;
 		if (animator) {
-			std::shared_ptr<Animations> animations = animator->getAnimations();
-			if (animations) {
-				sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);
+			std::weak_ptr<Animations> animations = animator->getAnimations();
+			if (!animations.expired()) {
+				sf::IntRect frameRect = animations.lock()->getFrameRect(animator->_animation, animator->_frame);
 
-				sf::Sprite sprite(*animations->getTexture()->_texture);
+				sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
 				sprite.setTextureRect(frameRect);
 				sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
 				sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));

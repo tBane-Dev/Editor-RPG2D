@@ -65,7 +65,7 @@ ConfirmDialog::ConfirmDialog(std::wstring title, std::wstring text, sf::Vector2i
 	_bottomComment->setFillColor(small_text_color);
 	_bottomComment->setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f(padding, getContentSize().y - 16 - padding));
 
-	setPosition(sf::Vector2i(200, 200));
+	setPosition(position);
 }
 
 ConfirmDialog::~ConfirmDialog() {

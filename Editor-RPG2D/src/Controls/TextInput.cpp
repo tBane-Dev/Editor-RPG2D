@@ -389,18 +389,19 @@ void TextInput::handleEvent(const sf::Event& event) {
 					c += character;
 					
 					if (_editState == TextInputEditState::TextEntered) {
-						if ((int)_textStr.length() < _limitCharacters) {
+						if (_limitCharacters == -1 || (int)_textStr.length() < _limitCharacters) {
 							_textStr.insert(_cursorPosition, c);
 							_cursorPosition += 1;
 							setText(_textStr);
 						}
 					}
 					else {
+						// if text is selected, replace it with the new character
 						int min = std::min(_selectionStart, _selectionEnd);
 						int max = std::max(_selectionStart, _selectionEnd);
 						_textStr.erase(min, max - min);
 						_textStr.insert(min, c);
-						_text->setString(_textStr.substr(0, _limitCharacters));
+						_text->setString(_textStr.substr(0, (_limitCharacters==-1)? _textStr.length() : _limitCharacters));
 						_editState = TextInputEditState::TextEntered;
 						_cursorPosition = min + 1;
 						_selectionStart = -1;

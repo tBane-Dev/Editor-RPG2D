@@ -10,7 +10,8 @@ public:
     GameObjectsOnMap();
     ~GameObjectsOnMap(); 
     
-	void addGameObject(std::shared_ptr<GameObjectOnMap> gameObjectOnMap);
+	void addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap);
+    void removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefab);
     void removeGameObjectsByAnimations(int animationID);
     void sort();
 

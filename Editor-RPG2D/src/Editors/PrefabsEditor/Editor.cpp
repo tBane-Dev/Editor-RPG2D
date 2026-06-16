@@ -13,7 +13,7 @@ namespace PrefabsEditor {
 		_title->setFillColor(basic_text_color);
 		_title->setPosition(sf::Vector2f(32, 48));
 
-		_object = nullptr;
+		_object = std::weak_ptr<GameObject>();
 	}
 
 	Editor::~Editor() {
@@ -45,8 +45,8 @@ namespace PrefabsEditor {
 	}
 
 	void Editor::createAnimator() {
-		if (_object)
-			_animator = std::make_shared<Animator>(_object->getAnimations(), 0.2f);
+		if (!_object.expired())
+			_animator = std::make_shared<Animator>(_object.lock()->getAnimations(), 0.2f);
 	}
 
 	void Editor::createAnimationPanel() {
@@ -71,8 +71,10 @@ namespace PrefabsEditor {
 			return;
 		}
 
+		
 		_animation_panel->cursorHover();
 		_collider_panel->cursorHover();
+		_main_panel->cursorHover();
 		_mesh_panel->cursorHover();
 		_palette->cursorHover();
 		_main_menu->cursorHover();

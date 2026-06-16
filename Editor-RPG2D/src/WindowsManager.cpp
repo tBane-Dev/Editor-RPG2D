@@ -72,6 +72,10 @@ namespace Main {
 		setPosition(_rect.position);
 	}
 
+	sf::Vector2i Window::getSize() {
+		return _rect.size;
+	}
+
 	sf::Vector2i Window::getContentPosition() {
 		return _contentRect.position;
 	}
@@ -90,6 +94,10 @@ namespace Main {
 		_closeButton->setPosition(_rect.position + sf::Vector2i(_rect.size.x - 32, border));
 
 		_contentRect.position = _rect.position + sf::Vector2i(border, border + basic_text_rect_height);
+	}
+
+	sf::Vector2i Window::getPosition() {
+		return _rect.position;
 	}
 
 	void Window::cursorHover() {

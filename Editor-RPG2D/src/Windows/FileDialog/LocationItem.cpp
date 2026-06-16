@@ -5,12 +5,11 @@
 #include "GUIManager.hpp"
 #include "RenderWindow.hpp"
 
-
 LocationItem::LocationItem() : Button() {
 	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(256, basic_text_rect_height));
 	
 	_name = L"";
-	_path = std::filesystem::path();
+	_path = std::make_shared<std::filesystem::path>();
 
 	_type = LocationItemType::Empty;
 	_opener = nullptr;
@@ -37,18 +36,25 @@ void LocationItem::setPosition(sf::Vector2i position) {
 	_text->setPosition(sf::Vector2f(_rect.position + sf::Vector2i(32+32, 2)));
 }
 
-void LocationItem::setFile(std::wstring name, std::filesystem::path path) {
+void LocationItem::setFile(std::wstring name, std::shared_ptr<std::filesystem::path> path) {
+
 	_name = name;
 	_path = path;
 
-	if(isDrive(_path.wstring()))
+	if (!_path)
+		_type = LocationItemType::Empty;
+	else if (*_path.get() == std::filesystem::path())
+		_type = LocationItemType::PC;
+	else if(isDrive(_path->wstring()))
 		_type = LocationItemType::Drive;
-	else if(std::filesystem::is_directory(_path))
+	else if(std::filesystem::is_directory(*_path))
 		_type = LocationItemType::Directory;
 	else
 		_type = LocationItemType::Empty;
 
-	if (hasChildren(_path)) {
+
+	// TO-DO - must be a _childrens.size() > 0
+	if (_path && (*_path.get() == std::filesystem::path() || hasChildren(*_path))) { // std::filesystem::path() (This PC) or directory with children
 		_opener = std::make_shared<Checkbox>(
 			textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\directoryToOpen.png"),
 			textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\directoryToOpen_hover.png")
@@ -71,7 +77,7 @@ void LocationItem::setFile(std::wstring name, std::filesystem::path path) {
 }
 
 void LocationItem::cursorHover() {
-	if(_path.empty())
+	if(!_path)
 		return;
 
 	Button::cursorHover();
@@ -82,7 +88,7 @@ void LocationItem::cursorHover() {
 }
 
 void LocationItem::handleEvent(const sf::Event& event) {
-	if(_path.empty())
+	if(!_path)
 		return;
 
 	Button::handleEvent(event);
@@ -93,7 +99,7 @@ void LocationItem::handleEvent(const sf::Event& event) {
 }
 
 void LocationItem::update() {
-	if(_path.empty())
+	if(!_path)
 		return;
 
 	Button::update();
@@ -151,7 +157,22 @@ void LocationItem::draw() {
 				break;
 		}
 		break;
+
+	case LocationItemType::PC:
+		switch (_state) {
+		case ButtonState::Pressed:
+			icon = textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\pc_press.png");
+			break;
+		case ButtonState::Hover:
+			icon = textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\pc_hover.png");
+			break;
+		default:
+			icon = textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\pc.png");
+			break;
+		}
+		break;
 	}
+
 
 	if (icon) {
 		sf::Sprite sprite(*icon->_texture);

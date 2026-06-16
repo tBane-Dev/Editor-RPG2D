@@ -147,7 +147,7 @@ CursorOnMap::CursorOnMap() {
     Main::render_window->setView(MapEditor::editor->_camera->_view);
     _position = sf::Vector2i(Main::render_window->mapPixelToCoords(Main::cursor->_position));
 
-	_object = nullptr;
+	_object = std::weak_ptr<Object>();
 }
 
 CursorOnMap::~CursorOnMap() {
@@ -163,7 +163,7 @@ void CursorOnMap::update() {
 
 void CursorOnMap::handleEvent(const sf::Event& event) {
 	
-	if(_object == nullptr)
+	if(_object.expired())
 		return;
 
     if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
@@ -175,14 +175,14 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             MapEditor::editor->_palette->_slots->selectSlot(-1);
         }
 
-        _object = nullptr;
+        _object = std::weak_ptr<Object>();
         return;
     }
 
     if (!(GUI_manager->Element_pressed == nullptr || GUI_manager->Element_pressed == MapEditor::editor->_map))
         return;
 
-	if (_object->_type == ObjectType::Terrain) {
+	if (_object.lock()->_type == ObjectType::Terrain) {
 
         bool conditionToDraw = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle || MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
 
@@ -194,7 +194,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			tileCoords.x = (_position.x - mapa->getRect().position.x) / Tile::tileSize;
 			tileCoords.y = (_position.y - mapa->getRect().position.y) / Tile::tileSize;
 
-			int type = std::dynamic_pointer_cast<Terrain>(MapEditor::editor->_cursor_on_map->_object)->_id;
+			int type = std::dynamic_pointer_cast<Terrain>(MapEditor::editor->_cursor_on_map->_object.lock())->_id;
 
 			std::set<std::shared_ptr<Chunk>> chunksToEdit;
 
@@ -252,15 +252,15 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
 		if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
-			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
-			std::shared_ptr<Animations> animations = prefab->getAnimations();
+			std::weak_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+			std::weak_ptr<Animations> animations = prefab.lock()->getAnimations().lock();
             
             float frameWidth = 128;
             float frameHeight = 128;
 
-            if (animations) {
-                frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
-                frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
+            if (!animations.expired()) {
+                frameWidth = (float)(animations.lock()->getTexture()->getSize().x / animations.lock()->_framesCount);
+                frameHeight = (float)(animations.lock()->getTexture()->getSize().y / animations.lock()->_animationsCount);
             }
 
 			// position of object on the map, aligning to the grid
@@ -268,16 +268,16 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
 			position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
 
-			if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
-				position.x += prefab->getOrigin().x;
-				position.y += prefab->getOrigin().y;
+			if (dynamic_cast<MonsterPrefab*>(prefab.lock().get())) {
+				position.x += prefab.lock()->getOrigin().x;
+				position.y += prefab.lock()->getOrigin().y;
 			}
 
 			// create object on map by type 
 			std::shared_ptr<GameObjectOnMap> objectOnMap;
 
-			if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
-			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
+			if (prefab.lock()->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
+			else if (prefab.lock()->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
 			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
 
 
@@ -295,7 +295,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 void CursorOnMap::draw()
 {
 	
-    if(_object == nullptr)
+    if(_object.expired())
 		return;
 
 	if(!(GUI_manager->Element_hovered == MapEditor::editor->_map || GUI_manager->Element_hovered == nullptr))
@@ -303,7 +303,7 @@ void CursorOnMap::draw()
 
     Main::render_window->setView(MapEditor::editor->_camera->_view);
 
-    if (_object->_type == ObjectType::Terrain) {
+    if (_object.lock()->_type == ObjectType::Terrain) {
 
 		int brushSize = MapEditor::editor->_palette->_brushSize;
 		
@@ -346,19 +346,19 @@ void CursorOnMap::draw()
         return;
     }
 
-	if(dynamic_pointer_cast<GameObject>(_object) != nullptr) {
+	if(dynamic_pointer_cast<GameObject>(_object.lock()) != nullptr) {
 
-		std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object);
-		std::shared_ptr<Animations> animations = prefab->getAnimations();
+		std::weak_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+		std::weak_ptr<Animations> animations = prefab.lock()->getAnimations();
         
         float frameWidth = 128;
         float frameHeight = 128;
 		sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
 
-        if (animations) {
-            frameWidth = (float)(animations->getTexture()->getSize().x / animations->_framesCount);
-            frameHeight = (float)(animations->getTexture()->getSize().y / animations->_animationsCount);
-			frameRect = animations->getFrameRect(0, 0);
+        if (!animations.expired()) {
+            frameWidth = (float)(animations.lock()->getTexture()->getSize().x / animations.lock()->_framesCount);
+            frameHeight = (float)(animations.lock()->getTexture()->getSize().y / animations.lock()->_animationsCount);
+			frameRect = animations.lock()->getFrameRect(0, 0);
         }
 
 		sf::Vector2i position;
@@ -372,8 +372,8 @@ void CursorOnMap::draw()
 		outlineRect.setOutlineColor(sf::Color::Green);
         Main::render_window->draw(outlineRect);
 
-        if (animations) {
-            sf::Sprite sprite(*animations->getTexture()->_texture);
+        if (!animations.expired()) {
+            sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
             sprite.setTextureRect(frameRect);
 
             sprite.setPosition(sf::Vector2f(position));

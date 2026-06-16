@@ -107,14 +107,16 @@ namespace PrefabsEditor {
 
 		// draw animation
 		std::shared_ptr<Animator>& animator = PrefabsEditor::editor->_animator;
-		if (animator) {
+		std::weak_ptr<Animations> animations = (animator) ? animator->getAnimations() : std::weak_ptr<Animations>();
+
+		if (animator && !animations.expired()) {
 
 			// TO-DO - must be in update
 			if (_type->getText() == L"Rectangular") {
 
 				std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
 				_collider = rectCollider;
-				sf::Vector2f spriteSize = sf::Vector2f(animator->getAnimations()->getFrameRect(0, 0).size);
+				sf::Vector2f spriteSize = sf::Vector2f(animator->getAnimations().lock()->getFrameRect(0, 0).size);
 				sf::Vector2f scale((float)rect.getSize().x / spriteSize.x, (float)rect.getSize().y / spriteSize.y);
 				sf::Vector2i colliderPosition(rect.getPosition().x + (float)rectCollider->_rect.position.x * scale.x, rect.getPosition().y + (float)rectCollider->_rect.position.y * scale.y);
 				_collider->draw(colliderPosition, scale);
@@ -123,7 +125,7 @@ namespace PrefabsEditor {
 
 				std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
 				_collider = circularCollider;
-				sf::Vector2f spriteSize = sf::Vector2f(animator->getAnimations()->getFrameRect(0, 0).size);
+				sf::Vector2f spriteSize = sf::Vector2f(animator->getAnimations().lock()->getFrameRect(0, 0).size);
 				sf::Vector2f scale((float)rect.getSize().x / spriteSize.x, (float)rect.getSize().y / spriteSize.y);
 				sf::Vector2i colliderPosition(
 					rect.getPosition().x + (float)(circularCollider->_x) * scale.x,
@@ -133,10 +135,10 @@ namespace PrefabsEditor {
 				_collider->draw(colliderPosition, scale);
 			}
 
-			std::shared_ptr<Animations> animations = animator->getAnimations();
-			sf::IntRect frameRect = animations->getFrameRect(0, 0);
+			std::weak_ptr<Animations> animations = animator->getAnimations();
+			sf::IntRect frameRect = animations.lock()->getFrameRect(0, 0);
 
-			sf::Sprite sprite(*animations->getTexture()->_texture);
+			sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
 			sprite.setTextureRect(frameRect);
 			sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
 			sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));

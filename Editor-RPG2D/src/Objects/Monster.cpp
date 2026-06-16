@@ -4,7 +4,7 @@
 #include <iostream>
 #include "Editors/MapEditor/Editor.hpp"
 
-MonsterPrefab::MonsterPrefab(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider) : GameObject(name, animations, origin, collider) {
+MonsterPrefab::MonsterPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider) : GameObject(name, animations, origin, collider) {
 	_type = ObjectType::Monster;
 	_stepSize = stepSize;
 }
@@ -13,7 +13,7 @@ MonsterPrefab::~MonsterPrefab() {
 
 }
 
-Monster::Monster(std::shared_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
+Monster::Monster(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 
 	_type = ObjectType::Monster;
 
@@ -69,7 +69,7 @@ void Monster::update() {
 			if (_position != _path->getEndPoint()) {
 
 				sf::Vector2i target = _path->getStartPoint();
-				int stepSize = std::dynamic_pointer_cast<MonsterPrefab>(_prefab)->_stepSize;
+				int stepSize = std::dynamic_pointer_cast<MonsterPrefab>(_prefab.lock())->_stepSize;
 
 				if (_position.y < target.y) {
 					_position.y += std::min(target.y - _position.y, stepSize);
@@ -106,34 +106,38 @@ void Monster::update() {
 
 void Monster::draw() {
 
+	if (_prefab.expired())
+		return;
+
 	if (MapEditor::editor->_main_menu->_render_paths->_checkbox->_value == 1) {
 		_path->draw();
 	}
-		
 
 	bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
 
-	if (renderAllColliders || _prefab->_collider->cursorHover(MapEditor::editor->_cursor_on_map->_position + _prefab->getOrigin(), _position)) {
-		_prefab->getCollider()->draw(_position);
+	std::shared_ptr<Collider> collider = _prefab.lock()->getCollider();
+
+	if (collider != nullptr && (renderAllColliders || collider->cursorHover(MapEditor::editor->_cursor_on_map->_position + _prefab.lock()->getOrigin(), _position))) {
+		_prefab.lock()->getCollider()->draw(_position);
 	}
 	
 
-	std::shared_ptr<Animations> anim = _animator->getAnimations();
+	std::weak_ptr<Animations> anim = _animator->getAnimations();
 	
-	if (!anim) {
+	if (anim.expired()) {
 		drawFrame();
 		return;
 	}
 
-	sf::IntRect frameRect = anim->getFrameRect(_animator->_animation, _animator->_frame);
+	sf::IntRect frameRect = anim.lock()->getFrameRect(_animator->_animation, _animator->_frame);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		drawFrame();
 	}
 
-	sf::Sprite sprite(*anim->getTexture()->_texture);
+	sf::Sprite sprite(*anim.lock()->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
-	sprite.setOrigin(sf::Vector2f(_prefab->getOrigin()));
+	sprite.setOrigin(sf::Vector2f(_prefab.lock()->getOrigin()));
 	sprite.setTextureRect(frameRect);
 	Main::render_window->draw(sprite);
 }

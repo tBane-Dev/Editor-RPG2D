@@ -143,15 +143,20 @@ namespace AnimationsEditor {
 			if (_scrollbar) index += _scrollbar->getValue() / basic_text_rect_height;
 
 			if (index < animations_manager->getAnimationsCount()) {
-				item->setName(animations_manager->getAnimations(index)->_path);
+				item->setName(animations_manager->getAnimations(index).lock()->_path);
 				item->_onclick_func = [this, index, item]() {
 
 					selectItem(index);
 
-					editor->_animations = std::make_shared<Animations>(*animations_manager->getAnimations(index));
+					std::shared_ptr<Animations> animations = animations_manager->getAnimations(index).lock();
 
+					if (!animations)
+						return;
+
+					editor->_animations = animations;
 					editor->_animator = std::make_shared<Animator>(editor->_animations, 0.2f);
-					editor->_animation_name_panel->loadAnimations();;
+
+					editor->_animation_name_panel->loadAnimations();
 					editor->_sprite_sheet_panel->loadAnimations();
 					editor->_preview_panel->loadAnimations();
 					};

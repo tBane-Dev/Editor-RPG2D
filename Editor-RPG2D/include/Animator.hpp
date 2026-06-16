@@ -29,7 +29,7 @@ public:
 	void pause();
 	void update();
 
-	std::shared_ptr<Animations> getAnimations();
+	std::weak_ptr<Animations> getAnimations();
 
 
 };

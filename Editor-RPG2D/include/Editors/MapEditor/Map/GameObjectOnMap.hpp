@@ -5,11 +5,11 @@
 
 class GameObjectOnMap : public Object {
 public:
-	std::shared_ptr<GameObject> _prefab;
+	std::weak_ptr<GameObject> _prefab;
 	std::shared_ptr<Animator> _animator;
     sf::Vector2i _position;
 
-	GameObjectOnMap(std::shared_ptr<GameObject> prefab);
+	GameObjectOnMap(std::weak_ptr<GameObject> prefab);
 	~GameObjectOnMap();
 
 	void drawFrame();

@@ -9,7 +9,7 @@ GameObjectsOnMap::GameObjectsOnMap() {
 	 
 	std::shared_ptr<Map> map = MapEditor::editor->_map;
 	sf::IntRect mapRect = map->getRect();
-	sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations()->getTexture()->_texture->getSize());
+	sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations().lock()->getTexture()->_texture->getSize());
 
 	std::shared_ptr<GameObjectOnMap> tree_1 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
 	tree_1->setPosition(sf::Vector2i(0, 0));
@@ -33,25 +33,64 @@ GameObjectsOnMap::~GameObjectsOnMap() {
 
 }
 
-void GameObjectsOnMap::addGameObject(std::shared_ptr<GameObjectOnMap> gameObjectOnMap) {
+void GameObjectsOnMap::addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap) {
 
-	_gameObjectsOnMap.push_back(gameObjectOnMap);
+	_gameObjectsOnMap.push_back(gameObjectOnMap.lock());
 }
 
-void GameObjectsOnMap::removeGameObjectsByAnimations(int animationID) {
+void GameObjectsOnMap::removeGameObjectsByAnimations(int animationID)
+{
+	std::shared_ptr<Animations> animation = animations_manager->getAnimations(animationID).lock();
 
-	std::shared_ptr<Animations> animation = animations_manager->getAnimations(animationID);
+	if (!animation)
+		return;
 
-	std::erase_if(_gameObjectsOnMap, [&](const std::shared_ptr<GameObjectOnMap>& object)
-		{ return object->_prefab->_animations.lock() == animation; }
-	);
+	std::erase_if(_gameObjectsOnMap,
+		[&](const std::weak_ptr<GameObjectOnMap>& weakObject)
+		{
+			auto object = weakObject.lock();
+			if (!object)
+				return true;
+
+			auto prefab = object->_prefab.lock();
+			if (!prefab)
+				return true;
+
+			auto prefabAnimation = prefab->_animations.lock();
+			if (!prefabAnimation)
+				return true;
+
+			return prefabAnimation == animation;
+		});
+}
+
+void GameObjectsOnMap::removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefab)
+{
+    auto prefabPtr = prefab.lock();
+
+    if (!prefabPtr)
+        return;
+
+    std::erase_if(_gameObjectsOnMap,
+        [&](const std::shared_ptr<GameObjectOnMap>& object)
+        {
+            if (!object)
+                return true;
+
+            auto objectPrefab = object->_prefab.lock();
+
+            if (!objectPrefab)
+                return true;
+
+            return objectPrefab == prefabPtr;
+        });
 }
 
 void GameObjectsOnMap::sort() {
 	std::sort(_gameObjectsOnMap.begin(), _gameObjectsOnMap.end(), [](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
 		
-		sf::Vector2i posA = a->_position + (dynamic_pointer_cast<MonsterPrefab>(a->_prefab)? sf::Vector2i(0, 0) : a->_prefab->getOrigin());
-		sf::Vector2i posB = b->_position + (dynamic_pointer_cast<MonsterPrefab>(b->_prefab)? sf::Vector2i(0, 0) : b->_prefab->getOrigin());
+		sf::Vector2i posA = a->_position + (dynamic_pointer_cast<MonsterPrefab>(a->_prefab.lock())? sf::Vector2i(0, 0) : a->_prefab.lock()->getOrigin());
+		sf::Vector2i posB = b->_position + (dynamic_pointer_cast<MonsterPrefab>(b->_prefab.lock())? sf::Vector2i(0, 0) : b->_prefab.lock()->getOrigin());
 
 		if (posA.y == posB.y)
 			return posA.x < posB.x;

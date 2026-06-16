@@ -170,19 +170,13 @@ void Slots::loadObjects() {
 
 	if (_type == ObjectType::Terrain) {
 
-		std::vector<std::shared_ptr<Terrain>> terrains;
-		for(int i=0;i<MapEditor::editor->_tileset->groups.size(); i++) {
-
-			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
-		}
-
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i < terrains.size()) {
-				_slots[i]->_object = terrains[i];
+			if (i < Components::Palette::terrains.size()) {
+				_slots[i]->_object = Components::Palette::terrains[i];
 				_slots[i]->_animator = nullptr;
 			}
 			else {
-				_slots[i]->_object = nullptr;
+				_slots[i]->_object = std::weak_ptr<Object>();
 				_slots[i]->_animator = nullptr;
 			}
 		}
@@ -199,7 +193,7 @@ void Slots::loadObjects() {
 			_slots[i]->_animator->play();
 		}
 		else {
-			_slots[i]->_object = nullptr;
+			_slots[i]->_object = std::weak_ptr<Object>();
 			_slots[i]->_animator = nullptr;
 		}
 	}
@@ -231,7 +225,7 @@ void Slots::updateObjects() {
 				_slots[i]->_animator = nullptr;
 			}
 			else {
-				_slots[i]->_object = nullptr;
+				_slots[i]->_object = std::weak_ptr<Object>();
 				_slots[i]->_animator = nullptr;
 			}
 		}
@@ -249,7 +243,7 @@ void Slots::updateObjects() {
 			_slots[i]->_animator->play();
 		}
 		else {
-			_slots[i]->_object = nullptr;
+			_slots[i]->_object = std::weak_ptr<Object>();
 			_slots[i]->_animator = nullptr;
 		}
 	}
@@ -260,7 +254,7 @@ void Slots::setCategory(ObjectType type) {
 	if (_type != type) {
 		_type = type;
 		selectSlot(-1);
-		MapEditor::editor->_cursor_on_map->_object = nullptr;
+		MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<Object>();
 	}
 
 	
@@ -291,7 +285,7 @@ void Slots::setFunction(std::function<void(std::shared_ptr<Slot> slot, int selec
 
 		slot->_onclick_func = [this, slot, i, function]() {
 
-			if (slot->_object != nullptr) {
+			if (!slot->_object.expired()) {
 				int startIndex = _scrollbar->getValue() / ((_type == ObjectType::Terrain) ? (160 + _inner_margin) : (80 + _inner_margin)) * _slotsCount.x;
 				function(slot, i + startIndex);
 			}

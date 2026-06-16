@@ -5,6 +5,7 @@
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
+#include "Windows/FileDialog/FileDialog.hpp"
 
 namespace AnimationsEditor {
 
@@ -21,6 +22,44 @@ namespace AnimationsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\mediumButton_press.png"),
 			sf::Vector2i(_rect.position.x + 512 + 64, _rect.position.y + 48)
 		);
+
+		_loadBtn->_onclick_func = [this]() {
+
+			std::shared_ptr<FileDialog> fileDialog = std::make_shared<FileDialog>(L"Load Spritesheet");
+			
+			std::function<void()> function = [this, fileDialog]() {
+
+				std::shared_ptr<sf::Image> image = std::make_shared<sf::Image>();
+				
+				if (!image->loadFromFile(fileDialog->getPathFile())) {
+					std::wcout << L"Nie udało się wczytać obrazka: "
+						<< fileDialog->getPathFile() << std::endl;
+					return;
+				}
+
+				std::shared_ptr<Texture> texture = std::make_shared<Texture>(fileDialog->getPathFile(), image);
+
+				if (editor->_animations.expired()) {
+					editor->_animations = std::make_shared<Animations>(fileDialog->getPathFile(), texture, 1, 1);
+				}
+				else {
+					editor->_animations.lock()->_texture = texture;
+					editor->_animations.lock()->_framesCount = 1;
+					editor->_animations.lock()->_animationsCount = 1;
+				}
+					
+
+				loadAnimations();
+
+				if (editor->_preview_panel) {
+					editor->_preview_panel->loadAnimations();
+				}
+
+			};
+
+			fileDialog->setFunction(function);
+			Main::windows_manager->push_back(fileDialog);
+		};
 
 		// text inputs
 		sf::Vector2i startPosition(_rect.position.x + 512 + 96, _rect.position.y + 64 + 64);
@@ -63,39 +102,39 @@ namespace AnimationsEditor {
 
 		// text inputs functions
 		_x->_onEditedFunction = [this]() {
-			if (editor->_animations) {
+			if (!editor->_animations.expired()) {
 				DebugLog(L"ta funkcja jeszcze nie działa");
 			}
 		};
 
 		_y->_onEditedFunction = [this]() {
-			if (editor->_animations) {
+			if (!editor->_animations.expired()) {
 				DebugLog(L"ta funkcja jeszcze nie działa");
 			}
-			};
+		};
 
 		
 		_w->_onEditedFunction = [this]() {
-			if (editor->_animations) {
+			if (!editor->_animations.expired()) {
 				int w = std::stoi(_w->getText());
-				if (w > 0 && w <= editor->_animations->getTexture()->getSize().x) {
-					editor->_animations->_framesCount = editor->_animations->getTexture()->getSize().x / w; // TO-DO - to delete
+				if (w > 0 && w <= editor->_animations.lock()->getTexture()->getSize().x) {
+					editor->_animations.lock()->_framesCount = editor->_animations.lock()->getTexture()->getSize().x / w; // TO-DO - to delete
 					editor->_preview_panel->loadAnimations();
 				}
 					
 			}
-			};
+		};
 
 		_h->_onEditedFunction = [this]() {
-			if (editor->_animations) {
+			if (!editor->_animations.expired()) {
 				int h = std::stoi(_h->getText());
-				if (h > 0 && h <= editor->_animations->getTexture()->getSize().y) {
-					editor->_animations->_animationsCount = editor->_animations->getTexture()->getSize().y / h; // TO-DO - to delete
+				if (h > 0 && h <= editor->_animations.lock()->getTexture()->getSize().y) {
+					editor->_animations.lock()->_animationsCount = editor->_animations.lock()->getTexture()->getSize().y / h; // TO-DO - to delete
 					editor->_preview_panel->loadAnimations();
 				}
 					
 			}
-			};
+		};
 
 		loadAnimations();
 	}
@@ -114,13 +153,13 @@ namespace AnimationsEditor {
 		if (!editor->_animator)
 			return;
 
-		if(!editor->_animations)
+		if(editor->_animations.expired())
 			return;
 
 		_x->setText(L"0");
 		_y->setText(L"0");
-		_w->setText(std::to_wstring(editor->_animations->getTexture()->getSize().x / editor->_animations->_framesCount));
-		_h->setText(std::to_wstring(editor->_animations->getTexture()->getSize().y / editor->_animations->_animationsCount));
+		_w->setText(std::to_wstring(editor->_animations.lock()->getTexture()->getSize().x / editor->_animations.lock()->_framesCount));
+		_h->setText(std::to_wstring(editor->_animations.lock()->getTexture()->getSize().y / editor->_animations.lock()->_animationsCount));
 	}
 
 	void SpriteSheetPanel::cursorHover() {
@@ -176,17 +215,17 @@ namespace AnimationsEditor {
 
 		// draw sprite sheet
 		float scale = 1;
-		if (editor->_animations) {
+		if (!editor->_animations.expired()) {
 
-			int width = editor->_animations->getTexture()->_texture->getSize().x;
-			int height = editor->_animations->getTexture()->_texture->getSize().y;
+			int width = editor->_animations.lock()->getTexture()->_texture->getSize().x;
+			int height = editor->_animations.lock()->getTexture()->_texture->getSize().y;
 
 			float scaleX = rect.getSize().x / width;
 			float scaleY = rect.getSize().y / height;
 
 			scale = std::min(scaleX, scaleY);
 
-			sf::Sprite sprite(*editor->_animations->getTexture()->_texture);
+			sf::Sprite sprite(*editor->_animations.lock()->getTexture()->_texture);
 			sprite.setScale(sf::Vector2f(scale, scale));
 			sprite.setPosition(rect.getPosition());
 			Main::render_window->draw(sprite);
@@ -204,8 +243,8 @@ namespace AnimationsEditor {
 		grid2_shader->setUniform("gridSize", sf::Vector2f(16.0f * scale, 16.0f * scale));
 		grid2_shader->setUniform("chunkSize", 
 			sf::Vector2f(
-				(editor->_animations)?(float)editor->_animations->getFrameRect(0, 0).size.x * scale : 128,
-				(editor->_animations)?(float)editor->_animations->getFrameRect(0, 0).size.y * scale : 128
+				(!editor->_animations.expired())?(float)editor->_animations.lock()->getFrameRect(0, 0).size.x * scale : 128,
+				(!editor->_animations.expired())?(float)editor->_animations.lock()->getFrameRect(0, 0).size.y * scale : 128
 			)
 		);
 		grid2_shader->setUniform("gridWidth", gridWidth);

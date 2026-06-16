@@ -5,11 +5,11 @@
 class Animations {
 public:
     std::wstring _path;
-    std::weak_ptr<Texture> _texture;
+    std::shared_ptr<Texture> _texture;
     int _animationsCount;
     int _framesCount;
     
-    Animations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount);
+    Animations(std::wstring path, std::shared_ptr<Texture> texture, int animationsCount, int framesCount);
     Animations(std::wstring path, int animationsCount, int framesCount, bool& loadingStatus);
     ~Animations();
     
@@ -26,8 +26,8 @@ public:
     ~AnimationsManager();
     
     int addAnimations(std::wstring name, std::shared_ptr<Texture> texture, int animationsCount, int framesCount);
-    std::shared_ptr<Animations> getAnimations(std::wstring path);
-    std::shared_ptr<Animations> getAnimations(int index);
+    std::weak_ptr<Animations> getAnimations(std::wstring path);
+    std::weak_ptr<Animations> getAnimations(int index);
     int getAnimationsID(std::wstring path);
     void removeAnimations(int index);
     int getAnimationsCount();

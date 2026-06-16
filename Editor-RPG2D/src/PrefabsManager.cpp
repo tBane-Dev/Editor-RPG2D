@@ -15,8 +15,17 @@ void PrefabsManager::addPrefab(std::shared_ptr<GameObject> prefab) {
 	_prefabs.push_back(prefab);
 }
 
-void PrefabsManager::removePrefab(std::shared_ptr<GameObject> prefab) {
-    _prefabs.erase(std::remove(_prefabs.begin(), _prefabs.end(), prefab), _prefabs.end());
+void PrefabsManager::removePrefab(std::weak_ptr<GameObject> prefab)
+{
+    auto prefabPtr = prefab.lock();
+    if (!prefabPtr)
+        return;
+
+    std::erase_if(_prefabs,
+        [&](const std::shared_ptr<GameObject>& p)
+        {
+            return p == prefabPtr;
+        });
 }
 
 std::shared_ptr<GameObject> PrefabsManager::getPrefab(std::wstring path) {
@@ -46,10 +55,18 @@ std::vector<std::shared_ptr<GameObject>> PrefabsManager::getPrefabs(ObjectType t
 
 void PrefabsManager::removePrefabsByAnimations(int animationID) {
 
-	std::shared_ptr<Animations> animation = animations_manager->getAnimations(animationID);
+    std::shared_ptr<Animations> animation =
+        animations_manager->getAnimations(animationID).lock();
 
-    std::erase_if(_prefabs, [&](const std::shared_ptr<GameObject>& prefab) 
-        { return prefab->_animations.lock() == animation; }
+    if (!animation)
+        return;
+
+    std::erase_if(_prefabs, [&](const std::shared_ptr<GameObject>& prefab) {
+            if (!prefab)
+                return false;
+
+            return prefab->_animations.lock() == animation;
+        }
     );
 }
 

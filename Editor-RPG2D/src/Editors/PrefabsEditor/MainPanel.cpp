@@ -1,5 +1,7 @@
 #include "Editors/PrefabsEditor/MainPanel.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
+
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
 #include "DebugLog.hpp"
@@ -40,7 +42,7 @@ namespace PrefabsEditor {
 
 		_add_prefab->_onclick_func = [this]() {
 
-			if (!PrefabsEditor::editor->_object)
+			if (PrefabsEditor::editor->_object.expired())
 				return;
 
 			std::shared_ptr<Collider> collider;
@@ -85,31 +87,38 @@ namespace PrefabsEditor {
 
 		_remove_prefab->_onclick_func = [this]() {
 
-			if (PrefabsEditor::editor->_object == nullptr) {
+			if (PrefabsEditor::editor->_object.expired()) {
 				return;
 			}
 
 			int selectedSlotId = PrefabsEditor::editor->_palette->_slots->_selectedSlotId;
 			int scrollbarValue = PrefabsEditor::editor->_palette->_slots->_scrollbar->getValue();
-
+			
+			// remove from map
+			MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<GameObject>();
+			MapEditor::editor->_game_objects->removeGameObjectsByPrefab(PrefabsEditor::editor->_object);
 			prefabs_manager->removePrefab(PrefabsEditor::editor->_object);
-			PrefabsEditor::editor->_object = nullptr;
+			
+			// updates palettes
 			PrefabsEditor::editor->_palette->loadAll(PrefabsEditor::editor->_palette->_categories->_selectedType);
+			MapEditor::editor->_palette->loadAll(PrefabsEditor::editor->_palette->_categories->_selectedType);
+			
 			PrefabsEditor::editor->_palette->_slots->_scrollbar->setValue(scrollbarValue);
+			PrefabsEditor::editor->_object = std::weak_ptr<GameObject>();
 
 			selectedSlotId -= 1;
 
 			PrefabsEditor::editor->_palette->_slots->selectSlot(selectedSlotId);
 
 			if (PrefabsEditor::editor->_palette->_slots->_selectedSlotId >= 0) {
-				PrefabsEditor::editor->_object = std::dynamic_pointer_cast<GameObject>(PrefabsEditor::editor->_palette->_slots->_selectedSlot->_object);
+				PrefabsEditor::editor->_object = std::dynamic_pointer_cast<GameObject>(PrefabsEditor::editor->_palette->_slots->_selectedSlot->_object.lock());
 			}
 
 			PrefabsEditor::editor->_palette->_slots->updateObjects();
 			PrefabsEditor::editor->_animator = nullptr;
 
-			if (PrefabsEditor::editor->_object)
-				PrefabsEditor::editor->_animator = std::make_shared<Animator>(PrefabsEditor::editor->_object->_animations, 0.2f);
+			if (!PrefabsEditor::editor->_object.expired())
+				PrefabsEditor::editor->_animator = std::make_shared<Animator>(PrefabsEditor::editor->_object.lock()->_animations, 0.2f);
 			};
 	}
 

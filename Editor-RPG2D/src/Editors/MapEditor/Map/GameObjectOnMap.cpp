@@ -6,9 +6,9 @@
 #include "Animator.hpp"
 #include "Theme.hpp"
 
-GameObjectOnMap::GameObjectOnMap(std::shared_ptr<GameObject> prefab) : Object() {
+GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 	_prefab = prefab;
-	_animator = std::make_shared<Animator>(prefab->getAnimations(), 0.1f);
+	_animator = std::make_shared<Animator>(prefab.lock()->getAnimations(), 0.1f);
 	_position = sf::Vector2i(0, 0);
 }
 
@@ -20,15 +20,15 @@ void GameObjectOnMap::drawFrame() {
 
 	int x, y, w, h;
 
-	if (_prefab->getAnimations()) {
-		w = _prefab->getAnimations()->getFrameRect(0, 0).size.x;
-		h = _prefab->getAnimations()->getFrameRect(0, 0).size.y;
+	if (!_prefab.lock()->getAnimations().expired()) {
+		w = _prefab.lock()->getAnimations().lock()->getFrameRect(0, 0).size.x;
+		h = _prefab.lock()->getAnimations().lock()->getFrameRect(0, 0).size.y;
 		x = _position.x;
 		y = _position.y;
 
-		if (_prefab->_type == ObjectType::Monster) {
-			x -= _prefab->getOrigin().x;
-			y -= _prefab->getOrigin().y;
+		if (_prefab.lock()->_type == ObjectType::Monster) {
+			x -= _prefab.lock()->getOrigin().x;
+			y -= _prefab.lock()->getOrigin().y;
 		}
 	}
 	else {
@@ -38,8 +38,8 @@ void GameObjectOnMap::drawFrame() {
 		w = 96;
 		h = 96;
 
-		if (_prefab->getCollider()->_type == ColliderType::Circular) {
-			std::shared_ptr<CircularCollider> circularCollider = std::dynamic_pointer_cast<CircularCollider>(_prefab->getCollider());
+		if (_prefab.lock()->getCollider()->_type == ColliderType::Circular) {
+			std::shared_ptr<CircularCollider> circularCollider = std::dynamic_pointer_cast<CircularCollider>(_prefab.lock()->getCollider());
 			w = circularCollider->_radiusX * 2;
 			w += circularCollider->_radiusY;
 			if (w < 96) w = 96;
@@ -48,7 +48,7 @@ void GameObjectOnMap::drawFrame() {
 			y += circularCollider->_radiusY - h;
 		}
 		else {
-			std::shared_ptr<RectangularCollider> rectangularCollider = std::dynamic_pointer_cast<RectangularCollider>(_prefab->getCollider());
+			std::shared_ptr<RectangularCollider> rectangularCollider = std::dynamic_pointer_cast<RectangularCollider>(_prefab.lock()->getCollider());
 			w = rectangularCollider->_rect.size.x;
 			w += rectangularCollider->_rect.size.y;
 			if (w < 96) w = 96;
@@ -64,7 +64,7 @@ void GameObjectOnMap::drawFrame() {
 
 	sf::Color color = sf::Color(255, 30, 45);
 
-	sf::Text text(basicFont, _prefab->getName(), 14);
+	sf::Text text(basicFont, _prefab.lock()->getName(), 14);
 	text.setFillColor(color);
 	text.setStyle(sf::Text::Bold);
 	text.setPosition(sf::Vector2f(x + paddingLeft, y - 10));
@@ -114,19 +114,19 @@ void GameObjectOnMap::draw() {
 
 	bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
 
-	if (renderAllColliders || _prefab->_collider->cursorHover(MapEditor::editor->_cursor_on_map->_position, _position)) {
-		_prefab->getCollider()->draw(_position + _prefab->getOrigin());
+	if (renderAllColliders || _prefab.lock()->getCollider()->cursorHover(MapEditor::editor->_cursor_on_map->_position, _position)) {
+		_prefab.lock()->getCollider()->draw(_position + _prefab.lock()->getOrigin());
 	}
 
-	std::shared_ptr<Animations> animations = _animator->getAnimations();
+	std::weak_ptr<Animations> animations = _animator->getAnimations();
 
-	sf::IntRect frameRect = animations->getFrameRect(0,0);
+	sf::IntRect frameRect = animations.lock()->getFrameRect(0,0);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		drawFrame();
 	}
 
-	sf::Sprite sprite(*animations->getTexture()->_texture);
+	sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setTextureRect(frameRect);
 	Main::render_window->draw(sprite);

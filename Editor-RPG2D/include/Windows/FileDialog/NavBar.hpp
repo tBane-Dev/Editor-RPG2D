@@ -32,6 +32,7 @@ public:
 
 	void clear();
 	void add(std::filesystem::path path, std::function<void()> onclick_func);
+	void pop_back();
 	void setPosition(sf::Vector2i position);
 
 	void cursorHover();

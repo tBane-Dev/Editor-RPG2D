@@ -19,7 +19,7 @@ namespace AnimationsEditor {
 
 		std::shared_ptr<MainMenu> _main_menu;
 
-		std::shared_ptr<Animations> _animations;
+		std::weak_ptr<Animations> _animations;
 		std::shared_ptr<Animator> _animator;
 
 		std::shared_ptr<NamePanel> _animation_name_panel;

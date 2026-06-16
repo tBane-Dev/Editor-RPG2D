@@ -2,6 +2,8 @@
 #include "Components/MainMenu/MenuButton.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
+#include "WindowsManager.hpp" // TO-DO - to delete
+#include "Windows/FileDialog/FileDialog.hpp" // TO-DO - to delete
 
 namespace MapEditor {
 
@@ -38,6 +40,13 @@ namespace MapEditor {
 			textures_manager->getTexture(L"assets\\tex\\main_menu\\open_project.png"),
 			L"Ctrl+O"
 		);
+
+		// TO-DO - to delete
+		_file_open_project->_onclick_func = [this]() {
+			closeMenu();
+			Main::windows_manager->push_back(std::make_shared<FileDialog>(L"Test File Dialog Window 1"));
+			};
+		//
 
 		_file_save_project = std::make_shared<OptionWithIcon>(
 			L"Save project",

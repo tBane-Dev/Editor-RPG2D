@@ -2,11 +2,19 @@
 #include "DebugLog.hpp"
 
 Texture::Texture(std::wstring path, bool& loadingStatus) {
-        _path = path;
-        _texture = std::make_shared<sf::Texture>();
-        if (!_texture->loadFromFile(path)) {
-                loadingStatus = false;
-        }
+    _path = path;
+    _texture = std::make_shared<sf::Texture>();
+
+    if (!_texture->loadFromFile(path)) {
+        loadingStatus = false;
+    }
+}
+
+Texture::Texture(std::wstring path, std::shared_ptr<sf::Image> image) {
+    _path = path;
+
+    _texture = std::make_shared<sf::Texture>();
+    _texture->loadFromImage(*image);
 }
 
 Texture::~Texture() {
@@ -103,6 +111,7 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\windows\\file_dialog\\up.png");
         texturePaths.push_back(L"assets\\tex\\windows\\file_dialog\\up_hover.png");
         texturePaths.push_back(L"assets\\tex\\windows\\file_dialog\\up_press.png");
+        texturePaths.push_back(L"assets\\tex\\windows\\file_dialog\\navbar_pc.png");
         texturePaths.push_back(L"assets\\tex\\windows\\file_dialog\\pc.png");
         texturePaths.push_back(L"assets\\tex\\windows\\file_dialog\\pc_hover.png");
         texturePaths.push_back(L"assets\\tex\\windows\\file_dialog\\pc_press.png");

@@ -83,17 +83,17 @@ namespace PrefabsEditor {
 				
 				_slots->selectSlot(selectedSlotId);
 
-				std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(slot->_object);
+				std::weak_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(slot->_object.lock());
 				editor->_object = prefab;
-				editor->_animator = std::make_shared<Animator>(prefab->getAnimations(), 0.2f);
+				editor->_animator = std::make_shared<Animator>(prefab.lock()->getAnimations(), 0.2f);
 
-				editor->_main_panel->_name->setText(prefab->_name);
+				editor->_main_panel->_name->setText(prefab.lock()->_name);
 				//editor->_main_panel->_type->setText(prefab->_type.toString()); // TO-DO - enum to string
 				
 				// TO-DO 2 - start - must be - move to collider panel
 
-				if (prefab->_collider->_type == ColliderType::Rectangular) {
-					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(prefab->_collider);
+				if (prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(prefab.lock()->_collider);
 					editor->_collider_panel->_collider = collider;
 					editor->_collider_panel->_type->setText(L"Rectangular");
 					editor->_collider_panel->_x->setText(std::to_wstring(collider->_rect.position.x));
@@ -102,8 +102,8 @@ namespace PrefabsEditor {
 					editor->_collider_panel->_h->setText(std::to_wstring(collider->_rect.size.y));
 					
 				}
-				else if (prefab->_collider->_type == ColliderType::Circular) {
-					std::shared_ptr<CircularCollider> collider = std::dynamic_pointer_cast<CircularCollider>(prefab->_collider);
+				else if (prefab.lock()->_collider->_type == ColliderType::Circular) {
+					std::shared_ptr<CircularCollider> collider = std::dynamic_pointer_cast<CircularCollider>(prefab.lock()->_collider);
 					editor->_collider_panel->_collider = collider;
 					editor->_collider_panel->_type->setText(L"Circular");
 					editor->_collider_panel->_x->setText(std::to_wstring(collider->_x));

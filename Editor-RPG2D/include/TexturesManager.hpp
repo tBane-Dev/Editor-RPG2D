@@ -7,6 +7,7 @@ public:
     std::shared_ptr<sf::Texture> _texture;
             
     Texture(std::wstring path, bool& loadingStatus);
+    Texture(std::wstring path, std::shared_ptr<sf::Image> image);
     ~Texture();
     sf::Vector2i getSize();
 };

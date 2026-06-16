@@ -96,7 +96,7 @@ void NavBarItem::update() {
 void NavBarItem::draw() {
 
 	if(_path == std::filesystem::path()) {
-		sf::Sprite icon(*textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\pc.png")->_texture);
+		sf::Sprite icon(*textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\navbar_pc.png")->_texture);
 		icon.setPosition(sf::Vector2f(_rect.position - sf::Vector2i(32, 4)));
 		Main::render_window->draw(icon);
 	}
@@ -135,6 +135,11 @@ void NavBar::add(std::filesystem::path path, std::function<void()> onclick_func)
 	item->_onclick_func = onclick_func;
 
 	_items.push_back(item);
+}
+
+void NavBar::pop_back() {
+	if (!_items.empty())
+		_items.pop_back();
 }
 
 void NavBar::setPosition(sf::Vector2i position) {

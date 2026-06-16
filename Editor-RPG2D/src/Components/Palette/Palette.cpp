@@ -9,7 +9,17 @@
 
 
 namespace Components {
+
+	std::vector<std::shared_ptr<Terrain>> Palette::terrains;
+
 	Palette::Palette() : Element() {
+
+
+		Palette::terrains.clear();
+		for (int i = 0; i < MapEditor::editor->_tileset->groups.size(); i++) {
+			Palette::terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+		}
+
 		sf::Vector2i size;
 		size.x = 600;
 		size.y = Main::render_window->getSize().y - MapEditor::editor->_main_menu->getSize().y;

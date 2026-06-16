@@ -115,6 +115,6 @@ void Animator::update() {
 	}
 }
 
-std::shared_ptr<Animations> Animator::getAnimations() {
-	return _animations.lock();
+std::weak_ptr<Animations> Animator::getAnimations() {
+	return _animations;
 }

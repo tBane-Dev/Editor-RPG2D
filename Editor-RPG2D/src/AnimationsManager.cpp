@@ -10,7 +10,7 @@ Animations::Animations(std::wstring path, int animationsCount, int framesCount, 
 	
 	_texture = textures_manager->getTexture(path);
     
-	if (_texture.expired()) {
+	if (!_texture) {
         loadingStatus = false;
     }
 }
@@ -28,32 +28,23 @@ Animations::~Animations() {
     
 sf::IntRect Animations::getFrameRect(int animation, int frame) {
 	
-	if (_texture.expired()) 
+	if (!_texture || _framesCount <= 0 || _animationsCount <= 0)
 		return sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
 
-	std::shared_ptr<Texture> texture = _texture.lock();
-
-	if (texture) {
-		sf::IntRect frameRect;
-
-		frameRect.size.x = texture->getSize().x / _framesCount;
-		frameRect.size.y = texture->getSize().y / _animationsCount;
-
-		frameRect.position.x = frame * frameRect.size.x;
-		frameRect.position.y = animation * frameRect.size.y;
-
-		return frameRect;
-	}
+	sf::IntRect frameRect;
 	
+	frameRect.size.x = _texture->getSize().x / _framesCount;
+	frameRect.size.y = _texture->getSize().y / _animationsCount;
 	
+	frameRect.position.x = frame * frameRect.size.x;
+	frameRect.position.y = animation * frameRect.size.y;
 	
+	return frameRect;
+
 }
 
 std::shared_ptr<Texture> Animations::getTexture() {
-	if (_texture.expired())
-		return nullptr;
-
-	return _texture.lock();
+	return _texture;
 }
 
 AnimationsManager::AnimationsManager() {
@@ -66,27 +57,27 @@ AnimationsManager::~AnimationsManager() {
 	
 }
 
-std::shared_ptr<Animations> AnimationsManager::getAnimations(std::wstring path) {
-	for(auto& anim : _animations) {
-		if(anim->_path == path) {
-		    return anim;
+std::weak_ptr<Animations> AnimationsManager::getAnimations(std::wstring path) {
+	for (auto& anim : _animations) {
+		if (anim && anim->_path == path) {
+			return anim;
 		}
 	}
-	
-	return nullptr;
+
+	return std::weak_ptr<Animations>();
 }
 
-std::shared_ptr<Animations> AnimationsManager::getAnimations(int index) {
+std::weak_ptr<Animations> AnimationsManager::getAnimations(int index) {
 	if (index >= 0 && index < (int)_animations.size()) {
 		return _animations[index];
 	}
 
-	return nullptr;
+	return std::weak_ptr<Animations>();
 }
 
 int AnimationsManager::getAnimationsID(std::wstring path) {
-	for (int i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->_path == path) {
+	for (int i = 0; i < (int)_animations.size(); i++) {
+		if (_animations[i] && _animations[i]->_path == path) {
 			return i;
 		}
 	}
@@ -134,50 +125,50 @@ void AnimationsManager::loadAllAnimations() {
 	};
         
 		
-		// textures
-		std::vector<Data> datas;
+	// textures
+	std::vector<Data> datas;
 
-        datas.emplace_back(L"assets\\tex\\monsters\\golem.png", 4, 4);
-        datas.emplace_back(L"assets\\tex\\monsters\\troll.png", 4, 4);
-        datas.emplace_back(L"assets\\tex\\monsters\\dziobak.png", 4, 4);
-        datas.emplace_back(L"assets\\tex\\monsters\\goblin.png", 4, 4);
-        datas.emplace_back(L"assets\\tex\\monsters\\bies.png", 4, 4);
-        datas.emplace_back(L"assets\\tex\\monsters\\hero.png", 4, 4);
-        datas.emplace_back(L"assets\\tex\\monsters\\monster.png", 1, 1);
-
-        datas.emplace_back(L"assets\\tex\\tree_1.png", 1, 1);
-        datas.emplace_back(L"assets\\tex\\boulder_1.png", 1, 1);
-        datas.emplace_back(L"assets\\tex\\boulder_2.png", 1, 1);
-
-
-        // load all textures
-        for (auto& data : datas) {
-                loadAnimations(data._path, data._animationsCount, data._framesCount);
+    datas.emplace_back(L"assets\\tex\\monsters\\golem.png", 4, 4);
+    datas.emplace_back(L"assets\\tex\\monsters\\troll.png", 4, 4);
+    datas.emplace_back(L"assets\\tex\\monsters\\dziobak.png", 4, 4);
+    datas.emplace_back(L"assets\\tex\\monsters\\goblin.png", 4, 4);
+    datas.emplace_back(L"assets\\tex\\monsters\\bies.png", 4, 4);
+    datas.emplace_back(L"assets\\tex\\monsters\\hero.png", 4, 4);
+    datas.emplace_back(L"assets\\tex\\monsters\\monster.png", 1, 1);
+    
+    datas.emplace_back(L"assets\\tex\\tree_1.png", 1, 1);
+    datas.emplace_back(L"assets\\tex\\boulder_1.png", 1, 1);
+    datas.emplace_back(L"assets\\tex\\boulder_2.png", 1, 1);
+    
+    
+    // load all textures
+    for (auto& data : datas) {
+        loadAnimations(data._path, data._animationsCount, data._framesCount);
+    }
+    
+    // Loaded textures
+    DebugLog(L"Loading animations:");
+    for (auto& data : datas) {
+		if (getAnimations(data._path).expired()) {
+			DebugStat(data._path);
         }
-
-        // Loaded textures
-        DebugLog(L"Loading animations:");
-        for (auto& data : datas) {
-                if (getAnimations(data._path)) {
-                        DebugStat(data._path);
-                }
+    }
+    
+    // Failed textures
+    bool failed = false;
+    for (auto& data : datas) {
+		if (getAnimations(data._path).expired()) {
+			if (!failed) {
+               DebugError(L"Failed to load animations:");
+            }
+            DebugError(data._path);
+            failed = true;
         }
-
-        // Failed textures
-        bool failed = false;
-        for (auto& data : datas) {
-                if (!getAnimations(data._path)) {
-                        if (!failed) {
-                                DebugError(L"Failed to load animations:");
-                        }
-                        DebugError(data._path);
-                        failed = true;
-                }
-        }
-
-        if (failed) {
-                exit(0);
-        }
+    }
+    
+    if (failed) {
+        exit(0);
+    }
 
 }
 

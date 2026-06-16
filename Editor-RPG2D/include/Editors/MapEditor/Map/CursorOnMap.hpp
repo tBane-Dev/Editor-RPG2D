@@ -5,7 +5,7 @@
 class CursorOnMap {
 public:
 	sf::Vector2i _position;
-	std::shared_ptr<Object> _object = nullptr;
+	std::weak_ptr<Object> _object = std::weak_ptr<Object>();
 	int _frame = 0;
 
 	CursorOnMap();

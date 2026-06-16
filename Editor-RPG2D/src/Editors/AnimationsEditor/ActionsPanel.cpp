@@ -48,10 +48,10 @@ namespace AnimationsEditor {
 
 		_addBtn->_onclick_func = []() {
 
-			if (!editor->_animations)
+			if (editor->_animations.expired())
 				return;
 
-			if (!editor->_animations->getTexture())
+			if (!editor->_animations.lock()->getTexture())
 				return;
 
 			if (editor->_sprite_sheet_panel->_w->getText().empty() || editor->_sprite_sheet_panel->_h->getText().empty())
@@ -59,9 +59,9 @@ namespace AnimationsEditor {
 
 			int newID = animations_manager->addAnimations(
 				editor->_animation_name_panel->_name->getText(),
-				editor->_animations->getTexture(),
-				editor->_animations->_animationsCount,
-				editor->_animations->_framesCount
+				editor->_animations.lock()->getTexture(),
+				editor->_animations.lock()->_animationsCount,
+				editor->_animations.lock()->_framesCount
 			);
 
 			editor->_list_panel->loadAll();
@@ -76,7 +76,7 @@ namespace AnimationsEditor {
 
 		_removeBtn->_onclick_func = []() {
 			
-			if (!editor->_animations)
+			if (editor->_animations.expired())
 				return;
 
 			int animationID = editor->_list_panel->_selectedItemIndex;

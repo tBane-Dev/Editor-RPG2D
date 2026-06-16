@@ -10,7 +10,7 @@ class MonsterPrefab : public GameObject {
 public:
 	int _stepSize;
 
-	MonsterPrefab(std::wstring name, std::shared_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider);
+	MonsterPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider);
 	~MonsterPrefab();
 };
 
@@ -23,7 +23,7 @@ public:
 
 	std::shared_ptr<Path> _path;
 
-	Monster(std::shared_ptr<GameObject> prefab);
+	Monster(std::weak_ptr<GameObject> prefab);
 	~Monster();
 
 	virtual void setPosition(sf::Vector2i position);

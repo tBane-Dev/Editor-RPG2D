@@ -2,7 +2,7 @@
 #include "RenderWindow.hpp"
 
 GameObjectSlot::GameObjectSlot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : Slot(texture, hoverTexture, pressTexture, position) {
-	_object = nullptr;
+	_object = std::weak_ptr<Object>();
 	_animator = nullptr;
 }
 
@@ -30,25 +30,25 @@ void GameObjectSlot::draw() {
 
 	Slot::draw();
 
-	if (_object == nullptr)
+	if (_object.expired())
 		return;
 
 	if (_animator != nullptr) {
 
-		std::shared_ptr<Animations> animations = _animator->getAnimations();
+		std::weak_ptr<Animations> animations = _animator->getAnimations();
 		
-		if (!animations)
+		if (animations.expired())
 			return;
 
-		sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
+		sf::IntRect frameRect = animations.lock()->getFrameRect(_animator->_animation, _animator->_frame);
 
-		_objectTexture = animations->getTexture();
+		_objectTexture = animations.lock()->getTexture();
 
 		_objectSprite = std::make_shared<sf::Sprite>(*_objectTexture->_texture);
 		_objectSprite->setTextureRect(frameRect);
 
-		float frameWidth = (float)(_objectTexture->getSize().x / animations->_framesCount);
-		float frameHeight = (float)(_objectTexture->getSize().y / animations->_animationsCount);
+		float frameWidth = (float)(_objectTexture->getSize().x / animations.lock()->_framesCount);
+		float frameHeight = (float)(_objectTexture->getSize().y / animations.lock()->_animationsCount);
 
 		_objectSprite->setScale(sf::Vector2f(80.f / frameWidth, 80.f / frameHeight));
 		_objectSprite->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(40, 40));

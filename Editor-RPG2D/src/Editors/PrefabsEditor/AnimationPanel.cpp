@@ -191,8 +191,9 @@ namespace PrefabsEditor {
 		if (!editor) return;
 
 		std::shared_ptr<Animator> animator = editor->_animator;
+		std::weak_ptr<Animations> animations = (animator) ? animator->getAnimations() : std::weak_ptr<Animations>();
 
-		if (!animator) {
+		if (!animator || animations.expired()) {
 			_animations_name->setString(L"--");
 			_animations_current->setString(L"--");
 			_animations_count->setString(L"--");
@@ -202,19 +203,17 @@ namespace PrefabsEditor {
 		}
 		else {
 
-			std::shared_ptr<Animations> animations = animator->getAnimations();
-
-			std::wstring name = animations->_path;
+			std::wstring name = animations.lock()->_path;
 			name = name.substr(name.find_first_of(L"\\/") + 1);
 			_animations_name->setString(name);
 
 			_animations_current->setString(std::to_wstring(animator->_animation));
-			_animations_count->setString(std::to_wstring(animations->_animationsCount));
+			_animations_count->setString(std::to_wstring(animations.lock()->_animationsCount));
 
 			_frame->setString(std::to_wstring(animator->_frame));
-			_frames_count->setString(std::to_wstring(animations->_framesCount));
+			_frames_count->setString(std::to_wstring(animations.lock()->_framesCount));
 
-			sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);
+			sf::IntRect frameRect = animations.lock()->getFrameRect(animator->_animation, animator->_frame);
 			_frame_size->setString(std::to_wstring(frameRect.size.x) + L" x " + std::to_wstring(frameRect.size.y));
 		}
 
@@ -304,15 +303,18 @@ namespace PrefabsEditor {
 		// draw animation
 		std::shared_ptr<Animator> animator = editor->_animator;
 		if (animator) {
-			std::shared_ptr<Animations> animations = animator->getAnimations();
-			sf::IntRect frameRect = animations->getFrameRect(animator->_animation, animator->_frame);
+			std::weak_ptr<Animations> animations = animator->getAnimations();
+			if (!animations.expired()) {
+				sf::IntRect frameRect = animations.lock()->getFrameRect(animator->_animation, animator->_frame);
 
-			sf::Sprite sprite(*animations->getTexture()->_texture);
-			sprite.setTextureRect(frameRect);
-			sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
-			sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
-			Main::render_window->draw(sprite);
+				sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
+				sprite.setTextureRect(frameRect);
+				sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
+				sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
+				Main::render_window->draw(sprite);
+			}
 		}
+			
 
 		// draw buttons
 		_first->draw();

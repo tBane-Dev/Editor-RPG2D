@@ -7,6 +7,7 @@
 #include "Controls/Scrollbar.hpp"
 #include "Controls/TextInput.hpp"
 #include "Controls/ButtonWithTextAndSprite.hpp"
+#include <functional>
 
 class FileDialog : public Main::Window {
 public:
@@ -42,7 +43,7 @@ public:
 	std::vector<std::shared_ptr<FileItem>> _files;
 
 	// left rect
-	std::vector<std::filesystem::path> _locationsPaths;
+	std::vector<std::shared_ptr<std::filesystem::path>> _locationsPaths;
 	std::vector<std::shared_ptr<LocationItem>> _locations;
 
 	// scrollbars
@@ -55,7 +56,7 @@ public:
 	std::shared_ptr<ButtonWithTextAndSprite> _confirmButton;
 	std::shared_ptr<ButtonWithTextAndSprite> _cancelButton;
 
-	FileDialog(std::wstring title);
+	FileDialog(std::wstring title, std::function<void()> function = { });
 	~FileDialog();
 
 	void createTop();
@@ -70,7 +71,10 @@ public:
 	void setTheLocationsSize();
 	void setTheLocations();
 
-	void createBottom();
+	void createBottom(std::function<void()> function);
+
+	void setFunction(std::function<void()> function);
+	std::wstring getPathFile();
 
 	virtual void setPosition(sf::Vector2i position);
 

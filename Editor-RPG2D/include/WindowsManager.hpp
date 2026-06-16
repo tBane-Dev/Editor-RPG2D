@@ -35,9 +35,11 @@ namespace Main {
 		~Window();
 
 		void setSize(sf::Vector2i size);
+		sf::Vector2i getSize();
 		sf::Vector2i getContentPosition();
 		sf::Vector2i getContentSize();
 		virtual void setPosition(sf::Vector2i position);
+		sf::Vector2i getPosition();
 		virtual void cursorHover();
 		virtual void handleEvent(const sf::Event& event);
 		virtual void update();
