@@ -26,7 +26,8 @@ namespace AnimationsEditor {
 		_loadBtn->_onclick_func = [this]() {
 
 			std::shared_ptr<FileDialog> fileDialog = std::make_shared<FileDialog>(L"Load Spritesheet");
-			
+			fileDialog->setPosition(sf::Vector2i(160, 128));
+
 			std::function<void()> function = [this, fileDialog]() {
 
 				std::shared_ptr<sf::Image> image = std::make_shared<sf::Image>();
@@ -39,22 +40,26 @@ namespace AnimationsEditor {
 
 				std::shared_ptr<Texture> texture = std::make_shared<Texture>(fileDialog->getPathFile(), image);
 
-				if (editor->_animations.expired()) {
-					editor->_animations = std::make_shared<Animations>(fileDialog->getPathFile(), texture, 1, 1);
-				}
-				else {
-					editor->_animations.lock()->_texture = texture;
-					editor->_animations.lock()->_framesCount = 1;
-					editor->_animations.lock()->_animationsCount = 1;
-				}
-					
-
-				loadAnimations();
-
-				if (editor->_preview_panel) {
-					editor->_preview_panel->loadAnimations();
+				if (!editor->_animations) {
+					editor->_animations = std::make_shared<Animations>(fileDialog->getPathFile(), texture, sf::Vector2i(texture->getSize()), 1, 1);
 				}
 
+				if (!editor->_tempAnimations) {
+					editor->_tempAnimations = std::make_shared<Animations>(fileDialog->getPathFile(), texture, sf::Vector2i(texture->getSize()), 1, 1);
+				}
+
+				if (!editor->_animator) {
+					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
+				}
+
+				editor->_tempAnimations->_texture = texture;
+
+				AnimationsEditor::editor->_sprite_sheet_panel->loadAnimations();
+				AnimationsEditor::editor->_actions_panel->setButtonsActivity();
+				AnimationsEditor::editor->_preview_panel->loadAnimations();
+				AnimationsEditor::editor->_preview_panel->setButtonsActivity();
+
+				
 			};
 
 			fileDialog->setFunction(function);
@@ -81,6 +86,14 @@ namespace AnimationsEditor {
 		_h->setPosition(sf::Vector2i(startPosition.x, _w->getPosition().y + _w->getSize().y + distance));
 		_h->setText(L"0");
 
+		_a = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_a->setPosition(sf::Vector2i(startPosition.x, _h->getPosition().y + _h->getSize().y + distance));
+		_a->setText(L"1");
+
+		_f = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_f->setPosition(sf::Vector2i(startPosition.x, _a->getPosition().y + _a->getSize().y + distance));
+		_f->setText(L"1");
+
 		// texts labels
 		int x = _x->getPosition().x - 32;
 
@@ -100,41 +113,82 @@ namespace AnimationsEditor {
 		_hLabel->setFillColor(basic_text_color);
 		_hLabel->setPosition(sf::Vector2f(x - _hLabel->getGlobalBounds().size.x / 2, _h->getPosition().y));
 
+		_aLabel = std::make_unique<sf::Text>(basicFont, L"a", 18);
+		_aLabel->setFillColor(basic_text_color);
+		_aLabel->setPosition(sf::Vector2f(x - _aLabel->getGlobalBounds().size.x / 2, _a->getPosition().y));
+
+		_fLabel = std::make_unique<sf::Text>(basicFont, L"f", 18);
+		_fLabel->setFillColor(basic_text_color);
+		_fLabel->setPosition(sf::Vector2f(x - _fLabel->getGlobalBounds().size.x / 2, _f->getPosition().y));
+
 		// text inputs functions
 		_x->_onEditedFunction = [this]() {
-			if (!editor->_animations.expired()) {
-				DebugLog(L"ta funkcja jeszcze nie działa");
+			if (editor->_animations) {
+				int x = std::stoi(_x->getText());
+				if (x >= 0 && x < editor->_tempAnimations->getTexture()->getSize().x) {
+					editor->_tempAnimations->_offsetX = x;
+					editor->_preview_panel->loadAnimations();
+					editor->_actions_panel->setButtonsActivity();
+				}
 			}
 		};
 
 		_y->_onEditedFunction = [this]() {
-			if (!editor->_animations.expired()) {
-				DebugLog(L"ta funkcja jeszcze nie działa");
+			if (editor->_animations) {
+				int y = std::stoi(_y->getText());
+				if (y >= 0 && y < editor->_tempAnimations->getTexture()->getSize().y) {
+					editor->_tempAnimations->_offsetY = y;
+					editor->_preview_panel->loadAnimations();
+					editor->_actions_panel->setButtonsActivity();
+				}
 			}
 		};
 
 		
 		_w->_onEditedFunction = [this]() {
-			if (!editor->_animations.expired()) {
-				int w = std::stoi(_w->getText());
-				if (w > 0 && w <= editor->_animations.lock()->getTexture()->getSize().x) {
-					editor->_animations.lock()->_framesCount = editor->_animations.lock()->getTexture()->getSize().x / w; // TO-DO - to delete
+			if (editor->_animations) {
+				int w = (_w->getText().empty())? 0 : std::stoi(_w->getText());
+				if (w > 0 && w <= editor->_tempAnimations->getTexture()->getSize().x) {
+					editor->_tempAnimations->_frameSize.x = w;
 					editor->_preview_panel->loadAnimations();
-				}
-					
+					editor->_actions_panel->setButtonsActivity();
+				}	
 			}
 		};
 
 		_h->_onEditedFunction = [this]() {
-			if (!editor->_animations.expired()) {
-				int h = std::stoi(_h->getText());
-				if (h > 0 && h <= editor->_animations.lock()->getTexture()->getSize().y) {
-					editor->_animations.lock()->_animationsCount = editor->_animations.lock()->getTexture()->getSize().y / h; // TO-DO - to delete
+			if (editor->_animations) {
+				int h = (_h->getText().empty()) ? 0 : std::stoi(_h->getText());
+				if (h > 0 && h <= editor->_tempAnimations->getTexture()->getSize().y) {
+					editor->_tempAnimations->_frameSize.y = h;
 					editor->_preview_panel->loadAnimations();
+					editor->_actions_panel->setButtonsActivity();
 				}
-					
 			}
 		};
+
+		_a->_onEditedFunction = [this]() {
+			if (editor->_animations) {
+				int a = (_a->getText().empty())? 0 : std::stoi(_a->getText());
+				if (a > 0 && a <= editor->_tempAnimations->getTexture()->getSize().y) {
+					editor->_tempAnimations->_animationsCount = a;
+					editor->_preview_panel->loadAnimations();
+					editor->_actions_panel->setButtonsActivity();
+				}
+			}
+		};
+
+		_f->_onEditedFunction = [this]() {
+			if (editor->_animations) {
+				int f = (_f->getText().empty()) ? 0 : std::stoi(_f->getText());
+				if (f > 0 && f <= editor->_tempAnimations->getTexture()->getSize().y) {
+					editor->_tempAnimations->_framesCount = f;
+					editor->_preview_panel->loadAnimations();
+					editor->_actions_panel->setButtonsActivity();
+				}
+			}
+		};
+
 
 		loadAnimations();
 	}
@@ -149,17 +203,18 @@ namespace AnimationsEditor {
 		_y->setText(L"");
 		_w->setText(L"");
 		_h->setText(L"");
+		_a->setText(L"");
+		_f->setText(L"");
 
-		if (!editor->_animator)
+		if (!editor->_tempAnimations)
 			return;
 
-		if(editor->_animations.expired())
-			return;
-
-		_x->setText(L"0");
-		_y->setText(L"0");
-		_w->setText(std::to_wstring(editor->_animations.lock()->getTexture()->getSize().x / editor->_animations.lock()->_framesCount));
-		_h->setText(std::to_wstring(editor->_animations.lock()->getTexture()->getSize().y / editor->_animations.lock()->_animationsCount));
+		_x->setText(std::to_wstring(editor->_tempAnimations->_offsetX));
+		_y->setText(std::to_wstring(editor->_tempAnimations->_offsetY));
+		_w->setText(std::to_wstring(editor->_tempAnimations->_frameSize.x));
+		_h->setText(std::to_wstring(editor->_tempAnimations->_frameSize.y));
+		_a->setText(std::to_wstring(editor->_tempAnimations->_animationsCount));
+		_f->setText(std::to_wstring(editor->_tempAnimations->_framesCount));
 	}
 
 	void SpriteSheetPanel::cursorHover() {
@@ -171,6 +226,8 @@ namespace AnimationsEditor {
 		_y->cursorHover();
 		_w->cursorHover();
 		_h->cursorHover();
+		_a->cursorHover();
+		_f->cursorHover();
 	}
 
 	void SpriteSheetPanel::handleEvent(const sf::Event& event) {
@@ -182,6 +239,8 @@ namespace AnimationsEditor {
 		_y->handleEvent(event);
 		_w->handleEvent(event);
 		_h->handleEvent(event);
+		_a->handleEvent(event);
+		_f->handleEvent(event);
 	}
 
 	void SpriteSheetPanel::update() {
@@ -193,6 +252,8 @@ namespace AnimationsEditor {
 		_y->update();
 		_w->update();
 		_h->update();
+		_a->update();
+		_f->update();
 	}
 
 	void SpriteSheetPanel::draw() {
@@ -215,17 +276,17 @@ namespace AnimationsEditor {
 
 		// draw sprite sheet
 		float scale = 1;
-		if (!editor->_animations.expired()) {
+		if (editor->_tempAnimations && editor->_tempAnimations->getTexture()) {
 
-			int width = editor->_animations.lock()->getTexture()->_texture->getSize().x;
-			int height = editor->_animations.lock()->getTexture()->_texture->getSize().y;
+			int width = editor->_tempAnimations->getTexture()->_texture->getSize().x;
+			int height = editor->_tempAnimations->getTexture()->_texture->getSize().y;
 
 			float scaleX = rect.getSize().x / width;
 			float scaleY = rect.getSize().y / height;
 
 			scale = std::min(scaleX, scaleY);
 
-			sf::Sprite sprite(*editor->_animations.lock()->getTexture()->_texture);
+			sf::Sprite sprite(*editor->_tempAnimations->getTexture()->_texture);
 			sprite.setScale(sf::Vector2f(scale, scale));
 			sprite.setPosition(rect.getPosition());
 			Main::render_window->draw(sprite);
@@ -235,16 +296,28 @@ namespace AnimationsEditor {
 		float gridWidth = 1.0f;
 		float mainGridMultiplier = 4.0f;
 		sf::Vector2f position_rect = rect.getPosition();
-		sf::Vector2f size_rect = rect.getSize();
+		if (!_x->getText().empty()) position_rect.x += (float)std::stoi(_x->getText()) * scale;
+		if (!_y->getText().empty()) position_rect.y += (float)std::stoi(_y->getText()) * scale;
 
+		// TO-DO - must be a number input
+		sf::Vector2f size_rect;
+		if (!_f->getText().empty() && !_w->getText().empty()) size_rect.x = ((float)std::stoi(_f->getText()) * (float)std::stoi(_w->getText())) * scale;
+		if (!_a->getText().empty() && !_h->getText().empty()) size_rect.y = ((float)std::stoi(_a->getText()) * (float)std::stoi(_h->getText())) * scale;
+		//
+		
+		// TO-DO - must be a number input
+		if (size_rect.x > 512 - (_x->getText().empty() ? 0 : std::stoi(_x->getText()) * scale)) size_rect.x = 512 - (_x->getText().empty() ? 0 : std::stoi(_x->getText()) * scale);
+		if (size_rect.y > 512 - (_y->getText().empty() ? 0 : std::stoi(_y->getText()) * scale)) size_rect.y = 512 - (_y->getText().empty() ? 0 : std::stoi(_y->getText()) * scale);
+		//
 
 		grid2_shader->setUniform("rectPosition", position_rect);
-		grid2_shader->setUniform("rectSize", sf::Vector2f(rect.getSize()));
+		grid2_shader->setUniform("rectSize", size_rect);
 		grid2_shader->setUniform("gridSize", sf::Vector2f(16.0f * scale, 16.0f * scale));
 		grid2_shader->setUniform("chunkSize", 
 			sf::Vector2f(
-				(!editor->_animations.expired())?(float)editor->_animations.lock()->getFrameRect(0, 0).size.x * scale : 128,
-				(!editor->_animations.expired())?(float)editor->_animations.lock()->getFrameRect(0, 0).size.y * scale : 128
+				// TO-DO
+				(editor->_sprite_sheet_panel->_w->getText().length() > 0 && std::stoi(editor->_sprite_sheet_panel->_w->getText()) > 0)?(float)std::stoi(editor->_sprite_sheet_panel->_w->getText()) * scale : 128,
+				(editor->_sprite_sheet_panel->_h->getText().length() > 0 && std::stoi(editor->_sprite_sheet_panel->_h->getText()) > 0)?(float)std::stoi(editor->_sprite_sheet_panel->_h->getText()) * scale : 128
 			)
 		);
 		grid2_shader->setUniform("gridWidth", gridWidth);
@@ -265,12 +338,16 @@ namespace AnimationsEditor {
 		_y->draw();
 		_w->draw();
 		_h->draw();
+		_a->draw();
+		_f->draw();
 
 		// text labels
 		Main::render_window->draw(*_xLabel);
 		Main::render_window->draw(*_yLabel);
 		Main::render_window->draw(*_wLabel);
 		Main::render_window->draw(*_hLabel);
+		Main::render_window->draw(*_aLabel);
+		Main::render_window->draw(*_fLabel);
 
 		
 	}

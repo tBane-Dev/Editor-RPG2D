@@ -120,6 +120,9 @@ void GameObjectOnMap::draw() {
 
 	std::weak_ptr<Animations> animations = _animator->getAnimations();
 
+	if (animations.expired())
+		return;
+
 	sf::IntRect frameRect = animations.lock()->getFrameRect(0,0);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {

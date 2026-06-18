@@ -212,16 +212,9 @@ void Slots::updateObjects() {
 
 	if (_type == ObjectType::Terrain) {
 
-		std::vector<std::shared_ptr<Terrain>> terrains;
-		for (int i = 0; i < MapEditor::editor->_tileset->groups.size(); i++) {
-
-			terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
-
-		}
-
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i+startIndex < terrains.size()) {
-				_slots[i]->_object = terrains[i+startIndex];
+			if (i < Components::Palette::terrains.size()) {
+				_slots[i]->_object = Components::Palette::terrains[i];
 				_slots[i]->_animator = nullptr;
 			}
 			else {
@@ -254,7 +247,6 @@ void Slots::setCategory(ObjectType type) {
 	if (_type != type) {
 		_type = type;
 		selectSlot(-1);
-		MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<Object>();
 	}
 
 	

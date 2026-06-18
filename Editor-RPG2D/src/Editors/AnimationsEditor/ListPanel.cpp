@@ -154,11 +154,15 @@ namespace AnimationsEditor {
 						return;
 
 					editor->_animations = animations;
-					editor->_animator = std::make_shared<Animator>(editor->_animations, 0.2f);
+					editor->_tempAnimations = std::make_shared<Animations>(*editor->_animations);
+					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
 
-					editor->_animation_name_panel->loadAnimations();
+					editor->_name_panel->loadAnimations();
 					editor->_sprite_sheet_panel->loadAnimations();
 					editor->_preview_panel->loadAnimations();
+
+					editor->_actions_panel->setButtonsActivity();
+					editor->_preview_panel->setButtonsActivity();
 					};
 			}
 			else {

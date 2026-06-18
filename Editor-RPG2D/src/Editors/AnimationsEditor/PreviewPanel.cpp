@@ -167,9 +167,11 @@ namespace AnimationsEditor {
 		_frames_count->setPosition(sf::Vector2f(s - _frames_count->getGlobalBounds().size.x - m, _statsRect.position.y + m + 3 * (basicFont.getLineSpacing(basic_text_size) + m)));
 		_frame_size->setPosition(sf::Vector2f(s - _frame_size->getGlobalBounds().size.x - m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
 
-		if (!editor->_animations.expired()) {
+		if (editor->_animations) {
 			loadAnimations();
 		}
+
+		setButtonsActivity();
 	}
 
 	PreviewPanel::~PreviewPanel() {
@@ -184,21 +186,22 @@ namespace AnimationsEditor {
 		_frames_count->setString(L"--");
 		_frame_size->setString(L"--");
 
-		if(editor->_animator == nullptr)
+		if (!editor->_animator)
 			return;
 
-		if (editor->_animations.expired())
+		if (!editor->_tempAnimations)
 			return;
+
+		sf::Vector2i frameSize = sf::Vector2i(0,0);
+		if(!editor->_sprite_sheet_panel->_w->getText().empty() && stoi(editor->_sprite_sheet_panel->_w->getText()) > 0)
+			frameSize.x = std::stoi(editor->_sprite_sheet_panel->_w->getText()); 
+		if (!editor->_sprite_sheet_panel->_h->getText().empty() && stoi(editor->_sprite_sheet_panel->_h->getText()) > 0)
+			frameSize.y = std::stoi(editor->_sprite_sheet_panel->_h->getText());
 
 		_animations_current->setString(std::to_wstring(editor->_animator->_animation));
-		_animations_count->setString(std::to_wstring(editor->_animations.lock()->_animationsCount));
+		_animations_count->setString(std::to_wstring(editor->_tempAnimations->_animationsCount));
 		_frame->setString(std::to_wstring(editor->_animator->_frame));
-		_frames_count->setString(std::to_wstring(editor->_animations.lock()->_framesCount));
-		
-		sf::Vector2i frameSize;
-		frameSize.x = std::stoi(editor->_sprite_sheet_panel->_w->getText());  
-		frameSize.y = std::stoi(editor->_sprite_sheet_panel->_h->getText());
-
+		_frames_count->setString(std::to_wstring(editor->_tempAnimations->_framesCount));
 		_frame_size->setString(std::to_wstring(frameSize.x) + L"x" + std::to_wstring(frameSize.y));
 
 		int m = 8;
@@ -210,6 +213,29 @@ namespace AnimationsEditor {
 		_frame_size->setPosition(sf::Vector2f(s - _frame_size->getGlobalBounds().size.x - m, _statsRect.position.y + m + 4 * (basicFont.getLineSpacing(basic_text_size) + m)));
 
 		
+	}
+
+	void PreviewPanel::setButtonsActivity() {
+		if (!editor->_animator || editor->_animator->_animations.expired()) {
+			_first->setActive(false);
+			_prev->setActive(false);
+			_play->setActive(false);
+			_pause->setActive(false);
+			_next->setActive(false);
+			_last->setActive(false);
+			_anim_prev->setActive(false);
+			_anim_next->setActive(false);
+			return;
+		}
+
+		_first->setActive(true);
+		_prev->setActive(true);
+		_play->setActive(true);
+		_pause->setActive(true);
+		_next->setActive(true);
+		_last->setActive(true);
+		_anim_prev->setActive(true);
+		_anim_next->setActive(true);
 	}
 
 	void PreviewPanel::cursorHover() {
@@ -256,6 +282,8 @@ namespace AnimationsEditor {
 		_anim_prev->update();
 		_anim_next->update();
 
+		loadAnimations();
+
 		/*
 		* now working in main editor update loop
 		if (editor->_animator)
@@ -283,14 +311,46 @@ namespace AnimationsEditor {
 		std::shared_ptr<Animator> animator = editor->_animator;
 		if (animator) {
 			std::weak_ptr<Animations> animations = animator->getAnimations();
-			if (!animations.expired()) {
-				sf::IntRect frameRect = animations.lock()->getFrameRect(animator->_animation, animator->_frame);
+			if (!animations.expired() && animations.lock()->getTexture()) {
 
-				sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
-				sprite.setTextureRect(frameRect);
-				sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
-				sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
-				Main::render_window->draw(sprite);
+				// TO-DO - tempAnimations
+				sf::Vector2i frameSize = sf::Vector2i(0, 0);
+				if (!editor->_sprite_sheet_panel->_w->getText().empty() && stoi(editor->_sprite_sheet_panel->_w->getText()) > 0)
+					frameSize.x = std::stoi(editor->_sprite_sheet_panel->_w->getText());
+
+				if (!editor->_sprite_sheet_panel->_h->getText().empty() && stoi(editor->_sprite_sheet_panel->_h->getText()) > 0)
+					frameSize.y = std::stoi(editor->_sprite_sheet_panel->_h->getText());
+
+				if (frameSize.x > (int)animations.lock()->getTexture()->_texture->getSize().x)
+					frameSize.x = std::min(frameSize.x, (int)animations.lock()->getTexture()->_texture->getSize().x);
+				
+				if (frameSize.y > (int)animations.lock()->getTexture()->_texture->getSize().y)
+					frameSize.y = std::min(frameSize.y, (int)animations.lock()->getTexture()->_texture->getSize().y);
+
+				sf::Vector2i framePosition = sf::Vector2i(0, 0);
+				if (!editor->_sprite_sheet_panel->_x->getText().empty() && stoi(editor->_sprite_sheet_panel->_x->getText()) >= 0) {
+					framePosition.x = std::stoi(editor->_sprite_sheet_panel->_x->getText());
+					framePosition.x += animator->_frame * frameSize.x;
+				}
+
+				if (!editor->_sprite_sheet_panel->_y->getText().empty() && stoi(editor->_sprite_sheet_panel->_y->getText()) >= 0) {
+					framePosition.y = std::stoi(editor->_sprite_sheet_panel->_y->getText());
+					framePosition.y += animator->_animation * frameSize.y;
+				}
+					
+
+				sf::IntRect frameRect = sf::IntRect(framePosition, frameSize);
+
+				if (animations.lock()->getTexture()) {
+					sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
+					sprite.setTextureRect(frameRect);
+					float scale = std::min(256.f / frameRect.size.x, 256.f / frameRect.size.y);
+					sprite.setScale(sf::Vector2f(scale, scale));
+					sprite.setPosition(sf::Vector2f(
+						rect.getPosition().x + (rect.getSize().x - sprite.getGlobalBounds().size.x)/2, 
+						rect.getPosition().y + (rect.getSize().y - sprite.getGlobalBounds().size.y)/26));
+					Main::render_window->draw(sprite);
+				}
 			}
 		}
 

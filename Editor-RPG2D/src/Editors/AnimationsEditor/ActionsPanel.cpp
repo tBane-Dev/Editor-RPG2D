@@ -46,23 +46,60 @@ namespace AnimationsEditor {
 			sf::Vector2i(startPosition.x + 16, _addBtn->getPosition().y + _addBtn->getSize().y + marginBetweenButtons)
 		);
 
-		_addBtn->_onclick_func = []() {
-
-			if (editor->_animations.expired())
+		_saveBtn->_onclick_func = []() {
+			if (!editor->_animations)
 				return;
 
-			if (!editor->_animations.lock()->getTexture())
+			if (!editor->_tempAnimations)
+				return;
+
+			if (!editor->_tempAnimations->getTexture())
+				return;
+
+			if(editor->_name_panel->_name->getText().empty())
+				return;
+
+			if (editor->_sprite_sheet_panel->_x->getText().empty() ||
+				editor->_sprite_sheet_panel->_y->getText().empty() ||
+				editor->_sprite_sheet_panel->_w->getText().empty() || 
+				editor->_sprite_sheet_panel->_h->getText().empty() ||
+				editor->_sprite_sheet_panel->_a->getText().empty() ||
+				editor->_sprite_sheet_panel->_f->getText().empty())
+				return;
+
+			editor->_animations->_path = editor->_tempAnimations->_path;
+			editor->_animations->_frameSize = editor->_tempAnimations->_frameSize;
+			editor->_animations->_animationsCount = editor->_tempAnimations->_animationsCount;
+			editor->_animations->_framesCount = editor->_tempAnimations->_framesCount;
+			editor->_animations->_offsetX = editor->_tempAnimations->_offsetX;
+			editor->_animations->_offsetY = editor->_tempAnimations->_offsetY;
+			editor->_animations->_texture = editor->_tempAnimations->_texture;
+
+			editor->_list_panel->loadAll();
+			};
+
+		_addBtn->_onclick_func = []() {
+
+			if (!editor->_animations)
+				return;
+
+			if(!editor->_tempAnimations)
+				return;
+
+			if (!editor->_tempAnimations->getTexture())
 				return;
 
 			if (editor->_sprite_sheet_panel->_w->getText().empty() || editor->_sprite_sheet_panel->_h->getText().empty())
 				return;
 
-			int newID = animations_manager->addAnimations(
-				editor->_animation_name_panel->_name->getText(),
-				editor->_animations.lock()->getTexture(),
-				editor->_animations.lock()->_animationsCount,
-				editor->_animations.lock()->_framesCount
-			);
+			int animations = 1;
+			int frames = 1;
+
+			int newID = animations_manager->addAnimations(std::make_shared<Animations>(*editor->_tempAnimations));
+
+			editor->_animations = animations_manager->getAnimations(newID).lock();
+			editor->_tempAnimations = std::make_shared<Animations>(*editor->_animations);
+			editor->_animator->_animations = editor->_tempAnimations;
 
 			editor->_list_panel->loadAll();
 
@@ -76,7 +113,7 @@ namespace AnimationsEditor {
 
 		_removeBtn->_onclick_func = []() {
 			
-			if (editor->_animations.expired())
+			if (!editor->_animations)
 				return;
 
 			int animationID = editor->_list_panel->_selectedItemIndex;
@@ -91,16 +128,70 @@ namespace AnimationsEditor {
 				if (newID >= animations_manager->getAnimationsCount()) newID = animations_manager->getAnimationsCount() - 1;
 				editor->_list_panel->selectItem(newID);
 
-				editor->_animations = animations_manager->getAnimations(editor->_list_panel->_selectedItemIndex);
-				editor->_animator = std::make_shared<Animator>(editor->_animations, 0.2f);
-				editor->_animation_name_panel->loadAnimations();;
-				editor->_sprite_sheet_panel->loadAnimations();
-				editor->_preview_panel->loadAnimations();
+				editor->_animations = animations_manager->getAnimations(editor->_list_panel->_selectedItemIndex).lock();
+				if (editor->_animations) {
+					editor->_tempAnimations = std::make_shared<Animations>(*editor->_animations);
+					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
+				}
+				else {
+					editor->_tempAnimations = nullptr;
+					editor->_animator = nullptr;
+				}
 			}
+			else {
+				editor->_animations = nullptr;
+				editor->_tempAnimations = nullptr;
+				editor->_animator = nullptr;
+			}
+
+			editor->_name_panel->loadAnimations();;
+			editor->_sprite_sheet_panel->loadAnimations();
+			editor->_actions_panel->setButtonsActivity();
+			editor->_preview_panel->loadAnimations();
+			editor->_preview_panel->setButtonsActivity();
 		};
+
+		setButtonsActivity();
 	}
 
 	ActionsPanel::~ActionsPanel() {
+
+	}
+
+	void ActionsPanel::setButtonsActivity() {
+
+		if (editor->_tempAnimations &&
+			AnimationsEditor::editor->_name_panel->_name->getText().length() > 0 && 
+			AnimationsEditor::editor->_sprite_sheet_panel->_x->getText().length() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_y->getText().length() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_w->getText().length() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_h->getText().length() > 0 
+			) {
+			_saveBtn->setActive(true);
+		}
+		else {
+			_saveBtn->setActive(false);
+		}
+
+		if (editor->_tempAnimations &&
+			AnimationsEditor::editor->_name_panel->_name->getText().length() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_x->getText().length() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_y->getText().length() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_w->getText().length() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_h->getText().length() > 0
+			) {
+			_addBtn->setActive(true);
+		}
+		else {
+			_addBtn->setActive(false);
+		}
+
+		if(editor->_tempAnimations){
+			_removeBtn->setActive(true);
+		}
+		else {
+			_removeBtn->setActive(false);
+		}
 
 	}
 

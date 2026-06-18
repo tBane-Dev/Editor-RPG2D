@@ -19,10 +19,11 @@ namespace AnimationsEditor {
 
 		std::shared_ptr<MainMenu> _main_menu;
 
-		std::weak_ptr<Animations> _animations;
+		std::shared_ptr<Animations> _animations;
+		std::shared_ptr<Animations> _tempAnimations;
 		std::shared_ptr<Animator> _animator;
 
-		std::shared_ptr<NamePanel> _animation_name_panel;
+		std::shared_ptr<NamePanel> _name_panel;
 		std::shared_ptr<ListPanel> _list_panel;
 		std::shared_ptr<ActionsPanel> _actions_panel;
 		std::shared_ptr<SpriteSheetPanel> _sprite_sheet_panel;
@@ -34,9 +35,9 @@ namespace AnimationsEditor {
 		void init();
 		void createMainMenu();
 		void createListPanel();
-		void createActionsPanel();
 		void createNamePanel();
 		void createSpriteSheetPanel();
+		void createActionsPanel();
 		void createPreviewPanel();
 
 		void cursorHover();

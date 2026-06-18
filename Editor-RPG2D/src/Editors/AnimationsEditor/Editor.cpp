@@ -22,13 +22,10 @@ namespace AnimationsEditor {
 	void Editor::init() {
 		createMainMenu();
 
-		//_animations = animations_manager->getAnimations(L"assets\\tex\\monsters\\golem.png");
-		//_animator = std::make_shared<Animator>(_animations, 0.2f);
-
 		createListPanel();
-		createActionsPanel();
 		createNamePanel();
 		createSpriteSheetPanel();
+		createActionsPanel();
 		createPreviewPanel();
 	}
 
@@ -40,16 +37,16 @@ namespace AnimationsEditor {
 		_list_panel = std::make_shared<ListPanel>(_margin);
 	}
 
-	void Editor::createActionsPanel() {
-		_actions_panel = std::make_shared<ActionsPanel>(_margin);
-	}
-
 	void Editor::createNamePanel() {
-		_animation_name_panel = std::make_shared<NamePanel>(_margin);
+		_name_panel = std::make_shared<NamePanel>(_margin);
 	}
 
 	void Editor::createSpriteSheetPanel() {
 		_sprite_sheet_panel = std::make_shared<SpriteSheetPanel>(_margin);
+	}
+
+	void Editor::createActionsPanel() {
+		_actions_panel = std::make_shared<ActionsPanel>(_margin);
 	}
 
 	void Editor::createPreviewPanel() {
@@ -66,7 +63,7 @@ namespace AnimationsEditor {
 			return;
 		}
 			
-		_animation_name_panel->cursorHover();
+		_name_panel->cursorHover();
 		_list_panel->cursorHover();
 		_actions_panel->cursorHover();
 		_sprite_sheet_panel->cursorHover();
@@ -84,7 +81,7 @@ namespace AnimationsEditor {
 		if (_main_menu->_state != Components::MainMenuStates::Closed)
 			return;
 
-		_animation_name_panel->handleEvent(event);
+		_name_panel->handleEvent(event);
 		_list_panel->handleEvent(event);
 		_actions_panel->handleEvent(event);
 		_sprite_sheet_panel->handleEvent(event);
@@ -99,7 +96,7 @@ namespace AnimationsEditor {
 		}
 
 		_main_menu->update();
-		_animation_name_panel->update();
+		_name_panel->update();
 		_list_panel->update();
 		_actions_panel->update();
 		_sprite_sheet_panel->update();
@@ -112,7 +109,7 @@ namespace AnimationsEditor {
 		GUI_manager->setView();
 
 		Main::render_window->draw(*_title);
-		_animation_name_panel->draw();
+		_name_panel->draw();
 		_list_panel->draw();
 		_actions_panel->draw();
 		_sprite_sheet_panel->draw();

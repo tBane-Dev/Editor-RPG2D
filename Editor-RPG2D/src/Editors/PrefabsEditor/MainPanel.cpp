@@ -85,40 +85,36 @@ namespace PrefabsEditor {
 			sf::Vector2i(startPosition.x, _duplicate_prefab->getPosition().y + _duplicate_prefab->getSize().y + distance_between_buttons)
 		);
 
-		_remove_prefab->_onclick_func = [this]() {
+		_remove_prefab->_onclick_func = [this]()
+			{
+				auto object = PrefabsEditor::editor->_object.lock();
 
-			if (PrefabsEditor::editor->_object.expired()) {
-				return;
-			}
+				if (!object)
+					return;
 
-			int selectedSlotId = PrefabsEditor::editor->_palette->_slots->_selectedSlotId;
-			int scrollbarValue = PrefabsEditor::editor->_palette->_slots->_scrollbar->getValue();
-			
-			// remove from map
-			MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<GameObject>();
-			MapEditor::editor->_game_objects->removeGameObjectsByPrefab(PrefabsEditor::editor->_object);
-			prefabs_manager->removePrefab(PrefabsEditor::editor->_object);
-			
-			// updates palettes
-			PrefabsEditor::editor->_palette->loadAll(PrefabsEditor::editor->_palette->_categories->_selectedType);
-			MapEditor::editor->_palette->loadAll(PrefabsEditor::editor->_palette->_categories->_selectedType);
-			
-			PrefabsEditor::editor->_palette->_slots->_scrollbar->setValue(scrollbarValue);
-			PrefabsEditor::editor->_object = std::weak_ptr<GameObject>();
+				// remove from map
+				MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<GameObject>();
+				MapEditor::editor->_game_objects->removeGameObjectsByPrefab(object);
 
-			selectedSlotId -= 1;
+				// remove prefab
+				prefabs_manager->removePrefab(object);
 
-			PrefabsEditor::editor->_palette->_slots->selectSlot(selectedSlotId);
+				// clear selection
+				PrefabsEditor::editor->_object = std::weak_ptr<GameObject>();
+				PrefabsEditor::editor->_animator = nullptr;
 
-			if (PrefabsEditor::editor->_palette->_slots->_selectedSlotId >= 0) {
-				PrefabsEditor::editor->_object = std::dynamic_pointer_cast<GameObject>(PrefabsEditor::editor->_palette->_slots->_selectedSlot->_object.lock());
-			}
+				PrefabsEditor::editor->_palette->loadAll(PrefabsEditor::editor->_palette->_categories->_selectedType);
+				MapEditor::editor->_palette->loadAll(ObjectType::Terrain);
 
-			PrefabsEditor::editor->_palette->_slots->updateObjects();
-			PrefabsEditor::editor->_animator = nullptr;
 
-			if (!PrefabsEditor::editor->_object.expired())
-				PrefabsEditor::editor->_animator = std::make_shared<Animator>(PrefabsEditor::editor->_object.lock()->_animations, 0.2f);
+				// reset slots
+				PrefabsEditor::editor->_palette->_slots->_scrollbar->setValue(0);
+				PrefabsEditor::editor->_palette->_slots->selectSlot(-1);
+				PrefabsEditor::editor->_palette->_slots->updateObjects();
+
+				MapEditor::editor->_palette->_slots->_scrollbar->setValue(0);
+				MapEditor::editor->_palette->_slots->selectSlot(-1);
+				MapEditor::editor->_palette->_slots->updateObjects();
 			};
 	}
 

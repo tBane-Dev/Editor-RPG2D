@@ -15,9 +15,10 @@ namespace Components {
 	Palette::Palette() : Element() {
 
 
-		Palette::terrains.clear();
-		for (int i = 0; i < MapEditor::editor->_tileset->groups.size(); i++) {
-			Palette::terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+		if (Palette::terrains.empty()) {
+			for (int i = 0; i < MapEditor::editor->_tileset->groups.size(); i++){
+				Palette::terrains.emplace_back(std::make_shared<Terrain>(i, sf::IntRect(sf::Vector2i(15 * 64, i * 64), sf::Vector2i(16, 16))));
+			}
 		}
 
 		sf::Vector2i size;

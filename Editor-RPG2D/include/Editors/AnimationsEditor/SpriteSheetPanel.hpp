@@ -16,12 +16,16 @@ namespace AnimationsEditor {
 		std::unique_ptr<sf::Text> _yLabel;
 		std::unique_ptr<sf::Text> _wLabel;
 		std::unique_ptr<sf::Text> _hLabel;
+		std::unique_ptr<sf::Text> _aLabel;
+		std::unique_ptr<sf::Text> _fLabel;
 
 		// text inputs
 		std::shared_ptr<TextInput> _x;
 		std::shared_ptr<TextInput> _y;
 		std::shared_ptr<TextInput> _w;
 		std::shared_ptr<TextInput> _h;
+		std::shared_ptr<TextInput> _a;
+		std::shared_ptr<TextInput> _f;
 
 		SpriteSheetPanel(sf::Vector2i margin);
 		~SpriteSheetPanel();
