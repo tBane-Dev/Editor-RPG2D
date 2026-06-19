@@ -119,8 +119,6 @@ namespace AnimationsEditor {
 			int animationID = editor->_list_panel->_selectedItemIndex;
 			if (animationID >= 0) {
 
-				//MapEditor::editor->_game_objects->removePrefabsByAnimations(animationID);
-				//prefabs_manager->removePrefabsByAnimations(animationID);
 				animations_manager->removeAnimations(animationID);
 
 				editor->_list_panel->loadAll();

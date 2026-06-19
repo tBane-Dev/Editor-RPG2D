@@ -147,6 +147,7 @@ void AnimationsManager::loadAllAnimations() {
     datas.emplace_back(L"assets\\tex\\monsters\\golem.png", sf::Vector2i(128,128), 4, 4);
     datas.emplace_back(L"assets\\tex\\monsters\\troll.png", sf::Vector2i(128, 128), 4, 4);
     datas.emplace_back(L"assets\\tex\\monsters\\dziobak.png", sf::Vector2i(128, 128), 4, 4);
+    datas.emplace_back(L"assets\\tex\\monsters\\deer.png", sf::Vector2i(128, 128), 4, 4);
     datas.emplace_back(L"assets\\tex\\monsters\\goblin.png", sf::Vector2i(128, 128), 4, 4);
     datas.emplace_back(L"assets\\tex\\monsters\\bies.png", sf::Vector2i(128, 128), 4, 4);
     datas.emplace_back(L"assets\\tex\\monsters\\hero.png", sf::Vector2i(128, 208), 4, 4);
