@@ -24,6 +24,9 @@ Button::Button() : Element() {
 	_rectPressBorderColor = sf::Color::Transparent;
 	_rectSelectBorderColor = sf::Color::Transparent;
 
+	_rectInactiveColor = sf::Color::Transparent;
+	_rectInactiveBorderColor = sf::Color::Transparent;
+
 	_isActive = true;
 	_activatedByEnter = false;
 

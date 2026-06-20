@@ -59,12 +59,11 @@ namespace AnimationsEditor {
 			if(editor->_name_panel->_name->getText().empty())
 				return;
 
-			if (editor->_sprite_sheet_panel->_x->getText().empty() ||
-				editor->_sprite_sheet_panel->_y->getText().empty() ||
-				editor->_sprite_sheet_panel->_w->getText().empty() || 
-				editor->_sprite_sheet_panel->_h->getText().empty() ||
-				editor->_sprite_sheet_panel->_a->getText().empty() ||
-				editor->_sprite_sheet_panel->_f->getText().empty())
+			if (
+				editor->_sprite_sheet_panel->_w->getNumber() == 0 || 
+				editor->_sprite_sheet_panel->_h->getNumber() == 0 ||
+				editor->_sprite_sheet_panel->_a->getNumber() == 0 ||
+				editor->_sprite_sheet_panel->_f->getNumber() == 0 )
 				return;
 
 			editor->_animations->_path = editor->_tempAnimations->_path;
@@ -89,7 +88,11 @@ namespace AnimationsEditor {
 			if (!editor->_tempAnimations->getTexture())
 				return;
 
-			if (editor->_sprite_sheet_panel->_w->getText().empty() || editor->_sprite_sheet_panel->_h->getText().empty())
+			if (
+				editor->_sprite_sheet_panel->_w->getNumber() == 0 ||
+				editor->_sprite_sheet_panel->_h->getNumber() == 0 ||
+				editor->_sprite_sheet_panel->_a->getNumber() == 0 ||
+				editor->_sprite_sheet_panel->_f->getNumber() == 0)
 				return;
 
 			int animations = 1;
@@ -160,10 +163,10 @@ namespace AnimationsEditor {
 
 		if (editor->_tempAnimations &&
 			AnimationsEditor::editor->_name_panel->_name->getText().length() > 0 && 
-			AnimationsEditor::editor->_sprite_sheet_panel->_x->getText().length() > 0 &&
-			AnimationsEditor::editor->_sprite_sheet_panel->_y->getText().length() > 0 &&
-			AnimationsEditor::editor->_sprite_sheet_panel->_w->getText().length() > 0 &&
-			AnimationsEditor::editor->_sprite_sheet_panel->_h->getText().length() > 0 
+			AnimationsEditor::editor->_sprite_sheet_panel->_w->getNumber() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_h->getNumber() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_a->getNumber() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_f->getNumber() > 0 
 			) {
 			_saveBtn->setActive(true);
 		}
@@ -173,10 +176,10 @@ namespace AnimationsEditor {
 
 		if (editor->_tempAnimations &&
 			AnimationsEditor::editor->_name_panel->_name->getText().length() > 0 &&
-			AnimationsEditor::editor->_sprite_sheet_panel->_x->getText().length() > 0 &&
-			AnimationsEditor::editor->_sprite_sheet_panel->_y->getText().length() > 0 &&
-			AnimationsEditor::editor->_sprite_sheet_panel->_w->getText().length() > 0 &&
-			AnimationsEditor::editor->_sprite_sheet_panel->_h->getText().length() > 0
+			AnimationsEditor::editor->_sprite_sheet_panel->_w->getNumber() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_h->getNumber() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_a->getNumber() > 0 &&
+			AnimationsEditor::editor->_sprite_sheet_panel->_f->getNumber() > 0 
 			) {
 			_addBtn->setActive(true);
 		}

@@ -1,6 +1,6 @@
 #pragma once
 #include "Components/Panel.hpp"
-#include "Controls/TextInput.hpp"
+#include "Controls/NumberInput.hpp"
 #include "Controls/ButtonWithTextAndSprite.hpp"
 
 namespace AnimationsEditor {
@@ -20,12 +20,12 @@ namespace AnimationsEditor {
 		std::unique_ptr<sf::Text> _fLabel;
 
 		// text inputs
-		std::shared_ptr<TextInput> _x;
-		std::shared_ptr<TextInput> _y;
-		std::shared_ptr<TextInput> _w;
-		std::shared_ptr<TextInput> _h;
-		std::shared_ptr<TextInput> _a;
-		std::shared_ptr<TextInput> _f;
+		std::shared_ptr<NumberInput> _x;
+		std::shared_ptr<NumberInput> _y;
+		std::shared_ptr<NumberInput> _w;
+		std::shared_ptr<NumberInput> _h;
+		std::shared_ptr<NumberInput> _a;
+		std::shared_ptr<NumberInput> _f;
 
 		SpriteSheetPanel(sf::Vector2i margin);
 		~SpriteSheetPanel();

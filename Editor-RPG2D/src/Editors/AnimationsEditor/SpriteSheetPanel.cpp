@@ -54,6 +54,13 @@ namespace AnimationsEditor {
 
 				editor->_tempAnimations->_texture = texture;
 
+				_x->setMaxValue(texture->getSize().x);
+				_y->setMaxValue(texture->getSize().y);
+				_w->setMaxValue(texture->getSize().x);
+				_h->setMaxValue(texture->getSize().y);
+				_a->setMaxValue(texture->getSize().y);
+				_f->setMaxValue(texture->getSize().x);
+
 				AnimationsEditor::editor->_sprite_sheet_panel->loadAnimations();
 				AnimationsEditor::editor->_actions_panel->setButtonsActivity();
 				AnimationsEditor::editor->_preview_panel->loadAnimations();
@@ -70,29 +77,29 @@ namespace AnimationsEditor {
 		sf::Vector2i startPosition(_rect.position.x + 512 + 96, _rect.position.y + 64 + 64);
 		int distance = 16;
 
-		_x = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_x = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"--", 24, 18);
 		_x->setPosition(sf::Vector2i(startPosition.x, startPosition.y));
-		_x->setText(L"0");
+		_x->setRange(0, 0);
 
-		_y = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_y = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"--", 24, 18);
 		_y->setPosition(sf::Vector2i(startPosition.x, _x->getPosition().y + _x->getSize().y + distance));
-		_y->setText(L"0");
+		_y->setRange(0, 0);
 
-		_w = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_w = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"--", 24, 18);
 		_w->setPosition(sf::Vector2i(startPosition.x, _y->getPosition().y + _y->getSize().y + distance));
-		_w->setText(L"0");
+		_w->setRange(0, 0);
 
-		_h = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_h = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"--", 24, 18);
 		_h->setPosition(sf::Vector2i(startPosition.x, _w->getPosition().y + _w->getSize().y + distance));
-		_h->setText(L"0");
+		_h->setRange(0, 0);
 
-		_a = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_a = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"--", 24, 18);
 		_a->setPosition(sf::Vector2i(startPosition.x, _h->getPosition().y + _h->getSize().y + distance));
-		_a->setText(L"1");
+		_a->setRange(0, 0);
 
-		_f = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"--", 24, 18);
+		_f = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"--", 24, 18);
 		_f->setPosition(sf::Vector2i(startPosition.x, _a->getPosition().y + _a->getSize().y + distance));
-		_f->setText(L"1");
+		_f->setRange(0, 0);
 
 		// texts labels
 		int x = _x->getPosition().x - 32;
@@ -124,7 +131,7 @@ namespace AnimationsEditor {
 		// text inputs functions
 		_x->_onEditedFunction = [this]() {
 			if (editor->_animations) {
-				int x = std::stoi(_x->getText());
+				int x = _x->getNumber();
 				if (x >= 0 && x < editor->_tempAnimations->getTexture()->getSize().x) {
 					editor->_tempAnimations->_offsetX = x;
 					editor->_preview_panel->loadAnimations();
@@ -135,7 +142,7 @@ namespace AnimationsEditor {
 
 		_y->_onEditedFunction = [this]() {
 			if (editor->_animations) {
-				int y = std::stoi(_y->getText());
+				int y = _y->getNumber();
 				if (y >= 0 && y < editor->_tempAnimations->getTexture()->getSize().y) {
 					editor->_tempAnimations->_offsetY = y;
 					editor->_preview_panel->loadAnimations();
@@ -147,7 +154,7 @@ namespace AnimationsEditor {
 		
 		_w->_onEditedFunction = [this]() {
 			if (editor->_animations) {
-				int w = (_w->getText().empty())? 0 : std::stoi(_w->getText());
+				int w = _w->getNumber();
 				if (w > 0 && w <= editor->_tempAnimations->getTexture()->getSize().x) {
 					editor->_tempAnimations->_frameSize.x = w;
 					editor->_preview_panel->loadAnimations();
@@ -158,7 +165,7 @@ namespace AnimationsEditor {
 
 		_h->_onEditedFunction = [this]() {
 			if (editor->_animations) {
-				int h = (_h->getText().empty()) ? 0 : std::stoi(_h->getText());
+				int h = _h->getNumber();
 				if (h > 0 && h <= editor->_tempAnimations->getTexture()->getSize().y) {
 					editor->_tempAnimations->_frameSize.y = h;
 					editor->_preview_panel->loadAnimations();
@@ -169,7 +176,7 @@ namespace AnimationsEditor {
 
 		_a->_onEditedFunction = [this]() {
 			if (editor->_animations) {
-				int a = (_a->getText().empty())? 0 : std::stoi(_a->getText());
+				int a = _a->getNumber();
 				if (a > 0 && a <= editor->_tempAnimations->getTexture()->getSize().y) {
 					editor->_tempAnimations->_animationsCount = a;
 					editor->_preview_panel->loadAnimations();
@@ -180,7 +187,7 @@ namespace AnimationsEditor {
 
 		_f->_onEditedFunction = [this]() {
 			if (editor->_animations) {
-				int f = (_f->getText().empty()) ? 0 : std::stoi(_f->getText());
+				int f = _f->getNumber();
 				if (f > 0 && f <= editor->_tempAnimations->getTexture()->getSize().y) {
 					editor->_tempAnimations->_framesCount = f;
 					editor->_preview_panel->loadAnimations();
@@ -296,18 +303,18 @@ namespace AnimationsEditor {
 		float gridWidth = 1.0f;
 		float mainGridMultiplier = 4.0f;
 		sf::Vector2f position_rect = rect.getPosition();
-		if (!_x->getText().empty()) position_rect.x += (float)std::stoi(_x->getText()) * scale;
-		if (!_y->getText().empty()) position_rect.y += (float)std::stoi(_y->getText()) * scale;
+		if (_x->getNumber() >= 0) position_rect.x += (float)_x->getNumber() * scale;
+		if (_y->getNumber() >= 0) position_rect.y += (float)_y->getNumber() * scale;
 
 		// TO-DO - must be a number input
 		sf::Vector2f size_rect;
-		if (!_f->getText().empty() && !_w->getText().empty()) size_rect.x = ((float)std::stoi(_f->getText()) * (float)std::stoi(_w->getText())) * scale;
-		if (!_a->getText().empty() && !_h->getText().empty()) size_rect.y = ((float)std::stoi(_a->getText()) * (float)std::stoi(_h->getText())) * scale;
+		if (_f->getNumber() >= 0 && _w->getNumber() >= 0) size_rect.x = ((float)_f->getNumber() * (float)_w->getNumber()) * scale;
+		if (_a->getNumber() >= 0 && _h->getNumber() >= 0) size_rect.y = ((float)_a->getNumber() * (float)_h->getNumber()) * scale;
 		//
 		
 		// TO-DO - must be a number input
-		if (size_rect.x > 512 - (_x->getText().empty() ? 0 : std::stoi(_x->getText()) * scale)) size_rect.x = 512 - (_x->getText().empty() ? 0 : std::stoi(_x->getText()) * scale);
-		if (size_rect.y > 512 - (_y->getText().empty() ? 0 : std::stoi(_y->getText()) * scale)) size_rect.y = 512 - (_y->getText().empty() ? 0 : std::stoi(_y->getText()) * scale);
+		if (size_rect.x > 512 - (_x->getNumber() >= 0 ? (float)_x->getNumber() * scale : 0)) size_rect.x = 512 - (_x->getNumber() >= 0 ? (float)_x->getNumber() * scale : 0);
+		if (size_rect.y > 512 - (_y->getNumber() >= 0 ? (float)_y->getNumber() * scale : 0)) size_rect.y = 512 - (_y->getNumber() >= 0 ? (float)_y->getNumber() * scale : 0);
 		//
 
 		grid2_shader->setUniform("rectPosition", position_rect);
@@ -316,8 +323,8 @@ namespace AnimationsEditor {
 		grid2_shader->setUniform("chunkSize", 
 			sf::Vector2f(
 				// TO-DO
-				(editor->_sprite_sheet_panel->_w->getText().length() > 0 && std::stoi(editor->_sprite_sheet_panel->_w->getText()) > 0)?(float)std::stoi(editor->_sprite_sheet_panel->_w->getText()) * scale : 128,
-				(editor->_sprite_sheet_panel->_h->getText().length() > 0 && std::stoi(editor->_sprite_sheet_panel->_h->getText()) > 0)?(float)std::stoi(editor->_sprite_sheet_panel->_h->getText()) * scale : 128
+				(editor->_sprite_sheet_panel->_w->getNumber() > 0) ? (float)editor->_sprite_sheet_panel->_w->getNumber() * scale : 128,
+				(editor->_sprite_sheet_panel->_h->getNumber() > 0) ? (float)editor->_sprite_sheet_panel->_h->getNumber() * scale : 128
 			)
 		);
 		grid2_shader->setUniform("gridWidth", gridWidth);

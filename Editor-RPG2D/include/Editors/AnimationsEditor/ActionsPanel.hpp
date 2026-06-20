@@ -1,8 +1,6 @@
 #pragma once
 #include "Components/Panel.hpp"
-#include "Controls/TextInput.hpp"
 #include "Controls/ButtonWithTextAndSprite.hpp"
-#include "Controls/Scrollbar.hpp"
 
 namespace AnimationsEditor {
 

@@ -193,10 +193,10 @@ namespace AnimationsEditor {
 			return;
 
 		sf::Vector2i frameSize = sf::Vector2i(0,0);
-		if(!editor->_sprite_sheet_panel->_w->getText().empty() && stoi(editor->_sprite_sheet_panel->_w->getText()) > 0)
-			frameSize.x = std::stoi(editor->_sprite_sheet_panel->_w->getText()); 
-		if (!editor->_sprite_sheet_panel->_h->getText().empty() && stoi(editor->_sprite_sheet_panel->_h->getText()) > 0)
-			frameSize.y = std::stoi(editor->_sprite_sheet_panel->_h->getText());
+		if(editor->_sprite_sheet_panel->_w->getNumber() > 0)
+			frameSize.x = editor->_sprite_sheet_panel->_w->getNumber(); 
+		if (editor->_sprite_sheet_panel->_h->getNumber() > 0)
+			frameSize.y = editor->_sprite_sheet_panel->_h->getNumber();
 
 		_animations_current->setString(std::to_wstring(editor->_animator->_animation));
 		_animations_count->setString(std::to_wstring(editor->_tempAnimations->_animationsCount));
@@ -315,11 +315,11 @@ namespace AnimationsEditor {
 
 				// TO-DO - tempAnimations
 				sf::Vector2i frameSize = sf::Vector2i(0, 0);
-				if (!editor->_sprite_sheet_panel->_w->getText().empty() && stoi(editor->_sprite_sheet_panel->_w->getText()) > 0)
-					frameSize.x = std::stoi(editor->_sprite_sheet_panel->_w->getText());
+				if (editor->_sprite_sheet_panel->_w->getNumber() > 0)
+					frameSize.x = editor->_sprite_sheet_panel->_w->getNumber();
 
-				if (!editor->_sprite_sheet_panel->_h->getText().empty() && stoi(editor->_sprite_sheet_panel->_h->getText()) > 0)
-					frameSize.y = std::stoi(editor->_sprite_sheet_panel->_h->getText());
+				if (editor->_sprite_sheet_panel->_h->getNumber() > 0)
+					frameSize.y = editor->_sprite_sheet_panel->_h->getNumber();
 
 				if (frameSize.x > (int)animations.lock()->getTexture()->_texture->getSize().x)
 					frameSize.x = std::min(frameSize.x, (int)animations.lock()->getTexture()->_texture->getSize().x);
@@ -328,13 +328,13 @@ namespace AnimationsEditor {
 					frameSize.y = std::min(frameSize.y, (int)animations.lock()->getTexture()->_texture->getSize().y);
 
 				sf::Vector2i framePosition = sf::Vector2i(0, 0);
-				if (!editor->_sprite_sheet_panel->_x->getText().empty() && stoi(editor->_sprite_sheet_panel->_x->getText()) >= 0) {
-					framePosition.x = std::stoi(editor->_sprite_sheet_panel->_x->getText());
+				if (editor->_sprite_sheet_panel->_x->getNumber() >= 0) {
+					framePosition.x = editor->_sprite_sheet_panel->_x->getNumber();
 					framePosition.x += animator->_frame * frameSize.x;
 				}
 
-				if (!editor->_sprite_sheet_panel->_y->getText().empty() && stoi(editor->_sprite_sheet_panel->_y->getText()) >= 0) {
-					framePosition.y = std::stoi(editor->_sprite_sheet_panel->_y->getText());
+				if (editor->_sprite_sheet_panel->_y->getNumber() >= 0) {
+					framePosition.y = editor->_sprite_sheet_panel->_y->getNumber();
 					framePosition.y += animator->_animation * frameSize.y;
 				}
 					
