@@ -14,6 +14,8 @@ public:
 
 	ObjectType _type;
 
+	std::shared_ptr<Animations> _emptySlotAnimation;
+
 	sf::Vector2i _slotsCount;
 	std::vector<std::shared_ptr<Slot>> _slots;
 	std::shared_ptr<Scrollbar> _scrollbar;

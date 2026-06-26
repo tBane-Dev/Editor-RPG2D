@@ -123,7 +123,7 @@ void AnimationsManager::loadAnimations(std::wstring path, sf::Vector2i frameSize
     if(loadingStatus)
         _animations.push_back(animations);
 }
-    \
+    
 void AnimationsManager::loadAllAnimations() {
 	
 	struct Data {

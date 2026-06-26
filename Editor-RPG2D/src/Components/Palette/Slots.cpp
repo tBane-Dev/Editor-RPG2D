@@ -8,6 +8,7 @@
 #include "DebugLog.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "Editors/MapEditor/Map/Tileset.hpp"
+#include "TexturesManager.hpp"
 
 Slots::Slots() {
 
@@ -28,6 +29,12 @@ Slots::Slots() {
 	_selectedSlotId = -1;
 	_selectedSlot = nullptr;
 
+	_emptySlotAnimation = std::make_shared<Animations>(
+		L"none",
+		textures_manager->getTexture(L"assets\\tex\\palette\\none.png"),
+		sf::Vector2i(80, 80),
+		1, 1
+	);
 
 	_type = ObjectType::None;
 	setCategory(_type);
@@ -189,7 +196,7 @@ void Slots::loadObjects() {
 	for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y+1); i++) {
 		if (i < prefabs.size()) {
 			_slots[i]->_object = prefabs[i];
-			_slots[i]->_animator = std::make_shared<Animator>(prefabs[i]->getAnimations(), 0.2f);
+			_slots[i]->_animator = std::make_shared<Animator>((prefabs[i]->getAnimations().expired())? _emptySlotAnimation : prefabs[i]->getAnimations(), 0.2f);
 			_slots[i]->_animator->play();
 		}
 		else {

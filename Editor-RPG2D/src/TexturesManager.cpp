@@ -184,6 +184,8 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_press.png");
+        
+        texturePaths.push_back(L"assets\\tex\\palette\\none.png");
 
         // preview panel
         texturePaths.push_back(L"assets\\tex\\editors_ui\\first.png");
