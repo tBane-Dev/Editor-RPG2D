@@ -488,7 +488,7 @@ void FileDialog::setTheVisibleLocations() {
 
 				_leftScrollbar->setMax(newMax);
 				_leftScrollbar->setValue(scrollbarValue);
-
+				_leftScrollbar->updateSliderSize();
 
 				setTheVisibleLocations();
 

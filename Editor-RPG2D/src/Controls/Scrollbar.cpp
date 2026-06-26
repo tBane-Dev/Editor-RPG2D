@@ -12,8 +12,8 @@ Scrollbar::Scrollbar(int x, int y, int width, int height, int min_value, int max
 	_barSize = width;
 	_textureSize = _barSize;
 
-	if (height < 3 * _barSize)
-		height = 3 * _barSize;
+	if (height < 4 * _barSize)
+		height = 4 * _barSize;
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(width, height));
 	_slider = sf::IntRect(sf::Vector2i(0, width), sf::Vector2i(width, width));
@@ -75,14 +75,21 @@ void Scrollbar::updateSliderSize() {
 		return;
 	}
 
-	int sizeY = int((float)trackHeight * ((float)_slider_size / ((float)range + (float)_slider_size)));
+	int sizeY = int(
+		(float)trackHeight *
+		((float)_slider_size / ((float)range + (float)_slider_size))
+		);
 
-	if (sizeY < 3*_barSize)
-		sizeY = 3*_barSize;
+	if (sizeY < 2 * _barSize)
+		sizeY = 2 * _barSize;
+
+	if (sizeY > trackHeight)
+		sizeY = trackHeight;
 
 	_slider.size = sf::Vector2i(_rect.size.x, sizeY);
+}
 
-}void Scrollbar::updateSliderPosition() {
+void Scrollbar::updateSliderPosition() {
 	int range = _max_value - _min_value;
 
 	int trackTop = _rect.position.y + _barSize;
@@ -220,13 +227,15 @@ void Scrollbar::draw() {
 	sliderTop.setScale(sf::Vector2f(scale, scale));
 	Main::render_window->draw(sliderTop);
 
-	sf::Sprite sliderCenter(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar"+std::to_wstring(_textureSize)+L"\\slider_center.png")->_texture);
-	sliderCenter.setPosition(sf::Vector2f(_slider.position.x, _slider.position.y + _barSize));
-	sliderCenter.setScale(sf::Vector2f(
-		float(_slider.size.x) / float(_textureSize),
-		float(_slider.size.y - 2 * _barSize) / float(_textureSize)
-	));
-	Main::render_window->draw(sliderCenter);
+	if(_slider.size.y > 2*_barSize) {
+		sf::Sprite sliderCenter(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar" + std::to_wstring(_textureSize) + L"\\slider_center.png")->_texture);
+		sliderCenter.setPosition(sf::Vector2f(_slider.position.x, _slider.position.y + _barSize));
+		sliderCenter.setScale(sf::Vector2f(
+			float(_slider.size.x) / float(_textureSize),
+			float(_slider.size.y - 2 * _barSize) / float(_textureSize)
+		));
+		Main::render_window->draw(sliderCenter);
+	}
 
 	sf::Sprite sliderBottom(*textures_manager->getTexture(L"assets\\tex\\controls\\scrollbar"+std::to_wstring(_textureSize)+L"\\slider_bottom.png")->_texture);
 	sliderBottom.setPosition(sf::Vector2f(_slider.position.x, _slider.position.y + _slider.size.y - _barSize));
