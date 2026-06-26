@@ -416,36 +416,22 @@ void FileDialog::setTheVisibleLocations() {
 
 			_navbar->clear();
 
-			auto addNavbarItem =
-				[this](const std::filesystem::path& navbarPath) {
+			auto addNavbarItem = [this](const std::filesystem::path& navbarPath) {
 
-				_navbar->add(
-					navbarPath,
-					[this, navbarPath]() {
+				_navbar->add(navbarPath,[this, navbarPath]() {
 
 						if (_currentPath == navbarPath)
 							return;
 
 						_currentPath = navbarPath;
 
-						while (
-							!_navbar->_items.empty() &&
-							_navbar->_items.back()->_path != navbarPath
-							) {
+						while (!_navbar->_items.empty() && _navbar->_items.back()->_path != navbarPath)
 							_navbar->pop_back();
-						}
 
 						loadDirectory();
 
 						_rightScrollbar->setValue(0);
-						_rightScrollbar->setMax(
-							std::max(
-								0,
-								static_cast<int>(_filesPaths.size()) *
-								basic_text_rect_height -
-								_rightInnerRect->size.y
-							)
-						);
+						_rightScrollbar->setMax(std::max(0, (int)_filesPaths.size()) * basic_text_rect_height - _rightInnerRect->size.y);
 
 						setTheFilesSize();
 						setTheFiles();
@@ -457,14 +443,7 @@ void FileDialog::setTheVisibleLocations() {
 			addNavbarItem(path);
 
 			_rightScrollbar->setValue(0);
-			_rightScrollbar->setMax(
-				std::max(
-					0,
-					static_cast<int>(_filesPaths.size()) *
-					basic_text_rect_height -
-					_rightInnerRect->size.y
-				)
-			);
+			_rightScrollbar->setMax(std::max(0, (int)(_filesPaths.size()) * basic_text_rect_height - _rightInnerRect->size.y));
 
 			setTheFilesSize();
 			setTheFiles();
