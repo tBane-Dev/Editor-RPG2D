@@ -44,8 +44,10 @@ FileDialog::FileDialog(std::wstring title, std::function<void()> function) : Mai
 	setTheFiles();
 
 	createLocations();
-	setTheLocationsSize();
-	setTheLocations();
+
+	createVisibleLocations();
+	setTheVisibleLocationsSize();
+	setTheVisibleLocations();
 	createBottom(function);
 
 	_leftScrollbar = std::make_shared<Scrollbar>(
@@ -54,11 +56,11 @@ FileDialog::FileDialog(std::wstring title, std::function<void()> function) : Mai
 		_scrollbarWidth,
 		_leftInnerRect->size.y,
 		0,
-		std::max(0, (int)_locationsPaths.size() * basic_text_rect_height - _leftInnerRect->size.y),
+		std::max(0, (int)_visibleLocations.size() * basic_text_rect_height - _leftInnerRect->size.y),
 		std::ceil((float)_leftInnerRect->size.y / (float)basic_text_rect_height) * basic_text_rect_height,
 		0
 	);
-	_leftScrollbar->_func = [this]() { setTheLocations(); };
+	_leftScrollbar->_func = [this]() { setTheVisibleLocations(); };
 	_leftScrollbar->setScrollArea(_leftInnerRect, (float)basic_text_rect_height*0.25f);
 
 	_rightScrollbar = std::make_shared<Scrollbar>(
@@ -269,8 +271,44 @@ void FileDialog::setTheFiles() {
 
 }
 
+void FileDialog::addVisibleLocation(std::shared_ptr<Location> location) {
+	if (!location)
+		return;
+
+	auto locationItem = std::make_shared<LocationItem>();
+
+	std::wstring name;
+
+	if (!location->_path) {
+		// Separator
+		locationItem->setFile(L"", nullptr);
+	}
+	else if (location->_path->empty()) {
+		name = L"This PC";
+		locationItem->setFile(name, location);
+	}
+	else if (isDrive(*location->_path)) {
+		name = L"Disc (" + location->_path->wstring();
+		name.pop_back(); // remove the trailing backslash
+		name += L")";
+
+		locationItem->setFile(name, location);
+	}
+	else {
+		name = location->_path->filename().wstring();
+		locationItem->setFile(name, location);
+	}
+
+	_visibleLocations.push_back(locationItem);
+
+	if (location->_isOpen) {
+		for (const auto& child : location->_children) {
+			addVisibleLocation(child);
+		}
+	}
+}
+
 void FileDialog::createLocations() {
-	
 	std::vector<std::wstring> fav_paths;
 
 	// favorite locations
@@ -301,112 +339,161 @@ void FileDialog::createLocations() {
 	_locationsPaths.push_back(nullptr); // separator
 	_locationsPaths.push_back(std::make_shared<std::filesystem::path>(std::filesystem::path())); // This PC
 
-	for (auto& path : drives_paths) {
-		_locationsPaths.push_back(std::make_shared<std::filesystem::path>(std::filesystem::path(path)));
+	// create the locations
+	_locations.clear();
+	for (auto& loc : _locationsPaths) {
+		std::shared_ptr<Location> l = std::make_shared<Location>(loc, 0);
+		_locations.push_back(l);
 	}
 
-	_locations.clear();
+	for (auto& d : drives_paths) {
+		std::shared_ptr<Location> driveLocation = std::make_shared<Location>(std::make_shared<std::filesystem::path>(std::filesystem::path(d)), 1);
+		_locations.back()->_children.push_back(driveLocation);
+	}
 
-	for (auto& path : _locationsPaths) {
-		
-		std::shared_ptr<LocationItem> location = std::make_shared<LocationItem>();
-		std::wstring name = L"";
-		if (path == nullptr) {
-			location->setFile(name, path);
-			_locations.push_back(location);
-			continue;
-		}
+	_locations.back()->_hasChildren = true;
+	_locations.back()->open();
+}
 
-		if(*path.get() == std::filesystem::path()) { 
-			name = L"This PC";
-		}else if (isDrive(*path)) {
-			name = L"Disc (" + path->wstring();
-			name.pop_back(); // remove the trailing backslash
-			name += L")";
-		}
-		else
-			name = std::filesystem::path(*path).filename().wstring();
+void FileDialog::createVisibleLocations() {
 
-		location->setFile(name, path);
-		_locations.push_back(location);
+	_visibleLocations.clear();
+
+	for (auto& location : _locations) {
+		addVisibleLocation(location);
 	}
 }
 
-
-void FileDialog::setTheLocationsSize() {
-	for(auto& location : _locations) {
+void FileDialog::setTheVisibleLocationsSize() {
+	for(auto& location : _visibleLocations) {
 		location->setSize(sf::Vector2i(_leftInnerRect->size.x, basic_text_rect_height));
 	}
 }
 
-void FileDialog::setTheLocations() {
+void FileDialog::setTheVisibleLocations() {
 
-	int scrollbarValue = (_leftScrollbar) ? _leftScrollbar->getValue() : 0;
-	int startIndex = scrollbarValue / basic_text_rect_height;
-	int offset = scrollbarValue % basic_text_rect_height;
+	int scrollbarValue =
+		_leftScrollbar ? _leftScrollbar->getValue() : 0;
 
-	for (int i = 0; i < _locations.size(); i++) {
-			
-		int index = i + startIndex;
+	for (int i = 0; i < _visibleLocations.size(); i++) {
 
-		if (index < _locationsPaths.size()) {
+		auto locationItem = _visibleLocations[i];
 
-			if (!_locationsPaths[index]) {
-				_locations[i]->setFile(L"", nullptr);
-				continue;
-			}
+		if (!locationItem)
+			continue;
 
-			if(*_locationsPaths[index].get() == std::filesystem::path()) {
-				_locations[i]->setFile(L"This PC", _locationsPaths[index]);
-			}else if (isDrive(*_locationsPaths[index])) {
-				std::wstring name = L"Disc (" + _locationsPaths[index]->wstring();
-				name.pop_back(); // remove the trailing backslash
-				name += L")";
-				_locations[i]->setFile(name, _locationsPaths[index]);
-			}
-			else
-				_locations[i]->setFile(_locationsPaths[index]->filename().wstring(), _locationsPaths[index]);
-			
-			_locations[i]->setSize(sf::Vector2i(_leftInnerRect->size.x, basic_text_rect_height));
-			std::filesystem::path path = *_locations[i]->_path;
-			_locations[i]->_onclick_func = [this, path]() {
-				if (_currentPath != path) {
-					_currentPath = path;
-					loadDirectory();
-					_navbar->clear();
+		auto location = locationItem->_location;
 
-					auto addNavbarItem = [this](const std::filesystem::path& path) {
-						_navbar->add(path, [this, path]() {
-							if (_currentPath != path) {
-								_currentPath = path;
-								while (!_navbar->_items.empty() && _navbar->_items.back()->_path != path) {
-									_navbar->pop_back();
-								}
-								loadDirectory();
-								_rightScrollbar->setValue(0);
-								_rightScrollbar->setMax(std::max(0, (int)_filesPaths.size() * basic_text_rect_height - _rightInnerRect->size.y));
-								setTheFilesSize();
-								setTheFiles();
-							}
-							});
-						};
+		locationItem->setPosition(
+			_leftInnerRect->position +
+			sf::Vector2i(
+				0,
+				i * basic_text_rect_height - scrollbarValue
+			)
+		);
 
-					// Nav Bar = "This PC > Location"
-					if(path!=std::filesystem::path()) addNavbarItem(std::filesystem::path());
-					addNavbarItem(path);
+		locationItem->setSize(
+			sf::Vector2i(
+				_leftInnerRect->size.x,
+				basic_text_rect_height
+			)
+		);
 
-					_rightScrollbar->setValue(0);
-					_rightScrollbar->setMax(std::max(0, (int)_filesPaths.size() * basic_text_rect_height - _rightInnerRect->size.y));
-
-					setTheFilesSize();
-					setTheFiles();
-				}
-				};
+		if (!location || !location->_path) {
+			locationItem->_onclick_func = nullptr;
+			continue;
 		}
 
-		_locations[i]->setPosition(
-			_leftInnerRect->position + sf::Vector2i(0, i * basic_text_rect_height - offset)
-		);
+		std::filesystem::path path = *location->_path;
+
+		locationItem->_onclick_func = [this, path]() {
+
+			if (path.empty() || _currentPath == path)
+				return;
+
+			_currentPath = path;
+			loadDirectory();
+
+			_navbar->clear();
+
+			auto addNavbarItem =
+				[this](const std::filesystem::path& navbarPath) {
+
+				_navbar->add(
+					navbarPath,
+					[this, navbarPath]() {
+
+						if (_currentPath == navbarPath)
+							return;
+
+						_currentPath = navbarPath;
+
+						while (
+							!_navbar->_items.empty() &&
+							_navbar->_items.back()->_path != navbarPath
+							) {
+							_navbar->pop_back();
+						}
+
+						loadDirectory();
+
+						_rightScrollbar->setValue(0);
+						_rightScrollbar->setMax(
+							std::max(
+								0,
+								static_cast<int>(_filesPaths.size()) *
+								basic_text_rect_height -
+								_rightInnerRect->size.y
+							)
+						);
+
+						setTheFilesSize();
+						setTheFiles();
+					}
+				);
+				};
+
+			addNavbarItem(std::filesystem::path());
+			addNavbarItem(path);
+
+			_rightScrollbar->setValue(0);
+			_rightScrollbar->setMax(
+				std::max(
+					0,
+					static_cast<int>(_filesPaths.size()) *
+					basic_text_rect_height -
+					_rightInnerRect->size.y
+				)
+			);
+
+			setTheFilesSize();
+			setTheFiles();
+			};
+
+		if (locationItem->_opener) {
+
+			locationItem->_opener->_onclick_func =
+				[this, location]() {
+
+				if (location->_isOpen)
+					location->close();
+				else
+					location->open();
+
+				createVisibleLocations();
+				setTheVisibleLocationsSize();
+				
+				int newMax = std::max(0, (int)(_visibleLocations.size()) * basic_text_rect_height - _leftInnerRect->size.y);
+				int scrollbarValue = std::min(_leftScrollbar->getValue(), newMax);
+
+				_leftScrollbar->setMax(newMax);
+				_leftScrollbar->setValue(scrollbarValue);
+
+
+				setTheVisibleLocations();
+
+			};
+		}
 	}
 }
 
@@ -503,11 +590,10 @@ void FileDialog::setPosition(sf::Vector2i position) {
 	}
 
 	{
-		int leftScrollbarValue = (_leftScrollbar) ? _leftScrollbar->getValue() : 0;
-		int startPosition = leftScrollbarValue % basic_text_rect_height;
+		int scrollbarValue = _leftScrollbar ? _leftScrollbar->getValue() : 0;
 
-		for (int i = 0; i < _locations.size(); i++) {
-			_locations[i]->setPosition(_leftInnerRect->position + sf::Vector2i(0, i * basic_text_rect_height - startPosition));
+		for (int i = 0; i < _visibleLocations.size(); i++) {
+			_visibleLocations[i]->setPosition(_leftInnerRect->position + sf::Vector2i(0, i * basic_text_rect_height - scrollbarValue));
 		}
 	}
 
@@ -544,7 +630,7 @@ sf::FloatRect FileDialog::getFilesRect() {
 	);
 }
 
-sf::FloatRect FileDialog::getLocationsRect() {
+sf::FloatRect FileDialog::getVisibleLocationsRect() {
 	return sf::FloatRect(
 		sf::Vector2f((float)_leftInnerRect->position.x, (float)_leftInnerRect->position.y),
 		sf::Vector2f((float)_leftInnerRect->size.x, (float)(_leftInnerRect->size.y))
@@ -581,8 +667,8 @@ void FileDialog::drawFiles() {
 	}
 }
 
-void FileDialog::drawLocations() {
-	sf::FloatRect locationsRect = getLocationsRect();
+void FileDialog::drawVisibleLocations() {
+	sf::FloatRect locationsRect = getVisibleLocationsRect();
 	sf::View view(locationsRect);
 
 	sf::FloatRect vp(
@@ -600,8 +686,14 @@ void FileDialog::drawLocations() {
 	view.setViewport(vp);
 	Main::render_window->setView(view);
 
-	for (auto& location : _locations) {
-		location->draw();
+	int scrollbarValue = _leftScrollbar ? _leftScrollbar->getValue() : 0;
+	int startIndex = scrollbarValue / basic_text_rect_height;
+	int visibleCount = (std::ceil((float)(_leftInnerRect->size.y) / basic_text_rect_height)) + 1;
+	int endIndex = std::min(startIndex + visibleCount, (int)(_visibleLocations.size()));
+
+	for (int i = startIndex; i < endIndex; i++) {
+		if (_visibleLocations[i])
+			_visibleLocations[i]->draw();
 	}
 }
 
@@ -634,7 +726,7 @@ void FileDialog::cursorHover() {
 
 	// locations (left inner rect)
 	if (_leftInnerRect->contains(Main::cursor->_position)) {
-		for (auto& location : _locations) {
+		for (auto& location : _visibleLocations) {
 			location->cursorHover();
 		}
 	}
@@ -665,7 +757,7 @@ void FileDialog::handleEvent(const sf::Event& event) {
 
 	_navbar->handleEvent(event);
 
-	for (auto& location : _locations) {
+	for (auto& location : _visibleLocations) {
 		location->handleEvent(event);
 	}
 
@@ -692,8 +784,21 @@ void FileDialog::update() {
 
 	_navbar->update();
 
-	for (auto& location : _locations) {
-		location->update();
+	for (int i = 0; i < _visibleLocations.size(); i++) {
+
+		std::shared_ptr<LocationItem> locationItem = _visibleLocations[i];
+
+		if (!locationItem)
+			continue;
+
+		bool openerPressed =
+			locationItem->_opener &&
+			locationItem->_opener->_state == CheckboxState::Pressed;
+
+		locationItem->update();
+
+		if (openerPressed)
+			return;
 	}
 
 	for (auto& file : _files) {
@@ -762,7 +867,7 @@ void FileDialog::draw() {
 
 	drawTop();
 	drawFiles();
-	drawLocations();
+	drawVisibleLocations();
 	
 	Main::render_window->setView(GUI_manager->_view);
 

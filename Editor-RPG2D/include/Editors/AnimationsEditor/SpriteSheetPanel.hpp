@@ -31,6 +31,7 @@ namespace AnimationsEditor {
 		~SpriteSheetPanel();
 
 		void loadAnimations();
+		void setTextInputsRange();
 		void cursorHover();
 		void handleEvent(const sf::Event& event);
 		void update();

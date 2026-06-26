@@ -54,12 +54,7 @@ namespace AnimationsEditor {
 
 				editor->_tempAnimations->_texture = texture;
 
-				_x->setMaxValue(texture->getSize().x);
-				_y->setMaxValue(texture->getSize().y);
-				_w->setMaxValue(texture->getSize().x);
-				_h->setMaxValue(texture->getSize().y);
-				_a->setMaxValue(texture->getSize().y);
-				_f->setMaxValue(texture->getSize().x);
+				setTextInputsRange();
 
 				AnimationsEditor::editor->_sprite_sheet_panel->loadAnimations();
 				AnimationsEditor::editor->_actions_panel->setButtonsActivity();
@@ -222,6 +217,15 @@ namespace AnimationsEditor {
 		_h->setText(std::to_wstring(editor->_tempAnimations->_frameSize.y));
 		_a->setText(std::to_wstring(editor->_tempAnimations->_animationsCount));
 		_f->setText(std::to_wstring(editor->_tempAnimations->_framesCount));
+	}
+
+	void SpriteSheetPanel::setTextInputsRange() {
+		_x->setMaxValue(editor->_animations->_texture->getSize().x);
+		_y->setMaxValue(editor->_animations->_texture->getSize().y);
+		_w->setMaxValue(editor->_animations->_texture->getSize().x);
+		_h->setMaxValue(editor->_animations->_texture->getSize().y);
+		_a->setMaxValue(editor->_animations->_texture->getSize().y);
+		_f->setMaxValue(editor->_animations->_texture->getSize().x);
 	}
 
 	void SpriteSheetPanel::cursorHover() {

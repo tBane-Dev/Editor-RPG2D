@@ -3,6 +3,7 @@
 #include "Windows/FileDialog/FileSystemFunctions.hpp"
 #include "Windows/FileDialog/NavBar.hpp"
 #include "Windows/FileDialog/FileItem.hpp"
+#include "Windows/FileDialog/Location.hpp"
 #include "Windows/FileDialog/LocationItem.hpp"
 #include "Controls/Scrollbar.hpp"
 #include "Controls/TextInput.hpp"
@@ -44,7 +45,8 @@ public:
 
 	// left rect
 	std::vector<std::shared_ptr<std::filesystem::path>> _locationsPaths;
-	std::vector<std::shared_ptr<LocationItem>> _locations;
+	std::vector<std::shared_ptr<Location>> _locations;
+	std::vector<std::shared_ptr<LocationItem>> _visibleLocations;
 
 	// scrollbars
 	std::shared_ptr<Scrollbar> _leftScrollbar;
@@ -67,9 +69,11 @@ public:
 	void setTheFilesSize();
 	void setTheFiles();
 
+	void addVisibleLocation(std::shared_ptr<Location> location);
 	void createLocations();
-	void setTheLocationsSize();
-	void setTheLocations();
+	void createVisibleLocations();
+	void setTheVisibleLocationsSize();
+	void setTheVisibleLocations();
 
 	void createBottom(std::function<void()> function);
 
@@ -79,11 +83,11 @@ public:
 	virtual void setPosition(sf::Vector2i position);
 
 	sf::FloatRect getFilesRect();
-	sf::FloatRect getLocationsRect();
+	sf::FloatRect getVisibleLocationsRect();
 
 	void drawTop();
 	void drawFiles();
-	void drawLocations();
+	void drawVisibleLocations();
 	void drawBottom();
 
 	
