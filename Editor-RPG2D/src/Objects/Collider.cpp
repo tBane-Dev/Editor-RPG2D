@@ -42,9 +42,20 @@ bool RectangularCollider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i 
 }
 
 void RectangularCollider::draw(sf::Vector2i position, sf::Vector2f scale) {
-	sf::RectangleShape collider(sf::Vector2f(_rect.size));
+	sf::Vector2f colliderSize(
+		(float)_rect.size.x * scale.x,
+		(float)_rect.size.y * scale.y
+	);
+
+	sf::Vector2f colliderPosition(
+		(float)position.x + (float)_rect.position.x * scale.x,
+		(float)position.y + (float)_rect.position.y * scale.y
+	);
+
+	sf::RectangleShape collider(colliderSize);
 	collider.setFillColor(sf::Color(255, 0, 0, 128));
-	collider.setPosition(sf::Vector2f(position));
+	collider.setPosition(colliderPosition);
+
 	Main::render_window->draw(collider);
 }
 
