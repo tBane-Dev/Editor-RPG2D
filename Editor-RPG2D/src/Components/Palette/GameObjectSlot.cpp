@@ -47,12 +47,14 @@ void GameObjectSlot::draw() {
 		_objectSprite = std::make_shared<sf::Sprite>(*_objectTexture->_texture);
 		_objectSprite->setTextureRect(frameRect);
 
-		float frameWidth = (float)(_objectTexture->getSize().x / animations.lock()->_framesCount);
-		float frameHeight = (float)(_objectTexture->getSize().y / animations.lock()->_animationsCount);
+		float scaleX = (float)(80) / (float)frameRect.size.x;
+		float scaleY = (float)(80) / (float)frameRect.size.y;
 
-		_objectSprite->setScale(sf::Vector2f(80.f / frameWidth, 80.f / frameHeight));
+		float scale = std::min(scaleX, scaleY);
+
+		_objectSprite->setScale(sf::Vector2f(scale, scale));
 		_objectSprite->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(40, 40));
-		_objectSprite->setOrigin(sf::Vector2f(frameWidth / 2.f, frameHeight / 2.f));
+		_objectSprite->setOrigin(sf::Vector2f(frameRect.size.x / 2.f, frameRect.size.y / 2.f));
 
 		Main::render_window->draw(*_objectSprite);
 	}

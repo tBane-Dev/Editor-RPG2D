@@ -259,8 +259,9 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             float frameHeight = 128;
 
             if (!animations.expired()) {
-                frameWidth = (float)(animations.lock()->getTexture()->getSize().x / animations.lock()->_framesCount);
-                frameHeight = (float)(animations.lock()->getTexture()->getSize().y / animations.lock()->_animationsCount);
+				sf::IntRect frameRect = animations.lock()->getFrameRect(0, 0);
+                frameWidth = (float)(frameRect.size.x);
+                frameHeight = (float)(frameRect.size.y);
             }
 
 			// position of object on the map, aligning to the grid
@@ -356,9 +357,9 @@ void CursorOnMap::draw()
 		sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
 
         if (!animations.expired()) {
-            frameWidth = (float)(animations.lock()->getTexture()->getSize().x / animations.lock()->_framesCount);
-            frameHeight = (float)(animations.lock()->getTexture()->getSize().y / animations.lock()->_animationsCount);
-			frameRect = animations.lock()->getFrameRect(0, 0);
+            frameRect = animations.lock()->getFrameRect(0, 0);
+            frameWidth = (float)(frameRect.size.x);
+            frameHeight = (float)(frameRect.size.y);
         }
 
 		sf::Vector2i position;

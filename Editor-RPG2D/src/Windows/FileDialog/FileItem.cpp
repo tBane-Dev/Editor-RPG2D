@@ -16,6 +16,10 @@ FileItem::FileItem() : Button() {
 	_text = std::make_unique<sf::Text>(basicFont, L"", basic_text_size);
 	_text->setFillColor(basic_text_color);
 
+	_rectIdleColor = sf::Color::Transparent;
+	_rectHoverColor = sf::Color(71, 71, 71);
+	_rectPressColor = sf::Color(71, 71, 71);
+
 	_onclick_func = {};
 }
 
@@ -58,14 +62,7 @@ void FileItem::cursorHover() {
 
 void FileItem::draw() {
 
-	// draw rect
-	sf::RectangleShape rect(sf::Vector2f(_rect.size));
-	rect.setPosition(sf::Vector2f(_rect.position));
-	if(GUI_manager->Element_hovered.get() == this)
-		rect.setFillColor(sf::Color(71, 71, 71));
-	else
-		rect.setFillColor(sf::Color::Transparent);
-	Main::render_window->draw(rect);
+	Button::draw();
 
 	// draw icon
 	std::shared_ptr<Texture> icon = nullptr;

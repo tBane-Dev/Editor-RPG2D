@@ -8,7 +8,8 @@
 
 GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 	_prefab = prefab;
-	_animator = std::make_shared<Animator>(prefab.lock()->getAnimations(), 0.1f);
+	_animator = std::make_shared<Animator>(prefab.lock()->getAnimations(), 0.2f);
+	_animator->play();
 	_position = sf::Vector2i(0, 0);
 }
 
@@ -123,7 +124,7 @@ void GameObjectOnMap::draw() {
 	if (animations.expired())
 		return;
 
-	sf::IntRect frameRect = animations.lock()->getFrameRect(0,0);
+	sf::IntRect frameRect = animations.lock()->getFrameRect(_animator->_animation, _animator->_frame);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		drawFrame();

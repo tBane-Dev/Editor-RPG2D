@@ -11,16 +11,8 @@ ButtonWithSprite::ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared
 	_hoverTexture = hoverTexture;
 	_pressTexture = pressTexture;
 
-	sf::Vector2i rectSize = sf::Vector2i(_texture->_texture->getSize());
-	_rect = sf::IntRect(sf::Vector2i(0, 0), rectSize);
-
+	setSize(sf::Vector2i(_texture->_texture->getSize()));
 	setPosition(position);
-
-	_state = ButtonState::Idle;
-
-	_hover_func = { };
-	_onclick_func = { };
-	_clickTime = currentTime;
 
 }
 

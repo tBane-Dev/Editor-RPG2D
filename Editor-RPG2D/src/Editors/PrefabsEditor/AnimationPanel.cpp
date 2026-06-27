@@ -4,6 +4,8 @@
 #include "Theme.hpp"
 #include "ShaderManager.hpp"
 #include "RenderWindow.hpp"
+#include "WindowsManager.hpp"
+#include "Editors/PrefabsEditor/AnimationsListDialog.hpp"
 
 namespace PrefabsEditor {
 
@@ -180,6 +182,33 @@ namespace PrefabsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_press.png"),
 			sf::Vector2i(_statsRect.position.x + _statsRect.size.x / 2 - 192 / 2, _statsRect.position.y + _statsRect.size.y + 32)
 		);
+
+		
+
+		_set_animation->_onclick_func = [this]() {
+
+			std::shared_ptr<AnimationsListDialog> dialog = std::make_shared<AnimationsListDialog>();
+
+			std::function<void()> func = [this, dialog]() {
+				if (!dialog->_fileNameInput->getText().empty()) {
+					std::wstring animName = dialog->_fileNameInput->getText();
+					if (!animations_manager->getAnimations(animName).expired()) {
+
+						if(!editor->_animator)
+							editor->_animator = std::make_shared<Animator>(animations_manager->getAnimations(animName), 0.2f);
+						else
+							editor->_animator->_animations = animations_manager->getAnimations(animName);
+						
+						Main::windows_manager->pop_back();
+
+					}
+				}
+				};
+
+			dialog->_confirmButton->_onclick_func = func;
+
+			Main::windows_manager->push_back(dialog);
+		};
 	}
 
 	AnimationPanel::~AnimationPanel() {
