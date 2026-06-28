@@ -88,10 +88,29 @@ void GameObjectsOnMap::removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefa
 
 void GameObjectsOnMap::sort() {
 	std::sort(_gameObjectsOnMap.begin(), _gameObjectsOnMap.end(), [](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
-		
-		sf::Vector2i posA = a->_position + (dynamic_pointer_cast<MonsterPrefab>(a->_prefab.lock())? sf::Vector2i(0, 0) : a->_prefab.lock()->getOrigin());
-		sf::Vector2i posB = b->_position + (dynamic_pointer_cast<MonsterPrefab>(b->_prefab.lock())? sf::Vector2i(0, 0) : b->_prefab.lock()->getOrigin());
 
+		// OBJECT A
+		sf::Vector2i posA = a->_position;
+		if (!dynamic_pointer_cast<MonsterPrefab>(a->_prefab.lock())) {
+			posA += a->_prefab.lock()->getOrigin();
+		}
+
+		if (a->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->_collider);
+			posA += collider->_rect.position + collider->_rect.size/2;
+		}
+		
+		// OBJECT B
+		sf::Vector2i posB = b->_position;
+		if (!dynamic_pointer_cast<MonsterPrefab>(b->_prefab.lock())) {
+			posB += b->_prefab.lock()->getOrigin();
+		}
+
+		if (b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->_collider);
+			posB += collider->_rect.position + collider->_rect.size / 2;
+		}
+		
 		if (posA.y == posB.y)
 			return posA.x < posB.x;
 
