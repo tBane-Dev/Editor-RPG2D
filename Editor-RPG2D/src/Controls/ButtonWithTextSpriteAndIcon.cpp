@@ -3,10 +3,10 @@
 #include "RenderWindow.hpp"
 
 ButtonWithTextSpriteAndIcon::ButtonWithTextSpriteAndIcon(std::wstring text, 
-	std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, 
+	std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> inactiveTexture,
 	std::shared_ptr<Texture> icon_texture, std::shared_ptr<Texture> icon_hoverTexture, std::shared_ptr<Texture> icon_pressTexture, 
 	sf::Vector2i position)
-: ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
+: ButtonWithSprite(texture, hoverTexture, pressTexture, inactiveTexture, position) {
 	
 	_text = std::make_unique<sf::Text>(basicFont, text, basic_text_size);
 	_text->setFillColor(basic_text_color);

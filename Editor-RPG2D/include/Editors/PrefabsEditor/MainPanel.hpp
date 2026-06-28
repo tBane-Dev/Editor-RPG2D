@@ -20,6 +20,8 @@ namespace PrefabsEditor {
 		MainPanel(sf::Vector2i margin);
 		~MainPanel();
 
+		void setButtonsActivity();
+
 		void cursorHover();
 		void handleEvent(const sf::Event& event);
 		void update();

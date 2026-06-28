@@ -20,6 +20,7 @@ namespace AnimationsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\mediumButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\mediumButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\mediumButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\mediumButton_inactive.png"),
 			sf::Vector2i(_rect.position.x + 512 + 64, _rect.position.y + 48)
 		);
 

@@ -12,6 +12,8 @@ namespace PrefabsEditor {
 		MeshPanel(sf::Vector2i margin);
 		~MeshPanel();
 
+		void setButtonsActivity();
+
 		void cursorHover();
 		void handleEvent(const sf::Event& event);
 		void update();

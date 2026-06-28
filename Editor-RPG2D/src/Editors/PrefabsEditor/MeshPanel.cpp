@@ -3,6 +3,7 @@
 #include "ShaderManager.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
+#include <iostream>
 
 namespace PrefabsEditor {
 	MeshPanel::MeshPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 375), sf::Vector2i(840 + margin.x, PrefabsEditor::editor->_main_menu->getSize().y + margin.y + PrefabsEditor::editor->_collider_panel->getSize().y + 4)) {
@@ -15,12 +16,25 @@ namespace PrefabsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_inactive.png"),
 			sf::Vector2i(_rect.position.x + _rect.size.x / 2 - 192 / 2, _rect.position.y + margin.y + 192 + 16)
 		);
 
+		setButtonsActivity();
 	}
 
 	MeshPanel::~MeshPanel() {
+
+	}
+
+	void MeshPanel::setButtonsActivity() {
+
+		if (!editor || !editor->_animator || editor->_animator->_animations.expired()) {
+			_set_mesh->setActive(false);
+		}
+		else {
+			_set_mesh->setActive(true);
+		}
 
 	}
 

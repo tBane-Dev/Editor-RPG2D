@@ -191,39 +191,50 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\editors_ui\\first.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\first_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\first_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\first_inactive.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\prev.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\prev_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\prev_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\prev_inactive.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\play.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\play_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\play_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\play_inactive.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\pause.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\pause_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\pause_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\pause_inactive.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\next.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\next_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\next_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\next_inactive.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\last.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\last_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\last_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\last_inactive.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_prev.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_prev_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_prev_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_prev_inactive.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_next.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_next_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_next_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\anim_next_inactive.png");
 
         texturePaths.push_back(L"assets\\tex\\editors_ui\\bottomButton.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\bottomButton_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\bottomButton_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\bottomButton_inactive.png");
 
         texturePaths.push_back(L"assets\\tex\\editors_ui\\mediumButton.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\mediumButton_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\mediumButton_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\mediumButton_inactive.png");
 
         texturePaths.push_back(L"assets\\tex\\editors_ui\\largeButton.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\largeButton_hover.png");
         texturePaths.push_back(L"assets\\tex\\editors_ui\\largeButton_press.png");
+        texturePaths.push_back(L"assets\\tex\\editors_ui\\largeButton_inactive.png");
 
         // tileset
         texturePaths.push_back(L"assets\\tex\\tileset.png");

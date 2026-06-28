@@ -92,6 +92,7 @@ void FileDialog::createTop() {
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\back.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\back_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\back_press.png"),
+		nullptr,
 		_topInnerRect->position + sf::Vector2i(marginLeft, marginTop)
 	);
 
@@ -99,6 +100,7 @@ void FileDialog::createTop() {
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\next.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\next_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\next_press.png"),
+		nullptr,
 		_topInnerRect->position + sf::Vector2i(32, 0) + sf::Vector2i(marginLeft, marginTop)
 	);
 
@@ -106,6 +108,7 @@ void FileDialog::createTop() {
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\up.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\up_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\up_press.png"),
+		nullptr,
 		_topInnerRect->position + sf::Vector2i(64, 0) + sf::Vector2i(marginLeft, marginTop)
 	);
 
@@ -496,6 +499,7 @@ void FileDialog::createBottom(std::function<void()> function) {
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_press.png"),
+		nullptr,
 		position
 	);
 
@@ -504,6 +508,7 @@ void FileDialog::createBottom(std::function<void()> function) {
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_press.png"),
+		nullptr,
 		position + sf::Vector2i(128, 0)
 	);
 

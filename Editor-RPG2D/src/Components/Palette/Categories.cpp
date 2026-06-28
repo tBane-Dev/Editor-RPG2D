@@ -3,7 +3,7 @@
 #include "Theme.hpp"
 #include "DebugLog.hpp"
 
-CategoryButton::CategoryButton(ObjectType type, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
+CategoryButton::CategoryButton(ObjectType type, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, nullptr, position) {
 	_type = type;
 	_categoryTexture = categoryTexture;
 }

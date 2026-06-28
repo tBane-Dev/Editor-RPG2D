@@ -115,7 +115,11 @@ void GameObjectOnMap::draw() {
 
 	bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
 
-	if (renderAllColliders || _prefab.lock()->getCollider()->cursorHover(MapEditor::editor->_cursor_on_map->_position, _position)) {
+	sf::Vector2i pos = _position;
+	if (_prefab.lock()->getCollider()->_type == ColliderType::Rectangular)
+		pos += _prefab.lock()->getOrigin();
+	
+	if (renderAllColliders || _prefab.lock()->getCollider()->cursorHover(MapEditor::editor->_cursor_on_map->_position, pos)) {
 		_prefab.lock()->getCollider()->draw(_position + _prefab.lock()->getOrigin());
 	}
 

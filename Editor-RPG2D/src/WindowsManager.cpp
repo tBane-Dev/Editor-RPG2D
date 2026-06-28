@@ -26,6 +26,7 @@ namespace Main {
 			textures_manager->getTexture(L"assets\\tex\\windows\\close.png"),
 			textures_manager->getTexture(L"assets\\tex\\windows\\close_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\windows\\close_press.png"),
+			nullptr,
 			_rect.position + sf::Vector2i(_rect.size.x - 32, + border)
 			);
 

@@ -18,42 +18,50 @@ namespace PrefabsEditor {
 		_first = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_inactive.png"));
 
 		_prev = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_inactive.png"));
 
 		_play = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_inactive.png"));
 
 		_pause = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_inactive.png"));
 
 		_next = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_inactive.png"));
 
 		_last = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_inactive.png"));
 
 		_anim_prev = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_inactive.png"));
 
 		_anim_next = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_inactive.png"));
 
 		int padding = 10;
 		int total_width = _rect.size.x - padding * 2;
@@ -118,6 +126,8 @@ namespace PrefabsEditor {
 				editor->_animator->nextAnimation();
 			};
 
+		setButtonsActivity();
+
 		// stats rect
 		int m = 8;
 		_statsRect = sf::IntRect(
@@ -180,6 +190,7 @@ namespace PrefabsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_inactive.png"),
 			sf::Vector2i(_statsRect.position.x + _statsRect.size.x / 2 - 192 / 2, _statsRect.position.y + _statsRect.size.y + 32)
 		);
 
@@ -199,6 +210,9 @@ namespace PrefabsEditor {
 						else
 							editor->_animator->_animations = animations_manager->getAnimations(animName);
 						
+						editor->_animation_panel->setButtonsActivity();
+						editor->_main_panel->setButtonsActivity();
+						editor->_mesh_panel->setButtonsActivity();
 						Main::windows_manager->pop_back();
 
 					}
@@ -213,6 +227,30 @@ namespace PrefabsEditor {
 
 	AnimationPanel::~AnimationPanel() {
 
+	}
+
+	void AnimationPanel::setButtonsActivity() {
+		if (!editor || !editor->_animator || editor->_animator->_animations.expired()) {
+
+			_first->setActive(false);
+			_prev->setActive(false);
+			_play->setActive(false);
+			_pause->setActive(false);
+			_next->setActive(false);
+			_last->setActive(false);
+			_anim_prev->setActive(false);
+			_anim_next->setActive(false);
+		}
+		else {
+			_first->setActive(true);
+			_prev->setActive(true);
+			_play->setActive(true);
+			_pause->setActive(true);
+			_next->setActive(true);
+			_last->setActive(true);
+			_anim_prev->setActive(true);
+			_anim_next->setActive(true);
+		}
 	}
 
 	void AnimationPanel::loadStatsValues() {

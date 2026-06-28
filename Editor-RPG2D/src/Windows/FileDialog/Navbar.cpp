@@ -47,6 +47,7 @@ NavBarItem::NavBarItem(std::filesystem::path path, sf::Vector2i position) : Butt
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\arrow.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\arrow_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\arrow_press.png"),
+		nullptr,
 		_rect.position + sf::Vector2i(_rect.size.x, 0)
 	);
 	

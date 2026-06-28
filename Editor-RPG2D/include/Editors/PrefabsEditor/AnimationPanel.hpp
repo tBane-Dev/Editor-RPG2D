@@ -39,6 +39,7 @@ namespace PrefabsEditor {
 		AnimationPanel(sf::Vector2i margin);
 		~AnimationPanel();
 
+		void setButtonsActivity();
 		void loadStatsValues();
 
 		void cursorHover();

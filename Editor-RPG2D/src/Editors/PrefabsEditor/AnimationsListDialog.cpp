@@ -198,6 +198,7 @@ void AnimationsListDialog::createBottom(std::function<void()> function) {
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_press.png"),
+		nullptr,
 		pos
 	);
 
@@ -206,6 +207,7 @@ void AnimationsListDialog::createBottom(std::function<void()> function) {
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_press.png"),
+		nullptr,
 		pos + sf::Vector2i(128, 0)
 	);
 

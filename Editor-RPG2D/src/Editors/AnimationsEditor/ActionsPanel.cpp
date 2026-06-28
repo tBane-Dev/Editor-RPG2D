@@ -27,6 +27,7 @@ namespace AnimationsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
 			sf::Vector2i(startPosition.x+16, startPosition.y)
 		);
 
@@ -35,6 +36,7 @@ namespace AnimationsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
 			sf::Vector2i(startPosition.x +16, _saveBtn->getPosition().y + _saveBtn->getSize().y + marginBetweenButtons)
 		);
 
@@ -43,6 +45,7 @@ namespace AnimationsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"), 
 			sf::Vector2i(startPosition.x + 16, _addBtn->getPosition().y + _addBtn->getSize().y + marginBetweenButtons)
 		);
 
@@ -162,6 +165,7 @@ namespace AnimationsEditor {
 	void ActionsPanel::setButtonsActivity() {
 
 		if (editor->_tempAnimations &&
+			editor->_list_panel->_selectedItemIndex >= 0 &&
 			AnimationsEditor::editor->_name_panel->_name->getText().length() > 0 && 
 			AnimationsEditor::editor->_sprite_sheet_panel->_w->getNumber() > 0 &&
 			AnimationsEditor::editor->_sprite_sheet_panel->_h->getNumber() > 0 &&

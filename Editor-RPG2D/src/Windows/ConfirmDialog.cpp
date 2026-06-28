@@ -38,6 +38,7 @@ ConfirmDialog::ConfirmDialog(std::wstring title, std::wstring text, sf::Vector2i
 		textures_manager->getTexture(L"assets\\tex\\windows\\button.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\button_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\button_press.png"),
+		nullptr,
 		textures_manager->getTexture(L"assets\\tex\\windows\\confirm.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\confirm_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\confirm_press.png")
@@ -54,6 +55,7 @@ ConfirmDialog::ConfirmDialog(std::wstring title, std::wstring text, sf::Vector2i
 		textures_manager->getTexture(L"assets\\tex\\windows\\button.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\button_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\button_press.png"),
+		nullptr,
 		textures_manager->getTexture(L"assets\\tex\\windows\\cancel.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\cancel_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\cancel_press.png")

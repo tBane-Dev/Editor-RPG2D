@@ -18,42 +18,50 @@ namespace AnimationsEditor {
 		_first = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\first_inactive.png"));
 
 		_prev = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\prev_inactive.png"));
 
 		_play = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\play_inactive.png"));
 
 		_pause = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\pause_inactive.png"));
 
 		_next = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\next_inactive.png"));
 
 		_last = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\last_inactive.png"));
 
 		_anim_prev = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_prev_inactive.png"));
 
 		_anim_next = std::make_shared<ButtonWithSprite>(
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_press.png"));
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\anim_next_inactive.png"));
 
 		int padding = 10;
 		int total_width = _rect.size.x - padding * 2;

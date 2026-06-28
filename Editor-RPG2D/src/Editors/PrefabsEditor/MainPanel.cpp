@@ -37,6 +37,7 @@ namespace PrefabsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
 			sf::Vector2i(startPosition.x, startPosition.y)
 		);
 
@@ -74,6 +75,7 @@ namespace PrefabsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
 			sf::Vector2i(startPosition.x, startPosition.y + _add_prefab->getSize().y + distance_between_buttons)
 		);
 
@@ -82,11 +84,11 @@ namespace PrefabsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
 			sf::Vector2i(startPosition.x, _duplicate_prefab->getPosition().y + _duplicate_prefab->getSize().y + distance_between_buttons)
 		);
 
-		_remove_prefab->_onclick_func = [this]()
-			{
+		_remove_prefab->_onclick_func = [this]() {
 				auto object = PrefabsEditor::editor->_object.lock();
 
 				if (!object)
@@ -115,10 +117,26 @@ namespace PrefabsEditor {
 				MapEditor::editor->_palette->_slots->_scrollbar->setValue(0);
 				MapEditor::editor->_palette->_slots->selectSlot(-1);
 				MapEditor::editor->_palette->_slots->updateObjects();
-			};
+		};
+
+		setButtonsActivity();
 	}
 
 	MainPanel::~MainPanel() {
+		
+	}
+
+	void MainPanel::setButtonsActivity() {
+		if (!editor || !editor->_animator || editor->_animator->_animations.expired()) {
+			_add_prefab->setActive(false);
+			_duplicate_prefab->setActive(false);
+			_remove_prefab->setActive(false);
+		}
+		else {
+			_add_prefab->setActive(true);
+			_duplicate_prefab->setActive(true);
+			_remove_prefab->setActive(true);
+		}
 
 	}
 

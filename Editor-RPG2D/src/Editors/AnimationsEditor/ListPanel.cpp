@@ -164,6 +164,7 @@ namespace AnimationsEditor {
 					editor->_actions_panel->setButtonsActivity();
 					editor->_preview_panel->setButtonsActivity();
 
+
 					editor->_sprite_sheet_panel->setTextInputsRange();
 					};
 			}

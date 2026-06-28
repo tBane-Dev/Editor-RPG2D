@@ -2,8 +2,8 @@
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
 
-ButtonWithTextAndSprite::ButtonWithTextAndSprite(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position)
-: ButtonWithSprite(texture, hoverTexture, pressTexture, position) {
+ButtonWithTextAndSprite::ButtonWithTextAndSprite(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> inactiveTexture, sf::Vector2i position)
+: ButtonWithSprite(texture, hoverTexture, pressTexture, inactiveTexture, position) {
 	
 	_text = std::make_unique<sf::Text>(basicFont, text, basic_text_size);
 	_text->setFillColor(basic_text_color);
