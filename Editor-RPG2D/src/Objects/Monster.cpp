@@ -3,6 +3,7 @@
 #include "RenderWindow.hpp"
 #include <iostream>
 #include "Editors/MapEditor/Editor.hpp"
+#include "DebugLog.hpp"
 
 MonsterPrefab::MonsterPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider) : GameObject(name, animations, origin, collider) {
 	_type = ObjectType::Monster;
@@ -23,6 +24,7 @@ Monster::Monster(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 	_direction = Direction::Down;
 
 	_animator->setRandFrame();
+	_animator->_interval = 0.125f; // monsters are fasters than static animated objects
 
 	_path = std::make_shared<Path>();
 	_path->setStartPoint(_position);
@@ -50,7 +52,6 @@ void Monster::update() {
 		_animator->_timer += deltaTime.asSeconds();
 
 		if (_animator->_timer >= _animator->_interval) {
-
 			_animator->_timer = 0.0f;
 
 			if (_path->isEmpty() || _position == _path->getEndPoint()) {
