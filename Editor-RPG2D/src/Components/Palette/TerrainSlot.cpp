@@ -11,7 +11,7 @@ sf::Vector2i TerrainSlot::tileRects[3][3] =
 	{ {2, 0},  {3, 0},  {1, 0} }
 };
 
-TerrainSlot::TerrainSlot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : Slot(texture, hoverTexture, pressTexture, position) {
+TerrainSlot::TerrainSlot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> inactiveTexture, sf::Vector2i position) : Slot(texture, hoverTexture, pressTexture, inactiveTexture, position) {
 	_topLeftSprite = nullptr;
 	_topSprite = nullptr;
 	_topRightSprite = nullptr;

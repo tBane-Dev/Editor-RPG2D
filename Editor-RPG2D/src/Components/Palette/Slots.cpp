@@ -73,18 +73,21 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 	std::shared_ptr<Texture> slotTexture;
 	std::shared_ptr<Texture> slotHoverTexture;
 	std::shared_ptr<Texture> slotPressTexture;
+	std::shared_ptr<Texture> slotInactiveTexture;
 
 	if(_type == ObjectType::Terrain) {
 		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 2;
 		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160.png");
 		slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_hover.png");
 		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_press.png");
+		slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
 	}
 	else {
 		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 5;
 		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80.png");
 		slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_hover.png");
 		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_press.png");
+		slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_inactive.png");
 	}
 
 	for (int y = 0; y < (_slotsCount.y+1); y++) {
@@ -97,6 +100,7 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 					slotTexture,
 					slotHoverTexture,
 					slotPressTexture,
+					slotInactiveTexture,
 					position
 				));
 			} else {
@@ -105,11 +109,12 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 					slotTexture,
 					slotHoverTexture,
 					slotPressTexture,
+					slotInactiveTexture,
 					position
 				));
 			}
 			
-			
+			_slots.back()->setActive(false);
 		}
 	}
 }
@@ -181,10 +186,12 @@ void Slots::loadObjects() {
 			if (i < Components::Palette::terrains.size()) {
 				_slots[i]->_object = Components::Palette::terrains[i];
 				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(true);
 			}
 			else {
 				_slots[i]->_object = std::weak_ptr<Object>();
 				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
 			}
 		}
 
@@ -198,10 +205,12 @@ void Slots::loadObjects() {
 			_slots[i]->_object = prefabs[i];
 			_slots[i]->_animator = std::make_shared<Animator>((prefabs[i]->getAnimations().expired())? _emptySlotAnimation : prefabs[i]->getAnimations(), 0.2f);
 			_slots[i]->_animator->play();
+			_slots[i]->setActive(true);
 		}
 		else {
 			_slots[i]->_object = std::weak_ptr<Object>();
 			_slots[i]->_animator = nullptr;
+			_slots[i]->setActive(false);
 		}
 	}
 }
@@ -223,10 +232,12 @@ void Slots::updateObjects() {
 			if (i < Components::Palette::terrains.size()) {
 				_slots[i]->_object = Components::Palette::terrains[i];
 				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(true);
 			}
 			else {
 				_slots[i]->_object = std::weak_ptr<Object>();
 				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
 			}
 		}
 
@@ -241,10 +252,12 @@ void Slots::updateObjects() {
 			_slots[i]->_object = prefabs[i + startIndex];
 			_slots[i]->_animator = std::make_shared<Animator>(prefabs[i + startIndex]->getAnimations(), 0.2f);
 			_slots[i]->_animator->play();
+			_slots[i]->setActive(true);
 		}
 		else {
 			_slots[i]->_object = std::weak_ptr<Object>();
 			_slots[i]->_animator = nullptr;
+			_slots[i]->setActive(false);
 		}
 	}
 }
@@ -298,18 +311,21 @@ void Slots::selectSlot(int selectedSlotId) {
 		std::shared_ptr<Texture> slotTexture;
 		std::shared_ptr<Texture> slotHoverTexture;
 		std::shared_ptr<Texture> slotPressTexture;
+		std::shared_ptr<Texture> slotInactiveTexture;
 
 		if (_type == ObjectType::Terrain) {
 			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 2;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_press.png");
+			slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
 		}
 		else {
 			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 5;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_press.png");
+			slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_inactive.png");
 		}
 
 		_selectedSlot->_texture = slotTexture;

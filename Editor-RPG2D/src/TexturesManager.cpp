@@ -177,6 +177,7 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_80.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_80_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_80_press.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_80_inactive.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_80.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_80_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_80_press.png");
@@ -184,6 +185,7 @@ void TexturesManager::loadAllTextures() {
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160_press.png");
+        texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_hover.png");
         texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_press.png");
