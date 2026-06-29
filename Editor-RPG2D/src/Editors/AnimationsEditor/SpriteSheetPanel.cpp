@@ -44,21 +44,20 @@ namespace AnimationsEditor {
 				if (!editor->_animations) {
 					editor->_animations = std::make_shared<Animations>(fileDialog->getPathFile(), texture, sf::Vector2i(texture->getSize()), 1, 1);
 				}
-
-				if (!editor->_tempAnimations) {
-					editor->_tempAnimations = std::make_shared<Animations>(fileDialog->getPathFile(), texture, sf::Vector2i(texture->getSize()), 1, 1);
-				}
-
-				if (!editor->_animator) {
-					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
-				}
-
+				
 				editor->_tempAnimations->_texture = texture;
+				editor->_tempAnimations->_offsetX = 0;
+				editor->_tempAnimations->_offsetY = 0;
+				editor->_tempAnimations->_frameSize = texture->getSize();
+				editor->_tempAnimations->_animationsCount = 1;
+				editor->_tempAnimations->_framesCount = 1;
 
-				setTextInputsRange();
+				editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
 
+				AnimationsEditor::editor->_sprite_sheet_panel->setTextInputsRange();
 				AnimationsEditor::editor->_sprite_sheet_panel->loadAnimations();
 				AnimationsEditor::editor->_actions_panel->setButtonsActivity();
+				AnimationsEditor::editor->_actions_panel->setTooltips();
 				AnimationsEditor::editor->_preview_panel->loadAnimations();
 				AnimationsEditor::editor->_preview_panel->setButtonsActivity();
 
@@ -128,7 +127,7 @@ namespace AnimationsEditor {
 		_x->_onEditedFunction = [this]() {
 			if (editor->_animations) {
 				int x = _x->getNumber();
-				if (x >= 0 && x < editor->_tempAnimations->getTexture()->getSize().x) {
+				if (x >= 0 && x < (!editor->_tempAnimations->getTexture())? 0 : editor->_tempAnimations->getTexture()->getSize().x) {
 					editor->_tempAnimations->_offsetX = x;
 					editor->_preview_panel->loadAnimations();
 					editor->_actions_panel->setButtonsActivity();
@@ -139,7 +138,7 @@ namespace AnimationsEditor {
 		_y->_onEditedFunction = [this]() {
 			if (editor->_animations) {
 				int y = _y->getNumber();
-				if (y >= 0 && y < editor->_tempAnimations->getTexture()->getSize().y) {
+				if (y >= 0 && y < (!editor->_tempAnimations->getTexture()) ? 0 : editor->_tempAnimations->getTexture()->getSize().y) {
 					editor->_tempAnimations->_offsetY = y;
 					editor->_preview_panel->loadAnimations();
 					editor->_actions_panel->setButtonsActivity();
@@ -151,7 +150,7 @@ namespace AnimationsEditor {
 		_w->_onEditedFunction = [this]() {
 			if (editor->_animations) {
 				int w = _w->getNumber();
-				if (w > 0 && w <= editor->_tempAnimations->getTexture()->getSize().x) {
+				if (w > 0 && w <= (!editor->_tempAnimations->getTexture()) ? 0 : editor->_tempAnimations->getTexture()->getSize().x) {
 					editor->_tempAnimations->_frameSize.x = w;
 					editor->_preview_panel->loadAnimations();
 					editor->_actions_panel->setButtonsActivity();
@@ -162,7 +161,7 @@ namespace AnimationsEditor {
 		_h->_onEditedFunction = [this]() {
 			if (editor->_animations) {
 				int h = _h->getNumber();
-				if (h > 0 && h <= editor->_tempAnimations->getTexture()->getSize().y) {
+				if (h > 0 && h <= (!editor->_tempAnimations->getTexture()) ? 0 : editor->_tempAnimations->getTexture()->getSize().y) {
 					editor->_tempAnimations->_frameSize.y = h;
 					editor->_preview_panel->loadAnimations();
 					editor->_actions_panel->setButtonsActivity();
@@ -221,12 +220,15 @@ namespace AnimationsEditor {
 	}
 
 	void SpriteSheetPanel::setTextInputsRange() {
-		_x->setMaxValue(editor->_animations->_texture->getSize().x);
-		_y->setMaxValue(editor->_animations->_texture->getSize().y);
-		_w->setMaxValue(editor->_animations->_texture->getSize().x);
-		_h->setMaxValue(editor->_animations->_texture->getSize().y);
-		_a->setMaxValue(editor->_animations->_texture->getSize().y);
-		_f->setMaxValue(editor->_animations->_texture->getSize().x);
+
+		if (!editor->_tempAnimations || !editor->_tempAnimations->_texture) return;
+
+		_x->setMaxValue(editor->_tempAnimations->_texture->getSize().x);
+		_y->setMaxValue(editor->_tempAnimations->_texture->getSize().y);
+		_w->setMaxValue(editor->_tempAnimations->_texture->getSize().x);
+		_h->setMaxValue(editor->_tempAnimations->_texture->getSize().y);
+		_a->setMaxValue(editor->_tempAnimations->_texture->getSize().y);
+		_f->setMaxValue(editor->_tempAnimations->_texture->getSize().x);
 	}
 
 	void SpriteSheetPanel::cursorHover() {

@@ -1,4 +1,4 @@
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 
 std::shared_ptr<sf::Shader> terrain_shader;
 std::shared_ptr<sf::Shader> grid_shader;

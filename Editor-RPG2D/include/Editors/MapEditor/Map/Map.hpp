@@ -4,7 +4,7 @@
 #include "Cursor.hpp"
 #include "Tileset.hpp"
 #include "TexturesManager.hpp"
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 #include "Time.hpp"
 #include "GUIManager.hpp"
 

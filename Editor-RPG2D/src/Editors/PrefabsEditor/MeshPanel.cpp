@@ -1,6 +1,6 @@
 #include "Editors/PrefabsEditor/MeshPanel.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
 #include <iostream>

@@ -1,6 +1,6 @@
 ﻿#include "Components/Palette/TerrainSlot.hpp"
 #include "Objects/Terrain.hpp"
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 #include "Time.hpp"
 #include "RenderWindow.hpp"
 

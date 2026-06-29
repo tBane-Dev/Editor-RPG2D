@@ -10,14 +10,16 @@
 #include "Time.hpp"
 
 #include "Theme.hpp"
+
+#include "Tooltip.hpp" // to move
+
 #include "TexturesManager.hpp"
 #include "AnimationsManager.hpp"
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 #include "PrefabsManager.hpp"
 
 #include "WindowsManager.hpp"
-#include "Windows/ConfirmDialog.hpp"    // TO-DO - to delete
-#include "Windows/FileDialog/FileDialog.hpp"    // TO-DO - to delete
+
 #include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
@@ -52,6 +54,7 @@ int main() {
 
     Main::cursor = std::make_shared<Main::Cursor>();
     GUI_manager = std::make_shared<GUIManager>();
+    Main::tooltip = std::make_shared<Main::Tooltip>();
 
     Main::windows_manager = std::make_shared<Main::WindowsManager>();
     Main::editor_manager = std::make_shared<Main::EditorsManager>();
@@ -89,11 +92,7 @@ int main() {
     //    sf::Vector2i(400, 300),
     //    sf::Vector2i(100,100)
     //));    
-    
-    Main::windows_manager->push_back(std::make_shared<FileDialog>(L"Test File Dialog Window 1"));
-
-	float timer = 0; // TO-DO - to delete because is used only for testing the system file dialog window
-
+  
     // init FPS clock
     sf::Clock FPSClock;
     sf::Clock FPSClockUpdate;	// clock for show FPS in main loop of Editor
@@ -107,34 +106,6 @@ int main() {
         if(deltaTime.asSeconds() > 0.1f) {
             deltaTime = sf::seconds(0.1f);
 		}
-
-		timer += deltaTime.asSeconds();  // TO-DO - to delete because is used only for testing the system file dialog window
-
-        if (timer > 10.0f) { // TO-DO - to delete because is used only for testing the system file dialog window
-            timer = 0;
-			// TO-DO - to delete
-            //wchar_t fileName[MAX_PATH] = L"";
-            //
-            //OPENFILENAMEW ofn = {};
-            //ofn.lStructSize = sizeof(ofn);
-            //ofn.hwndOwner = Main::render_window->getNativeHandle();
-            //ofn.lpstrFile = fileName;
-            //ofn.nMaxFile = MAX_PATH;
-            //
-            //ofn.lpstrFilter =
-            //    L"PNG Files (*.png)\0*.png\0"
-            //    L"All Files (*.*)\0*.*\0";
-            //
-            //ofn.nFilterIndex = 1;
-            //ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-            //
-            //if (GetOpenFileNameW(&ofn)) {
-            //    std::wcout << L"Selected file: " << fileName << std::endl;
-            //}
-            //else {
-            //    std::wcout << L"Canceled." << std::endl;
-            //}
-        }
 
         Main::cursor->update();
 
@@ -167,6 +138,7 @@ int main() {
         // update
         Main::editor_manager->update();
         Main::windows_manager->update();
+		Main::tooltip->update();
 
         // I Am The One! .. B-)
         //DebugStat(L"I am The One ..");
@@ -175,6 +147,7 @@ int main() {
         Main::render_window->clear(sf::Color(47, 47, 47));
         Main::editor_manager->draw();
         Main::windows_manager->draw();
+        Main::tooltip->draw();
         Main::render_window->display();
 
         

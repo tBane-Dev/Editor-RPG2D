@@ -22,6 +22,9 @@ Texture::~Texture() {
 }
 
 sf::Vector2i Texture::getSize() {
+    if (_texture == nullptr)
+        return sf::Vector2i(0, 0);
+
 	return sf::Vector2i(_texture->getSize());
 }
 

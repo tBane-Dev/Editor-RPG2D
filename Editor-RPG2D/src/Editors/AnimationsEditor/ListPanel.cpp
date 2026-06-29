@@ -159,13 +159,14 @@ namespace AnimationsEditor {
 
 					editor->_name_panel->loadAnimations();
 					editor->_sprite_sheet_panel->loadAnimations();
-					editor->_preview_panel->loadAnimations();
+					editor->_sprite_sheet_panel->setTextInputsRange();
 
 					editor->_actions_panel->setButtonsActivity();
+					editor->_actions_panel->setTooltips();
+
+					editor->_preview_panel->loadAnimations();
 					editor->_preview_panel->setButtonsActivity();
-
-
-					editor->_sprite_sheet_panel->setTextInputsRange();
+					
 					};
 			}
 			else {

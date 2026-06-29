@@ -18,6 +18,7 @@ namespace AnimationsEditor {
 		~ActionsPanel();
 
 		void setButtonsActivity();
+		void setTooltips();
 
 		void cursorHover();
 		void handleEvent(const sf::Event& event);

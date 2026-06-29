@@ -6,6 +6,7 @@
 #include "RenderWindow.hpp"
 #include <iostream>
 #include <memory>
+#include "Tooltip.hpp"
 
 Button::Button() : Element() {
 	_isSelected = false;
@@ -36,6 +37,7 @@ Button::Button() : Element() {
 	_onclick_func = {};
 	_clickTime = sf::Time::Zero;
 
+	_tooltipWidth = 256;
 	_title = L"";
 	_description = L"";
 }
@@ -123,7 +125,8 @@ void Button::activateByEnter(bool activate) {
 	_activatedByEnter = activate;
 }
 
-void Button::setTooltip(std::wstring title, std::wstring description) {
+void Button::setTooltip(int tooltipWidth, std::wstring title, std::wstring description) {
+	_tooltipWidth = tooltipWidth;
 	_title = title;
 	_description = description;
 }
@@ -135,12 +138,15 @@ void Button::cursorHover() {
 			return;
 	}
 
+	if (_rect.contains(Main::cursor->_position)) {
+		Main::tooltip->setElement(this->shared_from_this(), _tooltipWidth);
+	}
+
 	if (!_isActive)
 		return;
 
 	if (_rect.contains(Main::cursor->_position)) {
 		GUI_manager->Element_hovered = this->shared_from_this();
-		//tooltip->setButton(std::dynamic_pointer_cast<Button>(this->shared_from_this()));
 	}
 }
 

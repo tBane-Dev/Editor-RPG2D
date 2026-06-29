@@ -37,6 +37,7 @@ namespace AnimationsEditor {
 			editor->_preview_panel->loadAnimations();
 			editor->_preview_panel->setButtonsActivity();
 			editor->_actions_panel->setButtonsActivity();
+			editor->_actions_panel->setTooltips();
 			};
 	}
 

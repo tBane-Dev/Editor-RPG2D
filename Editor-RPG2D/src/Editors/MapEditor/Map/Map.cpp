@@ -1,5 +1,5 @@
 ﻿#include "Editors/MapEditor/Map/Map.hpp"
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 #include "GUIManager.hpp"
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Cursor.hpp"
@@ -7,7 +7,6 @@
 #include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
-#include "ShaderManager.hpp"
 #include "Theme.hpp"
 
 Tile::Tile() {

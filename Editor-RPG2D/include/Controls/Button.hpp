@@ -37,6 +37,7 @@ public:
 	std::function<void()> _onclick_func;
 	sf::Time _clickTime;
 
+	int _tooltipWidth;	
 	std::wstring _title;
 	std::wstring _description;
 
@@ -59,7 +60,7 @@ public:
 
 	virtual void activateByEnter(bool activate);
 
-	virtual void setTooltip(std::wstring title, std::wstring description);
+	virtual void setTooltip(int tooltipWitdh, std::wstring title, std::wstring description);
 
 	
 

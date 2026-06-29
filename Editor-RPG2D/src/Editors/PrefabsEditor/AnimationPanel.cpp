@@ -2,7 +2,7 @@
 #include "Editors/PrefabsEditor/AnimationPanel.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
 #include "Theme.hpp"
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 #include "RenderWindow.hpp"
 #include "WindowsManager.hpp"
 #include "Editors/PrefabsEditor/AnimationsListDialog.hpp"

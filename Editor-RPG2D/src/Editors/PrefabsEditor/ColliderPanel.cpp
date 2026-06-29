@@ -1,6 +1,6 @@
 #include "Editors/PrefabsEditor/ColliderPanel.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
-#include "ShaderManager.hpp"
+#include "ShadersManager.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
 

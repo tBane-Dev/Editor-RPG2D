@@ -156,6 +156,7 @@ namespace AnimationsEditor {
 		};
 
 		setButtonsActivity();
+		setTooltips();
 	}
 
 	ActionsPanel::~ActionsPanel() {
@@ -197,6 +198,54 @@ namespace AnimationsEditor {
 		else {
 			_removeBtn->setActive(false);
 		}
+
+	}
+
+	void ActionsPanel::setTooltips() {
+		if (_saveBtn->_isActive) {
+			_saveBtn->setTooltip(256, L"Save Animations", L"Saves the current animations to the selected animations");
+		}
+		else {
+			std::wstring tooltipTitle = L"Cannot Save Animations";
+			std::wstring tooltipDesc = L"Please check that:\n";
+			
+			if (editor->_name_panel->_name->getText().empty())
+				tooltipDesc += L"-The name is not empty\n";
+
+			if(!editor->_tempAnimations || !editor->_tempAnimations->getTexture())
+				tooltipDesc += L"-The texture is loaded\n";
+
+			if(editor->_list_panel->_selectedItemIndex < 0)
+				tooltipDesc += L"-An animations is selected in the list\n";
+
+			tooltipDesc.pop_back(); // remove last newline character
+			_saveBtn->setTooltip(256, tooltipTitle, tooltipDesc);
+		}
+
+		if (_addBtn->_isActive) {
+			_addBtn->setTooltip(256, L"Add Animations", L"Adds a new animations to the list");
+		}
+		else {
+			std::wstring tooltipTitle = L"Cannot Save Animations";
+			std::wstring tooltipDesc = L"Please check that:\n";
+
+			if (editor->_name_panel->_name->getText().empty()) {
+				tooltipDesc += L"-The name is not empty\n";
+			}
+
+			if (!editor->_tempAnimations || !editor->_tempAnimations->getTexture()) {
+				tooltipDesc += L"-The texture is loaded\n";
+			}
+
+			tooltipDesc.pop_back(); // remove last newline character
+			_addBtn->setTooltip(256, tooltipTitle, tooltipDesc);
+		}
+
+
+		if(_removeBtn->_isActive)
+			_removeBtn->setTooltip(256, L"Remove Animations", L"Removes the selected animations from the list");
+		else
+			_removeBtn->setTooltip(256, L"Cannot Remove Animations", L"Please select an animation from the list");
 
 	}
 
