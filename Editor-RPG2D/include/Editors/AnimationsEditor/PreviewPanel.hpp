@@ -37,6 +37,7 @@ namespace AnimationsEditor {
 
 		void loadAnimations();
 		void setButtonsActivity();
+		void setTooltips();
 
 		void cursorHover();
 		void handleEvent(const sf::Event& event);

@@ -180,6 +180,7 @@ namespace AnimationsEditor {
 		}
 
 		setButtonsActivity();
+		setTooltips();
 	}
 
 	PreviewPanel::~PreviewPanel() {
@@ -198,6 +199,9 @@ namespace AnimationsEditor {
 			return;
 
 		if (!editor->_tempAnimations)
+			return;
+
+		if(!editor->_tempAnimations->_texture)
 			return;
 
 		sf::Vector2i frameSize = sf::Vector2i(0,0);
@@ -224,7 +228,7 @@ namespace AnimationsEditor {
 	}
 
 	void PreviewPanel::setButtonsActivity() {
-		if (!editor->_animator || editor->_animator->_animations.expired()) {
+		if (!editor->_animator || !editor->_tempAnimations || !editor->_tempAnimations->_texture) {
 			_first->setActive(false);
 			_prev->setActive(false);
 			_play->setActive(false);
@@ -246,12 +250,40 @@ namespace AnimationsEditor {
 		_anim_next->setActive(true);
 	}
 
+	void PreviewPanel::setTooltips() {	
+		if (!editor->_animator || !editor->_tempAnimations || !editor->_tempAnimations->getTexture()) {
+
+			std::wstring desc = L"This button is inactive because no Sprite Sheet is loaded.";
+
+			_first->setTooltip(256, L"Cannot Go To First Frame", desc);
+			_prev->setTooltip(256, L"Cannot Go To Previous Frame", desc);
+			_play->setTooltip(256, L"Cannot Play Animation", desc);
+			_pause->setTooltip(256, L"Cannot Pause Animation", desc);
+			_next->setTooltip(256, L"Cannot Go To Next Frame", desc);
+			_last->setTooltip(256, L"Cannot Go To Last Frame", desc);
+
+			_anim_prev->setTooltip(256, L"Cannot Go To Previous Animation", desc);
+			_anim_next->setTooltip(256, L"Cannot Go To Next Animation", desc);
+
+			return;
+		}
+
+		_first->setTooltip(256, L"First Frame", L"");
+		_prev->setTooltip(256, L"Previous Frame", L"");
+		_play->setTooltip(256, L"Play Animation", L"");
+		_pause->setTooltip(256, L"Pause Animation", L"");
+		_next->setTooltip(256, L"Next Frame", L"");
+		_last->setTooltip(256, L"Last Frame", L"");
+		_anim_prev->setTooltip(256, L"Previous Animation", L"");
+		_anim_next->setTooltip(256, L"Next Animation", L"");
+	}
+
 	void PreviewPanel::cursorHover() {
 		Components::Panel::cursorHover();
 
 		_first->cursorHover();
 		_prev->cursorHover();
-		(editor->_animator == nullptr || editor->_animator->_isPlaying) ? _pause->cursorHover() : _play->cursorHover();
+		(editor->_animator == nullptr || editor->_animator->_animations.expired() || !editor->_tempAnimations || !editor->_tempAnimations->_texture || editor->_animator->_isPlaying) ? _pause->cursorHover() : _play->cursorHover();
 		_next->cursorHover();
 		_last->cursorHover();
 
@@ -265,7 +297,7 @@ namespace AnimationsEditor {
 
 		_first->handleEvent(event);
 		_prev->handleEvent(event);
-		(editor->_animator == nullptr || editor->_animator->_isPlaying) ? _pause->handleEvent(event) : _play->handleEvent(event);
+		(editor->_animator == nullptr || editor->_animator->_animations.expired() || !editor->_tempAnimations || !editor->_tempAnimations->_texture || editor->_animator->_isPlaying) ? _pause->handleEvent(event) : _play->handleEvent(event);
 		_next->handleEvent(event);
 		_last->handleEvent(event);
 
@@ -365,7 +397,7 @@ namespace AnimationsEditor {
 		// draw buttons
 		_first->draw();
 		_prev->draw();
-		(animator == nullptr || animator->_isPlaying) ? _pause->draw() : _play->draw();
+		(animator == nullptr || animator->_animations.expired() || !editor->_tempAnimations || !editor->_tempAnimations->_texture || animator->_isPlaying) ? _pause->draw() : _play->draw();
 		_next->draw();
 		_last->draw();
 

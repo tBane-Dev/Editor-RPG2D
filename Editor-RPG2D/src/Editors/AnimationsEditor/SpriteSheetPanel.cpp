@@ -45,12 +45,17 @@ namespace AnimationsEditor {
 					editor->_animations = std::make_shared<Animations>(fileDialog->getPathFile(), texture, sf::Vector2i(texture->getSize()), 1, 1);
 				}
 				
-				editor->_tempAnimations->_texture = texture;
-				editor->_tempAnimations->_offsetX = 0;
-				editor->_tempAnimations->_offsetY = 0;
-				editor->_tempAnimations->_frameSize = texture->getSize();
-				editor->_tempAnimations->_animationsCount = 1;
-				editor->_tempAnimations->_framesCount = 1;
+				if (!editor->_tempAnimations) {
+					editor->_tempAnimations = std::make_shared<Animations>(editor->_animations->_path, texture, sf::Vector2i(texture->getSize()), 1, 1);
+				}
+				else {
+					editor->_tempAnimations->_texture = texture;
+					editor->_tempAnimations->_offsetX = 0;
+					editor->_tempAnimations->_offsetY = 0;
+					editor->_tempAnimations->_frameSize = texture->getSize();
+					editor->_tempAnimations->_animationsCount = 1;
+					editor->_tempAnimations->_framesCount = 1;
+				}
 
 				editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
 
@@ -60,6 +65,8 @@ namespace AnimationsEditor {
 				AnimationsEditor::editor->_actions_panel->setTooltips();
 				AnimationsEditor::editor->_preview_panel->loadAnimations();
 				AnimationsEditor::editor->_preview_panel->setButtonsActivity();
+				AnimationsEditor::editor->_preview_panel->setTooltips();
+
 
 				
 			};
@@ -150,7 +157,7 @@ namespace AnimationsEditor {
 		_w->_onEditedFunction = [this]() {
 			if (editor->_animations) {
 				int w = _w->getNumber();
-				if (w > 0 && w <= (!editor->_tempAnimations->getTexture()) ? 0 : editor->_tempAnimations->getTexture()->getSize().x) {
+				if (editor->_tempAnimations->getTexture() && w > 0 && w <= editor->_tempAnimations->getTexture()->getSize().x) {
 					editor->_tempAnimations->_frameSize.x = w;
 					editor->_preview_panel->loadAnimations();
 					editor->_actions_panel->setButtonsActivity();
@@ -161,7 +168,7 @@ namespace AnimationsEditor {
 		_h->_onEditedFunction = [this]() {
 			if (editor->_animations) {
 				int h = _h->getNumber();
-				if (h > 0 && h <= (!editor->_tempAnimations->getTexture()) ? 0 : editor->_tempAnimations->getTexture()->getSize().y) {
+				if (editor->_tempAnimations->getTexture() && h > 0 && h <= editor->_tempAnimations->getTexture()->getSize().y) {
 					editor->_tempAnimations->_frameSize.y = h;
 					editor->_preview_panel->loadAnimations();
 					editor->_actions_panel->setButtonsActivity();

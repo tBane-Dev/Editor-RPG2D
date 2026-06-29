@@ -210,13 +210,13 @@ namespace AnimationsEditor {
 			std::wstring tooltipDesc = L"Please check that:\n";
 			
 			if (editor->_name_panel->_name->getText().empty())
-				tooltipDesc += L"-The name is not empty\n";
+				tooltipDesc += L"-The Name is not empty\n";
 
 			if(!editor->_tempAnimations || !editor->_tempAnimations->getTexture())
-				tooltipDesc += L"-The texture is loaded\n";
+				tooltipDesc += L"-The Sprite Sheet is loaded\n";
 
 			if(editor->_list_panel->_selectedItemIndex < 0)
-				tooltipDesc += L"-An animations is selected in the list\n";
+				tooltipDesc += L"-An Animations is selected in the list\n";
 
 			tooltipDesc.pop_back(); // remove last newline character
 			_saveBtn->setTooltip(256, tooltipTitle, tooltipDesc);
@@ -230,11 +230,11 @@ namespace AnimationsEditor {
 			std::wstring tooltipDesc = L"Please check that:\n";
 
 			if (editor->_name_panel->_name->getText().empty()) {
-				tooltipDesc += L"-The name is not empty\n";
+				tooltipDesc += L"-The Name is not empty\n";
 			}
 
 			if (!editor->_tempAnimations || !editor->_tempAnimations->getTexture()) {
-				tooltipDesc += L"-The texture is loaded\n";
+				tooltipDesc += L"-The Sprite Sheet is loaded\n";
 			}
 
 			tooltipDesc.pop_back(); // remove last newline character

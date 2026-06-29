@@ -209,9 +209,10 @@ namespace Main {
 				pos.y = button.lock()->getPosition().y + button.lock()->getSize().y + tooltip_rect_border_width;
 			}
 
-			
-			//pos.x = std::clamp(pos.x, dialog_padding, int(window->getSize().x - rectSize.x - dialog_padding));
-			//pos.y = std::clamp(pos.y, dialog_padding, int(window->getSize().y - rectSize.y - dialog_padding));
+			int padding = 16;
+			pos.x = std::clamp(pos.x, padding, int(Main::render_window->getSize().x - rectSize.x - padding));
+			pos.y = std::clamp(pos.y, padding, int(Main::render_window->getSize().y - rectSize.y - padding));
+
 			rect.setPosition(sf::Vector2f(pos));
 
 			Main::render_window->draw(rect);
