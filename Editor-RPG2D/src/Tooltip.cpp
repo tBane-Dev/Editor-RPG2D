@@ -209,7 +209,7 @@ namespace Main {
 			sf::RectangleShape outerRectShape(sf::Vector2f(rectSize.x, rectSize.y));
 			outerRectShape.setPosition(sf::Vector2f(pos.x, pos.y));
 			outerRectShape.setFillColor(sf::Color(47, 47, 47));
-			outerRectShape.setOutlineThickness(1.0f);
+			outerRectShape.setOutlineThickness(2.0f);
 			outerRectShape.setOutlineColor(sf::Color(63, 63, 63));
 			Main::render_window->draw(outerRectShape);
 

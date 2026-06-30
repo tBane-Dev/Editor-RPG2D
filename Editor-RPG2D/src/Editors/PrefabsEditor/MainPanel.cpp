@@ -225,7 +225,7 @@ namespace PrefabsEditor {
 			_add_prefab->setTooltip(256, L"Add prefab", L"Adds the current object as a new prefab");
 		}
 		else {
-			std::wstring tooltipTitle = L"Cannot Save Prefab";
+			std::wstring tooltipTitle = L"Cannot add Prefab";
 			std::wstring tooltipDesc = L"Please check that:\n";
 
 			if (!editor->_main_panel || editor->_main_panel->_name->getText().empty())

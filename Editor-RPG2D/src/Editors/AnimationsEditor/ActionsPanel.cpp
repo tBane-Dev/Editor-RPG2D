@@ -226,7 +226,7 @@ namespace AnimationsEditor {
 			_addBtn->setTooltip(256, L"Add Animations", L"Adds a new animations to the list");
 		}
 		else {
-			std::wstring tooltipTitle = L"Cannot Save Animations";
+			std::wstring tooltipTitle = L"Cannot add Animations";
 			std::wstring tooltipDesc = L"Please check that:\n";
 
 			if (editor->_name_panel->_name->getText().empty()) {
