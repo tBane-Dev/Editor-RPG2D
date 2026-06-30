@@ -180,56 +180,53 @@ namespace Main {
 
 		if ((currentTime - _timer).asSeconds() > 0.5f && (_title != L"" || _description != L"")) {
 
-			int tooltip_padding = 4;
-			int tooltip_rect_border_width = 1;
-
+			int padding = 4;
 
 			sf::Vector2i rectSize;
 			rectSize.x = (_title_text->getGlobalBounds().size.x > _description_text->getGlobalBounds().size.x) ? int(_title_text->getGlobalBounds().size.x) : int(_description_text->getGlobalBounds().size.x);
-			rectSize.x += 2 * tooltip_padding + 2 * tooltip_rect_border_width;
+			rectSize.x += 2 * padding;
 
 			if (_title != L"" && _description != L"")
-				rectSize.y = int(getHeightOfTitleAndDescription() + 3 * tooltip_padding + 2 * tooltip_rect_border_width);
+				rectSize.y = int(getHeightOfTitleAndDescription() + 3 * padding);
 			else
-				rectSize.y = int(getHeightOfTitleAndDescription() + 2 * tooltip_padding + 2 * tooltip_rect_border_width);
+				rectSize.y = int(getHeightOfTitleAndDescription() + 2 * padding);
 
 
-			rectSize.x = rectSize.x - 2 * tooltip_rect_border_width;
-			rectSize.y = rectSize.y - 2 * tooltip_rect_border_width;
-
-			sf::RectangleShape rect(sf::Vector2f((float)(rectSize.x), (float)(rectSize.y)));
-			rect.setFillColor(sf::Color(63,63,63));
-			rect.setOutlineThickness((float)(tooltip_rect_border_width));
-			rect.setOutlineColor(sf::Color(31,31,31));
+			rectSize.x = rectSize.x + padding;
+			rectSize.y = rectSize.y + padding;
 
 			sf::Vector2i pos;
 			if (std::dynamic_pointer_cast<Button>(_element.lock())) {
 				std::weak_ptr<Button> button = std::dynamic_pointer_cast<Button>(_element.lock());
-				pos.x = button.lock()->getPosition().x + button.lock()->getSize().x / 2 + tooltip_rect_border_width;
-				pos.y = button.lock()->getPosition().y + button.lock()->getSize().y + tooltip_rect_border_width;
+				pos.x = button.lock()->getPosition().x + button.lock()->getSize().x / 2;
+				pos.y = button.lock()->getPosition().y + button.lock()->getSize().y;
 			}
 
-			int padding = 16;
-			pos.x = std::clamp(pos.x, padding, int(Main::render_window->getSize().x - rectSize.x - padding));
-			pos.y = std::clamp(pos.y, padding, int(Main::render_window->getSize().y - rectSize.y - padding));
+			int screenPadding = 16;
+			pos.x = std::clamp(pos.x, screenPadding, int(Main::render_window->getSize().x - rectSize.x - screenPadding));
+			pos.y = std::clamp(pos.y, screenPadding, int(Main::render_window->getSize().y - rectSize.y - screenPadding));
 
-			rect.setPosition(sf::Vector2f(pos));
+			sf::RectangleShape outerRectShape(sf::Vector2f(rectSize.x, rectSize.y));
+			outerRectShape.setPosition(sf::Vector2f(pos.x, pos.y));
+			outerRectShape.setFillColor(sf::Color(47, 47, 47));
+			outerRectShape.setOutlineThickness(1.0f);
+			outerRectShape.setOutlineColor(sf::Color(63, 63, 63));
+			Main::render_window->draw(outerRectShape);
 
-			Main::render_window->draw(rect);
 
 			if (_title != L"") {
 				sf::Vector2i titlePos;
-				titlePos.x = pos.x + tooltip_padding;
-				titlePos.y = pos.y + tooltip_padding;
+				titlePos.x = pos.x + padding;
+				titlePos.y = pos.y + padding;
 				_title_text->setPosition(sf::Vector2f(titlePos));
 				Main::render_window->draw(*_title_text);
 			}
 
 			if (_description != L"") {
 				sf::Vector2i descriptionPos;
-				descriptionPos.x = pos.x + tooltip_padding;
-				descriptionPos.y = pos.y + tooltip_padding;
-				if (_title != L"") descriptionPos.y += (int)(basicFont.getLineSpacing(small_text_size)) + tooltip_padding;
+				descriptionPos.x = pos.x + padding;
+				descriptionPos.y = pos.y + padding;
+				if (_title != L"") descriptionPos.y += (int)(basicFont.getLineSpacing(small_text_size)) + padding;
 				_description_text->setPosition(sf::Vector2f(descriptionPos));
 				Main::render_window->draw(*_description_text);
 			}
