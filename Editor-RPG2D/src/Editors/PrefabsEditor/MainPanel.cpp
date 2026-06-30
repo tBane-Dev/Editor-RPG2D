@@ -32,13 +32,31 @@ namespace PrefabsEditor {
 		startPosition.y = _margin + getPosition().y + 512 + 16;
 		int distance_between_buttons = 16;
 
+		_save_prefab = std::make_shared<ButtonWithTextAndSprite>(
+			L"Save prefab",
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
+			sf::Vector2i(startPosition.x, startPosition.y)
+		);
+
 		_add_prefab = std::make_shared<ButtonWithTextAndSprite>(
 			L"Add prefab",
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
-			sf::Vector2i(startPosition.x, startPosition.y)
+			sf::Vector2i(startPosition.x, startPosition.y + _save_prefab->getSize().y + distance_between_buttons)
+		);
+
+		_remove_prefab = std::make_shared<ButtonWithTextAndSprite>(
+			L"Remove prefab",
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
+			sf::Vector2i(startPosition.x, _add_prefab->getPosition().y + _add_prefab->getSize().y + distance_between_buttons)
 		);
 
 		_add_prefab->_onclick_func = [this]() {
@@ -69,24 +87,6 @@ namespace PrefabsEditor {
 			PrefabsEditor::editor->_palette->_slots->updateObjects();
 
 			};
-
-		_duplicate_prefab = std::make_shared<ButtonWithTextAndSprite>(
-			L"Duplicate prefab",
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
-			sf::Vector2i(startPosition.x, startPosition.y + _add_prefab->getSize().y + distance_between_buttons)
-		);
-
-		_remove_prefab = std::make_shared<ButtonWithTextAndSprite>(
-			L"Remove prefab",
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_press.png"),
-			textures_manager->getTexture(L"assets\\tex\\editors_ui\\largeButton_inactive.png"),
-			sf::Vector2i(startPosition.x, _duplicate_prefab->getPosition().y + _duplicate_prefab->getSize().y + distance_between_buttons)
-		);
 
 		_remove_prefab->_onclick_func = [this]() {
 				auto object = PrefabsEditor::editor->_object.lock();
@@ -128,13 +128,13 @@ namespace PrefabsEditor {
 
 	void MainPanel::setButtonsActivity() {
 		if (!editor || !editor->_animator || editor->_animator->_animations.expired()) {
+			_save_prefab->setActive(false);
 			_add_prefab->setActive(false);
-			_duplicate_prefab->setActive(false);
 			_remove_prefab->setActive(false);
 		}
 		else {
+			_save_prefab->setActive(true);
 			_add_prefab->setActive(true);
-			_duplicate_prefab->setActive(true);
 			_remove_prefab->setActive(true);
 		}
 
@@ -146,8 +146,8 @@ namespace PrefabsEditor {
 		_name->cursorHover();
 		_type->cursorHover();
 
+		_save_prefab->cursorHover();
 		_add_prefab->cursorHover();
-		_duplicate_prefab->cursorHover();
 		_remove_prefab->cursorHover();
 
 	}
@@ -158,8 +158,8 @@ namespace PrefabsEditor {
 		_name->handleEvent(event);
 		_type->handleEvent(event);
 
+		_save_prefab->handleEvent(event);
 		_add_prefab->handleEvent(event);
-		_duplicate_prefab->handleEvent(event);
 		_remove_prefab->handleEvent(event);
 	}
 
@@ -169,8 +169,8 @@ namespace PrefabsEditor {
 		_name->update();
 		_type->update();
 
+		_save_prefab->update();
 		_add_prefab->update();
-		_duplicate_prefab->update();
 		_remove_prefab->update();
 	}
 
@@ -183,8 +183,8 @@ namespace PrefabsEditor {
 		Main::render_window->draw(*_typeText);
 		_type->draw();
 
+		_save_prefab->draw();
 		_add_prefab->draw();
-		_duplicate_prefab->draw();
 		_remove_prefab->draw();
 
 

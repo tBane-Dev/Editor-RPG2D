@@ -13,8 +13,8 @@ namespace PrefabsEditor {
 		std::unique_ptr<sf::Text> _typeText;
 		std::shared_ptr<TextInput> _type;
 
+		std::shared_ptr<ButtonWithTextAndSprite> _save_prefab;
 		std::shared_ptr<ButtonWithTextAndSprite> _add_prefab;
-		std::shared_ptr<ButtonWithTextAndSprite> _duplicate_prefab;
 		std::shared_ptr<ButtonWithTextAndSprite> _remove_prefab;
 
 		MainPanel(sf::Vector2i margin);
