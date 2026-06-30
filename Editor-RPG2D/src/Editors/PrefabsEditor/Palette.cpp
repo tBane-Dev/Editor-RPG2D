@@ -114,6 +114,8 @@ namespace PrefabsEditor {
 
 				// TO-DO 2 - end
 				
+				editor->_main_panel->setButtonsActivity();
+				editor->_main_panel->setTooltips();
 
 			}
 		);

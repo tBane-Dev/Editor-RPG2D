@@ -40,6 +40,7 @@ namespace PrefabsEditor {
 		~AnimationPanel();
 
 		void setButtonsActivity();
+		void setTooltips();
 		void loadStatsValues();
 
 		void cursorHover();

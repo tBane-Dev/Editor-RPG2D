@@ -127,6 +127,7 @@ namespace PrefabsEditor {
 			};
 
 		setButtonsActivity();
+		setTooltips();
 
 		// stats rect
 		int m = 8;
@@ -211,8 +212,11 @@ namespace PrefabsEditor {
 							editor->_animator->_animations = animations_manager->getAnimations(animName);
 						
 						editor->_animation_panel->setButtonsActivity();
+						editor->_animation_panel->setTooltips();
 						editor->_main_panel->setButtonsActivity();
+						editor->_main_panel->setTooltips();
 						editor->_mesh_panel->setButtonsActivity();
+						
 						Main::windows_manager->pop_back();
 
 					}
@@ -251,6 +255,36 @@ namespace PrefabsEditor {
 			_anim_prev->setActive(true);
 			_anim_next->setActive(true);
 		}
+	}
+
+	void AnimationPanel::setTooltips() {
+	
+		if(!editor || !editor->_animator){
+
+			std::wstring desc = L"This button is inactive because no Animations is loaded.";
+
+			_first->setTooltip(256, L"Cannot Go To First Frame", desc);
+			_prev->setTooltip(256, L"Cannot Go To Previous Frame", desc);
+			_play->setTooltip(256, L"Cannot Play Animation", desc);
+			_pause->setTooltip(256, L"Cannot Pause Animation", desc);
+			_next->setTooltip(256, L"Cannot Go To Next Frame", desc);
+			_last->setTooltip(256, L"Cannot Go To Last Frame", desc);
+
+			_anim_prev->setTooltip(256, L"Cannot Go To Previous Animation", desc);
+			_anim_next->setTooltip(256, L"Cannot Go To Next Animation", desc);
+
+			return;
+		}
+
+		_first->setTooltip(256, L"First Frame", L"");
+		_prev->setTooltip(256, L"Previous Frame", L"");
+		_play->setTooltip(256, L"Play Animation", L"");
+		_pause->setTooltip(256, L"Pause Animation", L"");
+		_next->setTooltip(256, L"Next Frame", L"");
+		_last->setTooltip(256, L"Last Frame", L"");
+
+		_anim_prev->setTooltip(256, L"Previous Animation", L"");
+		_anim_next->setTooltip(256, L"Next Animation", L"");
 	}
 
 	void AnimationPanel::loadStatsValues() {

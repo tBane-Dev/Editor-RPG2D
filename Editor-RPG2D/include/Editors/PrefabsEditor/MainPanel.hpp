@@ -21,6 +21,7 @@ namespace PrefabsEditor {
 		~MainPanel();
 
 		void setButtonsActivity();
+		void setTooltips();
 
 		void cursorHover();
 		void handleEvent(const sf::Event& event);
