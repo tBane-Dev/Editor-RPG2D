@@ -20,6 +20,7 @@ namespace PrefabsEditor {
 		MainPanel(sf::Vector2i margin);
 		~MainPanel();
 
+		bool edited();
 		void setButtonsActivity();
 		void setTooltips();
 

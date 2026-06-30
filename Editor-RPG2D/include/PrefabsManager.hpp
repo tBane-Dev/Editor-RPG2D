@@ -16,7 +16,7 @@ public:
 	std::vector<std::shared_ptr<GameObject>>& getAllPrefabs();
 	std::vector<std::shared_ptr<GameObject>> getPrefabs(ObjectType type);
     void removePrefabsByAnimations(int animationID);
-    void replacePrefab(std::weak_ptr<GameObject> oldPrefabWeak, std::shared_ptr<GameObject> newPrefab);
+    void replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab);
     void loadPrefabs();
 };
 

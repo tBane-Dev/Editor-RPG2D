@@ -13,6 +13,7 @@ public:
 	void addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap);
     void removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefab);
     void removeGameObjectsByAnimations(int animationID);
+    void replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab);
     void sort();
 
     virtual void update();

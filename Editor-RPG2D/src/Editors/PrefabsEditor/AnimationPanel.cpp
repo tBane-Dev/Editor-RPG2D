@@ -259,7 +259,7 @@ namespace PrefabsEditor {
 
 	void AnimationPanel::setTooltips() {
 	
-		if(!editor || !editor->_animator){
+		if(!editor || !editor->_animator || editor->_animator->_animations.expired()){
 
 			std::wstring desc = L"This button is inactive because no Animations is loaded.";
 

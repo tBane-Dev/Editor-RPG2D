@@ -10,3 +10,6 @@ public:
 	Object();
 	virtual ~Object();
 };
+
+std::wstring ObjectTypeToWString(ObjectType type);
+ObjectType WStringToObjectType(std::wstring type);

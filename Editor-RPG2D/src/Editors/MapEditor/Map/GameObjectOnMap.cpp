@@ -117,6 +117,10 @@ void GameObjectOnMap::draw() {
 	bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
 
 	sf::Vector2i pos = _position;
+
+	if (_prefab.expired())
+		return;
+
 	if (_prefab.lock()->getCollider()->_type == ColliderType::Rectangular)
 		pos += _prefab.lock()->getOrigin();
 	

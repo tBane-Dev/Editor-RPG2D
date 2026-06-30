@@ -70,17 +70,28 @@ void PrefabsManager::removePrefabsByAnimations(int animationID) {
     );
 }
 
-void PrefabsManager::replacePrefab(std::weak_ptr<GameObject> oldPrefabWeak, std::shared_ptr<GameObject> newPrefab) {
-    auto oldPrefab = oldPrefabWeak.lock();
+void PrefabsManager::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab) {
     if (!oldPrefab || !newPrefab)
         return;
 
-    for (auto& prefab : _prefabs) {
-        if (prefab == oldPrefab) {
-            prefab = newPrefab;
-        }
-    }
+    if(oldPrefab == newPrefab)
+		return;
 
+    //for (auto& prefab : _prefabs) {
+    //    if (prefab == oldPrefab) {
+    //        prefab = newPrefab;
+    //    }
+    //}
+
+    std::erase_if(_prefabs, [&](const std::shared_ptr<GameObject>& prefab) {
+        if (!prefab)
+            return false;
+
+        return prefab == oldPrefab;
+        }
+    );
+
+    addPrefab(newPrefab);
 }
 
 void PrefabsManager::loadPrefabs() {

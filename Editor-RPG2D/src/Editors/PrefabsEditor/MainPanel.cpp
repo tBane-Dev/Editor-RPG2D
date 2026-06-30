@@ -26,6 +26,7 @@ namespace PrefabsEditor {
 
 		_type = std::make_shared<TextInput>(sf::Vector2i(384, 48), L"Type here", 20, 20);
 		_type->setPosition(sf::Vector2i(_rect.position.x + 16, _typeText->getGlobalBounds().position.y + 32));
+		_type->setText(L"None");
 
 		sf::Vector2i startPosition;
 		startPosition.x = getPosition().x + (getSize().x - 380) / 2;
@@ -59,10 +60,18 @@ namespace PrefabsEditor {
 			sf::Vector2i(startPosition.x, _add_prefab->getPosition().y + _add_prefab->getSize().y + distance_between_buttons)
 		);
 
+		setButtonsActivity();
+		setTooltips();
+
 		_name->_onEditedFunction = [this]() {
 			editor->_main_panel->setButtonsActivity();
 			editor->_main_panel->setTooltips();
 		};
+
+		_type->_onEditedFunction = [this]() {
+			editor->_main_panel->setButtonsActivity();
+			editor->_main_panel->setTooltips();
+			};
 
 		_save_prefab->_onclick_func = [this]() {
 
@@ -77,19 +86,48 @@ namespace PrefabsEditor {
 				collider = std::make_shared<CircularCollider>(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()) / 2, std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()) / 2);
 			}
 
-			std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(
-				_name->getText(),
-				PrefabsEditor::editor->_animator->getAnimations(),
-				sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
-				collider
-			);
+			auto oldPrefab = PrefabsEditor::editor->_object.lock();
 
-			prefabs_manager->replacePrefab(PrefabsEditor::editor->_object, prefab);
-			//PrefabsEditor::editor->_object = prefab;
+			if (!oldPrefab)
+				return;
+
+			std::shared_ptr<GameObject> prefab;
+
+			if (_type->getText() == L"Monster") {
+				prefab = std::make_shared<MonsterPrefab>(
+					_name->getText(),
+					PrefabsEditor::editor->_animator->getAnimations(),
+					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					4,
+					collider
+				);
+			}
+			else if (_type->getText() == L"Nature") {
+				prefab = std::make_shared<NaturePrefab>(
+					_name->getText(),
+					PrefabsEditor::editor->_animator->getAnimations(),
+					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					collider
+				);
+			}
+			else {
+				return;
+			}
+
+			MapEditor::editor->_game_objects->replacePrefab(oldPrefab, prefab);
+			if (MapEditor::editor->_cursor_on_map->_object.lock() == oldPrefab) MapEditor::editor->_cursor_on_map->_object = prefab;
+
+			prefabs_manager->replacePrefab(oldPrefab, prefab);
+
+			MapEditor::editor->_palette->loadAll(MapEditor::editor->_palette->_categories->_selectedType);
+
+			PrefabsEditor::editor->_object = prefab;
 			PrefabsEditor::editor->_palette->loadAll(prefab->_type);
 			PrefabsEditor::editor->_palette->_slots->selectLastSlot();
 			PrefabsEditor::editor->_palette->_slots->_scrollbar->setValue(PrefabsEditor::editor->_palette->_slots->_scrollbar->_max_value);
 			PrefabsEditor::editor->_palette->_slots->updateObjects();
+			PrefabsEditor::MainPanel::setButtonsActivity();
+			PrefabsEditor::MainPanel::setTooltips();
 
 			};
 
@@ -103,12 +141,28 @@ namespace PrefabsEditor {
 				collider = std::make_shared<CircularCollider>(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()) / 2, std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()) / 2);
 			}
 
-			std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(
-				_name->getText(),
-				PrefabsEditor::editor->_animator->getAnimations(),
-				sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
-				collider
-			);
+			std::shared_ptr<GameObject> prefab;
+
+			if (_type->getText() == L"Monster") {
+				prefab = std::make_shared<MonsterPrefab>(
+					_name->getText(),
+					PrefabsEditor::editor->_animator->getAnimations(),
+					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					4,
+					collider
+				);
+			}
+			else if (_type->getText() == L"Nature") {
+				prefab = std::make_shared<NaturePrefab>(
+					_name->getText(),
+					PrefabsEditor::editor->_animator->getAnimations(),
+					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					collider
+				);
+			}
+			else {
+				return;
+			}
 
 			prefabs_manager->addPrefab(prefab);
 			PrefabsEditor::editor->_object = prefab;
@@ -116,6 +170,9 @@ namespace PrefabsEditor {
 			PrefabsEditor::editor->_palette->_slots->selectLastSlot();
 			PrefabsEditor::editor->_palette->_slots->_scrollbar->setValue(PrefabsEditor::editor->_palette->_slots->_scrollbar->_max_value);
 			PrefabsEditor::editor->_palette->_slots->updateObjects();
+			PrefabsEditor::MainPanel::setButtonsActivity();
+			PrefabsEditor::MainPanel::setTooltips();
+
 
 		};
 
@@ -125,37 +182,167 @@ namespace PrefabsEditor {
 				if (!object)
 					return;
 
-				// remove from map
-				MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<GameObject>();
-				MapEditor::editor->_game_objects->removeGameObjectsByPrefab(object);
+				int objectID = editor->_palette->_slots->_selectedSlotId;
+				if (objectID >= 0) {
+					// remove from map
+					MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<GameObject>();
+					MapEditor::editor->_game_objects->removeGameObjectsByPrefab(object);
 
-				// remove prefab
-				prefabs_manager->removePrefab(object);
+					// remove prefab
+					prefabs_manager->removePrefab(object);
 
-				// clear selection
-				PrefabsEditor::editor->_object = std::weak_ptr<GameObject>();
-				PrefabsEditor::editor->_animator = nullptr;
+					// reload Prefabs Editor Palette
+					PrefabsEditor::editor->_palette->loadAll(PrefabsEditor::editor->_palette->_categories->_selectedType);
+					int newID = objectID;
+					
+					if (newID >= prefabs_manager->getPrefabs(PrefabsEditor::editor->_palette->_categories->_selectedType).size())
+						newID = prefabs_manager->getPrefabs(PrefabsEditor::editor->_palette->_categories->_selectedType).size() - 1;
 
-				PrefabsEditor::editor->_palette->loadAll(PrefabsEditor::editor->_palette->_categories->_selectedType);
-				MapEditor::editor->_palette->loadAll(ObjectType::Terrain);
+					PrefabsEditor::editor->_palette->_slots->selectSlot(newID);
+					PrefabsEditor::editor->_palette->_slots->updateObjects();
 
+					editor->_object = std::weak_ptr<GameObject>();
+					editor->_animator = nullptr;
+					editor->_main_panel->_name->setText(L"");
+					editor->_main_panel->_type->setText(L"");
+					editor->_collider_panel->_collider = nullptr;
+					editor->_collider_panel->_type->setText(L"");
+					editor->_collider_panel->_x->setText(L"");
+					editor->_collider_panel->_y->setText(L"");
+					editor->_collider_panel->_w->setText(L"");
+					editor->_collider_panel->_h->setText(L"");
 
-				// reset slots
-				PrefabsEditor::editor->_palette->_slots->_scrollbar->setValue(0);
-				PrefabsEditor::editor->_palette->_slots->selectSlot(-1);
-				PrefabsEditor::editor->_palette->_slots->updateObjects();
+					if (newID >= 0) {
+						// load all stuff
+						std::shared_ptr<GameObject> newObject = std::dynamic_pointer_cast<GameObject>(PrefabsEditor::editor->_palette->_slots->_selectedSlot->_object.lock());
 
-				MapEditor::editor->_palette->_slots->_scrollbar->setValue(0);
-				MapEditor::editor->_palette->_slots->selectSlot(-1);
-				MapEditor::editor->_palette->_slots->updateObjects();
+						editor->_object = newObject;
+						editor->_animator = std::make_shared<Animator>(newObject->getAnimations(), 0.2f);
+
+						editor->_main_panel->_name->setText(newObject->_name);
+						editor->_main_panel->_type->setText(ObjectTypeToWString(newObject->_type));
+
+						if (newObject->_collider->_type == ColliderType::Rectangular) {
+							std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(newObject->_collider);
+							editor->_collider_panel->_collider = collider;
+							editor->_collider_panel->_type->setText(L"Rectangular");
+							editor->_collider_panel->_x->setText(std::to_wstring(collider->_rect.position.x));
+							editor->_collider_panel->_y->setText(std::to_wstring(collider->_rect.position.y));
+							editor->_collider_panel->_w->setText(std::to_wstring(collider->_rect.size.x));
+							editor->_collider_panel->_h->setText(std::to_wstring(collider->_rect.size.y));
+
+						}
+						else if (newObject->_collider->_type == ColliderType::Circular) {
+							std::shared_ptr<CircularCollider> collider = std::dynamic_pointer_cast<CircularCollider>(newObject->_collider);
+							editor->_collider_panel->_collider = collider;
+							editor->_collider_panel->_type->setText(L"Circular");
+							editor->_collider_panel->_x->setText(std::to_wstring(collider->_x));
+							editor->_collider_panel->_y->setText(std::to_wstring(collider->_y));
+							editor->_collider_panel->_w->setText(std::to_wstring(collider->_radiusX * 2));
+							editor->_collider_panel->_h->setText(std::to_wstring(collider->_radiusY * 2));
+						}
+					}
+
+					// reload Map Editor Palette
+					MapEditor::editor->_palette->loadAll(ObjectType::Terrain);
+					MapEditor::editor->_palette->_slots->_scrollbar->setValue(0);
+					MapEditor::editor->_palette->_slots->updateObjects();
+
+					PrefabsEditor::editor->_main_panel->setButtonsActivity();
+					PrefabsEditor::editor->_main_panel->setTooltips();
+
+					PrefabsEditor::editor->_animation_panel->loadStatsValues();
+					PrefabsEditor::editor->_animation_panel->setButtonsActivity();
+					PrefabsEditor::editor->_animation_panel->setTooltips();
+
+				}
+				
 		};
 
-		setButtonsActivity();
-		setTooltips();
+		
 	}
 
 	MainPanel::~MainPanel() {
 		
+	}
+
+	bool MainPanel::edited() {
+
+		std::shared_ptr<GameObject> object = editor->_object.lock();
+
+		if (!object)
+			return false;
+
+		if (WStringToObjectType(_type->getText()) == ObjectType::None)
+			return false;
+
+		if (!editor->_animator || editor->_animator->_animations.expired() || !editor->_animator->_animations.lock()->getTexture())
+			return false;
+
+		// name
+		if (object->_name != _name->getText())
+			return true;
+
+		// object type
+		if (ObjectTypeToWString(object->_type) != _type->getText())
+			return true;
+
+		// animations
+		if (object->_animations.lock() != editor->_animator->_animations.lock())
+			return true;
+
+		// collider
+		std::shared_ptr<Collider> collider = object->getCollider();
+
+		if (!collider)
+			return false;
+
+		if (collider->_type == ColliderType::Rectangular) {
+
+			if (PrefabsEditor::editor->_collider_panel->_type->getText() != L"Rectangular")
+				return true;
+
+			std::shared_ptr<RectangularCollider> rectCollider = std::dynamic_pointer_cast<RectangularCollider>(collider);
+
+			if (!rectCollider)
+				return false;
+
+			if (rectCollider->_rect.position.x != std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()))
+				return true;
+
+			if (rectCollider->_rect.position.y != std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()))
+				return true;
+
+			if (rectCollider->_rect.size.x != std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()))
+				return true;
+
+			if (rectCollider->_rect.size.y != std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()))
+				return true;
+		}
+		else if (collider->_type == ColliderType::Circular) {
+
+			if (PrefabsEditor::editor->_collider_panel->_type->getText() != L"Circular")
+				return true;
+
+			std::shared_ptr<CircularCollider> circCollider = std::dynamic_pointer_cast<CircularCollider>(collider);
+
+			if (!circCollider)
+				return false;
+
+			if (circCollider->_x != std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()))
+				return true;
+
+			if (circCollider->_y != std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()))
+				return true;
+
+			if (circCollider->_radiusX * 2 != std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()))
+				return true;
+
+			if (circCollider->_radiusY * 2 != std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()))
+				return true;
+		}
+
+		return false;
 	}
 
 	void MainPanel::setButtonsActivity() {
@@ -163,13 +350,10 @@ namespace PrefabsEditor {
 		if (
 			!editor ||
 			!editor->_main_panel ||
-			editor->_main_panel->_name->getText().empty() ||
-			!editor->_animator ||
-			editor->_animator->_animations.expired() ||
-			!editor->_animator->_animations.lock()->getTexture() ||
-			editor->_palette->_slots->_selectedSlotId < 0
+			editor->_palette->_slots->_selectedSlotId < 0 ||
+			WStringToObjectType(_type->getText()) == ObjectType::None ||
+			!edited()
 			) {
-
 			_save_prefab->setActive(false);
 		}
 		else {
@@ -179,10 +363,8 @@ namespace PrefabsEditor {
 		if (
 			!editor ||
 			!editor->_main_panel ||
-			editor->_main_panel->_name->getText().empty() ||
-			!editor->_animator ||
-			editor->_animator->_animations.expired() ||
-			!editor->_animator->_animations.lock()->getTexture()
+			WStringToObjectType(_type->getText()) == ObjectType::None ||
+			(!editor->_animator || editor->_animator->_animations.expired() || !editor->_animator->_animations.lock()->getTexture())
 			) {
 
 			_add_prefab->setActive(false);
@@ -204,18 +386,25 @@ namespace PrefabsEditor {
 		if (_save_prefab->_isActive) {
 			_save_prefab->setTooltip(256, L"Save prefab", L"Saves the current prefab");
 		}
+		else if (!editor->_object.expired() && editor->_palette->_slots->_selectedSlotId >= 0 && !edited()) {
+			_save_prefab->setTooltip(256, L"Cannot Save Prefab", L"There are changes to save");
+		}
 		else {
 			std::wstring tooltipTitle = L"Cannot Save Prefab";
 			std::wstring tooltipDesc = L"Please check that:\n";
 
+			if (!editor->_main_panel || editor->_object.expired() || editor->_palette->_slots->_selectedSlotId < 0)
+				tooltipDesc += L"- A Prefab is selected from the Palette\n";
+
 			if (!editor->_main_panel || editor->_main_panel->_name->getText().empty())
 				tooltipDesc += L"-The Name is not empty\n";
+
+			if (!editor->_main_panel || WStringToObjectType(editor->_main_panel->_type->getText()) == ObjectType::None)
+				tooltipDesc += L"-The Type is valid\n";
 
 			if (!editor->_animator || editor->_animator->_animations.expired() || !editor->_animator->_animations.lock()->getTexture())
 				tooltipDesc += L"-The Animations is loaded\n";
 
-			if(editor->_palette->_slots->_selectedSlotId < 0)
-				tooltipDesc += L"-A prefab is selected\n";
 
 			tooltipDesc.pop_back(); // remove last newline character
 			_save_prefab->setTooltip(256, tooltipTitle, tooltipDesc);
@@ -225,11 +414,14 @@ namespace PrefabsEditor {
 			_add_prefab->setTooltip(256, L"Add prefab", L"Adds the current object as a new prefab");
 		}
 		else {
-			std::wstring tooltipTitle = L"Cannot add Prefab";
+			std::wstring tooltipTitle = L"Cannot Add Prefab";
 			std::wstring tooltipDesc = L"Please check that:\n";
 
 			if (!editor->_main_panel || editor->_main_panel->_name->getText().empty())
 				tooltipDesc += L"-The Name is not empty\n";
+
+			if (!editor->_main_panel || WStringToObjectType(editor->_main_panel->_type->getText()) == ObjectType::None)
+				tooltipDesc += L"-The Type is valid\n";
 
 			if (!editor->_animator || editor->_animator->_animations.expired() || !editor->_animator->_animations.lock()->getTexture())
 				tooltipDesc += L"-The Animations is loaded\n";

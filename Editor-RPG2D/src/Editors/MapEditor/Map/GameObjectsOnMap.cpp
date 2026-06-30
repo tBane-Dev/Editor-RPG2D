@@ -1,4 +1,5 @@
 #include "DebugLog.hpp"
+#include "Objects/Nature.hpp"
 #include "Objects/Monster.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include <typeinfo>
@@ -84,6 +85,43 @@ void GameObjectsOnMap::removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefa
 
             return objectPrefab == prefabPtr;
         });
+}
+
+
+void GameObjectsOnMap::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab) {
+	if (!oldPrefab || !newPrefab)
+		return;
+
+	for (auto& objectOnMap : _gameObjectsOnMap) {
+
+		std::shared_ptr<GameObject> currentPrefab = objectOnMap->_prefab.lock();
+
+		if (currentPrefab != oldPrefab)
+			continue;
+
+		// get the position of the current object on the map
+		sf::Vector2i position = objectOnMap->_position;
+
+		if (currentPrefab->_type == ObjectType::Monster) {
+			auto monster = std::dynamic_pointer_cast<Monster>(objectOnMap);
+			position = monster->_basePosition - monster->_prefab.lock()->getOrigin();
+		}
+			
+
+		// create a new object on the map with the new prefab
+		std::shared_ptr<GameObjectOnMap> newObjectOnMap;
+
+		if (newPrefab->_type == ObjectType::Monster) newObjectOnMap = std::make_shared<Monster>(newPrefab);
+		else if (newPrefab->_type == ObjectType::Nature) newObjectOnMap = std::make_shared<Nature>(newPrefab);
+		else newObjectOnMap = std::make_shared<GameObjectOnMap>(newPrefab);
+
+		// set the position
+		newObjectOnMap->setPosition(position);
+
+		objectOnMap = newObjectOnMap;
+	}
+
+	sort();
 }
 
 void GameObjectsOnMap::sort() {

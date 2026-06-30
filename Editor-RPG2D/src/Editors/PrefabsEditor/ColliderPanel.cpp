@@ -18,7 +18,7 @@ namespace PrefabsEditor {
 		_x = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"x", 24, 18);
 		_x->setPosition(sf::Vector2i(_rect.position.x + 84, _type->getPosition().y + _type->getSize().y + 8));
 		_x->setText(L"0");
-
+		
 		_y = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"y", 24, 18);
 		_y->setPosition(sf::Vector2i(_rect.position.x + 84, _x->getPosition().y + _x->getSize().y + 8));
 		_y->setText(L"0");
@@ -30,6 +30,29 @@ namespace PrefabsEditor {
 		_h = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"height", 24, 18);
 		_h->setPosition(sf::Vector2i(_rect.position.x + 84, _w->getPosition().y + _w->getSize().y + 8));
 		_h->setText(L"0");
+
+		// functions
+		_x->_onEditedFunction = [this]() {
+			editor->_main_panel->setButtonsActivity();
+			editor->_main_panel->setTooltips();
+		};
+
+		_y->_onEditedFunction = [this]() {
+			editor->_main_panel->setButtonsActivity();
+			editor->_main_panel->setTooltips();
+			};
+
+
+		_w->_onEditedFunction = [this]() {
+			editor->_main_panel->setButtonsActivity();
+			editor->_main_panel->setTooltips();
+			};
+
+
+		_h->_onEditedFunction = [this]() {
+			editor->_main_panel->setButtonsActivity();
+			editor->_main_panel->setTooltips();
+			};
 
 		// texts labels
 		int x = _x->getPosition().x - 32;

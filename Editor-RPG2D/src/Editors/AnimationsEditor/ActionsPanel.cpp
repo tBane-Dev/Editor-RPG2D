@@ -115,6 +115,8 @@ namespace AnimationsEditor {
 			}
 
 			editor->_list_panel->selectItem(newID);
+			editor->_actions_panel->setButtonsActivity();
+			editor->_actions_panel->setTooltips();
 		};
 
 		_removeBtn->_onclick_func = []() {
@@ -129,7 +131,9 @@ namespace AnimationsEditor {
 
 				editor->_list_panel->loadAll();
 				int newID = editor->_list_panel->_selectedItemIndex;
-				if (newID >= animations_manager->getAnimationsCount()) newID = animations_manager->getAnimationsCount() - 1;
+				if (newID >= animations_manager->getAnimationsCount()) 
+					newID = animations_manager->getAnimationsCount() - 1;
+
 				editor->_list_panel->selectItem(newID);
 
 				editor->_animations = animations_manager->getAnimations(editor->_list_panel->_selectedItemIndex).lock();
@@ -151,6 +155,7 @@ namespace AnimationsEditor {
 			editor->_name_panel->loadAnimations();;
 			editor->_sprite_sheet_panel->loadAnimations();
 			editor->_actions_panel->setButtonsActivity();
+			editor->_actions_panel->setTooltips();
 			editor->_preview_panel->loadAnimations();
 			editor->_preview_panel->setButtonsActivity();
 		};

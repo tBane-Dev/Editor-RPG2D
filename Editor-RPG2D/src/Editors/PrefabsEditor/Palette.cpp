@@ -88,9 +88,7 @@ namespace PrefabsEditor {
 				editor->_animator = std::make_shared<Animator>(prefab.lock()->getAnimations(), 0.2f);
 
 				editor->_main_panel->_name->setText(prefab.lock()->_name);
-				//editor->_main_panel->_type->setText(prefab->_type.toString()); // TO-DO - enum to string
-				
-				// TO-DO 2 - start - must be - move to collider panel
+				editor->_main_panel->_type->setText(ObjectTypeToWString(prefab.lock()->_type));
 
 				if (prefab.lock()->_collider->_type == ColliderType::Rectangular) {
 					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(prefab.lock()->_collider);
@@ -111,11 +109,13 @@ namespace PrefabsEditor {
 					editor->_collider_panel->_w->setText(std::to_wstring(collider->_radiusX*2));
 					editor->_collider_panel->_h->setText(std::to_wstring(collider->_radiusY*2));
 				}
-
-				// TO-DO 2 - end
 				
 				editor->_main_panel->setButtonsActivity();
 				editor->_main_panel->setTooltips();
+
+				editor->_animation_panel->loadStatsValues();
+				editor->_animation_panel->setButtonsActivity();
+				editor->_animation_panel->setTooltips();
 
 			}
 		);
