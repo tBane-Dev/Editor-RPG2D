@@ -196,9 +196,13 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
 	if (_object.lock()->_type == ObjectType::Terrain) {
 
-        bool conditionToDraw = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle || MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
+        bool conditionToDraw = 
+            GUI_manager->Element_hovered == MapEditor::editor->_map &&
+            sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && 
+            MapEditor::editor->_map->getChunkByGlobalPosition() != nullptr &&
+            (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle || MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
 
-		if (conditionToDraw && MapEditor::editor->_map->getChunkByGlobalPosition()!=nullptr) {
+		if (conditionToDraw) {
 
 			std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
 
