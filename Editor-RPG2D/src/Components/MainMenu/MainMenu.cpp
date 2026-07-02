@@ -121,8 +121,14 @@ namespace Components {
 		//	}
 		//}
 
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
-			mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
+			if (_state == MainMenuStates::Opened) {
+				closeMenu();
+				return;
+			}
+		}
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
 			if (_state == MainMenuStates::Opened) {
 				if (!cursorOnAnyMenuButton()) {
