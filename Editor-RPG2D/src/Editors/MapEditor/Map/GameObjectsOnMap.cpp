@@ -116,7 +116,11 @@ void GameObjectsOnMap::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std:
 		else newObjectOnMap = std::make_shared<GameObjectOnMap>(newPrefab);
 
 		// set the position
-		newObjectOnMap->setPosition(position);
+		if(newObjectOnMap->_type == ObjectType::Monster) {
+			newObjectOnMap->setPosition(position + newPrefab->getOrigin());
+		}
+		else
+			newObjectOnMap->setPosition(position);
 
 		objectOnMap = newObjectOnMap;
 	}
