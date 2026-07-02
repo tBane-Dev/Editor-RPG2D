@@ -104,6 +104,10 @@ void GameObjectOnMap::drawFrame() {
 	Main::render_window->draw(text);
 }
 
+sf::Vector2i GameObjectOnMap::getPosition() {
+	return _position;
+}
+
 void GameObjectOnMap::setPosition(sf::Vector2i position) {
 	_position = position;
 }

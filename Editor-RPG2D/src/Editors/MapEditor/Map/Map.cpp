@@ -5,11 +5,54 @@
 #include "ShadersManager.hpp"
 
 Map::Map() {
-	
+	_ghostChunk = std::make_shared<GhostChunk>();
 }
 
 Map::~Map() {
 
+}
+
+void Map::addChunk(std::shared_ptr<Chunk> chunk, int tileType) {
+
+	int x = chunk->_coords.x;
+	int y = chunk->_coords.y;
+
+	for (int ty = 0; ty < Chunk::tilesRows; ty++) {
+		for (int tx = 0; tx < Chunk::tilesCols; tx++) {
+			std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+
+			tile->_type = tileType;
+
+			tile->_coords.x = x * Chunk::tilesCols + tx;
+			tile->_coords.y = y * Chunk::tilesRows + ty;
+
+			tile->_position.x = (float)(tile->_coords.x * Tile::tileSize);
+			tile->_position.y = (float)(tile->_coords.y * Tile::tileSize);
+
+			chunk->_tiles.push_back(tile);
+		}
+	}
+
+	_chunks.push_back(chunk);
+
+	for (int yy = -1; yy <= 1; yy++) {
+		for (int xx = -1; xx <= 1; xx++) {
+
+			int cx = x + xx;
+			int cy = y + yy;
+
+			std::shared_ptr<Chunk> currentChunk = getChunkByCoords(cx, cy);
+
+			if (!currentChunk)
+				continue;
+
+			currentChunk->generateVertexArray(
+				getChunkByCoords(cx - 1, cy - 1), getChunkByCoords(cx, cy - 1), getChunkByCoords(cx + 1, cy - 1),
+				getChunkByCoords(cx - 1, cy), getChunkByCoords(cx + 1, cy),
+				getChunkByCoords(cx - 1, cy + 1), getChunkByCoords(cx, cy + 1), getChunkByCoords(cx + 1, cy + 1)
+			);
+		}
+	}
 }
 
 void Map::create(int width, int height) {
@@ -20,30 +63,8 @@ void Map::create(int width, int height) {
 		for (int x = 0; x < width; x++) {
 			std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>(x,y);
 
-			for (int ty = 0; ty < Chunk::tilesRows; ty++) {
-				for (int tx = 0; tx < Chunk::tilesCols; tx++) {
-					std::shared_ptr<Tile> tile = std::make_shared<Tile>();
-
-					tile->_type = tileType;
-
-					tile->_coords.x = x * Chunk::tilesCols + tx;
-					tile->_coords.y = y * Chunk::tilesRows + ty;
-
-					tile->_position.x = (float)(tile->_coords.x * Tile::tileSize);
-					tile->_position.y = (float)(tile->_coords.y * Tile::tileSize);
-
-					chunk->_tiles.push_back(tile);
-
-				}
-			}
-
-			chunk->generateVertexArray(
-				getChunkByCoords(x - 1, y - 1), getChunkByCoords(x, y - 1), getChunkByCoords(x + 1, y - 1),
-				getChunkByCoords(x - 1, y), getChunkByCoords(x + 1, y),
-				getChunkByCoords(x - 1, y + 1), getChunkByCoords(x, y + 1), getChunkByCoords(x + 1, y + 1)
-			);
-
-			_chunks.push_back(chunk);
+			addChunk(chunk, tileType);
+			
 
 		}
 	}
@@ -98,8 +119,8 @@ std::shared_ptr<Chunk> Map::getChunkByCoords(int x, int y) {
 }
 
 std::shared_ptr<Chunk> Map::getChunkByTileGlobalCoords(int x, int y) {
-	x /= Chunk::tilesCols;
-	y /= Chunk::tilesRows;
+	x = std::floor((float)x / (float)Chunk::tilesCols);
+	y = std::floor((float)y / (float)Chunk::tilesRows);
 
 	for (auto& chunk : _chunks) {
 		if (chunk->_coords.x == x && chunk->_coords.y == y) {
@@ -112,8 +133,8 @@ std::shared_ptr<Chunk> Map::getChunkByTileGlobalCoords(int x, int y) {
 
 std::shared_ptr<Chunk> Map::getChunkByGlobalPosition() {
 
-	int x = MapEditor::editor->_cursor_on_map->_position.x / Tile::tileSize;
-	int y = MapEditor::editor->_cursor_on_map->_position.y / Tile::tileSize;
+	int x = std::floor((float)MapEditor::editor->_cursor_on_map->_position.x / (float)Tile::tileSize);
+	int y = std::floor((float)MapEditor::editor->_cursor_on_map->_position.y / (float)Tile::tileSize);
 
 	return getChunkByTileGlobalCoords(x, y);
 }
@@ -160,6 +181,8 @@ void Map::cursorHover() {
 	if (MapEditor::editor->_cursor_on_map != nullptr && getRect().contains(MapEditor::editor->_cursor_on_map->_position)) {
 		GUI_manager->Element_hovered = shared_from_this();
 	}
+
+	_ghostChunk->cursorHover();
 }
 
 void Map::handleEvent(const sf::Event& event) {
@@ -176,6 +199,12 @@ void Map::handleEvent(const sf::Event& event) {
 			GUI_manager->Element_pressed = nullptr;
 	}
 
+
+	_ghostChunk->handleEvent(event);
+}
+
+void Map::update() {
+	_ghostChunk->update();
 }
 
 void Map::draw() {
@@ -230,6 +259,9 @@ void Map::draw() {
 			chunk->drawCoords();
 		}
 	}
+
+	_ghostChunk->draw();
+
 }
 
 int getNeighbourTypeLocal(

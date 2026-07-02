@@ -149,6 +149,8 @@ CursorOnMap::CursorOnMap() {
     _position = sf::Vector2i(Main::render_window->mapPixelToCoords(Main::cursor->_position));
 
 	_object = std::weak_ptr<Object>();
+
+    _state = CursorOnMapState::Idle;
 }
 
 CursorOnMap::~CursorOnMap() {
@@ -156,8 +158,6 @@ CursorOnMap::~CursorOnMap() {
 }
 
 void CursorOnMap::update() {
-
-
     Main::render_window->setView(MapEditor::editor->_camera->_view);
     _position = sf::Vector2i(Main::render_window->mapPixelToCoords(Main::cursor->_position));
 }
@@ -176,8 +176,19 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             MapEditor::editor->_palette->_slots->selectSlot(-1);
         }
 
+        if (_state == CursorOnMapState::Drawing) {
+            _state = CursorOnMapState::Idle;
+        }
+
         _object = std::weak_ptr<Object>();
         return;
+    }
+
+    if (const auto* mbl = event.getIf<sf::Event::MouseButtonReleased>(); mbl && mbl->button == sf::Mouse::Button::Left) {
+        if (_state == CursorOnMapState::Drawing) {
+            _state = CursorOnMapState::Idle;
+        }
+			
     }
 
     if (!(GUI_manager->Element_pressed == nullptr || GUI_manager->Element_pressed == MapEditor::editor->_map))
@@ -187,7 +198,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
         bool conditionToDraw = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle || MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
 
-		if (conditionToDraw) {
+		if (conditionToDraw && MapEditor::editor->_map->getChunkByGlobalPosition()!=nullptr) {
 
 			std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
 
@@ -245,7 +256,10 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 					mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y),
 					mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)
 				);
-		}
+		
+            if(!chunksToEdit.empty())
+                _state = CursorOnMapState::Drawing;
+        }
 
 		return;
 	}

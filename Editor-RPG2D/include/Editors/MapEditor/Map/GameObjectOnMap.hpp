@@ -14,6 +14,7 @@ public:
 
 	void drawFrame();
 
+	virtual sf::Vector2i getPosition();
 	virtual void setPosition(sf::Vector2i position);
 	virtual void update();
 	virtual void draw();

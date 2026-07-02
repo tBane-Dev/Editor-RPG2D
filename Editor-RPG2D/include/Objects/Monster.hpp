@@ -26,6 +26,7 @@ public:
 	Monster(std::weak_ptr<GameObject> prefab);
 	~Monster();
 
+	virtual sf::Vector2i getPosition();
 	virtual void setPosition(sf::Vector2i position);
 	virtual void update();
 

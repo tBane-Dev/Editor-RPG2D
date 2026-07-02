@@ -2,14 +2,16 @@
 #include <SFML/Graphics.hpp>
 #include "GUIManager.hpp"
 #include "Editors/MapEditor/Map/Chunk.hpp"
-
+#include "Editors/MapEditor/Map/GhostChunk.hpp"
 class Map : public Element {
 public:
 	std::vector<std::shared_ptr<Chunk>> _chunks;
+	std::shared_ptr<GhostChunk> _ghostChunk;
 
 	Map();
 	~Map();
 
+	void addChunk(std::shared_ptr<Chunk> chunk, int tileType);
 	void create(int width, int height);
 
 	void drawCircle(sf::Vector2i center, int radius, int type);
@@ -22,6 +24,7 @@ public:
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
+	void update();
 	void draw();
 };
 

@@ -258,6 +258,12 @@ void TexturesManager::loadAllTextures() {
 		texturePaths.push_back(L"assets\\tex\\boulder_2.png");
 		texturePaths.push_back(L"assets\\tex\\monsters\\monster.png");
 
+        // Ghost Chunks
+		texturePaths.push_back(L"assets\\tex\\ghost_chunk_plus.png");
+		texturePaths.push_back(L"assets\\tex\\ghost_chunk_plus_hover.png");
+		texturePaths.push_back(L"assets\\tex\\ghost_chunk_plus_press.png");
+
+
 
         // load all textures
         for (auto& path : texturePaths) {

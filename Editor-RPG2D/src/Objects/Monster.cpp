@@ -36,6 +36,10 @@ Monster::~Monster() {
 
 }
 
+sf::Vector2i Monster::getPosition() {
+	return _basePosition;
+}
+
 void Monster::setPosition(sf::Vector2i position) {
 	GameObjectOnMap::setPosition(position);
 
