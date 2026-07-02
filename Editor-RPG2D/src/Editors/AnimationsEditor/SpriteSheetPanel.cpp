@@ -6,6 +6,7 @@
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
 #include "Windows/FileDialog/FileDialog.hpp"
+#include "ShadersManager.hpp"
 
 namespace AnimationsEditor {
 

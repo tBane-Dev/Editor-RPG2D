@@ -5,6 +5,7 @@
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
+#include "ShadersManager.hpp"
 
 namespace AnimationsEditor {
 

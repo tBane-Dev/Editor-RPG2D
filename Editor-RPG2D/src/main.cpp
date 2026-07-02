@@ -18,6 +18,7 @@
 #include "ShadersManager.hpp"
 #include "PrefabsManager.hpp"
 
+#include "Cursor.hpp"
 #include "WindowsManager.hpp"
 
 #include "EditorsManager.hpp"

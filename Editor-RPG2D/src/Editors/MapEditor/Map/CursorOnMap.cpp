@@ -12,6 +12,7 @@
 #include <typeinfo>
 #include "Animator.hpp"
 #include "DebugLog.hpp"
+#include <set>
 
 std::vector<std::vector<std::vector<bool>>> circle_brushes = {
 
