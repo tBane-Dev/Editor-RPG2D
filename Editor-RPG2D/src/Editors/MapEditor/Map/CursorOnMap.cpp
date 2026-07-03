@@ -321,6 +321,9 @@ void CursorOnMap::draw()
 	if(!(GUI_manager->Element_hovered == MapEditor::editor->_map || GUI_manager->Element_hovered == nullptr))
 		return;
 
+    if(MapEditor::editor->_main_menu->_state != Components::MainMenuStates::Closed)
+		return;
+
     Main::render_window->setView(MapEditor::editor->_camera->_view);
 
     if (_object.lock()->_type == ObjectType::Terrain) {

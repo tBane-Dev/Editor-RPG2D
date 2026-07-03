@@ -145,7 +145,7 @@ namespace MapEditor {
 		_main_menu->update();
 		_palette->update();
 
-		if (!Main::windows_manager->get_back() && _main_menu->_state == Components::MainMenuStates::Closed) {
+		if (!Main::windows_manager->get_back()) {
 			_camera->update();
 			_cursor_on_map->update();
 		}
