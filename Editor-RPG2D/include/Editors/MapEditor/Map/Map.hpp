@@ -3,6 +3,8 @@
 #include "GUIManager.hpp"
 #include "Editors/MapEditor/Map/Chunk.hpp"
 #include "Editors/MapEditor/Map/GhostChunk.hpp"
+#include <fstream>
+
 class Map : public Element {
 public:
 	std::vector<std::shared_ptr<Chunk>> _chunks;
@@ -21,6 +23,9 @@ public:
 	std::shared_ptr<Chunk> getChunkByGlobalPosition();
 	std::shared_ptr<Tile> getTileByTileGlobalCoords(int x, int y);
 	sf::IntRect getRect();
+
+	void save(std::ofstream& saver);
+	void load(std::ifstream& loader);
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

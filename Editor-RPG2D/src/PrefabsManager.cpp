@@ -2,6 +2,9 @@
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "Objects/Nature.hpp"
+#include "BinaryWriter.hpp"
+#include "BinaryReader.hpp"
+#include "Objects/Collider.hpp"
 
 PrefabsManager::PrefabsManager() {
 	_prefabs.clear();
@@ -93,6 +96,75 @@ void PrefabsManager::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::s
 
     addPrefab(newPrefab);
 }
+
+void PrefabsManager::save(std::ofstream& saver) {
+
+	BinaryWriter writer(saver);
+
+    writer.write_int32(_prefabs.size());
+    
+    for (auto& prefab : _prefabs) {
+        
+        if (prefab->_type == ObjectType::Monster) {
+			std::shared_ptr<MonsterPrefab> monsterPrefab = std::dynamic_pointer_cast<MonsterPrefab>(prefab);
+			writer.write_int8((int)monsterPrefab->_type);
+            writer.write_wstring(monsterPrefab->_name);
+			saveCollider(monsterPrefab->getCollider(), saver);
+            writer.write_Vector2i(monsterPrefab->_origin);
+            writer.write_int32(monsterPrefab->_stepSize);
+            writer.write_wstring((!monsterPrefab->_animations.expired()) ? monsterPrefab->_animations.lock()->_path : L"");
+
+        }
+        
+        if (prefab->_type == ObjectType::Nature) {
+			std::shared_ptr<NaturePrefab> naturePrefab = std::dynamic_pointer_cast<NaturePrefab>(prefab);
+			writer.write_int8((int)naturePrefab->_type);
+            writer.write_wstring(naturePrefab->_name);
+            saveCollider(naturePrefab->getCollider(), saver);
+			writer.write_Vector2i(naturePrefab->_origin);
+            writer.write_wstring((!naturePrefab->_animations.expired()) ? naturePrefab->_animations.lock()->_path : L"");
+
+
+        }
+    }
+}
+
+void PrefabsManager::load(std::ifstream& loader) {
+    
+    _prefabs.clear();
+
+    BinaryReader reader(loader);
+    
+    int prefabsCount = reader.read_int32();
+
+    for (int i = 0; i < prefabsCount; i++) {
+        int type = reader.read_int8();
+
+        if(type == (int)ObjectType::Monster) {
+
+            std::wstring name = reader.read_wstring();
+            std::shared_ptr<Collider> collider = loadCollider(loader);
+            sf::Vector2i origin = reader.read_Vector2i();
+            int stepSize = reader.read_int32();
+            std::wstring animationsPath = reader.read_wstring();
+            std::shared_ptr<Animations> animations = animations_manager->getAnimations(animationsPath).lock();
+            std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(name, animations, origin, stepSize, collider);
+            addPrefab(prefab);
+		}
+
+        if(type == (int)ObjectType::Nature) {
+            std::wstring name = reader.read_wstring();
+            std::shared_ptr<Collider> collider = loadCollider(loader);
+            sf::Vector2i origin = reader.read_Vector2i();
+            std::wstring animationsPath = reader.read_wstring();
+            std::shared_ptr<Animations> animations = animations_manager->getAnimations(animationsPath).lock();
+            std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(name, animations, origin, collider);
+            addPrefab(prefab);
+		}
+    }
+}
+
+
 
 void PrefabsManager::loadPrefabs() {
 	

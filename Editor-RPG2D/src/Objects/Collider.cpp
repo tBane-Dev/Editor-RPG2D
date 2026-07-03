@@ -1,5 +1,7 @@
 #include "Objects/Collider.hpp"
 #include "RenderWindow.hpp"
+#include "BinaryWriter.hpp"
+#include "BinaryReader.hpp"
 
 Collider::Collider() {
 
@@ -103,4 +105,49 @@ void CircularCollider::draw(sf::Vector2i position, sf::Vector2f scale) {
 	collider.setPosition(sf::Vector2f(position));
 
 	Main::render_window->draw(collider);
+}
+
+void saveCollider(std::shared_ptr<Collider> collider, std::ofstream& saver) {
+	BinaryWriter writer(saver);
+
+	writer.write_int8((int)collider->_type);
+
+	if(collider->_type == ColliderType::Rectangular) {
+		RectangularCollider* rectangularCollider = dynamic_cast<RectangularCollider*>(collider.get());
+		writer.write_int32(rectangularCollider->_rect.position.x);
+		writer.write_int32(rectangularCollider->_rect.position.y);
+		writer.write_int32(rectangularCollider->_rect.size.x);
+		writer.write_int32(rectangularCollider->_rect.size.y);
+	}
+	else if(collider->_type == ColliderType::Circular) {
+		CircularCollider* circularCollider = dynamic_cast<CircularCollider*>(collider.get());
+		writer.write_int32(circularCollider->_x);
+		writer.write_int32(circularCollider->_y);
+		writer.write_int32(circularCollider->_radiusX);
+		writer.write_int32(circularCollider->_radiusY);
+	}
+
+}
+
+std::shared_ptr<Collider> loadCollider(std::ifstream& loader) {
+	BinaryReader reader(loader);
+
+	int type = reader.read_int8();
+
+	if(type == (int)ColliderType::Rectangular) {
+		int x = reader.read_int32();
+		int y = reader.read_int32();
+		int w = reader.read_int32();
+		int h = reader.read_int32();
+		return std::make_shared<RectangularCollider>(x, y, w, h);
+	}
+	else if(type == (int)ColliderType::Circular) {
+		int x = reader.read_int32();
+		int y = reader.read_int32();
+		int radiusX = reader.read_int32();
+		int radiusY = reader.read_int32();
+		return std::make_shared<CircularCollider>(x, y, radiusX, radiusY);
+	}
+
+	return nullptr;
 }

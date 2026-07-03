@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "TexturesManager.hpp"
+#include <fstream>
 
 class Animations {
 public:
@@ -35,6 +36,9 @@ public:
     int getAnimationsID(std::wstring path);
     void removeAnimations(int index);
     int getAnimationsCount();
+
+    void save(std::ofstream& saver);
+    void load(std::ifstream& loader);
 
     void loadAnimations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount);
     void loadAllAnimations();

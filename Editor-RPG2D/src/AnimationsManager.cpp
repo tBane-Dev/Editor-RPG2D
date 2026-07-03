@@ -1,5 +1,7 @@
 #include "AnimationsManager.hpp"
 #include "DebugLog.hpp"
+#include "BinaryWriter.hpp"
+#include "BinaryReader.hpp"
 
 Animations::Animations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount, bool& loadingStatus, int offsetX, int offsetY) {
 	
@@ -114,6 +116,59 @@ int AnimationsManager::addAnimations(std::shared_ptr<Animations> animations) {
 	return _animations.size() - 1;
 }
 
+void AnimationsManager::save(std::ofstream& saver) {
+
+	BinaryWriter writer(saver);
+
+	writer.write_int32(_animations.size());
+	//DebugLog(L"Saving animations count: " + std::to_wstring(_animations.size()));
+		
+	for (auto& a : _animations) {
+		writer.write_wstring(a->_path);
+		writer.write_Vector2i(a->_frameSize);
+		writer.write_int32(a->_animationsCount);
+		writer.write_int32(a->_framesCount);
+		writer.write_int32(a->_offsetX);
+		writer.write_int32(a->_offsetY);
+		writer.write_Image(a->_texture->_texture->copyToImage());
+
+		//DebugLog(L"Saved animations: " + a->_path);
+		//DebugLog(L"Frame size: " + std::to_wstring(a->_frameSize.x) + L"x" + std::to_wstring(a->_frameSize.y));
+		//DebugLog(L"Animations count: " + std::to_wstring(a->_animationsCount));
+		//DebugLog(L"Frames count: " + std::to_wstring(a->_framesCount));
+		//DebugLog(L"Offset: " + std::to_wstring(a->_offsetX) + L"," + std::to_wstring(a->_offsetY));
+		//DebugLog(L"Texture size: " + std::to_wstring(a->_texture->getSize().x) + L"x" + std::to_wstring(a->_texture->getSize().y));
+		//DebugLog(L"----");
+	}
+}
+
+void AnimationsManager::load(std::ifstream& loader) {
+	BinaryReader reader(loader);
+
+	_animations.clear();
+
+	int animationsCount = reader.read_int32();
+
+	for (int i = 0; i < animationsCount; i++) {
+		std::wstring path = reader.read_wstring();
+		sf::Vector2i frameSize = reader.read_Vector2i();
+		int animationsCount = reader.read_int32();
+		int framesCount = reader.read_int32();
+		int offsetX = reader.read_int32();
+		int offsetY = reader.read_int32();
+		std::shared_ptr<sf::Image> image = std::make_shared<sf::Image>(reader.read_Image());
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>(path, image);
+		addAnimations(path, texture, frameSize, animationsCount, framesCount);
+
+		//DebugLog(L"Loaded animations: " + path);
+		//DebugLog(L"Frame size: " + std::to_wstring(frameSize.x) + L"x" + std::to_wstring(frameSize.y));
+		//DebugLog(L"Animations count: " + std::to_wstring(animationsCount));
+		//DebugLog(L"Frames count: " + std::to_wstring(framesCount));
+		//DebugLog(L"Offset: " + std::to_wstring(offsetX) + L"," + std::to_wstring(offsetY));
+		//DebugLog(L"Texture size: " + std::to_wstring(texture->getSize().x) + L"x" + std::to_wstring(texture->getSize().y));
+		//DebugLog(L"----");
+	}
+}
 
 void AnimationsManager::loadAnimations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount) {
 	

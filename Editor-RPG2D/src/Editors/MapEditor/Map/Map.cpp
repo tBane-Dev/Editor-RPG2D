@@ -3,6 +3,8 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "RenderWindow.hpp"
 #include "ShadersManager.hpp"
+#include "BinaryWriter.hpp"
+#include "BinaryReader.hpp"
 
 Map::Map() {
 	_ghostChunk = std::make_shared<GhostChunk>();
@@ -174,6 +176,61 @@ sf::IntRect Map::getRect() {
 	);
 
 	return rect;
+}
+
+void Map::save(std::ofstream& saver) {
+	BinaryWriter writer(saver);
+
+	writer.write_int32((int32_t)_chunks.size());
+
+	for (auto& chunk : _chunks) {
+		writer.write_Vector2i(chunk->_coords);
+
+		for (int ty = 0; ty < Chunk::tilesRows; ty++) {
+			for (int tx = 0; tx < Chunk::tilesCols; tx++) {
+				int index = ty * Chunk::tilesCols + tx;
+				writer.write_int8(chunk->_tiles[index]->_type);
+			}
+		}
+	}
+}
+
+void Map::load(std::ifstream& loader) {
+
+	// clear all
+	_chunks.clear();
+
+	BinaryReader reader(loader);
+
+	int chunksCount = reader.read_int32();
+
+	for(int i=0; i < chunksCount; i++) {
+
+		sf::Vector2i chunkCoords = reader.read_Vector2i();
+		std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>(chunkCoords.x, chunkCoords.y);
+
+		for (int ty = 0; ty < Chunk::tilesRows; ty++) {
+			for (int tx = 0; tx < Chunk::tilesCols; tx++) {
+				std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+				tile->_type = reader.read_int8();
+				tile->_coords.x = chunkCoords.x * Chunk::tilesCols + tx;
+				tile->_coords.y = chunkCoords.y * Chunk::tilesRows + ty;
+				tile->_position.x = (float)(tile->_coords.x * Tile::tileSize);
+				tile->_position.y = (float)(tile->_coords.y * Tile::tileSize);
+				chunk->_tiles.push_back(tile);
+			}
+		}
+
+		_chunks.push_back(chunk);
+	}
+
+	for (auto& chunk : _chunks) {
+		chunk->generateVertexArray(
+			getChunkByCoords(chunk->_coords.x - 1, chunk->_coords.y - 1), getChunkByCoords(chunk->_coords.x, chunk->_coords.y - 1), getChunkByCoords(chunk->_coords.x + 1, chunk->_coords.y - 1),
+			getChunkByCoords(chunk->_coords.x - 1, chunk->_coords.y), getChunkByCoords(chunk->_coords.x + 1, chunk->_coords.y),
+			getChunkByCoords(chunk->_coords.x - 1, chunk->_coords.y + 1), getChunkByCoords(chunk->_coords.x, chunk->_coords.y + 1), getChunkByCoords(chunk->_coords.x + 1, chunk->_coords.y + 1)
+		);
+	}
 }
 
 void Map::cursorHover() {

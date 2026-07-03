@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/GameObject.hpp"
-
+#include <fstream>
 
 class PrefabsManager {
 public:
@@ -17,6 +17,10 @@ public:
 	std::vector<std::shared_ptr<GameObject>> getPrefabs(ObjectType type);
     void removePrefabsByAnimations(int animationID);
     void replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab);
+
+	void save(std::ofstream& saver);
+	void load(std::ifstream& loader);
+
     void loadPrefabs();
 };
 

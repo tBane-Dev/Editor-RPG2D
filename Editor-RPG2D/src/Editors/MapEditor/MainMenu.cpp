@@ -4,6 +4,11 @@
 #include "Editors/PrefabsEditor/Editor.hpp"
 #include "WindowsManager.hpp" // TO-DO - to delete
 #include "Windows/FileDialog/FileDialog.hpp" // TO-DO - to delete
+#include "DebugLog.hpp"
+
+#include <fstream>
+#include "Editors/MapEditor/Editor.hpp"
+#include "Editors/MapEditor/Map/Map.hpp"
 
 namespace MapEditor {
 
@@ -41,12 +46,24 @@ namespace MapEditor {
 			L"Ctrl+O"
 		);
 
-		// TO-DO - to delete
 		_file_open_project->_onclick_func = [this]() {
 			closeMenu();
-			Main::windows_manager->push_back(std::make_shared<FileDialog>(L"Test File Dialog Window 1"));
+			std::shared_ptr<FileDialog> load_window = std::make_shared<FileDialog>(L"Open Project");
+			std::function<void()> load_function = [load_window]() {
+				std::ifstream loader;
+				loader.open(load_window->getPathFile(), std::ios::in | std::ios::binary);
+				animations_manager->load(loader);
+				prefabs_manager->load(loader);
+				MapEditor::editor->_map->load(loader);
+				MapEditor::editor->_game_objects->load(loader);
+				loader.close();
+
+				MapEditor::editor->_palette->_slots->loadObjects();
 			};
-		//
+
+			load_window->setFunction(load_function);
+			Main::windows_manager->push_back(load_window);
+			};
 
 		_file_save_project = std::make_shared<OptionWithIcon>(
 			L"Save project",
@@ -54,6 +71,23 @@ namespace MapEditor {
 			textures_manager->getTexture(L"assets\\tex\\main_menu\\save_project.png"),
 			L"Ctrl+S"
 		);
+
+		_file_save_project->_onclick_func = [this]() {
+			closeMenu();
+			std::shared_ptr<FileDialog> save_window = std::make_shared<FileDialog>(L"Save Project");
+			std::function<void()> save_function = [save_window]() {
+				std::ofstream saver;
+				saver.open(save_window->getPathFile(), std::ios::out | std::ios::trunc | std::ios::binary);
+				animations_manager->save(saver);
+				prefabs_manager->save(saver);
+				MapEditor::editor->_map->save(saver);
+				MapEditor::editor->_game_objects->save(saver);
+				saver.close();
+
+			};
+			save_window->setFunction(save_function);
+			Main::windows_manager->push_back(save_window);
+		};
 
 		_file_exit = std::make_shared<OptionWithIcon>(
 			L"Exit",

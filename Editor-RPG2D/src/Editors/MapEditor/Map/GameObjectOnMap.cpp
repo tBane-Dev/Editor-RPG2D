@@ -8,7 +8,15 @@
 
 GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 	_prefab = prefab;
-	_animator = std::make_shared<Animator>(prefab.lock()->getAnimations(), 0.2f);
+
+	if(_prefab.expired()) {
+		_type = ObjectType::None;
+	}
+	else {
+		_type = _prefab.lock()->_type;
+	}
+
+	_animator = std::make_shared<Animator>((!_prefab.expired())?prefab.lock()->getAnimations() : std::weak_ptr<Animations>(), 0.2f);
 
 	_animator->play();
 	_position = sf::Vector2i(0, 0);

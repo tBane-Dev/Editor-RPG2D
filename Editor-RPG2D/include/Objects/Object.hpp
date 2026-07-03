@@ -5,7 +5,7 @@ enum class ObjectType { None, Terrain, Monster, Nature };
 
 class Object {
 public:
-	ObjectType _type = ObjectType::None;
+	ObjectType _type;
 
 	Object();
 	virtual ~Object();

@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
-
+#include <fstream>
 
 class GameObjectsOnMap {
 public:
@@ -15,6 +15,9 @@ public:
     void removeGameObjectsByAnimations(int animationID);
     void replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab);
     void sort();
+
+    void save(std::ofstream& saver);
+    void load(std::ifstream& loader);
 
     virtual void update();
     virtual void draw();

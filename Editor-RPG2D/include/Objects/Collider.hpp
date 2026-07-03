@@ -35,3 +35,6 @@ public:
 	virtual bool cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1, 1));
 	virtual void draw(sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1,1));
 };
+
+void saveCollider(std::shared_ptr<Collider> collider, std::ofstream& saver);
+std::shared_ptr<Collider> loadCollider(std::ifstream& loader);
