@@ -250,7 +250,7 @@ void Slots::updateObjects() {
 	for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y+1); i++) {
 		if (i + startIndex < prefabs.size()) {
 			_slots[i]->_object = prefabs[i + startIndex];
-			_slots[i]->_animator = std::make_shared<Animator>(prefabs[i + startIndex]->getAnimations(), 0.2f);
+			_slots[i]->_animator = std::make_shared<Animator>((prefabs[i]->getAnimations().expired()) ? _emptySlotAnimation : prefabs[i]->getAnimations(), 0.2f);
 			_slots[i]->_animator->play();
 			_slots[i]->setActive(true);
 		}

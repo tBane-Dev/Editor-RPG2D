@@ -58,7 +58,7 @@ namespace MapEditor {
 				MapEditor::editor->_game_objects->load(loader);
 				loader.close();
 
-				MapEditor::editor->_palette->_slots->loadObjects();
+				MapEditor::editor->_palette->_slots->updateObjects();
 			};
 
 			load_window->setFunction(load_function);
