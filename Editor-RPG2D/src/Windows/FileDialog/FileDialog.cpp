@@ -7,7 +7,7 @@
 
 int FileDialog::_padding = 8;
 
-FileDialog::FileDialog(std::wstring title, std::function<void()> function) : Main::Window(title, sf::Vector2i(640, 440), sf::Vector2i(100, 100)) {
+FileDialog::FileDialog(std::wstring title, std::wstring confirmButtonText, std::function<void()> function) : Main::Window(title, sf::Vector2i(640, 440), sf::Vector2i(100, 100)) {
 	
 	_leftRectWidth = 224;
 	_bottomRectHeight = 96+16+8;
@@ -48,7 +48,7 @@ FileDialog::FileDialog(std::wstring title, std::function<void()> function) : Mai
 	createVisibleLocations();
 	setTheVisibleLocationsSize();
 	setTheVisibleLocations();
-	createBottom(function);
+	createBottom(confirmButtonText, function);
 
 	_leftScrollbar = std::make_shared<Scrollbar>(
 		_leftInnerRect->position.x + _leftInnerRect->size.x + 4,
@@ -479,7 +479,7 @@ void FileDialog::setTheVisibleLocations() {
 	}
 }
 
-void FileDialog::createBottom(std::function<void()> function) {
+void FileDialog::createBottom(std::wstring confirmButtonText, std::function<void()> function) {
 	_fileNameText = std::make_unique<sf::Text>(basicFont, L"Filename", basic_text_size);
 	_fileNameText->setFillColor(basic_text_color);
 	_fileNameText->setPosition(sf::Vector2f(_bottomInnerRect->position + sf::Vector2i(32, 16+4)));
@@ -495,7 +495,7 @@ void FileDialog::createBottom(std::function<void()> function) {
 	sf::Vector2i position = _fileNameInput->getPosition() + sf::Vector2i(_fileNameInput->getSize().x - 2*128, 40);
 
 	_confirmButton = std::make_shared<ButtonWithTextAndSprite>(
-		L"select",
+		confirmButtonText,
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_hover.png"),
 		textures_manager->getTexture(L"assets\\tex\\windows\\file_dialog\\button_press.png"),

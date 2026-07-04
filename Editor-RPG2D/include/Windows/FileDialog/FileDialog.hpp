@@ -58,7 +58,7 @@ public:
 	std::shared_ptr<ButtonWithTextAndSprite> _confirmButton;
 	std::shared_ptr<ButtonWithTextAndSprite> _cancelButton;
 
-	FileDialog(std::wstring title, std::function<void()> function = { });
+	FileDialog(std::wstring title, std::wstring confirmButtonText, std::function<void()> function = { });
 	~FileDialog();
 
 	void createTop();
@@ -75,7 +75,7 @@ public:
 	void setTheVisibleLocationsSize();
 	void setTheVisibleLocations();
 
-	void createBottom(std::function<void()> function);
+	void createBottom(std::wstring confirmButtonText, std::function<void()> function);
 
 	void setFunction(std::function<void()> function);
 	std::wstring getPathFile();

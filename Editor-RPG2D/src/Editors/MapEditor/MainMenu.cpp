@@ -48,7 +48,7 @@ namespace MapEditor {
 
 		_file_open_project->_onclick_func = [this]() {
 			closeMenu();
-			std::shared_ptr<FileDialog> load_window = std::make_shared<FileDialog>(L"Open Project");
+			std::shared_ptr<FileDialog> load_window = std::make_shared<FileDialog>(L"Open Project", L"Open");
 			std::function<void()> load_function = [load_window]() {
 				std::ifstream loader;
 				loader.open(load_window->getPathFile(), std::ios::in | std::ios::binary);
@@ -74,7 +74,7 @@ namespace MapEditor {
 
 		_file_save_project->_onclick_func = [this]() {
 			closeMenu();
-			std::shared_ptr<FileDialog> save_window = std::make_shared<FileDialog>(L"Save Project");
+			std::shared_ptr<FileDialog> save_window = std::make_shared<FileDialog>(L"Save Project", L"Save");
 			std::function<void()> save_function = [save_window]() {
 				std::ofstream saver;
 				saver.open(save_window->getPathFile(), std::ios::out | std::ios::trunc | std::ios::binary);
