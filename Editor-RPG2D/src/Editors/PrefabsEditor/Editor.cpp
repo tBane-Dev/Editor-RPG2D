@@ -1,4 +1,5 @@
 #include "Editors/PrefabsEditor/Editor.hpp"
+#include "Editors/PrefabsEditor/Palette.hpp"
 #include "DebugLog.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"

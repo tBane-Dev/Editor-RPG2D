@@ -120,4 +120,8 @@ namespace PrefabsEditor {
 			}
 		);
 	}
+
+	void Palette::draw() {
+		Components::Palette::draw();
+	}
 }

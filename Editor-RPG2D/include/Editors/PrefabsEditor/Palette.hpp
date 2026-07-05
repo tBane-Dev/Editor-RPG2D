@@ -9,6 +9,8 @@ namespace PrefabsEditor {
 		~Palette();
 
 		virtual void loadAll(ObjectType type);
+		virtual void draw();
+
 	};
 
 }

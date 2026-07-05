@@ -191,19 +191,17 @@ namespace Components {
 
 		GUI_manager->setView();
 
-		if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value == 0) {
-			sf::RectangleShape rect(sf::Vector2f(_rect.size));
-			rect.setFillColor(sf::Color(31, 31, 31));
-			rect.setPosition(sf::Vector2f(_rect.position));
-			Main::render_window->draw(rect);
+		sf::RectangleShape rect(sf::Vector2f(_rect.size));
+		rect.setFillColor(sf::Color(31, 31, 31));
+		rect.setPosition(sf::Vector2f(_rect.position));
+		Main::render_window->draw(rect);
 
-			_categories->draw();
-			if (_categories->_selectedType == ObjectType::Terrain)
-				_tools->draw();
-			_slots->draw();
+		_categories->draw();
+		if (_categories->_selectedType == ObjectType::Terrain)
+			_tools->draw();
+		_slots->draw();
 
-			GUI_manager->setView();
-		}
+		GUI_manager->setView();
 
 
 

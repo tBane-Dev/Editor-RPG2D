@@ -36,6 +36,6 @@ namespace Components {
 		void cursorHover();
 		void handleEvent(const sf::Event& event);
 		void update();
-		void draw();
+		virtual void draw();
 	};
 }

@@ -158,7 +158,8 @@ void AnimationsManager::load(std::ifstream& loader) {
 		int offsetY = reader.read_int32();
 		std::shared_ptr<sf::Image> image = std::make_shared<sf::Image>(reader.read_Image());
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>(path, image);
-		addAnimations(path, texture, frameSize, animationsCount, framesCount);
+		std::shared_ptr<Animations> animations = std::make_shared<Animations>(path, texture, frameSize, animationsCount, framesCount, offsetX, offsetY);
+		addAnimations(animations);
 
 		//DebugLog(L"Loaded animations: " + path);
 		//DebugLog(L"Frame size: " + std::to_wstring(frameSize.x) + L"x" + std::to_wstring(frameSize.y));

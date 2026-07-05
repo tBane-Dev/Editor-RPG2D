@@ -159,4 +159,10 @@ namespace MapEditor {
 			);
 		}
 	}
+
+	void Palette::draw() {
+		if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value == 0) {
+			Components::Palette::draw();
+		}
+	}
 }
