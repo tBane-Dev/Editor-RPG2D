@@ -67,7 +67,7 @@ void GhostChunk::cursorHover() {
 			if (offsetY != 0) MapEditor::editor->_camera->_position.y += (float)pixelOffsetY;
 
 			// move the gameobjects
-			for(auto& go : MapEditor::editor->_game_objects->_gameObjectsOnMap) {
+			for(auto& go : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
 
 				sf::Vector2i pos = go->getPosition();
 				if(offsetX != 0) pos.x += pixelOffsetX;
@@ -118,6 +118,8 @@ void GhostChunk::cursorHover() {
 					map->getChunkByCoords(x - 1, y + 1), map->getChunkByCoords(x, y + 1), map->getChunkByCoords(x + 1, y + 1)
 				);
 			}
+
+			map->setVisibleChunks();
 		};
 
 		if (_rect.contains(MapEditor::editor->_cursor_on_map->_position)) {

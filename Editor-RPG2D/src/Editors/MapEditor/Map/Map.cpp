@@ -5,6 +5,8 @@
 #include "ShadersManager.hpp"
 #include "BinaryWriter.hpp"
 #include "BinaryReader.hpp"
+#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include "DebugLog.hpp"
 
 Map::Map() {
 	_ghostChunk = std::make_shared<GhostChunk>();
@@ -63,11 +65,8 @@ void Map::create(int width, int height) {
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>(x,y);
-
+			std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>(x, y);
 			addChunk(chunk, tileType);
-			
-
 		}
 	}
 }
@@ -141,6 +140,14 @@ std::shared_ptr<Chunk> Map::getChunkByGlobalPosition() {
 	return getChunkByTileGlobalCoords(x, y);
 }
 
+std::shared_ptr<Chunk> Map::getChunkByGlobalPosition(sf::Vector2i position) {
+
+	int x = std::floor((float)position.x / (float)Tile::tileSize);
+	int y = std::floor((float)position.y / (float)Tile::tileSize);
+
+	return getChunkByTileGlobalCoords(x, y);
+}
+
 std::shared_ptr<Tile> Map::getTileByTileGlobalCoords(int x, int y) {
 
 	std::shared_ptr<Chunk> chunk = getChunkByTileGlobalCoords(x, y);
@@ -176,6 +183,21 @@ sf::IntRect Map::getRect() {
 	);
 
 	return rect;
+}
+
+void Map::setVisibleChunks() {
+
+	for (auto& chunk : _visibleChunks)
+		chunk->_isVisible = false;
+
+	_visibleChunks.clear();
+	MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.clear();
+	
+	for(auto& chunk : _chunks) {
+		if (MapEditor::editor->_camera->_visibleRect.findIntersection(chunk->getGameObjectsOnMapRect())) {
+			chunk->setVisible();
+		}
+	}
 }
 
 void Map::save(std::ofstream& saver) {
@@ -231,6 +253,8 @@ void Map::load(std::ifstream& loader) {
 			getChunkByCoords(chunk->_coords.x - 1, chunk->_coords.y + 1), getChunkByCoords(chunk->_coords.x, chunk->_coords.y + 1), getChunkByCoords(chunk->_coords.x + 1, chunk->_coords.y + 1)
 		);
 	}
+
+	setVisibleChunks();
 }
 
 void Map::cursorHover() {
@@ -258,10 +282,14 @@ void Map::handleEvent(const sf::Event& event) {
 
 
 	_ghostChunk->handleEvent(event);
+
 }
 
 void Map::update() {
 	_ghostChunk->update();
+
+	if(MapEditor::editor->_camera->_isMoving)
+		setVisibleChunks();
 }
 
 void Map::draw() {
@@ -274,7 +302,7 @@ void Map::draw() {
 
 	Main::render_window->setView(camera->_view);
 
-	for (auto& chunk : _chunks) {
+	for (auto& chunk : _visibleChunks) {
 		chunk->draw();
 	}
 
@@ -312,7 +340,7 @@ void Map::draw() {
 		rect.setFillColor(sf::Color(127, 47, 47, 127));
 		Main::render_window->draw(rect, rs);
 
-		for (auto& chunk : _chunks) {
+		for (auto& chunk : _visibleChunks) {
 			chunk->drawCoords();
 		}
 	}

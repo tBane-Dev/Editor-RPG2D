@@ -8,6 +8,7 @@
 class Map : public Element {
 public:
 	std::vector<std::shared_ptr<Chunk>> _chunks;
+	std::vector<std::shared_ptr<Chunk>> _visibleChunks;
 	std::shared_ptr<GhostChunk> _ghostChunk;
 
 	Map();
@@ -21,8 +22,11 @@ public:
 	std::shared_ptr<Chunk> getChunkByCoords(int x, int y);
 	std::shared_ptr<Chunk> getChunkByTileGlobalCoords(int x, int y);
 	std::shared_ptr<Chunk> getChunkByGlobalPosition();
+	std::shared_ptr<Chunk> getChunkByGlobalPosition(sf::Vector2i position);
 	std::shared_ptr<Tile> getTileByTileGlobalCoords(int x, int y);
 	sf::IntRect getRect();
+
+	void setVisibleChunks();
 
 	void save(std::ofstream& saver);
 	void load(std::ifstream& loader);

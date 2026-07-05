@@ -3,11 +3,16 @@
 #include "Objects/GameObject.hpp"
 #include "Animator.hpp"
 
+
+
 class GameObjectOnMap : public Object {
 public:
+
 	std::weak_ptr<GameObject> _prefab;
 	std::shared_ptr<Animator> _animator;
     sf::Vector2i _position;
+
+	std::unique_ptr<sf::Text> _text;
 
 	GameObjectOnMap(std::weak_ptr<GameObject> prefab);
 	~GameObjectOnMap();

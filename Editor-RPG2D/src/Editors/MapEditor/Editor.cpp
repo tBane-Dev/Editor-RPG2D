@@ -29,7 +29,6 @@ namespace MapEditor {
 		_map->drawCircle(sf::Vector2i(24, 28), 16, 4);
 		_map->drawCircle(sf::Vector2i(48, 16), 16, 4);
 		_map->drawCircle(sf::Vector2i(42, 28), 16, 4);
-
 	}
 
 	void Editor::createCursorOnMap() {
@@ -95,6 +94,10 @@ namespace MapEditor {
 		_camera->update();
 	}
 
+	void Editor::setVisibleChunks() {
+		_map->setVisibleChunks();
+	}
+
 	void Editor::createMainMenu() {
 		_main_menu = std::make_shared<MainMenu>();
 	}
@@ -128,7 +131,6 @@ namespace MapEditor {
 		if (_main_menu->_state != Components::MainMenuStates::Closed)
 			return;
 
-		_camera->handleEvent(event);
 		_map->handleEvent(event);
 		_cursor_on_map->handleEvent(event);
 		_palette->handleEvent(event);
@@ -138,19 +140,19 @@ namespace MapEditor {
 
 	void Editor::update() {
 
-		_game_objects->update();
-
-		_game_objects->sort();
+		
 
 		_main_menu->update();
 		_palette->update();
 
-		if (!Main::windows_manager->get_back()) {
-			_camera->update();
-			_cursor_on_map->update();
-		}
+		_camera->update();
+		_cursor_on_map->update();
 		
 		_map->update();
+
+		_game_objects->update();
+
+		_game_objects->sort();
 
 	}
 

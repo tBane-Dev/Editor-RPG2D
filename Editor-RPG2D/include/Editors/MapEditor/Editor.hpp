@@ -28,6 +28,7 @@ namespace MapEditor {
 		void createGameObjects();
 		void createCamera();
 		void createCursorOnMap();
+		void setVisibleChunks();
 		void createMainMenu();
 		void createPalette();
 

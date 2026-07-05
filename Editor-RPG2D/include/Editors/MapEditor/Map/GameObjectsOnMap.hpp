@@ -5,15 +5,17 @@
 
 class GameObjectsOnMap {
 public:
-    std::vector<std::shared_ptr<GameObjectOnMap>> _gameObjectsOnMap;
+    std::vector<std::shared_ptr<GameObjectOnMap>> _visibleGameObjectsOnMap;
     
     GameObjectsOnMap();
     ~GameObjectsOnMap(); 
     
 	void addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap);
+    void removeGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap);
     void removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefab);
     void removeGameObjectsByAnimations(int animationID);
     void replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab);
+
     void sort();
 
     void save(std::ofstream& saver);

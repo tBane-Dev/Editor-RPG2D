@@ -7,6 +7,9 @@ class CameraOnMap {
 
 	sf::Vector2f _position;
 	sf::View _view;
+	bool _isMoving;
+
+	sf::IntRect _visibleRect;
 
 	CameraOnMap();
 	~CameraOnMap();

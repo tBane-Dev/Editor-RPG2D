@@ -13,6 +13,7 @@
 #include "Animator.hpp"
 #include "DebugLog.hpp"
 #include <set>
+#include "WindowsManager.hpp"
 
 std::vector<std::vector<std::vector<bool>>> circle_brushes = {
 
@@ -167,6 +168,9 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 	if(_object.expired())
 		return;
 
+    if (Main::windows_manager->get_back())
+        return;
+
     if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
         if (MapEditor::editor->_palette->_tools->_selectedTool != nullptr) {
             MapEditor::editor->_palette->_tools->setTool(MapEditor::editor->_palette->_tools->_tools[0], ToolType::None);
@@ -303,7 +307,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
 			// positioning and adding object to map
 			objectOnMap->setPosition(position);
-            MapEditor::editor->_game_objects->addGameObject(objectOnMap);
+			MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
+            MapEditor::editor->_map->setVisibleChunks();
 			return;
 		}
 

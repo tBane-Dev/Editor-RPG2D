@@ -68,6 +68,7 @@ int main() {
     MapEditor::editor->createCursorOnMap();
     MapEditor::editor->createMainMenu();
     MapEditor::editor->createPalette();
+    
 
     Main::editor_manager->push_back(MapEditor::editor);
 
@@ -78,25 +79,14 @@ int main() {
     MapEditor::editor->_camera->_position = camPos;
     MapEditor::editor->_camera->update();
     //
-    
-    // TO-DO - test windows
-    //Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(
-    //    L"Test Confirm Window",
-    //    L"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua.",
-    //    sf::Vector2i(400, 300),
-    //    sf::Vector2i(100, 100)
-    //));
-    //
-    //Main::windows_manager->push_back(std::make_shared<ConfirmDialog>(
-    //    L"Test Confirm Window 2",
-    //    L"Lorem ipsum dolor sit amet ..",
-    //    sf::Vector2i(400, 300),
-    //    sf::Vector2i(100,100)
-    //));    
-  
+
+    MapEditor::editor->setVisibleChunks();
+
     // init FPS clock
     sf::Clock FPSClock;
-    sf::Clock FPSClockUpdate;	// clock for show FPS in main loop of Editor
+    int frames = 0;
+    float elapsed = 0.0f;
+
 
     while (Main::render_window->isOpen()) {
 
@@ -110,14 +100,20 @@ int main() {
 
         Main::cursor->update();
 
-        // FPS timer
-        float FPS = 1.0f / FPSClock.restart().asSeconds();
-        if (FPSClockUpdate.getElapsedTime().asSeconds() > 0.5f) {
+        // FPS TIMER
+        float dtFPS = FPSClock.restart().asSeconds();
+        frames++;
+        elapsed += dtFPS;
+
+        if (elapsed >= 0.5f) {
+            float FPS = frames / elapsed;
+            float ms = 1000.0f / FPS;
 
             std::ostringstream ss;
-            ss << std::fixed << std::setprecision(2) << FPS << " FPS";
-            Main::render_window->setTitle("Editor - RPG2D - " + ss.str());
-            FPSClockUpdate.restart();
+            ss << "Editor - RPG2D - " << std::fixed << std::setprecision(2) << FPS << " FPS / " << std::setprecision(3) << ms << " ms";
+            Main::render_window->setTitle(ss.str());
+            frames = 0;
+            elapsed = 0.0f;
         }
 
         GUI_manager->Element_hovered = nullptr;

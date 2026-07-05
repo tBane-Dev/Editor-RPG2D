@@ -106,6 +106,22 @@ void Monster::update() {
 
 		}
 	}
+
+	sf::IntRect colliderRect;
+	if (_prefab.lock()->getCollider()->_type == ColliderType::Rectangular) {
+		std::shared_ptr<RectangularCollider> c = std::dynamic_pointer_cast<RectangularCollider>(_prefab.lock()->getCollider());
+		colliderRect = c->_rect;
+		colliderRect.position += _position;
+	}
+	else {
+		std::shared_ptr<CircularCollider> c = std::dynamic_pointer_cast<CircularCollider>(_prefab.lock()->getCollider());
+		colliderRect = sf::IntRect(sf::Vector2i(_position.x - c->_radiusX, _position.y - c->_radiusY), sf::Vector2i(2 * c->_radiusX, 2 * c->_radiusY));
+	}
+
+	if (MapEditor::editor->_camera->_visibleRect.findIntersection(colliderRect)) {
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		chunk->_isVisible = true;
+	}
 	
 }
 

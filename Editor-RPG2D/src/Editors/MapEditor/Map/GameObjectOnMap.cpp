@@ -20,6 +20,8 @@ GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 
 	_animator->play();
 	_position = sf::Vector2i(0, 0);
+
+	_text = std::make_unique<sf::Text>(basicFont, (_prefab.expired()) ? L"Unknown" : _prefab.lock()->getName(), 14);
 }
 
 GameObjectOnMap::~GameObjectOnMap() {
@@ -74,12 +76,12 @@ void GameObjectOnMap::drawFrame() {
 
 	sf::Color color = sf::Color(255, 30, 45);
 
-	sf::Text text(basicFont, _prefab.lock()->getName(), 14);
-	text.setFillColor(color);
-	text.setStyle(sf::Text::Bold);
-	text.setPosition(sf::Vector2f(x + paddingLeft, y - 10));
+	_text->setString((_prefab.expired()) ? L"Unknown" : _prefab.lock()->getName());
+	_text->setFillColor(color);
+	_text->setStyle(sf::Text::Bold);
+	_text->setPosition(sf::Vector2f(x + paddingLeft, y - 10));
 
-	auto bounds = text.getLocalBounds();
+	auto bounds = _text->getLocalBounds();
 
 	float gapStart = paddingLeft - textPadding;
 	float gapEnd = paddingLeft + bounds.size.x + textPadding;
@@ -109,7 +111,7 @@ void GameObjectOnMap::drawFrame() {
 	Main::render_window->draw(left);
 	Main::render_window->draw(right);
 	Main::render_window->draw(bottom);
-	Main::render_window->draw(text);
+	Main::render_window->draw(*_text);
 }
 
 sf::Vector2i GameObjectOnMap::getPosition() {
@@ -130,28 +132,34 @@ void GameObjectOnMap::draw() {
 
 	sf::Vector2i pos = _position;
 
-	if (_prefab.expired())
-		return;
+	if (_prefab.expired()) return;
 
-	if (_prefab.lock()->getCollider()->_type == ColliderType::Rectangular)
-		pos += _prefab.lock()->getOrigin();
-	
-	if (renderAllColliders || _prefab.lock()->getCollider()->cursorHover(MapEditor::editor->_cursor_on_map->_position, pos)) {
-		_prefab.lock()->getCollider()->draw(_position + _prefab.lock()->getOrigin());
+	std::shared_ptr<Collider> collider = _prefab.lock()->getCollider();
+
+	if (collider->cursorHover(MapEditor::editor->_cursor_on_map->_position, pos) || renderAllColliders) {
+		if (collider->_type == ColliderType::Rectangular) {
+			collider->draw(_position);
+		}
+		else if (collider->_type == ColliderType::Circular) {
+			collider->draw(_position + _prefab.lock()->getOrigin());
+		}
 	}
 
-	std::weak_ptr<Animations> animations = _animator->getAnimations();
-
-	if (animations.expired())
+	if(_animator->_animations.expired())
 		return;
 
-	sf::IntRect frameRect = animations.lock()->getFrameRect(_animator->_animation, _animator->_frame);
+	std::shared_ptr<Animations> animations = _animator->getAnimations().lock();
+
+	if (!animations)
+		return;
+
+	sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		drawFrame();
 	}
 
-	sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
+	sf::Sprite sprite(*animations->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setTextureRect(frameRect);
 	Main::render_window->draw(sprite);
