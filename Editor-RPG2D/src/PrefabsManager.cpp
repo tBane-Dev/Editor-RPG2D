@@ -80,12 +80,6 @@ void PrefabsManager::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::s
     if(oldPrefab == newPrefab)
 		return;
 
-    //for (auto& prefab : _prefabs) {
-    //    if (prefab == oldPrefab) {
-    //        prefab = newPrefab;
-    //    }
-    //}
-
     std::erase_if(_prefabs, [&](const std::shared_ptr<GameObject>& prefab) {
         if (!prefab)
             return false;

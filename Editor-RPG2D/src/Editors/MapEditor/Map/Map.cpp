@@ -221,6 +221,7 @@ void Map::load(std::ifstream& loader) {
 
 	// clear all
 	_chunks.clear();
+	MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.clear();
 
 	BinaryReader reader(loader);
 

@@ -149,6 +149,9 @@ void Chunk::calculateGameObjectOnMapRect() {
 		if (object->_type == ObjectType::Monster) 
 			continue;
 
+		if (object->_prefab.expired())
+			continue;
+
 		std::shared_ptr<Collider> collider = object->_prefab.lock()->getCollider();
 		int minX, minY, maxX, maxY;
 

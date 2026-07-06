@@ -107,39 +107,42 @@ void GameObjectsOnMap::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std:
 	if (!oldPrefab || !newPrefab)
 		return;
 
-	for (auto& objectOnMap : _visibleGameObjectsOnMap) {
+	for (auto& chunk : MapEditor::editor->_map->_chunks) {
+		for (auto& objectOnMap : chunk->_gameObjectsOnMap) {
 
-		std::shared_ptr<GameObject> currentPrefab = objectOnMap->_prefab.lock();
+			std::shared_ptr<GameObject> currentPrefab = objectOnMap->_prefab.lock();
 
-		if (currentPrefab != oldPrefab)
-			continue;
+			if (currentPrefab != oldPrefab)
+				continue;
 
-		// get the position of the current object on the map
-		sf::Vector2i position = objectOnMap->_position;
+			// get the position of the current object on the map
+			sf::Vector2i position = objectOnMap->_position;
 
-		if (currentPrefab->_type == ObjectType::Monster) {
-			auto monster = std::dynamic_pointer_cast<Monster>(objectOnMap);
-			position = monster->_basePosition - monster->_prefab.lock()->getOrigin();
+			if (currentPrefab->_type == ObjectType::Monster) {
+				auto monster = std::dynamic_pointer_cast<Monster>(objectOnMap);
+				position = monster->_basePosition - monster->_prefab.lock()->getOrigin();
+			}
+
+
+			// create a new object on the map with the new prefab
+			std::shared_ptr<GameObjectOnMap> newObjectOnMap;
+
+			if (newPrefab->_type == ObjectType::Monster) newObjectOnMap = std::make_shared<Monster>(newPrefab);
+			else if (newPrefab->_type == ObjectType::Nature) newObjectOnMap = std::make_shared<Nature>(newPrefab);
+			else newObjectOnMap = std::make_shared<GameObjectOnMap>(newPrefab);
+
+			// set the position
+			if (newObjectOnMap->_type == ObjectType::Monster) {
+				newObjectOnMap->setPosition(position + newPrefab->getOrigin());
+			}
+			else
+				newObjectOnMap->setPosition(position);
+
+			objectOnMap = newObjectOnMap;
 		}
-			
-
-		// create a new object on the map with the new prefab
-		std::shared_ptr<GameObjectOnMap> newObjectOnMap;
-
-		if (newPrefab->_type == ObjectType::Monster) newObjectOnMap = std::make_shared<Monster>(newPrefab);
-		else if (newPrefab->_type == ObjectType::Nature) newObjectOnMap = std::make_shared<Nature>(newPrefab);
-		else newObjectOnMap = std::make_shared<GameObjectOnMap>(newPrefab);
-
-		// set the position
-		if(newObjectOnMap->_type == ObjectType::Monster) {
-			newObjectOnMap->setPosition(position + newPrefab->getOrigin());
-		}
-		else
-			newObjectOnMap->setPosition(position);
-
-		objectOnMap = newObjectOnMap;
 	}
 
+	MapEditor::editor->setVisibleChunks();
 	sort();
 }
 
@@ -235,9 +238,10 @@ void GameObjectsOnMap::save(std::ofstream& saver) {
 }
 
 void GameObjectsOnMap::load(std::ifstream& loader) {
-	BinaryReader reader(loader);
-	
+
 	_visibleGameObjectsOnMap.clear();
+
+	BinaryReader reader(loader);
 
 	int objectsCount = reader.read_int32();
 

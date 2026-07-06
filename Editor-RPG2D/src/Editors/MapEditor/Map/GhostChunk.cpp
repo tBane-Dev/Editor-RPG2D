@@ -67,17 +67,19 @@ void GhostChunk::cursorHover() {
 			if (offsetY != 0) MapEditor::editor->_camera->_position.y += (float)pixelOffsetY;
 
 			// move the gameobjects
-			for(auto& go : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
+			for(auto& chunk : MapEditor::editor->_map->_chunks) {
+				for(auto& go : chunk->_gameObjectsOnMap) {
+					sf::Vector2i pos = go->getPosition();
+					if(offsetX != 0) pos.x += pixelOffsetX;
+					if(offsetY != 0) pos.y += pixelOffsetY;
+					go->setPosition(pos);
 
-				sf::Vector2i pos = go->getPosition();
-				if(offsetX != 0) pos.x += pixelOffsetX;
-				if(offsetY != 0) pos.y += pixelOffsetY;
-				go->setPosition(pos);
-
-				if(go->_type == ObjectType::Monster) {
-					std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(go);
-					monster->_position.x += pixelOffsetX;
-					monster->_position.y += pixelOffsetY;
+					if(go->_type == ObjectType::Monster) {
+						std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(go);
+						monster->_position.x += pixelOffsetX;
+						monster->_position.y += pixelOffsetY;
+					}
+					
 				}
 			}
 
