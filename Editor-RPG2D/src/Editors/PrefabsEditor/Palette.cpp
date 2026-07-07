@@ -117,6 +117,7 @@ namespace PrefabsEditor {
 				editor->_animation_panel->setButtonsActivity();
 				editor->_animation_panel->setTooltips();
 
+				editor->_mesh_panel->setButtonsActivity();
 			}
 		);
 	}

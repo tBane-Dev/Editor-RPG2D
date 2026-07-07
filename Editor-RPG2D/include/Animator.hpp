@@ -23,6 +23,7 @@ public:
 	void prevFrame();
 	void nextFrame();
 	void lastFrame();
+	void setRandTime();
 	void setRandFrame();
 	void play();
 	void stop();

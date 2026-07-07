@@ -74,6 +74,13 @@ void Animator::lastFrame() {
 	_timer = 0.0f;
 }
 
+void Animator::setRandTime() {
+	if (_animations.expired())
+		return;
+
+	_timer = float(rand()) / float(RAND_MAX) * _interval;
+}
+
 void Animator::setRandFrame() {
 
 	if (_animations.expired())
@@ -106,7 +113,7 @@ void Animator::update() {
 
 	if (_timer >= _interval) {
 
-		_timer = 0.0f;
+		_timer -= _interval;
 		_frame++;
 
 		if (_frame >= _animations.lock()->_framesCount) {

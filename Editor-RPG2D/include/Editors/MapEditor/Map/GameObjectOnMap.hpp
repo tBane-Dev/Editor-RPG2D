@@ -5,7 +5,7 @@
 
 
 
-class GameObjectOnMap : public Object {
+class GameObjectOnMap : public Object, public std::enable_shared_from_this<GameObjectOnMap> {
 public:
 
 	std::weak_ptr<GameObject> _prefab;
@@ -21,6 +21,7 @@ public:
 
 	virtual sf::Vector2i getPosition();
 	virtual void setPosition(sf::Vector2i position);
+	virtual void cursorHover();
 	virtual void update();
 	virtual void draw();
 };

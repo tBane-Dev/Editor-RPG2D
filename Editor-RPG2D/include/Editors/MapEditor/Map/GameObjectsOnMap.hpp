@@ -6,7 +6,8 @@
 class GameObjectsOnMap {
 public:
     std::vector<std::shared_ptr<GameObjectOnMap>> _visibleGameObjectsOnMap;
-    
+    std::weak_ptr<GameObjectOnMap> _hoveredGameObjectOnMap;
+
     GameObjectsOnMap();
     ~GameObjectsOnMap(); 
     
@@ -21,6 +22,7 @@ public:
     void save(std::ofstream& saver);
     void load(std::ifstream& loader);
 
+    virtual void cursorHover();
     virtual void update();
     virtual void draw();
 };

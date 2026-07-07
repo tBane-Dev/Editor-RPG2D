@@ -60,7 +60,7 @@ void AnimationsListItem::draw() {
 
 
 
-AnimationsListDialog::AnimationsListDialog() : Main::Window(L"Animations List", sf::Vector2i(640, 440), sf::Vector2i(100, 100)) {
+AnimationsListDialog::AnimationsListDialog() : Main::Window(L"Animations List", sf::Vector2i(640, 440), sf::Vector2i(256, 256)) {
 
 	_padding = 8;
 

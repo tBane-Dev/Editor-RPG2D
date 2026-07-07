@@ -9,6 +9,7 @@
 
 GameObjectsOnMap::GameObjectsOnMap() {
 	_visibleGameObjectsOnMap.clear();
+	_hoveredGameObjectOnMap = std::weak_ptr<GameObjectOnMap>();
 	 
 	std::shared_ptr<Map> map = MapEditor::editor->_map;
 	sf::IntRect mapRect = map->getRect();
@@ -287,6 +288,12 @@ void GameObjectsOnMap::load(std::ifstream& loader) {
 	}
 
 	MapEditor::editor->_map->setVisibleChunks();
+}
+
+void GameObjectsOnMap::cursorHover() {
+	for (auto& object : _visibleGameObjectsOnMap) {
+		object->cursorHover();
+	}
 }
 
 void GameObjectsOnMap::update() {

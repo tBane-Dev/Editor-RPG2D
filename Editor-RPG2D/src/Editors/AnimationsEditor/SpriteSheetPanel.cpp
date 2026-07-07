@@ -28,7 +28,7 @@ namespace AnimationsEditor {
 		_loadBtn->_onclick_func = [this]() {
 
 			std::shared_ptr<FileDialog> fileDialog = std::make_shared<FileDialog>(L"Load Spritesheet", L"Load");
-			fileDialog->setPosition(sf::Vector2i(160, 128));
+			fileDialog->setPosition(sf::Vector2i(256, 192));
 
 			std::function<void()> function = [this, fileDialog]() {
 

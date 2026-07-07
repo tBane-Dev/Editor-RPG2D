@@ -115,7 +115,10 @@ namespace MapEditor {
 			_main_menu->cursorHover();
 			return;
 		}
-			
+
+		_game_objects->_hoveredGameObjectOnMap = std::weak_ptr<GameObjectOnMap>();
+		_game_objects->cursorHover();
+
 		_map->cursorHover();
 		_palette->cursorHover();
 		_main_menu->cursorHover();
@@ -139,8 +142,6 @@ namespace MapEditor {
 	}
 
 	void Editor::update() {
-
-		
 
 		_main_menu->update();
 		_palette->update();

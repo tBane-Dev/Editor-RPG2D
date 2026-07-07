@@ -4,7 +4,8 @@
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
 #include <iostream>
-
+#include "WindowsManager.hpp"
+#include "Editors/PrefabsEditor/MeshEditor.hpp"
 namespace PrefabsEditor {
 	MeshPanel::MeshPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 375), sf::Vector2i(840 + margin.x, PrefabsEditor::editor->_main_menu->getSize().y + margin.y + PrefabsEditor::editor->_collider_panel->getSize().y + 4)) {
 		_title = std::make_unique<sf::Text>(basicFont, L"Mesh", 20);
@@ -19,6 +20,13 @@ namespace PrefabsEditor {
 			textures_manager->getTexture(L"assets\\tex\\editors_ui\\bottomButton_inactive.png"),
 			sf::Vector2i(_rect.position.x + _rect.size.x / 2 - 192 / 2, _rect.position.y + margin.y + 192 + 16)
 		);
+
+		_set_mesh->_onclick_func = []() {
+
+			std::shared_ptr<Main::Window> mesh_editor = std::make_shared<MeshEditor>();
+			Main::windows_manager->push_back(mesh_editor);
+
+			};
 
 		setButtonsActivity();
 	}
@@ -78,11 +86,12 @@ namespace PrefabsEditor {
 		if (animator && !animations.expired()) {
 			
 			sf::IntRect frameRect = animations.lock()->getFrameRect(0, 0);
-
+			float scale = std::min(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y);
 			sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
 			sprite.setTextureRect(frameRect);
-			sprite.setScale(sf::Vector2f(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y));
-			sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
+			sprite.setScale(sf::Vector2f(scale, scale));
+			sprite.setPosition(sf::Vector2f(rect.getPosition().x + (rect.getSize().x - frameRect.size.x * scale) / 2, rect.getPosition().y + (rect.getSize().y - frameRect.size.y * scale) / 2));
+
 			Main::render_window->draw(sprite);
 		}
 

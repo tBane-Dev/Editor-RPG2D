@@ -5,6 +5,7 @@
 #include "DebugLog.hpp"
 #include "Animator.hpp"
 #include "Theme.hpp"
+#include "ShadersManager.hpp"
 
 GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 	_prefab = prefab;
@@ -18,6 +19,8 @@ GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 
 	_animator = std::make_shared<Animator>((!_prefab.expired())?prefab.lock()->getAnimations() : std::weak_ptr<Animations>(), 0.2f);
 
+	_animator->setRandFrame();
+	_animator->setRandTime();
 	_animator->play();
 	_position = sf::Vector2i(0, 0);
 
@@ -122,6 +125,16 @@ void GameObjectOnMap::setPosition(sf::Vector2i position) {
 	_position = position;
 }
 
+void GameObjectOnMap::cursorHover() {
+	sf::IntRect rect = _animator->_animations.lock()->getFrameRect(0,0);
+	rect.position.x += _position.x;
+	rect.position.y += _position.y;
+
+	if (rect.contains(MapEditor::editor->_cursor_on_map->_position)) {
+		MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+	}
+}
+
 void GameObjectOnMap::update() {
 	_animator->update();
 }
@@ -162,5 +175,7 @@ void GameObjectOnMap::draw() {
 	sf::Sprite sprite(*animations->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setTextureRect(frameRect);
+	if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock().get() == this)
+		sprite.setColor(sf::Color::Red);
 	Main::render_window->draw(sprite);
 }
