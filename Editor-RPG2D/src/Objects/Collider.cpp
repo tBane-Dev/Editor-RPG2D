@@ -11,6 +11,11 @@ Collider::~Collider() {
 
 }
 
+
+sf::IntRect Collider::getRect() {
+	return sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
+}
+
 bool Collider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale) {
 	return false;
 }
@@ -29,6 +34,10 @@ RectangularCollider::RectangularCollider(int x, int y, int w, int h) : Collider(
 
 RectangularCollider::~RectangularCollider() {
 
+}
+
+sf::IntRect RectangularCollider::getRect() {
+	return _rect;
 }
 
 bool RectangularCollider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale) {
@@ -71,6 +80,10 @@ CircularCollider::CircularCollider(int x, int y, int radiusX, int radiusY) : Col
 
 CircularCollider::~CircularCollider() {
 
+}
+
+sf::IntRect CircularCollider::getRect() {
+	return sf::IntRect(sf::Vector2i(_x - _radiusX, _y - _radiusY), sf::Vector2i(_radiusX * 2, _radiusY * 2));
 }
 
 bool CircularCollider::cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale) {

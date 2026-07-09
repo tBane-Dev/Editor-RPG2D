@@ -9,6 +9,7 @@ public:
 
 	Collider();
 	virtual ~Collider();
+	virtual sf::IntRect getRect();
 	virtual bool cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1, 1));
 	virtual void draw(sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1,1));
 };
@@ -19,6 +20,7 @@ public:
 
 	RectangularCollider(int x, int y, int w, int h);
 	virtual ~RectangularCollider();
+	virtual sf::IntRect getRect();
 	virtual bool cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1, 1));
 	virtual void draw(sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1,1));
 };
@@ -32,6 +34,7 @@ public:
 
 	CircularCollider(int x, int y, int radiusX, int radiusY);
 	virtual ~CircularCollider();
+	virtual sf::IntRect getRect();
 	virtual bool cursorHover(sf::Vector2i cursorPosition, sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1, 1));
 	virtual void draw(sf::Vector2i position, sf::Vector2f scale = sf::Vector2f(1,1));
 };

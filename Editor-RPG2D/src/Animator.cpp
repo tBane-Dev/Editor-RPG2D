@@ -78,15 +78,18 @@ void Animator::setRandTime() {
 	if (_animations.expired())
 		return;
 
-	_timer = float(rand()) / float(RAND_MAX) * _interval;
+	_timer = float(rand()%5+3) /  5.f * _interval;
 }
 
 void Animator::setRandFrame() {
 
-	if (_animations.expired())
+	if (_animations.expired()) {
+		_frame = 0;
+		_timer = 0.0f;
 		return;
-
-	_frame = rand() % _animations.lock()->_framesCount;
+	}
+		
+	_frame = rand() % (4 * _animations.lock()->_framesCount) / 4;
 	_timer = 0.0f;
 }
 
