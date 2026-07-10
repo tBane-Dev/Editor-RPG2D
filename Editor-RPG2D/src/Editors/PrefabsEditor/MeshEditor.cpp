@@ -3,6 +3,7 @@
 #include "Cursor.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
 #include "RenderWindow.hpp"
+#include "DebugLog.hpp"
 
 MeshEditor::MeshEditor() : Main::Window(L"Mesh Editor", sf::Vector2i(1120, 920), sf::Vector2i(256, 64)) {
 
@@ -18,10 +19,20 @@ MeshEditor::MeshEditor() : Main::Window(L"Mesh Editor", sf::Vector2i(1120, 920),
 	_spriteOutlineThickness = 6.0f;
 
 	_spriteRect = sf::IntRect(sf::Vector2i(_canvasRect.position + sf::Vector2i((_canvasRect.size.x - _animations->getFrameRect(0,0).size.x * _spriteScale) / 2, (_canvasRect.size.y - _animations->getFrameRect(0,0).size.y * _spriteScale) / 2)), sf::Vector2i(_animations->getFrameRect(0,0).size.x * _spriteScale, _animations->getFrameRect(0,0).size.y * _spriteScale));
+
+	if (PrefabsEditor::editor->_mesh == nullptr)
+		PrefabsEditor::editor->_mesh = std::make_shared<Mesh>(2.0f, 1.0f);
+
+	PrefabsEditor::editor->_mesh->setRadius(2.0f * _spriteScale);
+	PrefabsEditor::editor->_mesh->setScale(_spriteScale);
+
+	_activeShape = PrefabsEditor::editor->_mesh->getLastShape();
+
 }
 
 MeshEditor::~MeshEditor() {
-
+	PrefabsEditor::editor->_main_panel->setButtonsActivity();
+	PrefabsEditor::editor->_main_panel->setTooltips();
 }
 
 void MeshEditor::setPosition(sf::Vector2i position) {
@@ -30,6 +41,108 @@ void MeshEditor::setPosition(sf::Vector2i position) {
 	_innerRect.position = sf::Vector2i(getContentPosition().x + margin, getContentPosition().y + margin);
 	_canvasRect.position = sf::Vector2i(_innerRect.position.x + (_innerRect.size.x - 768) / 2, _innerRect.position.y + (_innerRect.size.y - 768) / 2);
 	_spriteRect.position = sf::Vector2i(_canvasRect.position.x + (_canvasRect.size.x - _animations->getFrameRect(0,0).size.x * _spriteScale) / 2, _canvasRect.position.y + (_canvasRect.size.y - _animations->getFrameRect(0,0).size.y * _spriteScale) / 2);
+}
+
+void MeshEditor::cursorHover() {
+	Main::Window::cursorHover();
+}
+
+void MeshEditor::handleEvent(const sf::Event& event) {
+	Main::Window::handleEvent(event);
+
+	_cursorPosition = sf::Vector2i(-1, -1);
+
+	// draw point at cursor position if inside canvas
+	int cursorMargin = 8;
+	sf::IntRect rectForCursor = sf::IntRect(_spriteRect.position - sf::Vector2i(cursorMargin, cursorMargin), _spriteRect.size + sf::Vector2i(2 * cursorMargin, 2 * cursorMargin));
+
+	if (rectForCursor.contains(Main::cursor->_position)) {
+		int radius = 8;
+		_cursorPosition.x = (float)_canvasRect.position.x + std::round((Main::cursor->_position.x - _canvasRect.position.x) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
+		_cursorPosition.y = (float)_canvasRect.position.y + std::round((Main::cursor->_position.y - _canvasRect.position.y) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
+
+		sf::Vector2i point;
+		point.x = std::round((_cursorPosition.x - _canvasRect.position.x) / _spriteScale);
+		point.y = std::round((_cursorPosition.y - _canvasRect.position.y) / _spriteScale);
+
+
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+
+			if (PrefabsEditor::editor->_mesh->_shapes.empty()) {
+				PrefabsEditor::editor->_mesh->addShape(std::make_shared<Shape>());
+				_activeShape = PrefabsEditor::editor->_mesh->getShape(0);
+			}
+
+			for (int i = PrefabsEditor::editor->_mesh->_shapes.size() - 1; i >= 0; i -= 1) {
+
+				std::shared_ptr<Shape > shape = PrefabsEditor::editor->_mesh->getShape(i);
+
+
+				if (shape->hasPoint(point) && shape->insidePoint(point, PrefabsEditor::editor->_mesh->_radius, PrefabsEditor::editor->_mesh->_scale) >= 0) {
+					_activeShape = shape;
+					return;
+				}
+			}
+
+			for (int i = PrefabsEditor::editor->_mesh->_shapes.size() - 1; i >= 0; i -= 1) {
+				std::shared_ptr<Shape > shape = PrefabsEditor::editor->_mesh->getShape(i);
+				if (shape->hasPoint(point) && shape->_points.size() >= 3 && shape->pointInShape(point)) {
+					_activeShape = shape;
+					return;
+				}
+			}
+
+			if (!_activeShape.expired()) {
+				_activeShape.lock()->addPoint(point);
+			}
+			else {
+				std::shared_ptr<Shape> shape = std::make_shared<Shape>();
+				shape->addPoint(point);
+				PrefabsEditor::editor->_mesh->addShape(shape);
+				_activeShape = shape;
+			}
+
+		}
+
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
+
+			std::shared_ptr<Mesh> mesh = PrefabsEditor::editor->_mesh;
+
+			if (!mesh) return;
+
+			for (int i = static_cast<int>(mesh->_shapes.size()) - 1; i >= 0; --i) {
+				std::shared_ptr<Shape> shape = mesh->getShape(i);
+
+				if (!shape) continue;
+
+				int pointIndex = shape->insidePoint(point, mesh->_radius, mesh->_scale);
+				if (pointIndex < 0) continue;
+
+				std::shared_ptr<Shape> activeShape = _activeShape.lock();
+
+				if (activeShape != shape) {
+					_activeShape = shape;
+					return;
+				}
+
+				shape->removePoint(shape->_points[pointIndex]);
+
+				if (shape->_points.empty()) {
+					mesh->removeShape(shape);
+					_activeShape = std::weak_ptr<Shape>();
+				}
+
+				return;
+			}
+
+			_activeShape = std::weak_ptr<Shape>();
+		}
+	}
+
+}
+
+void MeshEditor::update() {
+	Main::Window::update();
 }
 
 void MeshEditor::draw() {
@@ -94,21 +207,24 @@ void MeshEditor::draw() {
 	spriteOutline.setOutlineColor(sf::Color(23, 23, 23));
 	Main::render_window->draw(spriteOutline);
 
+	if (PrefabsEditor::editor->_mesh)
+		PrefabsEditor::editor->_mesh->draw(_canvasRect.position, _spriteScale, sf::Color(255, 0, 0), true, _activeShape.lock());
+
 	// draw point at cursor position if inside canvas
 	int cursorMargin = 8;
 	sf::IntRect rectForCursor = sf::IntRect(_spriteRect.position - sf::Vector2i(cursorMargin, cursorMargin), _spriteRect.size + sf::Vector2i(2 * cursorMargin, 2 * cursorMargin));
 
-	if (rectForCursor.contains(Main::cursor->_position)) {
-		int radius = 8;
+	if (_cursorPosition != sf::Vector2i(-1,-1)) {
+		
+		int radius = 2.f * _spriteScale;
+		if (radius > 16.f)
+			radius = 16.f;
+
 		sf::CircleShape point(radius);
-		point.setFillColor(sf::Color(127, 47, 127));
+		point.setFillColor(sf::Color(255, 0, 255));
 		point.setOrigin(sf::Vector2f(radius, radius));
 
-		sf::Vector2f position;
-		position.x = (float)_canvasRect.position.x + std::round((Main::cursor->_position.x - _canvasRect.position.x) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
-		position.y = (float)_canvasRect.position.y + std::round((Main::cursor->_position.y - _canvasRect.position.y) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
-		
-		sf::Vector2f centerPoint = position; // because outer margin is 4, and we want to keep center the point inside grid
+		sf::Vector2f centerPoint = sf::Vector2f(_cursorPosition); // because outer margin is 4, and we want to keep center the point inside grid
 		if (centerPoint.x < _canvasRect.position.x + 2) centerPoint.x = (float)_canvasRect.position.x + 2;
 		if (centerPoint.y < _canvasRect.position.y + 2) centerPoint.y = (float)_canvasRect.position.y + 2;
 		if (centerPoint.x > _canvasRect.position.x + _canvasRect.size.x - 2) centerPoint.x = (float)_canvasRect.position.x + _canvasRect.size.x - 2;

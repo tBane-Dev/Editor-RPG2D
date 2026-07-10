@@ -104,6 +104,7 @@ void PrefabsManager::save(std::ofstream& saver) {
 			writer.write_int8((int)monsterPrefab->_type);
             writer.write_wstring(monsterPrefab->_name);
 			saveCollider(monsterPrefab->getCollider(), saver);
+			saveMesh(monsterPrefab->getMesh(), saver);
             writer.write_Vector2i(monsterPrefab->_origin);
             writer.write_int32(monsterPrefab->_stepSize);
             writer.write_wstring((!monsterPrefab->_animations.expired()) ? monsterPrefab->_animations.lock()->_path : L"");
@@ -115,6 +116,7 @@ void PrefabsManager::save(std::ofstream& saver) {
 			writer.write_int8((int)naturePrefab->_type);
             writer.write_wstring(naturePrefab->_name);
             saveCollider(naturePrefab->getCollider(), saver);
+			saveMesh(naturePrefab->getMesh(), saver);
 			writer.write_Vector2i(naturePrefab->_origin);
             writer.write_wstring((!naturePrefab->_animations.expired()) ? naturePrefab->_animations.lock()->_path : L"");
 
@@ -138,21 +140,23 @@ void PrefabsManager::load(std::ifstream& loader) {
 
             std::wstring name = reader.read_wstring();
             std::shared_ptr<Collider> collider = loadCollider(loader);
+            std::shared_ptr<Mesh> mesh = loadMesh(loader);
             sf::Vector2i origin = reader.read_Vector2i();
             int stepSize = reader.read_int32();
             std::wstring animationsPath = reader.read_wstring();
             std::shared_ptr<Animations> animations = animations_manager->getAnimations(animationsPath).lock();
-            std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(name, animations, origin, stepSize, collider);
+            std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(name, animations, origin, stepSize, collider, mesh);
             addPrefab(prefab);
 		}
 
         if(type == (int)ObjectType::Nature) {
             std::wstring name = reader.read_wstring();
             std::shared_ptr<Collider> collider = loadCollider(loader);
+			std::shared_ptr<Mesh> mesh = loadMesh(loader);
             sf::Vector2i origin = reader.read_Vector2i();
             std::wstring animationsPath = reader.read_wstring();
             std::shared_ptr<Animations> animations = animations_manager->getAnimations(animationsPath).lock();
-            std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(name, animations, origin, collider);
+            std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(name, animations, origin, collider, mesh);
             addPrefab(prefab);
 		}
     }
@@ -168,7 +172,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\golem.png"),
             sf::Vector2i(62, 96),
             4,
-			std::make_shared<CircularCollider>(62, 96, 48, 32)
+			std::make_shared<CircularCollider>(62, 96, 48, 32),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -179,7 +184,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\troll.png"),
             sf::Vector2i(62, 96),
             4,
-            std::make_shared<CircularCollider>(62, 96, 48, 32)
+            std::make_shared<CircularCollider>(62, 96, 48, 32),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -190,7 +196,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\monster.png"),
             sf::Vector2i(62, 96),
             4,
-            std::make_shared<CircularCollider>(62, 96, 48, 32)
+            std::make_shared<CircularCollider>(62, 96, 48, 32),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -201,7 +208,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\dziobak.png"),
             sf::Vector2i(62, 88),
             6,
-			std::make_shared<CircularCollider>(62, 88, 48, 32)
+			std::make_shared<CircularCollider>(62, 88, 48, 32),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -212,7 +220,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\deer.png"),
             sf::Vector2i(65, 90),
             6,
-            std::make_shared<CircularCollider>(65, 90, 48, 32)
+            std::make_shared<CircularCollider>(65, 90, 48, 32),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -223,7 +232,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\goblin.png"),
             sf::Vector2i(62, 90),
             6,
-			std::make_shared<CircularCollider>(62, 90, 24, 16)
+			std::make_shared<CircularCollider>(62, 90, 24, 16),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -235,7 +245,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\bies.png"),
             sf::Vector2i(64, 90),
             6,
-            std::make_shared<CircularCollider>(64, 90, 64, 48)
+            std::make_shared<CircularCollider>(64, 90, 64, 48),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -246,7 +257,8 @@ void PrefabsManager::loadPrefabs() {
             animations_manager->getAnimations(L"assets\\tex\\monsters\\hero.png"),
             sf::Vector2i(64, 192),
             12,
-            std::make_shared<CircularCollider>(64, 192, 48, 32)
+            std::make_shared<CircularCollider>(64, 192, 48, 32),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -256,7 +268,8 @@ void PrefabsManager::loadPrefabs() {
             L"tree_1",
             animations_manager->getAnimations(L"assets\\tex\\tree_1.png"),
             sf::Vector2i(128, 214),
-			std::make_shared<CircularCollider>(128, 214, 32, 24)
+			std::make_shared<CircularCollider>(128, 214, 32, 24),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -267,7 +280,8 @@ void PrefabsManager::loadPrefabs() {
             L"boulder_1",
             animations_manager->getAnimations(L"assets\\tex\\boulder_1.png"),
             sf::Vector2i(61, 68),
-			std::make_shared<CircularCollider>(61, 68, 47, 36)
+			std::make_shared<CircularCollider>(61, 68, 47, 36),
+            nullptr
         );
         addPrefab(prefab);
     }
@@ -277,7 +291,8 @@ void PrefabsManager::loadPrefabs() {
             L"boulder_2",
             animations_manager->getAnimations(L"assets\\tex\\boulder_2.png"),
             sf::Vector2i(62, 70),
-			std::make_shared<CircularCollider>(62, 70, 47, 37)
+			std::make_shared<CircularCollider>(62, 70, 47, 37),
+            nullptr
         );
         addPrefab(prefab);
     }

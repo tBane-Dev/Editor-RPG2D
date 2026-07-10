@@ -29,6 +29,18 @@ namespace PrefabsEditor {
 			};
 
 		setButtonsActivity();
+
+		_mesh = std::make_shared<Mesh>(2.0f, 1.0f);
+		_mesh->addShape(std::make_shared<Shape>());
+
+		if (!PrefabsEditor::editor->_object.expired()) {
+			_mesh = std::make_shared<Mesh>(*PrefabsEditor::editor->_object.lock()->getMesh());
+
+			if (_mesh == nullptr) {
+				_mesh = std::make_shared<Mesh>(2.0f, 1.0f);
+				_mesh->addShape(std::make_shared<Shape>());
+			}
+		}
 	}
 
 	MeshPanel::~MeshPanel() {
@@ -90,10 +102,18 @@ namespace PrefabsEditor {
 			sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
 			sprite.setTextureRect(frameRect);
 			sprite.setScale(sf::Vector2f(scale, scale));
-			sprite.setPosition(sf::Vector2f(rect.getPosition().x + (rect.getSize().x - frameRect.size.x * scale) / 2, rect.getPosition().y + (rect.getSize().y - frameRect.size.y * scale) / 2));
+			sf::Vector2f canvasPosition = sf::Vector2f(rect.getPosition().x + (rect.getSize().x - frameRect.size.x * scale) / 2, rect.getPosition().y + (rect.getSize().y - frameRect.size.y * scale) / 2);
+			sprite.setPosition(canvasPosition);
 
 			Main::render_window->draw(sprite);
+
+			std::shared_ptr<Mesh>& mesh = PrefabsEditor::editor->_mesh;
+			if (mesh) {
+				mesh->draw(sf::Vector2i(canvasPosition), scale, sf::Color(255, 255, 255), false);
+			}
 		}
+
+		
 
 		_set_mesh->draw();
 	}

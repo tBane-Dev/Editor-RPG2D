@@ -15,6 +15,9 @@ namespace PrefabsEditor {
 		_title->setPosition(sf::Vector2f(32, 48));
 
 		_object = std::weak_ptr<GameObject>();
+		_animator = nullptr;
+		_collider = nullptr;
+		_mesh = nullptr;
 	}
 
 	Editor::~Editor() {
@@ -29,6 +32,7 @@ namespace PrefabsEditor {
 		createAnimationPanel();
 		createColliderPanel();
 		createMeshPanel();
+		
 	}
 
 	void Editor::createMainMenu() {

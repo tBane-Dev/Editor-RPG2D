@@ -16,7 +16,6 @@ namespace PrefabsEditor {
 		std::unique_ptr<sf::Text> _hLabel;
 
 		std::shared_ptr<TextInput> _type;
-		std::shared_ptr<Collider> _collider;
 
 		std::shared_ptr<TextInput> _x;
 		std::shared_ptr<TextInput> _y;

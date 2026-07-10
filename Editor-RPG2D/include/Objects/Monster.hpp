@@ -10,7 +10,7 @@ class MonsterPrefab : public GameObject {
 public:
 	int _stepSize;
 
-	MonsterPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider);
+	MonsterPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh);
 	~MonsterPrefab();
 };
 

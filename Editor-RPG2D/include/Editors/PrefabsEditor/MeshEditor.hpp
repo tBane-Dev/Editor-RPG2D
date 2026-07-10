@@ -1,6 +1,7 @@
 #pragma once
 #include "WindowsManager.hpp"
 #include "AnimationsManager.hpp"
+#include "Objects/Mesh.hpp"
 
 class MeshEditor : public Main::Window {
 public:
@@ -15,9 +16,16 @@ public:
 	float _spriteOutlineThickness;
 	sf::IntRect _spriteRect;
 
+	sf::Vector2i _cursorPosition;
+	std::weak_ptr<Shape> _activeShape;
+
 	MeshEditor();
 	~MeshEditor();
 
 	virtual void setPosition(sf::Vector2i position);
+
+	virtual void cursorHover();
+	virtual void handleEvent(const sf::Event& event);
+	virtual void update();
 	virtual void draw();
 };

@@ -142,20 +142,20 @@ namespace PrefabsEditor {
 			if (_type->getText() == L"Rectangular") {
 
 				std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
-				_collider = rectCollider;
+				editor->_collider = rectCollider;
 				sf::Vector2i colliderPosition(rect.getPosition());
-				_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
+				editor->_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
 			}
 			else if (_type->getText() == L"Circular") {
 
 				std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
-				_collider = circularCollider;
+				editor->_collider = circularCollider;
 				sf::Vector2i colliderPosition(
 					rect.getPosition().x + (float)(circularCollider->_x) * scale,
 					rect.getPosition().y + (float)(circularCollider->_y) * scale
 				);
 
-				_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
+				editor->_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
 			}
 
 			sf::Sprite sprite(*animations.lock()->getTexture()->_texture);

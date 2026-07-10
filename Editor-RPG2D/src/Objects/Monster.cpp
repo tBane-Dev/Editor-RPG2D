@@ -5,7 +5,7 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
 
-MonsterPrefab::MonsterPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider) : GameObject(name, animations, origin, collider) {
+MonsterPrefab::MonsterPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, int stepSize, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh) : GameObject(name, animations, origin, collider, mesh) {
 	_type = ObjectType::Monster;
 	_stepSize = stepSize;
 }

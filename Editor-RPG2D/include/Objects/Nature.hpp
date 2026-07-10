@@ -5,7 +5,7 @@
 
 class NaturePrefab : public GameObject {
 public:
-	NaturePrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider);
+	NaturePrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh);
 	~NaturePrefab();
 };
 

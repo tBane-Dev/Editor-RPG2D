@@ -155,7 +155,13 @@ void GameObjectOnMap::cursorHover() {
 	rect.position.y += _position.y;
 
 	if (rect.contains(MapEditor::editor->_cursor_on_map->_position)) {
-		MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+		if (!_prefab.expired()) {
+			std::shared_ptr<Mesh> mesh = _prefab.lock()->getMesh();
+			if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_position, _position)) {
+				MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+			}
+		}
+			
 	}
 }
 
@@ -191,17 +197,21 @@ void GameObjectOnMap::draw() {
 
 	std::shared_ptr<Animations> animations = _animator->getAnimations().lock();
 
-	if (!animations)
-		return;
+	if (animations) {
+		sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
 
-	sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
+		sf::Sprite sprite(*animations->getTexture()->_texture);
+		sprite.setPosition(sf::Vector2f(_position));
+		sprite.setTextureRect(frameRect);
+		if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock().get() == this)
+			sprite.setColor(sf::Color::Red);
+		Main::render_window->draw(sprite);
+	}
 
-	
+	if(MapEditor::editor->_main_menu->_render_meshes->_checkbox->_value == 1) {
+		if (_prefab.lock()->getMesh()) {
+			_prefab.lock()->getMesh()->draw(_position, sf::Color::Red);
+		}
+	}
 
-	sf::Sprite sprite(*animations->getTexture()->_texture);
-	sprite.setPosition(sf::Vector2f(_position));
-	sprite.setTextureRect(frameRect);
-	if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock().get() == this)
-		sprite.setColor(sf::Color::Red);
-	Main::render_window->draw(sprite);
 }

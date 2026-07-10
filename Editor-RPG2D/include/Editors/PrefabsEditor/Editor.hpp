@@ -8,6 +8,7 @@
 #include "Editors/PrefabsEditor/MeshPanel.hpp"
 #include "PrefabsManager.hpp"
 #include "Controls/ButtonWithTextAndSprite.hpp"
+#include "Objects/Mesh.hpp"
 
 namespace PrefabsEditor {
 
@@ -22,6 +23,8 @@ namespace PrefabsEditor {
 
 		std::weak_ptr<GameObject> _object;
 		std::shared_ptr<Animator> _animator;
+		std::shared_ptr<Collider> _collider;
+		std::shared_ptr<Mesh> _mesh;
 
 		std::shared_ptr<MainPanel> _main_panel;
 		std::shared_ptr<AnimationPanel> _animation_panel;
@@ -39,6 +42,7 @@ namespace PrefabsEditor {
 		void createAnimationPanel();
 		void createColliderPanel();
 		void createMeshPanel();
+
 
 		void cursorHover();
 		void handleEvent(const sf::Event& event);

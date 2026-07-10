@@ -86,13 +86,13 @@ namespace PrefabsEditor {
 				std::weak_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(slot->_object.lock());
 				editor->_object = prefab;
 				editor->_animator = std::make_shared<Animator>(prefab.lock()->getAnimations(), 0.2f);
-
+				
 				editor->_main_panel->_name->setText(prefab.lock()->_name);
 				editor->_main_panel->_type->setText(ObjectTypeToWString(prefab.lock()->_type));
 
 				if (prefab.lock()->_collider->_type == ColliderType::Rectangular) {
 					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(prefab.lock()->_collider);
-					editor->_collider_panel->_collider = collider;
+					editor->_collider = collider;
 					editor->_collider_panel->_type->setText(L"Rectangular");
 					editor->_collider_panel->_x->setText(std::to_wstring(collider->_rect.position.x));
 					editor->_collider_panel->_y->setText(std::to_wstring(collider->_rect.position.y));
@@ -102,7 +102,7 @@ namespace PrefabsEditor {
 				}
 				else if (prefab.lock()->_collider->_type == ColliderType::Circular) {
 					std::shared_ptr<CircularCollider> collider = std::dynamic_pointer_cast<CircularCollider>(prefab.lock()->_collider);
-					editor->_collider_panel->_collider = collider;
+					editor->_collider = collider;
 					editor->_collider_panel->_type->setText(L"Circular");
 					editor->_collider_panel->_x->setText(std::to_wstring(collider->_x));
 					editor->_collider_panel->_y->setText(std::to_wstring(collider->_y));
@@ -110,6 +110,12 @@ namespace PrefabsEditor {
 					editor->_collider_panel->_h->setText(std::to_wstring(collider->_radiusY*2));
 				}
 				
+				std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(2.0f, 1.0f);
+				if(!prefab.expired() && prefab.lock()->_mesh)
+					mesh = std::make_shared<Mesh>(*prefab.lock()->_mesh);
+
+				editor->_mesh = mesh;
+
 				editor->_main_panel->setButtonsActivity();
 				editor->_main_panel->setTooltips();
 
