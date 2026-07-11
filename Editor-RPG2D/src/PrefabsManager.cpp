@@ -80,6 +80,8 @@ void PrefabsManager::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::s
     if(oldPrefab == newPrefab)
 		return;
 
+	auto idx = std::find(_prefabs.begin(), _prefabs.end(), oldPrefab);
+
     std::erase_if(_prefabs, [&](const std::shared_ptr<GameObject>& prefab) {
         if (!prefab)
             return false;
@@ -88,7 +90,9 @@ void PrefabsManager::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::s
         }
     );
 
-    addPrefab(newPrefab);
+    if (idx != _prefabs.end()) {
+		_prefabs.insert(idx, newPrefab);
+    }
 }
 
 void PrefabsManager::save(std::ofstream& saver) {

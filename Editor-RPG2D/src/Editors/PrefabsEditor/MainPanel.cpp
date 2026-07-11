@@ -122,13 +122,16 @@ namespace PrefabsEditor {
 			MapEditor::editor->_game_objects->replacePrefab(oldPrefab, prefab);
 			if (MapEditor::editor->_cursor_on_map->_object.lock() == oldPrefab) MapEditor::editor->_cursor_on_map->_object = prefab;
 
+			auto prefabs = prefabs_manager->getPrefabs(prefab->_type);
+			int index = std::find(prefabs.begin(), prefabs.end(), oldPrefab) - prefabs.begin();
+			
 			prefabs_manager->replacePrefab(oldPrefab, prefab);
 
 			MapEditor::editor->_palette->loadAll(MapEditor::editor->_palette->_categories->_selectedType);
 
 			PrefabsEditor::editor->_object = prefab;
 			PrefabsEditor::editor->_palette->loadAll(prefab->_type);
-			PrefabsEditor::editor->_palette->_slots->selectLastSlot();
+			PrefabsEditor::editor->_palette->_slots->selectSlot(index);
 			PrefabsEditor::editor->_palette->_slots->_scrollbar->setValue(PrefabsEditor::editor->_palette->_slots->_scrollbar->_max_value);
 			PrefabsEditor::editor->_palette->_slots->updateObjects();
 			PrefabsEditor::MainPanel::setButtonsActivity();
