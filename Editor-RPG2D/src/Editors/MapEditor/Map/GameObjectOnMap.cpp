@@ -179,7 +179,7 @@ void GameObjectOnMap::draw() {
 
 	std::shared_ptr<Collider> collider = _prefab.lock()->getCollider();
 
-	if (collider->cursorHover(MapEditor::editor->_cursor_on_map->_position, pos) || renderAllColliders) {
+	if (renderAllColliders) {
 		if (collider->_type == ColliderType::Rectangular) {
 			collider->draw(_position);
 		}

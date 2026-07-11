@@ -164,12 +164,14 @@ void Shape::draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bo
 
 	float radius = 2.0f * scale; // Radius of the circle
 
+	radius = std::clamp(radius, 1.0f, 8.0f);
+
 	for(auto& point : _points) {
 		
-		sf::CircleShape outlineCircle(radius + scale/2.f);
-		outlineCircle.setOrigin(sf::Vector2f(radius + scale/2.f, radius + scale/2.f));
+		sf::CircleShape outlineCircle(radius + radius / 3.f);
+		outlineCircle.setOrigin(sf::Vector2f(radius + radius / 3.f, radius + radius / 3.f));
 		outlineCircle.setFillColor(sf::Color::Transparent);
-		outlineCircle.setOutlineThickness(scale/2.f);
+		outlineCircle.setOutlineThickness(radius/3.f);
 		outlineCircle.setOutlineColor(sf::Color(47, 47, 47));
 		outlineCircle.setPosition(sf::Vector2f(position + sf::Vector2i((float)point.x * scale, (float)point.y * scale)));
 		Main::render_window->draw(outlineCircle);
@@ -177,7 +179,7 @@ void Shape::draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bo
 		sf::CircleShape circle(radius);
 		circle.setOrigin(sf::Vector2f(radius, radius));
 		circle.setFillColor(colorOfPoints);
-		circle.setOutlineThickness(scale/2.f);
+		circle.setOutlineThickness(radius/3.f);
 		circle.setOutlineColor(sf::Color(79, 79, 79));
 		circle.setPosition(sf::Vector2f(position + sf::Vector2i((float)point.x * scale, (float)point.y * scale)));
 		Main::render_window->draw(circle);
