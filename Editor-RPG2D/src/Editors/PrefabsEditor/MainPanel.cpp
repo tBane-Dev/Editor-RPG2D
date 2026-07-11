@@ -244,8 +244,6 @@ namespace PrefabsEditor {
 							editor->_collider_panel->_y->setText(std::to_wstring(collider->_rect.position.y));
 							editor->_collider_panel->_w->setText(std::to_wstring(collider->_rect.size.x));
 							editor->_collider_panel->_h->setText(std::to_wstring(collider->_rect.size.y));
-							editor->_mesh = std::make_shared<Mesh>(*newObject->getMesh());
-
 						}
 						else if (newObject->_collider->_type == ColliderType::Circular) {
 							std::shared_ptr<CircularCollider> collider = std::dynamic_pointer_cast<CircularCollider>(newObject->_collider);
@@ -255,8 +253,10 @@ namespace PrefabsEditor {
 							editor->_collider_panel->_y->setText(std::to_wstring(collider->_y));
 							editor->_collider_panel->_w->setText(std::to_wstring(collider->_radiusX * 2));
 							editor->_collider_panel->_h->setText(std::to_wstring(collider->_radiusY * 2));
-							editor->_mesh = std::make_shared<Mesh>(*newObject->getMesh());
 						}
+
+						editor->_mesh = (newObject->getMesh()) ? std::make_shared<Mesh>(*newObject->getMesh()) : std::make_shared<Mesh>(2.0f, 1.0f);
+
 					}
 
 					// reload Map Editor Palette
