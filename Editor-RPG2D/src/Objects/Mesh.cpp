@@ -55,11 +55,11 @@ Shape::Shape() {
 	_points.clear();
 }
 
-Shape::Shape(const Shape& other) {
+Shape::Shape(const Shape& other, float scale) {
 	_points.reserve(other._points.size());
 
 	for (const auto& point : other._points) {
-		addPoint(point);
+		addPoint(point, -1, scale);
 	}
 }
 
@@ -77,7 +77,7 @@ int Shape::getPointIndex(sf::Vector2i point) {
 	return -1;
 }
 
-void Shape::addPoint(sf::Vector2i point, int index) {
+void Shape::addPoint(sf::Vector2i point, int index, float scale) {
 	if(getPointIndex(point) >= 0) {
 		return;
 	}
@@ -92,9 +92,11 @@ void Shape::addPoint(sf::Vector2i point, int index) {
 		_pointTexts.insert(_pointTexts.begin() + index, text);
 	}
 
+	generateConvexShape();
+
 }
 
-void Shape::removePoint(sf::Vector2i point) {
+void Shape::removePoint(sf::Vector2i point, float scale) {
 	int index = getPointIndex(point);
 
 	if (index < 0)
@@ -106,6 +108,8 @@ void Shape::removePoint(sf::Vector2i point) {
 	for(int i = index; i < _pointTexts.size(); i++) {
 		_pointTexts[i]->setString(std::to_wstring(i + 1));
 	}
+
+	generateConvexShape();
 }
 
 bool Shape::hasPoint(sf::Vector2i point) {
@@ -141,24 +145,36 @@ bool Shape::pointInShape(sf::Vector2i point) {
 	return isPointInPolygon(point, _points);
 }
 
-void Shape::drawConvexShape(sf::Vector2i position, float scale, sf::Color color) {
-	sf::ConvexShape convexShape;
+void Shape::generateConvexShape() {
+
 	convexShape.setPointCount(_points.size());
 
-	for (int i = 0; i < _points.size(); i++)
-		convexShape.setPoint(i, sf::Vector2f(position + sf::Vector2i((float)_points[i].x * scale, (float)_points[i].y * scale)));
+	for (std::size_t i = 0; i < _points.size(); ++i) {
+		convexShape.setPoint(i, sf::Vector2f((float)(_points[i].x), (float)(_points[i].y)));
+	}
 
 	convexShape.setFillColor(sf::Color::Transparent);
+}
+
+
+void Shape::drawConvexShape(sf::Vector2i position, float scale, sf::Color color) {
+	if (_points.size() < 2)
+		return;
+
+	convexShape.setPosition(sf::Vector2f(position));
+	convexShape.setScale(sf::Vector2f(scale, scale));
+
 	convexShape.setOutlineColor(color);
-	float thickness = scale / 2.f;
-	if(thickness < 2.0f) {
-		thickness = 2.0f;
-	}
-	convexShape.setOutlineThickness(thickness);
+
+	if (scale > 0.f)
+		convexShape.setOutlineThickness(2.f / scale);
+	else
+		convexShape.setOutlineThickness(2.f);
+
 	Main::render_window->draw(convexShape);
 }
 
-void Shape::draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes) {
+void Shape::draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes, bool renderPoints) {
 
 	drawConvexShape(position, scale, colorOfPoints);
 
@@ -166,23 +182,25 @@ void Shape::draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bo
 
 	radius = std::clamp(radius, 1.0f, 8.0f);
 
-	for(auto& point : _points) {
-		
-		sf::CircleShape outlineCircle(radius + radius / 3.f);
-		outlineCircle.setOrigin(sf::Vector2f(radius + radius / 3.f, radius + radius / 3.f));
-		outlineCircle.setFillColor(sf::Color::Transparent);
-		outlineCircle.setOutlineThickness(radius/3.f);
-		outlineCircle.setOutlineColor(sf::Color(47, 47, 47));
-		outlineCircle.setPosition(sf::Vector2f(position + sf::Vector2i((float)point.x * scale, (float)point.y * scale)));
-		Main::render_window->draw(outlineCircle);
+	if (renderPoints == true) {
+		for (auto& point : _points) {
 
-		sf::CircleShape circle(radius);
-		circle.setOrigin(sf::Vector2f(radius, radius));
-		circle.setFillColor(colorOfPoints);
-		circle.setOutlineThickness(radius/3.f);
-		circle.setOutlineColor(sf::Color(79, 79, 79));
-		circle.setPosition(sf::Vector2f(position + sf::Vector2i((float)point.x * scale, (float)point.y * scale)));
-		Main::render_window->draw(circle);
+			sf::CircleShape outlineCircle(radius + radius / 3.f);
+			outlineCircle.setOrigin(sf::Vector2f(radius + radius / 3.f, radius + radius / 3.f));
+			outlineCircle.setFillColor(sf::Color::Transparent);
+			outlineCircle.setOutlineThickness(radius / 3.f);
+			outlineCircle.setOutlineColor(sf::Color(47, 47, 47));
+			outlineCircle.setPosition(sf::Vector2f(position + sf::Vector2i((float)point.x * scale, (float)point.y * scale)));
+			Main::render_window->draw(outlineCircle);
+
+			sf::CircleShape circle(radius);
+			circle.setOrigin(sf::Vector2f(radius, radius));
+			circle.setFillColor(colorOfPoints);
+			circle.setOutlineThickness(radius / 3.f);
+			circle.setOutlineColor(sf::Color(79, 79, 79));
+			circle.setPosition(sf::Vector2f(position + sf::Vector2i((float)point.x * scale, (float)point.y * scale)));
+			Main::render_window->draw(circle);
+		}
 	}
 
 	if (renderIndexes) {
@@ -212,7 +230,7 @@ Mesh::Mesh(const Mesh& other)
 
 	for (const auto& shape : other._shapes) {
 		if (shape) {
-			_shapes.push_back(std::make_shared<Shape>(*shape));
+			_shapes.push_back(std::make_shared<Shape>(*shape, _scale));
 		}
 		else {
 			_shapes.push_back(nullptr);
@@ -296,6 +314,14 @@ bool Mesh::isPointInside(sf::Vector2i point, sf::Vector2i position) {
 	return false;
 }
 
+void Mesh::drawConvexShapes(sf::Vector2i position, float scale, sf::Color color) {
+	for (auto& shape : _shapes) {
+		if (!shape)
+			continue;
+
+		shape->drawConvexShape(position, scale, color);
+	}
+}
 
 void Mesh::draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes, std::shared_ptr<Shape> activeShape) {
 	for (auto& shape : _shapes) {
@@ -304,13 +330,13 @@ void Mesh::draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, boo
 		if (shape.get() == activeShape.get()) {
 			shapeColor = colorOfPoints;
 		}
-		shape->draw(position, scale, shapeColor, renderIndexes);
+		shape->draw(position, scale, shapeColor, renderIndexes, true);
 	}
 }
 
-void Mesh::draw(sf::Vector2i position, sf::Color color) {
+void Mesh::draw(sf::Vector2i position, sf::Color color, bool renderPoints) {
 	for (auto& shape : _shapes) {
-		shape->draw(position, 1.0f, color, false);
+		shape->draw(position, 1.0f, color, false, renderPoints);
 	}
 }
 
@@ -345,7 +371,7 @@ std::shared_ptr<Mesh> loadMesh(std::ifstream& loader) {
 		std::shared_ptr<Shape> shape = std::make_shared<Shape>();
 		for (int j = 0; j < pointCount; j++) {
 			sf::Vector2i point = reader.read_Vector2i();
-			shape->addPoint(point);
+			shape->addPoint(point, -1, 1.0f);
 		}
 		mesh->addShape(shape);
 	}

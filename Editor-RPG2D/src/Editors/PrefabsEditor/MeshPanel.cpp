@@ -21,11 +21,10 @@ namespace PrefabsEditor {
 			sf::Vector2i(_rect.position.x + _rect.size.x / 2 - 192 / 2, _rect.position.y + margin.y + 192 + 16)
 		);
 
-		_set_mesh->_onclick_func = []() {
+		_set_mesh->_onclick_func = [this]() {
 
 			std::shared_ptr<Main::Window> mesh_editor = std::make_shared<MeshEditor>();
 			Main::windows_manager->push_back(mesh_editor);
-
 			};
 
 		setButtonsActivity();
@@ -109,7 +108,7 @@ namespace PrefabsEditor {
 
 			std::shared_ptr<Mesh>& mesh = PrefabsEditor::editor->_mesh;
 			if (mesh) {
-				mesh->draw(sf::Vector2i(canvasPosition), scale, sf::Color(255, 255, 255), false);
+				mesh->drawConvexShapes(sf::Vector2i(canvasPosition), scale, sf::Color(255, 0, 0));
 			}
 		}
 

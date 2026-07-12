@@ -58,12 +58,12 @@ void MeshEditor::handleEvent(const sf::Event& event) {
 
 	if (rectForCursor.contains(Main::cursor->_position)) {
 		int radius = 8;
-		_cursorPosition.x = (float)_canvasRect.position.x + std::round((Main::cursor->_position.x - _canvasRect.position.x) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
-		_cursorPosition.y = (float)_canvasRect.position.y + std::round((Main::cursor->_position.y - _canvasRect.position.y) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
+		_cursorPosition.x = (float)_spriteRect.position.x + std::round((Main::cursor->_position.x - _spriteRect.position.x) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
+		_cursorPosition.y = (float)_spriteRect.position.y + std::round((Main::cursor->_position.y - _spriteRect.position.y) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
 
 		sf::Vector2i point;
-		point.x = std::round((_cursorPosition.x - _canvasRect.position.x) / _spriteScale);
-		point.y = std::round((_cursorPosition.y - _canvasRect.position.y) / _spriteScale);
+		point.x = std::round((_cursorPosition.x - _spriteRect.position.x) / _spriteScale);
+		point.y = std::round((_cursorPosition.y - _spriteRect.position.y) / _spriteScale);
 
 
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
@@ -93,11 +93,11 @@ void MeshEditor::handleEvent(const sf::Event& event) {
 			}
 
 			if (!_activeShape.expired()) {
-				_activeShape.lock()->addPoint(point);
+				_activeShape.lock()->addPoint(point, -1, _spriteScale);
 			}
 			else {
 				std::shared_ptr<Shape> shape = std::make_shared<Shape>();
-				shape->addPoint(point);
+				shape->addPoint(point, -1, _spriteScale);
 				PrefabsEditor::editor->_mesh->addShape(shape);
 				_activeShape = shape;
 			}
@@ -208,7 +208,7 @@ void MeshEditor::draw() {
 	Main::render_window->draw(spriteOutline);
 
 	if (PrefabsEditor::editor->_mesh)
-		PrefabsEditor::editor->_mesh->draw(_canvasRect.position, _spriteScale, sf::Color(255, 0, 0), true, _activeShape.lock());
+		PrefabsEditor::editor->_mesh->draw(_spriteRect.position, _spriteScale, sf::Color(255, 0, 0), true, _activeShape.lock());
 
 	// draw point at cursor position if inside canvas
 	int cursorMargin = 8;

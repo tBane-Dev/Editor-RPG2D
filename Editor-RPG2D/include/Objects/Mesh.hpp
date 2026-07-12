@@ -6,19 +6,21 @@ public:
 
 	std::vector<sf::Vector2i> _points;
 	std::vector<std::shared_ptr<sf::Text>> _pointTexts;
+	sf::ConvexShape convexShape;
 
 	Shape();
-	Shape(const Shape& other);  // copy constructor
+	Shape(const Shape& other, float scale);  // copy constructor
 	~Shape();
 
 	int getPointIndex(sf::Vector2i point);
-	void addPoint(sf::Vector2i point, int index = -1);
-	void removePoint(sf::Vector2i point);
+	void addPoint(sf::Vector2i point, int index = -1, float scale = 1.0f);
+	void removePoint(sf::Vector2i point, float scale = 1.0f);
 	bool hasPoint(sf::Vector2i point);
 	int insidePoint(sf::Vector2i point, float radius, float scale);
 	bool pointInShape(sf::Vector2i point);
+	void generateConvexShape();
 	void drawConvexShape(sf::Vector2i position, float scale, sf::Color color);
-	void draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes);
+	void draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes, bool renderPoints = false);
 };
  
 class Mesh {
@@ -46,8 +48,9 @@ public:
 	bool everyShapeIsComplete();
 	bool isPointInside(sf::Vector2i point, sf::Vector2i position);
 
+	void drawConvexShapes(sf::Vector2i position, float scale, sf::Color color);
 	void draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes = true, std::shared_ptr<Shape> activeShape = nullptr);
-	void draw(sf::Vector2i position, sf::Color color);
+	void draw(sf::Vector2i position, sf::Color color, bool renderPoints = false);
 };
 
 void saveMesh(std::shared_ptr<Mesh> mesh, std::ofstream& saver);
