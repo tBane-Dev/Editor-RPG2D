@@ -486,6 +486,10 @@ namespace PrefabsEditor {
 			if (!editor->_animator || editor->_animator->_animations.expired() || !editor->_animator->_animations.lock()->getTexture())
 				tooltipDesc += L"-The Animations is loaded\n";
 
+			if(!editor->_mesh || !editor->_mesh->everyShapeIsComplete())
+				tooltipDesc += L"-The Mesh is complete\n";
+
+
 			tooltipDesc.pop_back(); // remove last newline character
 			_add_prefab->setTooltip(256, tooltipTitle, tooltipDesc);
 		}
