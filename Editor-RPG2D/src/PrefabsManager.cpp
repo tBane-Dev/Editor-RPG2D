@@ -73,26 +73,22 @@ void PrefabsManager::removePrefabsByAnimations(int animationID) {
     );
 }
 
-void PrefabsManager::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab) {
+void PrefabsManager::replacePrefab(
+    std::shared_ptr<GameObject> oldPrefab,
+    std::shared_ptr<GameObject> newPrefab
+) {
     if (!oldPrefab || !newPrefab)
         return;
 
-    if(oldPrefab == newPrefab)
-		return;
+    if (oldPrefab == newPrefab)
+        return;
 
-	auto idx = std::find(_prefabs.begin(), _prefabs.end(), oldPrefab);
+    auto it = std::find(_prefabs.begin(), _prefabs.end(), oldPrefab);
 
-    std::erase_if(_prefabs, [&](const std::shared_ptr<GameObject>& prefab) {
-        if (!prefab)
-            return false;
+    if (it == _prefabs.end())
+        return;
 
-        return prefab == oldPrefab;
-        }
-    );
-
-    if (idx != _prefabs.end()) {
-		_prefabs.insert(idx, newPrefab);
-    }
+    *it = newPrefab;
 }
 
 void PrefabsManager::save(std::ofstream& saver) {
