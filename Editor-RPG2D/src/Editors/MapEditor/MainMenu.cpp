@@ -2,6 +2,7 @@
 #include "Components/MainMenu/MenuButton.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
+#include "Editors/BuildingEditor/Editor.hpp"
 #include "WindowsManager.hpp" // TO-DO - to delete
 #include "Windows/FileDialog/FileDialog.hpp" // TO-DO - to delete
 #include "DebugLog.hpp"
@@ -156,9 +157,24 @@ namespace MapEditor {
 			}
 			};
 
+		_tool_buildings_editor = std::make_shared<OptionWithIcon>(
+			L"Buildings editor",
+			nullptr,
+			nullptr
+		);
+		_tool_buildings_editor->_onclick_func = [this]() {
+			if (BuildingsEditor::editor == nullptr) {
+				closeMenu();
+				BuildingsEditor::editor = std::make_shared<BuildingsEditor::Editor>();
+				BuildingsEditor::editor->init();
+				Main::editor_manager->push_back(BuildingsEditor::editor);
+			}
+			};
+
 		_tools->addOption(_tool_palette);
 		_tools->addOption(_tool_animations_editor);
 		_tools->addOption(_tool_prefabs_editor);
+		_tools->addOption(_tool_buildings_editor);	
 
 		// POSITIONING
 

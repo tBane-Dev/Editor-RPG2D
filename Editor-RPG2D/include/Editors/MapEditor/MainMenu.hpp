@@ -30,6 +30,7 @@ namespace MapEditor {
 		std::shared_ptr<OptionWithCheckbox> _tool_palette;
 		std::shared_ptr<OptionWithIcon> _tool_animations_editor;
 		std::shared_ptr<OptionWithIcon> _tool_prefabs_editor;
+		std::shared_ptr<OptionWithIcon> _tool_buildings_editor;
 
 		MainMenu();
 		~MainMenu();
