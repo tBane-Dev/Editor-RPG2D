@@ -2,6 +2,7 @@
 #include "EditorsManager.hpp"
 #include "Editors/BuildingsEditor/MainMenu.hpp"
 #include "Editors/BuildingsEditor/Palette.hpp"
+#include "Editors/BuildingsEditor/BuildingsListPanel.hpp"
 
 namespace BuildingsEditor {
 
@@ -13,6 +14,7 @@ namespace BuildingsEditor {
 
 		std::shared_ptr<MainMenu> _main_menu;
 		std::shared_ptr<Palette> _palette;
+		std::shared_ptr<BuildingsListPanel> _list_panel;
 
 		Editor();
 		~Editor();
@@ -20,6 +22,7 @@ namespace BuildingsEditor {
 		void init();
 		void createMainMenu();
 		void createPalette();
+		void createListPanel();
 
 		void cursorHover();
 		void handleEvent(const sf::Event& event);

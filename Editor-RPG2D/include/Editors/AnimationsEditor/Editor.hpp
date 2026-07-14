@@ -5,7 +5,7 @@
 #include "AnimationsManager.hpp"
 #include "Animator.hpp"
 #include "Editors/AnimationsEditor/NamePanel.hpp"
-#include "Editors/AnimationsEditor/ListPanel.hpp"
+#include "Editors/AnimationsEditor/AnimationsListPanel.hpp"
 #include "Editors/AnimationsEditor/ActionsPanel.hpp"
 #include "Editors/AnimationsEditor/SpriteSheetPanel.hpp"
 #include "Editors/AnimationsEditor/PreviewPanel.hpp"
@@ -24,7 +24,7 @@ namespace AnimationsEditor {
 		std::shared_ptr<Animator> _animator;
 
 		std::shared_ptr<NamePanel> _name_panel;
-		std::shared_ptr<ListPanel> _list_panel;
+		std::shared_ptr<AnimationsListPanel> _list_panel;
 		std::shared_ptr<ActionsPanel> _actions_panel;
 		std::shared_ptr<SpriteSheetPanel> _sprite_sheet_panel;
 		std::shared_ptr<PreviewPanel> _preview_panel;

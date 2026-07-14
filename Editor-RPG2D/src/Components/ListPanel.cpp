@@ -1,4 +1,4 @@
-#include "Editors/AnimationsEditor/ListPanel.hpp"
+#include "Components/ListPanel.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
@@ -6,7 +6,7 @@
 #include "Objects/Monster.hpp"
 #include "PrefabsManager.hpp"
 
-namespace AnimationsEditor {
+namespace Components {
 	ListPanelItem::ListPanelItem(sf::Vector2i size) : Button() {
 		_rect.size = size;
 		_text = std::make_unique<sf::Text>(basicFont, L"", 20);
@@ -50,12 +50,12 @@ namespace AnimationsEditor {
 		Main::render_window->draw(*_text);
 	}
 
-	ListPanel::ListPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 600), sf::Vector2i(margin.x, AnimationsEditor::editor->_main_menu->getSize().y + margin.y)) {
+	ListPanel::ListPanel(sf::Vector2i margin, sf::Vector2i size, sf::Vector2i position) : Panel(size, position) {
 
 		// title
 		_title = std::make_unique<sf::Text>(basicFont, L"Animations List", 20);
 		_title->setFillColor(basic_text_color);
-		_title->setPosition(sf::Vector2f(_rect.position.x + 16, _rect.position.y + 16));
+		_title->setPosition(sf::Vector2f(_rect.position.x + 16 , _rect.position.y + 16));
 		
 		// list background rect
 		{
@@ -118,6 +118,22 @@ namespace AnimationsEditor {
 		}
 	}
 
+	void ListPanel::resetItems() {
+		for (int i = 0; i < _items.size(); i++) {
+
+			_items[i]->setName(L"");
+
+			sf::Vector2i position;
+			position.x = _list_rect.position.x;
+			position.y = _list_rect.position.y + (i)*basic_text_rect_height;
+
+			if (_scrollbar)
+				position.y -= _scrollbar->getValue() % basic_text_rect_height;
+
+			_items[i]->setPosition(position);
+		}
+	}
+
 	void ListPanel::loadList() {
 
 		for (int i = 0; i < _items.size(); i++) {
@@ -134,50 +150,6 @@ namespace AnimationsEditor {
 			_items[i]->setPosition(position);
 		}
 
-		int max_id = (animations_manager->getAnimationsCount() < _items.size()) ? animations_manager->getAnimationsCount() : _items.size();
-
-		for (int i = 0; i < max_id; i++) {
-			std::shared_ptr<ListPanelItem> item = _items[i];
-
-			int index = i;
-			if (_scrollbar) index += _scrollbar->getValue() / basic_text_rect_height;
-
-			if (index < animations_manager->getAnimationsCount()) {
-				item->setName(animations_manager->getAnimations(index).lock()->_path);
-				item->_onclick_func = [this, index, item]() {
-
-					selectItem(index);
-
-					std::shared_ptr<Animations> animations = animations_manager->getAnimations(index).lock();
-
-					if (!animations)
-						return;
-
-					editor->_animations = animations;
-					editor->_tempAnimations = std::make_shared<Animations>(*editor->_animations);
-					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
-
-					editor->_name_panel->loadAnimations();
-					editor->_sprite_sheet_panel->loadAnimations();
-					editor->_sprite_sheet_panel->setTextInputsRange();
-
-					editor->_actions_panel->setButtonsActivity();
-					editor->_actions_panel->setTooltips();
-
-					editor->_preview_panel->loadAnimations();
-					editor->_preview_panel->setButtonsActivity();
-					editor->_preview_panel->setTooltips();
-					
-					};
-			}
-			else {
-				item->setName(L"");
-				item->_onclick_func = {};
-			}
-
-
-
-		}
 	}
 
 	void ListPanel::loadScrollbar() {

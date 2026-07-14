@@ -34,7 +34,7 @@ namespace AnimationsEditor {
 	}
 
 	void Editor::createListPanel() {
-		_list_panel = std::make_shared<ListPanel>(_margin);
+		_list_panel = std::make_shared<AnimationsListPanel>(_margin);
 	}
 
 	void Editor::createNamePanel() {

@@ -4,7 +4,7 @@
 #include "Controls/ButtonWithTextAndSprite.hpp"
 #include "Controls/Scrollbar.hpp"
 
-namespace AnimationsEditor {
+namespace Components {
 
 	class ListPanelItem : public Button {
 	public:
@@ -33,19 +33,22 @@ namespace AnimationsEditor {
 
 		std::shared_ptr<Scrollbar> _scrollbar;
 
-		ListPanel(sf::Vector2i margin);
+		ListPanel(sf::Vector2i margin, sf::Vector2i size, sf::Vector2i position);
 		~ListPanel();
 
 		void selectItem(int index);
-		void loadList();
+		void resetItems();
+
+		virtual void loadList();
+
 		void loadScrollbar();
 		void loadAll();
 		sf::FloatRect getListRect();
 
-		void cursorHover();
-		void handleEvent(const sf::Event& event);
-		void update();
-		void draw();
+		virtual void cursorHover();
+		virtual void handleEvent(const sf::Event& event);
+		virtual void update();
+		virtual void draw();
 
 	};
 }
