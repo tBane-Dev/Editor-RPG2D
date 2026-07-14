@@ -74,7 +74,7 @@ namespace MapEditor {
 				_tools->setTool(_tools->_tools[1], ToolType::Circle);
 				if (_slots->_selectedSlot == nullptr) {
 					if (_slots->_slots.size() > 0) {
-						_slots->selectSlot(0);
+						_slots->selectSlot(1);
 						MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 					}
 				}
@@ -91,7 +91,7 @@ namespace MapEditor {
 
 				if (_slots->_selectedSlot == nullptr) {
 					if (_slots->_slots.size() > 0) {
-						_slots->selectSlot(0);
+						_slots->selectSlot(1);
 						MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
 					}
 				}
