@@ -2,7 +2,7 @@
 #include "Components/MainMenu/MenuButton.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Editors/PrefabsEditor/Editor.hpp"
-#include "Editors/BuildingEditor/Editor.hpp"
+#include "Editors/BuildingsEditor/Editor.hpp"
 #include "WindowsManager.hpp" // TO-DO - to delete
 #include "Windows/FileDialog/FileDialog.hpp" // TO-DO - to delete
 #include "DebugLog.hpp"

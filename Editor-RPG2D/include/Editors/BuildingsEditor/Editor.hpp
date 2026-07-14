@@ -1,5 +1,6 @@
 #pragma once
 #include "EditorsManager.hpp"
+#include "Editors/BuildingsEditor/MainMenu.hpp"
 
 namespace BuildingsEditor {
 
@@ -9,7 +10,7 @@ namespace BuildingsEditor {
 		std::unique_ptr<sf::Text> _title;
 		sf::Vector2i _margin;
 
-		//std::shared_ptr<MainMenu> _main_menu;
+		std::shared_ptr<MainMenu> _main_menu;
 		//std::shared_ptr<Palette> _palette;
 
 		Editor();
