@@ -1,5 +1,5 @@
 #include "Editors/BuildingsEditor/Editor.hpp"
-//#include "Editors/PrefabsEditor/Palette.hpp"
+#include "Editors/BuildingsEditor/Palette.hpp"
 #include "DebugLog.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
@@ -22,7 +22,7 @@ namespace BuildingsEditor {
 
 	void Editor::init() {
 		createMainMenu();
-		//createPalette();
+		createPalette();
 		
 	}
 
@@ -31,7 +31,7 @@ namespace BuildingsEditor {
 	}
 
 	void Editor::createPalette() {
-		//_palette = std::make_shared<Palette>();
+		_palette = std::make_shared<Palette>();
 	}
 
 
@@ -45,7 +45,7 @@ namespace BuildingsEditor {
 			return;
 		}
 		
-		//_palette->cursorHover();
+		_palette->cursorHover();
 		_main_menu->cursorHover();
 
 	}
@@ -61,14 +61,14 @@ namespace BuildingsEditor {
 			return;
 		}
 		
-		//_palette->handleEvent(event);
+		_palette->handleEvent(event);
 
 	}
 
 	void Editor::update() {
 
 		_main_menu->update();
-		//_palette->update();
+		_palette->update();
 
 	}
 
@@ -78,7 +78,7 @@ namespace BuildingsEditor {
 
 		Main::render_window->draw(*_title);
 
-		//_palette->draw();
+		_palette->draw();
 		_main_menu->draw();
 	}
 
