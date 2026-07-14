@@ -188,9 +188,11 @@ namespace Components {
 
 	sf::FloatRect ListPanel::getListRect() {
 
+		float border = 2.0f;
+
 		return sf::FloatRect(
-			sf::Vector2f((float)_list_rect.position.x, (float)_list_rect.position.y),
-			sf::Vector2f((float)_list_rect.size.x, (float)(_list_rect.size.y))
+			sf::Vector2f((float)_list_rect.position.x + border, (float)_list_rect.position.y + border),
+			sf::Vector2f((float)_list_rect.size.x - 2*border, (float)(_list_rect.size.y - 2*border))
 		);
 	}
 
