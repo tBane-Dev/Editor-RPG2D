@@ -24,6 +24,7 @@ namespace BuildingsEditor {
 		createMainMenu();
 		createPalette();
 		createListPanel();
+		createNamePanel(); 
 		createBuildingPanel();
 	}
 
@@ -33,6 +34,10 @@ namespace BuildingsEditor {
 
 	void Editor::createPalette() {
 		_palette = std::make_shared<Palette>();
+	}
+
+	void Editor::createNamePanel() {
+		_name_panel = std::make_shared<NamePanel>(_margin);
 	}
 
 	void Editor::createListPanel() {
@@ -54,6 +59,7 @@ namespace BuildingsEditor {
 		}
 		
 		_list_panel->cursorHover();
+		_name_panel->cursorHover();
 		_building_panel->cursorHover();
 		_palette->cursorHover();
 		_main_menu->cursorHover();
@@ -72,6 +78,7 @@ namespace BuildingsEditor {
 		}
 		
 		_list_panel->handleEvent(event);
+		_name_panel->handleEvent(event);
 		_building_panel->handleEvent(event);
 		_palette->handleEvent(event);
 
@@ -80,6 +87,7 @@ namespace BuildingsEditor {
 	void Editor::update() {
 
 		_list_panel->update();
+		_name_panel->update();
 		_building_panel->update();
 		_main_menu->update();
 		_palette->update();
@@ -93,6 +101,7 @@ namespace BuildingsEditor {
 		Main::render_window->draw(*_title);
 
 		_building_panel->draw();
+		_name_panel->draw();
 		_list_panel->draw();
 		_palette->draw();
 		_main_menu->draw();
