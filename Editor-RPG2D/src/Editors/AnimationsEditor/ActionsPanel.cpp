@@ -1,4 +1,4 @@
-#include "Components/ListPanel.hpp" // TO-DO - to delete
+#include "Editors/AnimationsEditor/ActionsPanel.hpp"
 #include "Editors/AnimationsEditor/Editor.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
