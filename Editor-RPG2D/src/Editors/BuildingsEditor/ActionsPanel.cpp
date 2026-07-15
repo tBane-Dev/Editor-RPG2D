@@ -9,7 +9,7 @@ namespace BuildingsEditor {
 	
 	ActionsPanel::ActionsPanel(sf::Vector2i margin) : Panel(
 		sf::Vector2i(420, 300), 
-		sf::Vector2i(BuildingsEditor::editor->_list_panel->getPosition().x, BuildingsEditor::editor->_list_panel->getPosition().y + BuildingsEditor::editor->_list_panel->getSize().y)) {
+		sf::Vector2i(BuildingsEditor::editor->_list_panel->getPosition().x, BuildingsEditor::editor->_list_panel->getPosition().y + BuildingsEditor::editor->_list_panel->getSize().y + 4)) {
 
 		// title
 		_title = std::make_unique<sf::Text>(basicFont, L"Actions", 20);

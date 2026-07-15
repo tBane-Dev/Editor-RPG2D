@@ -6,6 +6,7 @@
 #include "Editors/BuildingsEditor/ActionsPanel.hpp"
 #include "Editors/BuildingsEditor/NamePanel.hpp"
 #include "Editors/BuildingsEditor/BuildingPanel.hpp"
+#include "Controls/Shapes/ResizableShape.hpp"
 
 namespace BuildingsEditor {
 

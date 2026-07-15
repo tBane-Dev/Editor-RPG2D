@@ -127,6 +127,12 @@ int main() {
                 Main::render_window->close();
             }
 
+            if(event->is<sf::Event::Resized>()) {
+				sf::Vector2u newSize = event->getIf<sf::Event::Resized>()->size;
+                Main::render_window->setSize(newSize);
+                GUI_manager->resize(sf::Vector2i(newSize));
+			}
+
             Main::editor_manager->handleEvent(*event);
             Main::windows_manager->handleEvent(*event);
 

@@ -23,6 +23,7 @@ public:
 	GUIManager();
 	~GUIManager();
 
+	void resize(sf::Vector2i newSize);
 	void setView();
 };
 

@@ -9,7 +9,9 @@
 
 namespace AnimationsEditor {
 	
-	ActionsPanel::ActionsPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 300), sf::Vector2i(margin.x, AnimationsEditor::editor->_main_menu->getSize().y + 600 + margin.y)) {
+	ActionsPanel::ActionsPanel(sf::Vector2i margin) : Panel(
+		sf::Vector2i(420, 300), 
+		sf::Vector2i(AnimationsEditor::editor->_list_panel->getPosition().x, AnimationsEditor::editor->_list_panel->getPosition().y + AnimationsEditor::editor->_list_panel->getSize().y + 4)) {
 
 		// title
 		_title = std::make_unique<sf::Text>(basicFont, L"Actions", 20);

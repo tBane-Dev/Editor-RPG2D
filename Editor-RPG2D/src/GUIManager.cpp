@@ -36,6 +36,11 @@ GUIManager::GUIManager() {
 GUIManager::~GUIManager() {
 }
 
+void GUIManager::resize(sf::Vector2i newSize)
+{
+    _view = sf::View(sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(newSize)));
+}
+
 void GUIManager::setView() {
 	Main::render_window->setView(_view);
 }
