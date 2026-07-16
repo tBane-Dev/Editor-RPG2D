@@ -11,9 +11,9 @@ namespace BuildingsEditor {
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-			nullptr,
-			ObjectType::None,
-			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\walls.png"),
+			ObjectType::Wall,
+			[this]() { loadAll(ObjectType::Wall); }
 		);
 
 
@@ -21,36 +21,36 @@ namespace BuildingsEditor {
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-			nullptr,
-			ObjectType::None,
-			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\floors.png"),
+			ObjectType::Floor,
+			[this]() { loadAll(ObjectType::Floor); }
 		);
 
 		_categories->addCategory(
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-			nullptr,
-			ObjectType::None,
-			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\doors.png"),
+			ObjectType::Door,
+			[this]() { loadAll(ObjectType::Door); }
 		);
 
 		_categories->addCategory(
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-			nullptr,
-			ObjectType::None,
-			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\windows.png"),
+			ObjectType::Window,
+			[this]() { loadAll(ObjectType::Window); }
 		);
 
 		_categories->addCategory(
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-			nullptr,
-			ObjectType::None,
-			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\wall_mounted.png"),
+			ObjectType::WallMounted,
+			[this]() { loadAll(ObjectType::WallMounted); }
 		);
 
 		_tools = std::make_shared<Tools>();
@@ -59,7 +59,7 @@ namespace BuildingsEditor {
 		setPosition(sf::Vector2i(_rect.position));
 
 		// set the active group
-		loadAll(ObjectType::None); // TO-DO - must be - selectCategory
+		loadAll(ObjectType::Wall);
 
 		//_slots->setCategory(ObjectType::None);
 	}

@@ -158,6 +158,11 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\terrain.png");
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\natures.png");
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\monsters.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\categories\\walls.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\categories\\floors.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\categories\\doors.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\categories\\windows.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\categories\\wall_mounted.png");
 
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\prev.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\prev_hover.png");

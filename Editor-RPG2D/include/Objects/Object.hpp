@@ -1,7 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-enum class ObjectType { None, Terrain, Monster, Nature };
+enum class ObjectType { 
+	None, Terrain, Monster, Nature,
+	Wall, Floor, Door, Window, WallMounted
+};
 
 class Object {
 public:
