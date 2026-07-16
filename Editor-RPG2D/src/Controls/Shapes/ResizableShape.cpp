@@ -3,7 +3,21 @@
 
 ResizableShape::ResizableShape() : Element() {
 
-	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(512, 512));
+	int size = 512;
+
+	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(size, size));
+	_state = ResizableShapeState::Idle;
+	_step = 1;
+
+	sf::Vector2i _minSize = sf::Vector2i(0, 0);
+	sf::Vector2i _maxSize = sf::Vector2i(size, size);
+
+	_state = ResizableShapeState::Idle;
+	_offset = sf::Vector2i(0, 0);
+
+	_color = sf::Color(191, 0, 0);
+	_outlineColor = sf::Color(191, 0, 0);
+
 	generateEdgePoints();
 }
 
@@ -11,22 +25,44 @@ ResizableShape::~ResizableShape() {
 
 }
 
-void ResizableShape::generateEdgePoints() {
+sf::Vector2i ResizableShape::getSize() {
+	return _rect.size;
+}
 
-	float m = edgePointSize / 2.0;
+void ResizableShape::setStep(int step) {
+	_step = step;
+}
+
+void ResizableShape::setMinSize(sf::Vector2i minSize) {
+	_minSize = minSize;
+}
+
+void ResizableShape::setMaxSize(sf::Vector2i maxSize) {
+	_maxSize = maxSize;
+}
+
+void ResizableShape::setColor(sf::Color color) {
+	_color = color;
+}
+
+void ResizableShape::setOutlineColor(sf::Color outlineColor) {
+	_outlineColor = outlineColor;
+
+}
+void ResizableShape::generateEdgePoints() {
 
 	_edgePoints.clear();
 
-	_point_left_top = std::make_shared<EdgePoint>(EdgePointType::LeftTop, sf::Vector2i(_rect.position) + sf::Vector2i((int)(-m), (int)(-m)));
-	_point_top = std::make_shared<EdgePoint>(EdgePointType::Top, sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x / 2), (int)(-m)));
-	_point_right_top = std::make_shared<EdgePoint>(EdgePointType::RightTop, sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x + m), (int)(-m)));
+	_point_left_top = std::make_shared<EdgePoint>(EdgePointType::LeftTop, sf::Vector2i(_rect.position));
+	_point_top = std::make_shared<EdgePoint>(EdgePointType::Top, sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x / 2, 0));
+	_point_right_top = std::make_shared<EdgePoint>(EdgePointType::RightTop, sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x, 0));
 
-	_point_left = std::make_shared<EdgePoint>(EdgePointType::Left, sf::Vector2i(_rect.position) + sf::Vector2i((int)(-m), (int)(_rect.size.y / 2)));
-	_point_right = std::make_shared<EdgePoint>(EdgePointType::Right, sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x + m), (int)(_rect.size.y / 2)));
+	_point_left = std::make_shared<EdgePoint>(EdgePointType::Left, sf::Vector2i(_rect.position) + sf::Vector2i(0, _rect.size.y / 2));
+	_point_right = std::make_shared<EdgePoint>(EdgePointType::Right, sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x, _rect.size.y / 2));
 
-	_point_left_bottom = std::make_shared<EdgePoint>(EdgePointType::LeftBottom, sf::Vector2i(_rect.position) + sf::Vector2i((int)(-m), (int)(_rect.size.y + m)));
-	_point_bottom = std::make_shared<EdgePoint>(EdgePointType::Bottom, sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x / 2), (int)(_rect.size.y + m)));
-	_point_right_bottom = std::make_shared<EdgePoint>(EdgePointType::RightBottom, sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x + m), (int)(_rect.size.y + m)));
+	_point_left_bottom = std::make_shared<EdgePoint>(EdgePointType::LeftBottom, sf::Vector2i(_rect.position) + sf::Vector2i(0, _rect.size.y));
+	_point_bottom = std::make_shared<EdgePoint>(EdgePointType::Bottom, sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x / 2, _rect.size.y));
+	_point_right_bottom = std::make_shared<EdgePoint>(EdgePointType::RightBottom, sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x, _rect.size.y));
 
 	_edgePoints.push_back(_point_left_top);
 	_edgePoints.push_back(_point_top);
@@ -39,72 +75,88 @@ void ResizableShape::generateEdgePoints() {
 
 }
 
-sf::Vector2i ResizableShape::getSize() {
-	return _rect.size;
-}
-
 void ResizableShape::setPosition(sf::Vector2i position) {
+
 	_rect.position = position;
 
-	_point_left_top->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(-edgePointSize / 2), (int)(-edgePointSize / 2)));
-	_point_top->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x / 2), (int)(-edgePointSize / 2)));
-	_point_right_top->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x + edgePointSize / 2), (int)(-edgePointSize / 2)));
-	_point_left->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(-edgePointSize / 2), (int)(_rect.size.y / 2)));
-	_point_right->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x + edgePointSize / 2), (int)(_rect.size.y / 2)));
-	_point_left_bottom->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(-edgePointSize / 2), (int)(_rect.size.y + edgePointSize / 2)));
-	_point_bottom->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x / 2), (int)(_rect.size.y + edgePointSize / 2)));
-	_point_right_bottom->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i((int)(_rect.size.x + edgePointSize / 2), (int)(_rect.size.y + edgePointSize / 2)));
+	_point_left_top->setPosition(sf::Vector2i(_rect.position));
+	_point_top->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x / 2, 0));
+	_point_right_top->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x, 0));
+	_point_left->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i(0, _rect.size.y / 2));
+	_point_right->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x, _rect.size.y / 2));
+	_point_left_bottom->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i(0, _rect.size.y));
+	_point_bottom->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x / 2, _rect.size.y));
+	_point_right_bottom->setPosition(sf::Vector2i(_rect.position) + sf::Vector2i(_rect.size.x, _rect.size.y));
+}
+
+sf::Vector2i ResizableShape::getPosition() {
+	return _rect.position;
+}
+
+void ResizableShape::resize(sf::Vector2i size) {
+	_rect.size = size;
 }
 
 void ResizableShape::resize(std::shared_ptr<EdgePoint> edgePoint) {
 
-	sf::Vector2i p = Main::cursor->_position + _edgePoints[0]->getSize() / 2 - edgePoint->getPosition();
+	if (!edgePoint)
+		return;
 
-	float minX = _point_left->getPosition().x;
-	float minY = _point_top->getPosition().y;
-	float maxX = _point_right->getPosition().x;
-	float maxY = _point_bottom->getPosition().y;
+	sf::Vector2i p = Main::cursor->_position - edgePoint->getPosition();
+	p = p / _step * _step;
 
-	if (edgePoint == _point_left_top) {
-		minX = _point_left->getPosition().x + p.x;
-		minY = _point_top->getPosition().y + p.y;
+	int minX = _point_left->getPosition().x;
+	int minY = _point_top->getPosition().y;
+	int maxX = _point_right->getPosition().x;
+	int maxY = _point_bottom->getPosition().y;
+
+	bool resizeLeft =
+		edgePoint == _point_left_top ||
+		edgePoint == _point_left ||
+		edgePoint == _point_left_bottom;
+
+	bool resizeRight =
+		edgePoint == _point_right_top ||
+		edgePoint == _point_right ||
+		edgePoint == _point_right_bottom;
+
+	bool resizeTop =
+		edgePoint == _point_left_top ||
+		edgePoint == _point_top ||
+		edgePoint == _point_right_top;
+
+	bool resizeBottom =
+		edgePoint == _point_left_bottom ||
+		edgePoint == _point_bottom ||
+		edgePoint == _point_right_bottom;
+
+	if (resizeLeft)
+		minX += p.x;
+	else if (resizeRight)
+		maxX += p.x;
+
+	if (resizeTop)
+		minY += p.y;
+	else if (resizeBottom)
+		maxY += p.y;
+
+	if (resizeLeft) {
+		int width = std::clamp(maxX - minX, _minSize.x, _maxSize.x);
+		minX = maxX - width;
 	}
-	else if (edgePoint == _point_right_top) {
-		maxX = _point_right->getPosition().x + p.x;
-		minY = _point_top->getPosition().y + p.y;
-	}
-	else if (edgePoint == _point_left_bottom) {
-		minX = _point_left->getPosition().x + p.x;
-		maxY = _point_bottom->getPosition().y + p.y;
-	}
-	else if (edgePoint == _point_right_bottom) {
-		maxX = _point_right->getPosition().x + p.x;
-		maxY = _point_bottom->getPosition().y + p.y;
-	}
-	else if (edgePoint == _point_left) {
-		minX = _point_left->getPosition().x + p.x;
-	}
-	else if (edgePoint == _point_right) {
-		maxX = _point_right->getPosition().x + p.x;
-	}
-	else if (edgePoint == _point_top) {
-		minY = _point_top->getPosition().y + p.y;
-	}
-	else if (edgePoint == _point_bottom) {
-		maxY = _point_bottom->getPosition().y + p.y;
+	else if (resizeRight) {
+		int width = std::clamp(maxX - minX, _minSize.x, _maxSize.x);
+		maxX = minX + width;
 	}
 
-	if (edgePoint == _point_left_top || edgePoint == _point_left || edgePoint == _point_left_bottom)
-		minX = std::min(minX, maxX);
-
-	if (edgePoint == _point_right_top || edgePoint == _point_right || edgePoint == _point_right_bottom)
-		maxX = std::max(maxX, minX);
-
-	if (edgePoint == _point_left_top || edgePoint == _point_top || edgePoint == _point_right_top)
-		minY = std::min(minY, maxY);
-
-	if (edgePoint == _point_left_bottom || edgePoint == _point_bottom || edgePoint == _point_right_bottom)
-		maxY = std::max(maxY, minY);
+	if (resizeTop) {
+		int height = std::clamp(maxY - minY, _minSize.y, _maxSize.y);
+		minY = maxY - height;
+	}
+	else if (resizeBottom) {
+		int height = std::clamp(maxY - minY, _minSize.y, _maxSize.y);
+		maxY = minY + height;
+	}
 
 	_point_left_top->setPosition(sf::Vector2i(minX, minY));
 	_point_top->setPosition(sf::Vector2i((minX + maxX) / 2, minY));
@@ -118,7 +170,7 @@ void ResizableShape::resize(std::shared_ptr<EdgePoint> edgePoint) {
 	_point_right_bottom->setPosition(sf::Vector2i(maxX, maxY));
 
 	_rect = sf::IntRect(sf::Vector2i(minX, minY), sf::Vector2i(maxX - minX, maxY - minY));
-}
+ }
 
 void ResizableShape::cursorHover() {
 
@@ -126,7 +178,7 @@ void ResizableShape::cursorHover() {
 		GUI_manager->Element_hovered = this->shared_from_this();
 	}
 
-	for (auto& point : _edgePoints) {
+	for (auto& point : _edgePoints) { 
 		point->cursorHover();
 	}
 }
@@ -138,26 +190,66 @@ void ResizableShape::handleEvent(const sf::Event& event) {
 
 		if(point == GUI_manager->Element_pressed) {
 			resize(point);
+			return;
 		}
+	}
+
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
+		if(GUI_manager->Element_hovered.get() == this) {
+			_state = ResizableShapeState::Moving;
+			_offset = Main::cursor->_position - getPosition();
+			GUI_manager->Element_pressed = nullptr;
+		}
+	}
+
+	
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Middle) {
+		_state = ResizableShapeState::Idle;
+		_offset = sf::Vector2i(0, 0);
+		if(GUI_manager->Element_pressed.get() == this)
+			GUI_manager->Element_pressed = nullptr;
 	}
 }
 
 void ResizableShape::update() {
+
+	if(_state == ResizableShapeState::Moving) {
+		setPosition(Main::cursor->_position - _offset);
+		return;
+	}
+
 	for (auto& point : _edgePoints) {
 		point->update();
 	}
 }
 
+void ResizableShape::drawOnlyEdgePoints() {
+	for (auto& point : _edgePoints) {
+		point->draw(); 
+	}
+}
+
+void ResizableShape::drawOnlyRect() {
+	float border = 2.0f;
+	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2 * border, _rect.size.y - 2 * border));
+	rect.setFillColor(_color);
+	rect.setOutlineThickness(border);
+	rect.setOutlineColor(_outlineColor);
+	rect.setPosition(sf::Vector2f(_rect.position.x + border, _rect.position.y + border));
+	Main::render_window->draw(rect);
+} 
+
 void ResizableShape::draw() {
 	float border = 2.0f;
 	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2 * border, _rect.size.y - 2 * border));
-	rect.setFillColor(sf::Color(191, 0, 0));
+	rect.setFillColor(_color);
 	rect.setOutlineThickness(border);
-	rect.setOutlineColor(sf::Color(127, 0, 0));
+	rect.setOutlineColor(_outlineColor);
 	rect.setPosition(sf::Vector2f(_rect.position.x + border, _rect.position.y + border));
 	Main::render_window->draw(rect);
 
-	for(auto& point : _edgePoints) {
+	for (auto& point : _edgePoints) {
 		point->draw();
 	}
 }
+

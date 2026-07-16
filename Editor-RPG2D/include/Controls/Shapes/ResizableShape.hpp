@@ -3,11 +3,20 @@
 #include "GUIManager.hpp"
 #include "Controls/Shapes/EdgePoint.hpp"
 
-
+enum class ResizableShapeState { Idle, Moving };
 class ResizableShape : public Element{
 public:
 
 	sf::IntRect	_rect;
+	int _step = 1;
+	sf::Vector2i _minSize = sf::Vector2i(0, 0);
+	sf::Vector2i _maxSize = sf::Vector2i(0, 0);
+
+	ResizableShapeState _state = ResizableShapeState::Idle;
+	sf::Vector2i _offset = sf::Vector2i(0, 0);
+
+	sf::Color _color;
+	sf::Color _outlineColor;
 
 	// edge points
 	float edgePointSize = 16.0f;
@@ -25,14 +34,23 @@ public:
 	ResizableShape();
 	~ResizableShape();
 
-	void generateEdgePoints();
-
 	sf::Vector2i getSize();
+	void setStep(int step);
+	void setMinSize(sf::Vector2i minSize);
+	void setMaxSize(sf::Vector2i maxSize);
+	void setColor(sf::Color color);
+	void setOutlineColor(sf::Color outlineColor);
+
+	virtual void generateEdgePoints();
 	virtual void setPosition(sf::Vector2i position);
-	void resize(std::shared_ptr<EdgePoint> edgePoint);
+	sf::Vector2i getPosition();
+	void resize(sf::Vector2i size);
+	virtual void resize(std::shared_ptr<EdgePoint> edgePoint);
 
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);
 	virtual void update();
+	void drawOnlyEdgePoints();
+	void drawOnlyRect();
 	virtual void draw();
 };

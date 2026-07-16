@@ -143,6 +143,7 @@ int main() {
         Main::windows_manager->update();
 		Main::tooltip->update();
 
+        // TO-DO - to delete
         // I Am The One! .. B-)
         //DebugStat(L"I am The One ..");
 

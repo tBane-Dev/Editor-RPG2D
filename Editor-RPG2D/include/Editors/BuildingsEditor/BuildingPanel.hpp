@@ -3,6 +3,12 @@
 #include "Controls/Shapes/ResizableShape.hpp"
 
 namespace BuildingsEditor {
+
+	enum class BuildingState {
+		Idle,
+		Moving
+	};
+
 	class BuildingPanel : public Components::Panel {
 	public:
 
