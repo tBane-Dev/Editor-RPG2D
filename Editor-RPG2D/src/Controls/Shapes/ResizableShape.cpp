@@ -19,6 +19,7 @@ ResizableShape::ResizableShape() : Element() {
 	_outlineColor = sf::Color(191, 0, 0);
 
 	generateEdgePoints();
+
 }
 
 ResizableShape::~ResizableShape() {
@@ -215,6 +216,7 @@ void ResizableShape::update() {
 
 	if(_state == ResizableShapeState::Moving) {
 		setPosition(Main::cursor->_position - _offset);
+
 		return;
 	}
 

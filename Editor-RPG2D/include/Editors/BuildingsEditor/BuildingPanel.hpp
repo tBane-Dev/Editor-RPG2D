@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Components/Panel.hpp"
-#include "Controls/Shapes/ResizableShape.hpp"
+#include "Editors/BuildingsEditor/BuildingShape.hpp"
+#include "TexturesManager.hpp"
 
 namespace BuildingsEditor {
 
@@ -12,7 +13,7 @@ namespace BuildingsEditor {
 	class BuildingPanel : public Components::Panel {
 	public:
 
-		std::shared_ptr<ResizableShape> _buildingShape;
+		std::shared_ptr<BuildingShape> _building;
 
 		BuildingPanel(sf::Vector2i margin);
 		~BuildingPanel();

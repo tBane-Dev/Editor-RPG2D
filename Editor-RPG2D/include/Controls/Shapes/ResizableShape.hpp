@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "GUIManager.hpp"
 #include "Controls/Shapes/EdgePoint.hpp"
+#include <functional>
 
 enum class ResizableShapeState { Idle, Moving };
 class ResizableShape : public Element{
@@ -30,7 +31,6 @@ public:
 	std::shared_ptr<EdgePoint> _point_bottom;
 	std::shared_ptr<EdgePoint> _point_right_bottom;
 	
-
 	ResizableShape();
 	~ResizableShape();
 

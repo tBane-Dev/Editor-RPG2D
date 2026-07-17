@@ -51,6 +51,8 @@ namespace BuildingsEditor {
 
 	void Editor::createBuildingPanel() {
 		_building_panel = std::make_shared<BuildingPanel>(_margin);
+
+		_building_panel->_building->create();
 	}
 
 	void Editor::cursorHover() {

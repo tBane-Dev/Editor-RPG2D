@@ -11,16 +11,7 @@ namespace BuildingsEditor {
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getSize().x + 4, 768 + 4),
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getPosition().x, BuildingsEditor::editor->_name_panel->getPosition().y + BuildingsEditor::editor->_name_panel->getSize().y + 4)) {
 
-		sf::Vector2i buildingSize = sf::Vector2i(9*32, 9*32);
-
-		_buildingShape = std::make_shared<ResizableShape>();
-		_buildingShape->resize(buildingSize);
-		_buildingShape->setColor(sf::Color(79, 79, 79));
-		_buildingShape->setOutlineColor(sf::Color(47, 47, 47));
-		_buildingShape->setPosition(sf::Vector2i(_rect.position.x + (_rect.size.x - _buildingShape->getSize().x) / 2, _rect.position.y + (_rect.size.y - _buildingShape->getSize().y) / 2));
-		_buildingShape->setStep(32);
-		_buildingShape->setMinSize(sf::Vector2i(7 * 32, 7 * 32));
-		_buildingShape->setMaxSize(sf::Vector2i(19 * 32, 19 * 32));
+		_building = std::make_shared<BuildingShape>();
 	}
 
 	BuildingPanel::~BuildingPanel() {
@@ -29,26 +20,27 @@ namespace BuildingsEditor {
 
 	void BuildingPanel::cursorHover() {
 		Components::Panel::cursorHover();
-		_buildingShape->cursorHover();
+		_building->cursorHover();
 	}
 
 	void BuildingPanel::handleEvent(const sf::Event& event) {
 		Components::Panel::handleEvent(event);
-		_buildingShape->handleEvent(event);
+		_building->handleEvent(event);
 	}
 
 	void BuildingPanel::update() {
 		Components::Panel::update();
-		_buildingShape->update();
+		_building->update();
 	}
 
 	void BuildingPanel::draw() {
 		Components::Panel::draw();
 
-		_buildingShape->drawOnlyRect();
+		_building->drawOnlyShape();
+		_building->drawOnlyFloor();
 
-		grid2_shader->setUniform("rectPosition", sf::Vector2f(_buildingShape->getPosition()));
-		grid2_shader->setUniform("rectSize", sf::Vector2f(_buildingShape->getSize()));
+		grid2_shader->setUniform("rectPosition", sf::Vector2f(_building->getPosition()));
+		grid2_shader->setUniform("rectSize", sf::Vector2f(_building->getSize()));
 		grid2_shader->setUniform("gridSize", sf::Vector2f(32.f, 32.f));
 		grid2_shader->setUniform("chunkSize", sf::Vector2f(32.f, 32.f));
 		grid2_shader->setUniform("gridWidth", 2.f);
@@ -59,12 +51,12 @@ namespace BuildingsEditor {
 		sf::RenderStates rs;
 		rs.shader = &*grid2_shader;
 
-		sf::RectangleShape gridRect(sf::Vector2f(_buildingShape->getSize()));
-		gridRect.setPosition(sf::Vector2f(_buildingShape->getPosition()));
+		sf::RectangleShape gridRect(sf::Vector2f(_building->getSize()));
+		gridRect.setPosition(sf::Vector2f(_building->getPosition()));
 		gridRect.setFillColor(sf::Color(127, 47, 47, 127));
 		Main::render_window->draw(gridRect, rs);
 		
-		_buildingShape->drawOnlyEdgePoints();
+		_building->drawOnlyEdgePoints();
 
 	}
 }
