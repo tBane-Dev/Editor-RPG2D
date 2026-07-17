@@ -3,9 +3,13 @@
 #include "TexturesManager.hpp"
 
 namespace BuildingsEditor {
+
+	enum class BuildingEditStates { Idle, EditingFloor, Moving, Resizing };
+
 	class BuildingShape : public ResizableShape {
 	public:
 
+		BuildingEditStates _state = BuildingEditStates::Idle;
 		std::shared_ptr<Texture> _floorset;
 
 		std::vector<int> _floor;

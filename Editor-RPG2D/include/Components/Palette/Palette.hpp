@@ -8,12 +8,15 @@
 #include "Components/Palette/Tools.hpp"
 #include "Components/Palette/Slots.hpp"
 #include "Objects/Terrain.hpp"
+#include "Objects/Floor.hpp"
+
 
 namespace Components {
 	class Palette : public Element {
 	public:
 
 		static std::vector<std::shared_ptr<Terrain>> terrains;
+		static std::vector<std::shared_ptr<Floor>> floors;
 
 		sf::IntRect _rect;
 		std::shared_ptr<Categories> _categories;

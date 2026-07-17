@@ -1,10 +1,12 @@
 ﻿#include "Editors/BuildingsEditor/BuildingShape.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include "Cursor.hpp"
+#include "DebugLog.hpp"
 
 namespace BuildingsEditor {
+
 	BuildingShape::BuildingShape() : ResizableShape() {
-		
+		_state = BuildingEditStates::Idle;
 	}
 
 	BuildingShape::~BuildingShape() {
@@ -62,8 +64,8 @@ namespace BuildingsEditor {
 			}
 		}
 
-		_floor = std::move(newFloor);
-		_floorSize = { newWidth, newHeight };
+		_floor = newFloor;
+		_floorSize = sf::Vector2i(newWidth, newHeight);
 
 		generateFloorVertexArray();
 	}
@@ -204,22 +206,37 @@ namespace BuildingsEditor {
 			point->handleEvent(event);
 
 			if (point == GUI_manager->Element_pressed) {
-				resize(point);
+				_state = BuildingEditStates::Resizing;
 				return;
+			}
+		}
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			if (BuildingsEditor::editor->_palette->_categories->_selectedCategory->_type == ObjectType::Floor && BuildingsEditor::editor->_palette->_slots->_selectedSlotId > 0) {
+				if (GUI_manager->Element_hovered.get() == this) {
+					_state = BuildingEditStates::EditingFloor;
+					GUI_manager->Element_pressed = shared_from_this();
+					return;
+				}
 			}
 		}
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 			if (GUI_manager->Element_hovered.get() == this) {
-				_state = ResizableShapeState::Moving;
+				_state = BuildingEditStates::Moving;
 				_offset = Main::cursor->_position - getPosition();
 				GUI_manager->Element_pressed = nullptr;
 			}
 		}
 
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			_state = BuildingEditStates::Idle;
+			if (GUI_manager->Element_pressed.get() == this)
+				GUI_manager->Element_pressed = nullptr;
+		}
 
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Middle) {
-			_state = ResizableShapeState::Idle;
+			_state = BuildingEditStates::Idle;
 			_offset = sf::Vector2i(0, 0);
 			if (GUI_manager->Element_pressed.get() == this)
 				GUI_manager->Element_pressed = nullptr;
@@ -227,7 +244,7 @@ namespace BuildingsEditor {
 	}
 
 	void BuildingShape::update() {
-		if (_state == ResizableShapeState::Moving) {
+		if (_state == BuildingEditStates::Moving) {
 
 			sf::Vector2i oldPosition = getPosition();
 			sf::Vector2i newPosition = Main::cursor->_position - _offset;
@@ -237,6 +254,46 @@ namespace BuildingsEditor {
 			moveFloor(delta);
 
 			return;
+		}
+
+		if (_state == BuildingEditStates::Resizing) {
+			for (auto& point : _edgePoints) {
+				if(point == GUI_manager->Element_pressed) {
+					resize(point);
+					return;
+				}
+			}
+
+			return;
+		}
+
+		if(_state == BuildingEditStates::EditingFloor) {
+			if (GUI_manager->Element_pressed.get() == this) {
+				sf::Vector2i cursorPos = Main::cursor->_position;
+				sf::Vector2i localPos = cursorPos - getPosition();
+
+				int tileX = localPos.x / 16;
+				int tileY = localPos.y / 16;
+
+				if (tileX >= 0 && tileX < _floorSize.x &&
+					tileY >= 0 && tileY < _floorSize.y) {
+
+					std::shared_ptr<Slot> selectedSlot = BuildingsEditor::editor->_palette->_slots->_selectedSlot;
+
+					if (!selectedSlot) return;
+
+					std::shared_ptr<Floor> floor = std::dynamic_pointer_cast<Floor>(selectedSlot->_object.lock());
+
+					if (!floor) return;
+
+					int index = tileY * _floorSize.x + tileX;
+
+					if (_floor[index] != floor->_id) {
+						_floor[index] = floor->_id;
+						generateFloorVertexArray();
+					}
+				}
+			}
 		}
 
 		for (auto& point : _edgePoints) {
