@@ -190,6 +190,14 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_80_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_80_press.png");
 
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_120.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_120_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_120_press.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_120.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_120_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_120_press.png");
+
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160_press.png");

@@ -143,20 +143,20 @@ void Monster::draw() {
 	}
 	
 
-	std::weak_ptr<Animations> anim = _animator->getAnimations();
+	std::shared_ptr<Animations> anim = _animator->getAnimations().lock();
 	
-	if (anim.expired()) {
+	if (!anim) {
 		drawFrame();
 		return;
 	}
 
-	sf::IntRect frameRect = anim.lock()->getFrameRect(_animator->_animation, _animator->_frame);
+	sf::IntRect frameRect = anim->getFrameRect(_animator->_animation, _animator->_frame);
 
 	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		drawFrame();
 	}
 
-	sf::Sprite sprite(*anim.lock()->getTexture()->_texture);
+	sf::Sprite sprite(*anim->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setOrigin(sf::Vector2f(_prefab.lock()->getOrigin()));
 	sprite.setTextureRect(frameRect);

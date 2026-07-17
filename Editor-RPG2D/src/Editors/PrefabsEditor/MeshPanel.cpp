@@ -93,12 +93,12 @@ namespace PrefabsEditor {
 
 		// draw animation
 		std::shared_ptr<Animator>& animator = PrefabsEditor::editor->_animator;
-		std::weak_ptr<Animations> animations = (animator)? animator->getAnimations() : std::weak_ptr<Animations>();
-		if (animator && !animations.expired()) {
+		std::shared_ptr<Animations> animations = (animator)? animator->getAnimations().lock() : nullptr;
+		if (animator && animations) {
 			
-			sf::IntRect frameRect = animations.lock()->getFrameRect(0, 0);
+			sf::IntRect frameRect = animations->getFrameRect(0, 0);
 			float scale = std::min(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y);
-			sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
+			sf::Sprite sprite(*animations->getTexture()->_texture);
 			sprite.setTextureRect(frameRect);
 			sprite.setScale(sf::Vector2f(scale, scale));
 			sf::Vector2f canvasPosition = sf::Vector2f(rect.getPosition().x + (rect.getSize().x - frameRect.size.x * scale) / 2, rect.getPosition().y + (rect.getSize().y - frameRect.size.y * scale) / 2);

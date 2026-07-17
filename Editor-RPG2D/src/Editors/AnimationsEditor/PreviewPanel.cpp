@@ -351,8 +351,8 @@ namespace AnimationsEditor {
 		// draw animation
 		std::shared_ptr<Animator> animator = editor->_animator;
 		if (animator) {
-			std::weak_ptr<Animations> animations = animator->getAnimations();
-			if (!animations.expired() && animations.lock()->getTexture()) {
+			std::shared_ptr<Animations> animations = animator->getAnimations().lock();
+			if (animations && animations->getTexture()) {
 
 				// TO-DO - tempAnimations
 				sf::Vector2i frameSize = sf::Vector2i(0, 0);
@@ -362,11 +362,11 @@ namespace AnimationsEditor {
 				if (editor->_sprite_sheet_panel->_h->getNumber() > 0)
 					frameSize.y = editor->_sprite_sheet_panel->_h->getNumber();
 
-				if (frameSize.x > (int)animations.lock()->getTexture()->_texture->getSize().x)
-					frameSize.x = std::min(frameSize.x, (int)animations.lock()->getTexture()->_texture->getSize().x);
+				if (frameSize.x > (int)animations->getTexture()->_texture->getSize().x)
+					frameSize.x = std::min(frameSize.x, (int)animations->getTexture()->_texture->getSize().x);
 				
-				if (frameSize.y > (int)animations.lock()->getTexture()->_texture->getSize().y)
-					frameSize.y = std::min(frameSize.y, (int)animations.lock()->getTexture()->_texture->getSize().y);
+				if (frameSize.y > (int)animations->getTexture()->_texture->getSize().y)
+					frameSize.y = std::min(frameSize.y, (int)animations->getTexture()->_texture->getSize().y);
 
 				sf::Vector2i framePosition = sf::Vector2i(0, 0);
 				if (editor->_sprite_sheet_panel->_x->getNumber() >= 0) {
@@ -382,8 +382,8 @@ namespace AnimationsEditor {
 
 				sf::IntRect frameRect = sf::IntRect(framePosition, frameSize);
 
-				if (animations.lock()->getTexture()) {
-					sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
+				if (animations->getTexture()) {
+					sf::Sprite sprite(*animations->getTexture()->_texture);
 					sprite.setTextureRect(frameRect);
 					float scale = std::min(256.f / frameRect.size.x, 256.f / frameRect.size.y);
 					sprite.setScale(sf::Vector2f(scale, scale));

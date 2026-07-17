@@ -9,6 +9,7 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "Editors/MapEditor/Map/Tileset.hpp"
 #include "TexturesManager.hpp"
+#include "Components/Palette/Slot.hpp" // TO-DO - to delete
 
 Slots::Slots() {
 
@@ -82,6 +83,13 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_press.png");
 		slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
 	}
+	else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
+		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 120) / 3;
+		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120.png");
+		slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_hover.png");
+		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_press.png");
+		slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_inactive.png");
+	}
 	else {
 		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 5;
 		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80.png");
@@ -103,7 +111,18 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 					slotInactiveTexture,
 					position
 				));
-			} else {
+			}
+			else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
+				position = sf::Vector2i(_rect.position.x + _outer_margin + x * (120 + _inner_margin), _rect.position.y + _main_margin + _outer_margin + _top_margin + y * (120 + _inner_margin));
+				_slots.emplace_back(std::make_shared<Slot>(
+					slotTexture,
+					slotHoverTexture,
+					slotPressTexture,
+					slotInactiveTexture,
+					position
+				));
+			}
+			else {
 				position = sf::Vector2i(_rect.position.x + _outer_margin + x * (80 + _inner_margin), _rect.position.y + _main_margin + _outer_margin + _top_margin + y * (80 + _inner_margin));
 				_slots.emplace_back(std::make_shared<GameObjectSlot>(
 					slotTexture,
@@ -124,16 +143,37 @@ void Slots::generateScrollbar() {
 	sf::Vector2i scrollbarSize = sf::Vector2i(32, _rect.size.y - 2 * _main_margin - _top_margin - _inner_margin);
 
 	int rowsTotal;
-	if (_type == ObjectType::Terrain)
-		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
-	else
-		rowsTotal = (int)std::ceil((float)prefabs_manager->getPrefabs(_type).size() / (float)_slotsCount.x);
+	int rowsVisible;
+	int rowHeight;
+	int scrollbarValue;
+	int scrollbarMaxValue;
+	int scrollbarSliderSize;
 
-	int rowsVisible = _slotsCount.y;
-	int rowHeight = (_type == ObjectType::Terrain) ? 160 + _inner_margin : 80 + _inner_margin;
-	int scrollbarValue = 0;
-	int scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
-	int scrollbarSliderSize = (_type == ObjectType::Terrain) ? _slotsCount.y * (160 + _inner_margin) : _slotsCount.y * (80 + _inner_margin);
+	if (_type == ObjectType::Terrain) {
+		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
+		rowsVisible = _slotsCount.y;
+		rowHeight = rowHeight = 160 + _inner_margin;
+		scrollbarValue = 0;
+		scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
+		scrollbarSliderSize = _slotsCount.y * (160 + _inner_margin);
+	}
+	else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
+		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
+		rowsVisible = _slotsCount.y;
+		rowHeight = rowHeight = 120 + _inner_margin;
+		scrollbarValue = 0;
+		scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
+		scrollbarSliderSize = _slotsCount.y * (120 + _inner_margin);
+	}
+	else {
+		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
+		rowsVisible = _slotsCount.y;
+		rowHeight = rowHeight = 80 + _inner_margin;
+		scrollbarValue = 0;
+		scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
+		scrollbarSliderSize = _slotsCount.y * (80 + _inner_margin);
+	}
+	
 
 	if (_type == ObjectType::Terrain) {
 		_scrollbar = std::make_shared<Scrollbar>(scrollbarPosition.x, scrollbarPosition.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMaxValue, scrollbarSliderSize, scrollbarValue);
@@ -142,12 +182,19 @@ void Slots::generateScrollbar() {
 			sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _outer_margin)),
 			(160 + _inner_margin) / 4);
 	}
+	else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
+		_scrollbar = std::make_shared<Scrollbar>(scrollbarPosition.x, scrollbarPosition.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMaxValue, scrollbarSliderSize, scrollbarValue);
+		_scrollbar->setScrollArea(std::make_shared<sf::IntRect>(
+			sf::Vector2i(_rect.position.x + _outer_margin, _rect.position.y + _main_margin + _top_margin + _outer_margin),
+			sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _outer_margin)),
+			(120 + _inner_margin) / 5);
+	}
 	else {
 		_scrollbar = std::make_shared<Scrollbar>(scrollbarPosition.x, scrollbarPosition.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMaxValue, scrollbarSliderSize, scrollbarValue);
 		_scrollbar->setScrollArea(std::make_shared<sf::IntRect>(
 			sf::Vector2i(_rect.position.x + _outer_margin, _rect.position.y + _main_margin + _top_margin + _outer_margin),
 			sf::Vector2i(_rect.size.x - 32 - 2 * _outer_margin, _rect.size.y - 2 * _main_margin - _top_margin - _outer_margin)),
-			(80 + _inner_margin) / 4);
+			(80 + _inner_margin) / 7);
 	}
 
 
@@ -161,6 +208,12 @@ void Slots::generateScrollbar() {
 				position = sf::Vector2i(
 					_rect.position.x + _outer_margin + (i % _slotsCount.x) * (160 + _inner_margin),
 					_rect.position.y + _main_margin + _top_margin + _outer_margin + (i / _slotsCount.x) * (160 + _inner_margin) - (_scrollbar->getValue() % (160 + _inner_margin))
+				);
+			}
+			else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
+				position = sf::Vector2i(
+					_rect.position.x + _outer_margin + (i % _slotsCount.x) * (120 + _inner_margin),
+					_rect.position.y + _main_margin + _top_margin + _outer_margin + (i / _slotsCount.x) * (120 + _inner_margin) - (_scrollbar->getValue() % (120 + _inner_margin))
 				);
 			}
 			else {
@@ -269,12 +322,17 @@ void Slots::setCategory(ObjectType type) {
 		selectSlot(-1);
 	}
 
-	
+
 
 	// +1 because scrollbar takes one slot space
-	if(_type == ObjectType::Terrain) {
+	if (_type == ObjectType::Terrain) {
 		createSlots(sf::Vector2i(3, 3));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (160 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
+
+	}
+	else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
+		createSlots(sf::Vector2i(4, 6));
+		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (120 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
 
 	}
 	else {

@@ -130,11 +130,11 @@ namespace PrefabsEditor {
 
 		// draw animation
 		std::shared_ptr<Animator>& animator = PrefabsEditor::editor->_animator;
-		std::weak_ptr<Animations> animations = (animator) ? animator->getAnimations() : std::weak_ptr<Animations>();
+		std::shared_ptr<Animations> animations = (animator) ? animator->getAnimations().lock() : nullptr;
 
-		if (animator && !animations.expired()) {
+		if (animator && animations) {
 
-			sf::IntRect frameRect = animations.lock()->getFrameRect(0, 0);
+			sf::IntRect frameRect = animations->getFrameRect(0, 0);
 
 			float scale = std::min(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y);
 
@@ -158,7 +158,7 @@ namespace PrefabsEditor {
 				editor->_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
 			}
 
-			sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
+			sf::Sprite sprite(*animations->getTexture()->_texture);
 			sprite.setTextureRect(frameRect);
 			sprite.setScale(sf::Vector2f(scale, scale));
 			sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));

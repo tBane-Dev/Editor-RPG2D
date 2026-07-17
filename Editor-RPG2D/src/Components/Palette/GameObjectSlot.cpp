@@ -35,14 +35,14 @@ void GameObjectSlot::draw() {
 
 	if (_animator != nullptr) {
 
-		std::weak_ptr<Animations> animations = _animator->getAnimations();
+		std::shared_ptr<Animations> animations = _animator->getAnimations().lock();
 		
-		if (animations.expired())
+		if (!animations)
 			return;
 
-		sf::IntRect frameRect = animations.lock()->getFrameRect(_animator->_animation, _animator->_frame);
+		sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
 
-		_objectTexture = animations.lock()->getTexture();
+		_objectTexture = animations->getTexture();
 
 		_objectSprite = std::make_shared<sf::Sprite>(*_objectTexture->_texture);
 		_objectSprite->setTextureRect(frameRect);

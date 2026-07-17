@@ -275,14 +275,14 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
 		if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
-			std::weak_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
-			std::weak_ptr<Animations> animations = prefab.lock()->getAnimations().lock();
+			std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+			std::shared_ptr<Animations> animations = prefab->getAnimations().lock();
             
             float frameWidth = 128;
             float frameHeight = 128;
 
-            if (!animations.expired()) {
-				sf::IntRect frameRect = animations.lock()->getFrameRect(0, 0);
+            if (animations) {
+				sf::IntRect frameRect = animations->getFrameRect(0, 0);
                 frameWidth = (float)(frameRect.size.x);
                 frameHeight = (float)(frameRect.size.y);
             }
@@ -292,16 +292,16 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
 			position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
 
-			if (dynamic_cast<MonsterPrefab*>(prefab.lock().get())) {
-				position.x += prefab.lock()->getOrigin().x;
-				position.y += prefab.lock()->getOrigin().y;
+			if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
+				position.x += prefab->getOrigin().x;
+				position.y += prefab->getOrigin().y;
 			}
 
 			// create object on map by type 
 			std::shared_ptr<GameObjectOnMap> objectOnMap;
 
-			if (prefab.lock()->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
-			else if (prefab.lock()->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
+			if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
+			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
 			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
 
 
@@ -376,15 +376,15 @@ void CursorOnMap::draw()
 
 	if(dynamic_pointer_cast<GameObject>(_object.lock()) != nullptr) {
 
-		std::weak_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
-		std::weak_ptr<Animations> animations = prefab.lock()->getAnimations();
+		std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+		std::shared_ptr<Animations> animations = prefab->getAnimations().lock();
         
         float frameWidth = 128;
         float frameHeight = 128;
 		sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
 
-        if (!animations.expired()) {
-            frameRect = animations.lock()->getFrameRect(0, 0);
+        if (animations) {
+            frameRect = animations->getFrameRect(0, 0);
             frameWidth = (float)(frameRect.size.x);
             frameHeight = (float)(frameRect.size.y);
         }
@@ -400,8 +400,8 @@ void CursorOnMap::draw()
 		outlineRect.setOutlineColor(sf::Color::Green);
         Main::render_window->draw(outlineRect);
 
-        if (!animations.expired()) {
-            sf::Sprite sprite(*animations.lock()->getTexture()->_texture);
+        if (animations) {
+            sf::Sprite sprite(*animations->getTexture()->_texture);
             sprite.setTextureRect(frameRect);
 
             sprite.setPosition(sf::Vector2f(position));

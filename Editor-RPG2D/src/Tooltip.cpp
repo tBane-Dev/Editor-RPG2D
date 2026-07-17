@@ -133,9 +133,9 @@ namespace Main {
 		_description = L"";
 
 		if (std::dynamic_pointer_cast<Button>(_element.lock())) {
-			std::weak_ptr<Button> button = std::dynamic_pointer_cast<Button>(_element.lock());
-			_title = button.lock()->_title;
-			_description = wrap_text(width, basicFont, small_text_size, button.lock()->_description);
+			std::shared_ptr<Button> button = std::dynamic_pointer_cast<Button>(_element.lock());
+			_title = button->_title;
+			_description = wrap_text(width, basicFont, small_text_size, button->_description);
 		}
 		
 		_title_text->setString(_title);
@@ -197,9 +197,9 @@ namespace Main {
 
 			sf::Vector2i pos;
 			if (std::dynamic_pointer_cast<Button>(_element.lock())) {
-				std::weak_ptr<Button> button = std::dynamic_pointer_cast<Button>(_element.lock());
-				pos.x = button.lock()->getPosition().x + button.lock()->getSize().x / 2;
-				pos.y = button.lock()->getPosition().y + button.lock()->getSize().y;
+				std::shared_ptr<Button> button = std::dynamic_pointer_cast<Button>(_element.lock());
+				pos.x = button->getPosition().x + button->getSize().x / 2;
+				pos.y = button->getPosition().y + button->getSize().y;
 			}
 
 			int screenPadding = 16;

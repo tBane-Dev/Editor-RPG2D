@@ -45,9 +45,9 @@ void TerrainSlot::draw() {
 	if (_object.expired())
 		return;
 
-	std::weak_ptr<Terrain> terrain = std::dynamic_pointer_cast<Terrain>(_object.lock());
+	std::shared_ptr<Terrain> terrain = std::dynamic_pointer_cast<Terrain>(_object.lock());
 
-	if (terrain.expired())
+	if (!terrain)
 		return;
 
 	sf::RenderStates states;
@@ -68,7 +68,7 @@ void TerrainSlot::draw() {
 			sf::Sprite sprite(*texture->_texture);
 			sprite.setScale(sf::Vector2f(tileSize.x / 16.f,tileSize.y / 16.f));
 			sprite.setPosition(sf::Vector2f(_rect.position) + offset + sf::Vector2f(x * tileSize.x, y * tileSize.y));
-			sprite.setTextureRect(sf::IntRect(sf::Vector2i(tileRects[y][x].x * 64, terrain.lock()->_id * 64), sf::Vector2i(16, 16)));
+			sprite.setTextureRect(sf::IntRect(sf::Vector2i(tileRects[y][x].x * 64, terrain->_id * 64), sf::Vector2i(16, 16)));
 
 			Main::render_window->draw(sprite, states);
 		}
