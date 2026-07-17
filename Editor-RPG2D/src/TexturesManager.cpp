@@ -62,6 +62,7 @@ void TexturesManager::loadAllTextures() {
 
     // tileset
     texturePaths.push_back(L"assets\\tex\\tileset.png");
+    texturePaths.push_back(L"assets\\tex\\floorset.png");
 
 	// controls
     texturePaths.push_back(L"assets\\tex\\controls\\scrollbar32\\up.png");
@@ -193,7 +194,7 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_120.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_120_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_120_press.png");
-    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_120_inactive.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_120.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_120_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_120_press.png");
