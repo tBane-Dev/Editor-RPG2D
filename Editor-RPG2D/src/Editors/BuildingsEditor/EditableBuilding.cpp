@@ -46,8 +46,8 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::resizeFloor(int offsetX, int offsetY) {
-		int newWidth = getSize().x / 16;
-		int newHeight = getSize().y / 16;
+		int newWidth = getSize().x / int(16.f * _scale);
+		int newHeight = getSize().y / int(16.f * _scale);
 
 		std::vector<int> newFloor(newWidth * newHeight, 0);
 
@@ -76,15 +76,15 @@ namespace BuildingsEditor {
 
 		float s = 16.f;
 		float floorSize = 64.f;
-
+		float a = s * _scale;
 		sf::Vector2f p(getPosition());
 
 		for (int y = 0; y < _floorSize.y; ++y) {
 			for (int x = 0; x < _floorSize.x; ++x) {
 				int t = _floor[y * _floorSize.x + x];
 
-				float px = p.x + x * s;
-				float py = p.y + y * s;
+				float px = p.x + x * s * _scale;
+				float py = p.y + y * s * _scale;
 
 				float tx = t * floorSize + (x % 4) * s;
 				float ty = (y % 4) * s;
@@ -93,30 +93,23 @@ namespace BuildingsEditor {
 				if (ty < 0) ty = 0;
 
 				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px, py), sf::Color::White, sf::Vector2f(tx, ty)));
-				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px + s, py), sf::Color::White, sf::Vector2f(tx + s, ty)));
-				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px + s, py + s), sf::Color::White, sf::Vector2f(tx + s, ty + s)));
+				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px + a, py), sf::Color::White, sf::Vector2f(tx + s, ty)));
+				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px + a, py + a), sf::Color::White, sf::Vector2f(tx + s, ty + s)));
 
 				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px, py), sf::Color::White, sf::Vector2f(tx, ty)));
-				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px + s, py + s), sf::Color::White, sf::Vector2f(tx + s, ty + s)));
-				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px, py + s), sf::Color::White, sf::Vector2f(tx, ty + s)));
+				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px + a, py + a), sf::Color::White, sf::Vector2f(tx + s, ty + s)));
+				_floorVertexArray.append(sf::Vertex(sf::Vector2f(px, py + a), sf::Color::White, sf::Vector2f(tx, ty + s)));
 			}
 		}
 	}
 
 	void EditableBuilding::resize(std::shared_ptr<EdgePoint> edgePoint) {
 
-		if (!edgePoint)
+		if (!edgePoint || _scale <= 0.f)
 			return;
 
-		sf::Vector2i oldPosition = getPosition();
-
-		sf::Vector2i p = Main::cursor->_position - edgePoint->getPosition();
-		p = p / _step * _step;
-
-		int minX = _point_left->getPosition().x;
-		int minY = _point_top->getPosition().y;
-		int maxX = _point_right->getPosition().x;
-		int maxY = _point_bottom->getPosition().y;
+		sf::Vector2i oldPosition = _rect.position;
+		sf::Vector2i oldSize = _rect.size;
 
 		bool resizeLeft =
 			edgePoint == _point_left_top ||
@@ -138,57 +131,53 @@ namespace BuildingsEditor {
 			edgePoint == _point_bottom ||
 			edgePoint == _point_right_bottom;
 
-		if (resizeLeft)
-			minX += p.x;
-		else if (resizeRight)
-			maxX += p.x;
+		sf::Vector2i screenDelta = Main::cursor->_position - edgePoint->getPosition();
 
-		if (resizeTop)
-			minY += p.y;
-		else if (resizeBottom)
-			maxY += p.y;
+		auto screenToLogicalStep = [this](int screenDelta) {
+			int logicalDelta = int(std::round(float(screenDelta) / _scale));
+			return logicalDelta / _step * _step;
+		};
+
+		sf::Vector2i logicalDelta(screenToLogicalStep(screenDelta.x), screenToLogicalStep(screenDelta.y));
+
+		sf::Vector2i newPosition = oldPosition;
+		sf::Vector2i newSize = oldSize;
 
 		if (resizeLeft) {
-			int width = std::clamp(maxX - minX, _minSize.x, _maxSize.x);
-			minX = maxX - width;
+			newSize.x = std::clamp(oldSize.x - logicalDelta.x, _minSize.x, _maxSize.x);
+			int appliedLogicalDelta = oldSize.x - newSize.x;
+			newPosition.x += int(std::round(appliedLogicalDelta * _scale));
 		}
 		else if (resizeRight) {
-			int width = std::clamp(maxX - minX, _minSize.x, _maxSize.x);
-			maxX = minX + width;
+			newSize.x = std::clamp(oldSize.x + logicalDelta.x, _minSize.x, _maxSize.x);
 		}
 
 		if (resizeTop) {
-			int height = std::clamp(maxY - minY, _minSize.y, _maxSize.y);
-			minY = maxY - height;
+			newSize.y = std::clamp(oldSize.y - logicalDelta.y, _minSize.y, _maxSize.y);
+			int appliedLogicalDelta = oldSize.y - newSize.y;
+			newPosition.y += int(std::round(appliedLogicalDelta * _scale));
 		}
 		else if (resizeBottom) {
-			int height = std::clamp(maxY - minY, _minSize.y, _maxSize.y);
-			maxY = minY + height;
+			newSize.y = std::clamp(oldSize.y + logicalDelta.y, _minSize.y, _maxSize.y);
 		}
 
-		_point_left_top->setPosition(sf::Vector2i(minX, minY));
-		_point_top->setPosition(sf::Vector2i((minX + maxX) / 2, minY));
-		_point_right_top->setPosition(sf::Vector2i(maxX, minY));
+		if (newPosition == oldPosition && newSize == oldSize)
+			return;
 
-		_point_left->setPosition(sf::Vector2i(minX, (minY + maxY) / 2));
-		_point_right->setPosition(sf::Vector2i(maxX, (minY + maxY) / 2));
-
-		_point_left_bottom->setPosition(sf::Vector2i(minX, maxY));
-		_point_bottom->setPosition(sf::Vector2i((minX + maxX) / 2, maxY));
-		_point_right_bottom->setPosition(sf::Vector2i(maxX, maxY));
-
-		_rect = sf::IntRect(sf::Vector2i(minX, minY), sf::Vector2i(maxX - minX, maxY - minY));
+		_rect.position = newPosition;
+		_rect.size = newSize;
 
 		int offsetX = 0;
 		int offsetY = 0;
 
 		if (resizeLeft)
-			offsetX = (oldPosition.x - minX) / 16;
+			offsetX = (newSize.x - oldSize.x) / 16;
 
 		if (resizeTop)
-			offsetY = (oldPosition.y - minY) / 16;
+			offsetY = (newSize.y - oldSize.y) / 16;
 
 		resizeFloor(offsetX, offsetY);
+		setPosition(_rect.position);
 	}
 
 	void EditableBuilding::moveFloor(sf::Vector2i offset) {
@@ -241,6 +230,19 @@ namespace BuildingsEditor {
 			if (GUI_manager->Element_pressed.get() == this)
 				GUI_manager->Element_pressed = nullptr;
 		}
+
+		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
+			float oldScale = _scale;
+			float newScale = std::clamp(_scale + mws->delta * 0.04f, 0.1f, 4.0f);
+			sf::Vector2f cursorPosition(Main::cursor->_position);
+			sf::Vector2f oldPosition(getPosition());
+			float scaleFactor = newScale / oldScale;
+			sf::Vector2f newPosition = cursorPosition + (oldPosition - cursorPosition) * scaleFactor;
+			_scale = newScale;
+			setPosition(sf::Vector2i(newPosition));
+			generateFloorVertexArray();
+			generateEdgePoints();
+		}
 	}
 
 	void EditableBuilding::update() {
@@ -270,10 +272,10 @@ namespace BuildingsEditor {
 		if(_state == EditableBuildingStates::EditingFloor) {
 			if (GUI_manager->Element_pressed.get() == this) {
 				sf::Vector2i cursorPos = Main::cursor->_position;
-				sf::Vector2i localPos = cursorPos - getPosition();
+				sf::Vector2i localPos = cursorPos - sf::Vector2i(sf::Vector2f(getPosition()));
 
-				int tileX = localPos.x / 16;
-				int tileY = localPos.y / 16;
+				int tileX = localPos.x / int(16.f * _scale);
+				int tileY = localPos.y / int(16.f * _scale);
 
 				if (tileX >= 0 && tileX < _floorSize.x &&
 					tileY >= 0 && tileY < _floorSize.y) {

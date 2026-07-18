@@ -41,8 +41,8 @@ namespace BuildingsEditor {
 
 		grid2_shader->setUniform("rectPosition", sf::Vector2f(_building->getPosition()));
 		grid2_shader->setUniform("rectSize", sf::Vector2f(_building->getSize()));
-		grid2_shader->setUniform("gridSize", sf::Vector2f(32.f, 32.f));
-		grid2_shader->setUniform("chunkSize", sf::Vector2f(32.f, 32.f));
+		grid2_shader->setUniform("gridSize", sf::Vector2f(32.f, 32.f) * _building->_scale);
+		grid2_shader->setUniform("chunkSize", sf::Vector2f(32.f, 32.f) * _building->_scale);
 		grid2_shader->setUniform("gridWidth", 2.f);
 		grid2_shader->setUniform("mainGridMultiplier", 1.f);
 		grid2_shader->setUniform("gridMainColor", sf::Glsl::Vec4(sf::Color(127, 7, 7, 255)));

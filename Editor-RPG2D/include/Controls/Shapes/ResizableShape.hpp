@@ -13,6 +13,8 @@ public:
 	sf::Vector2i _minSize = sf::Vector2i(0, 0);
 	sf::Vector2i _maxSize = sf::Vector2i(0, 0);
 
+	float _scale = 1.0f;
+
 	ResizableShapeState _state = ResizableShapeState::Idle;
 	sf::Vector2i _offset = sf::Vector2i(0, 0);
 
