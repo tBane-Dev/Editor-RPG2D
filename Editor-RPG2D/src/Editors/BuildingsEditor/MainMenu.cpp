@@ -8,11 +8,11 @@ namespace BuildingsEditor {
 
 	MainMenu::MainMenu() : Components::MainMenu() {
 		_file = std::make_shared<Components::MenuButton>(std::make_shared<MainMenu>(*this), L"File");
-		_tools = std::make_shared<Components::MenuButton>(std::make_shared<MainMenu>(*this), L"Tools");
+		_render = std::make_shared<Components::MenuButton>(std::make_shared<MainMenu>(*this), L"Render");
 		_settings = std::make_shared<Components::MenuButton>(std::make_shared<MainMenu>(*this), L"Settings");
 
 		_menu_boxes.push_back(_file);
-		_menu_boxes.push_back(_tools);
+		_menu_boxes.push_back(_render);
 		_menu_boxes.push_back(_settings);
 
 
@@ -46,6 +46,15 @@ namespace BuildingsEditor {
 		_file->addOption(_file_back_to_map_editor);
 		_file->addOption(_file_exit);
 
+
+		// RENDER
+
+		_render_grid = std::make_shared<OptionWithCheckbox>(L"Grid", textures_manager->getTexture(L"assets\\tex\\unchecked.png"), textures_manager->getTexture(L"assets\\tex\\unchecked_hover.png"));
+		_render_grid->addValue(textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
+		_render_grid->_checkbox->setValue(1);
+
+		_render->addOption(_render_grid);
+
 		// POSITIONING
 
 		setPosition(sf::Vector2i(0, 0));
@@ -57,5 +66,6 @@ namespace BuildingsEditor {
 
 	void MainMenu::handleEvent(const sf::Event& event) {
 		Components::MainMenu::handleEvent(event);
+
 	}
 }

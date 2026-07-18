@@ -21,7 +21,7 @@ public:
 	void save(std::ofstream& saver);
 	void load(std::ifstream& loader);
 
-    void loadPrefabs();
+    void loadBasicPrefabs();
 };
 
 extern std::shared_ptr<PrefabsManager> prefabs_manager;

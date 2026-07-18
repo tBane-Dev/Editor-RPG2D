@@ -38,23 +38,26 @@ namespace BuildingsEditor {
 
 		_building->drawOnlyShape();
 		_building->drawOnlyFloor();
+		_building->drawOnlyWalls();
 
-		grid2_shader->setUniform("rectPosition", sf::Vector2f(_building->getPosition()));
-		grid2_shader->setUniform("rectSize", sf::Vector2f(_building->getSize()));
-		grid2_shader->setUniform("gridSize", sf::Vector2f(32.f, 32.f) * _building->_scale);
-		grid2_shader->setUniform("chunkSize", sf::Vector2f(32.f, 32.f) * _building->_scale);
-		grid2_shader->setUniform("gridWidth", 2.f);
-		grid2_shader->setUniform("mainGridMultiplier", 1.f);
-		grid2_shader->setUniform("gridMainColor", sf::Glsl::Vec4(sf::Color(127, 7, 7, 255)));
-		grid2_shader->setUniform("gridSecondColor", sf::Glsl::Vec4(sf::Color(47, 47, 47, 255)));
+		if (BuildingsEditor::editor->_main_menu->_render_grid->_checkbox->_value == 1) {
+			grid2_shader->setUniform("rectPosition", sf::Vector2f(_building->getPosition()));
+			grid2_shader->setUniform("rectSize", sf::Vector2f(_building->getSize()));
+			grid2_shader->setUniform("gridSize", sf::Vector2f(32.f, 32.f) * _building->_scale);
+			grid2_shader->setUniform("chunkSize", sf::Vector2f(32.f, 32.f) * _building->_scale);
+			grid2_shader->setUniform("gridWidth", 2.f);
+			grid2_shader->setUniform("mainGridMultiplier", 1.f);
+			grid2_shader->setUniform("gridMainColor", sf::Glsl::Vec4(sf::Color(127, 7, 7, 255)));
+			grid2_shader->setUniform("gridSecondColor", sf::Glsl::Vec4(sf::Color(47, 47, 47, 255)));
 
-		sf::RenderStates rs;
-		rs.shader = &*grid2_shader;
+			sf::RenderStates rs;
+			rs.shader = &*grid2_shader;
 
-		sf::RectangleShape gridRect(sf::Vector2f(_building->getSize()));
-		gridRect.setPosition(sf::Vector2f(_building->getPosition()));
-		gridRect.setFillColor(sf::Color(127, 47, 47, 127));
-		Main::render_window->draw(gridRect, rs);
+			sf::RectangleShape gridRect(sf::Vector2f(_building->getSize()));
+			gridRect.setPosition(sf::Vector2f(_building->getPosition()));
+			gridRect.setFillColor(sf::Color(127, 47, 47, 127));
+			Main::render_window->draw(gridRect, rs);
+		}
 		
 		_building->drawOnlyEdgePoints();
 

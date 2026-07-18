@@ -16,6 +16,8 @@
 #include "TexturesManager.hpp"
 #include "AnimationsManager.hpp"
 #include "ShadersManager.hpp"
+#include "Tileset.hpp"
+#include "Wallset.hpp"
 #include "PrefabsManager.hpp"
 
 #include "Cursor.hpp"
@@ -25,7 +27,6 @@
 #include "Editors/MapEditor/Editor.hpp"
 
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
-#include "Editors/MapEditor/Map/Tileset.hpp"
 #include "Editors/MapEditor/Map/Map.hpp"
 
 #include "Objects/Object.hpp"
@@ -49,7 +50,7 @@ int main() {
     animations_manager = std::make_shared<AnimationsManager>();
     prefabs_manager = std::make_shared<PrefabsManager>();
 
-    prefabs_manager->loadPrefabs();
+    prefabs_manager->loadBasicPrefabs();
 
     loadShaders();
 
@@ -60,8 +61,11 @@ int main() {
     Main::windows_manager = std::make_shared<Main::WindowsManager>();
     Main::editor_manager = std::make_shared<Main::EditorsManager>();
 
+	tileset = std::make_shared<Tileset>();
+	wallset = std::make_shared<Wallset>();
+	//floorset = std::make_shared<Floorset>();
+
     MapEditor::editor = std::make_shared<MapEditor::Editor>();
-    MapEditor::editor->createTileset();
     MapEditor::editor->createMap(5, 3);
     MapEditor::editor->createGameObjects();
     MapEditor::editor->createCamera();

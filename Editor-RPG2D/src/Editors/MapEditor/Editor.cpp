@@ -14,12 +14,6 @@ namespace MapEditor {
 
 	}
 
-	void Editor::createTileset() {
-
-		_tileset = std::make_shared<Tileset>();
-
-	}
-
 	void Editor::createMap(int width, int height) {
 
 		_map = std::make_shared<Map>();

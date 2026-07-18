@@ -1,18 +1,18 @@
-﻿#include "Editors/MapEditor/Map/Tileset.hpp"
+﻿#include "Tileset.hpp"
 #include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 
 Tileset::Tileset() {
 
-	std::shared_ptr<Tileset::Group> ocean = std::make_shared<Tileset::Group>(L"ocean");
-	std::shared_ptr<Tileset::Group> ocean_beach = std::make_shared<Tileset::Group>(L"ocean-beach");
-	std::shared_ptr<Tileset::Group> beach_grass = std::make_shared<Tileset::Group>(L"beach-grass");
-	std::shared_ptr<Tileset::Group> beach_swamp = std::make_shared<Tileset::Group>(L"beach-swamp");
-	std::shared_ptr<Tileset::Group> grass_swamp = std::make_shared<Tileset::Group>(L"grass-swamp");
-	std::shared_ptr<Tileset::Group> swamp_bog = std::make_shared<Tileset::Group>(L"swamp-bog");
-	std::shared_ptr<Tileset::Group> grass_rocks = std::make_shared<Tileset::Group>(L"grass-rocks");
-	std::shared_ptr<Tileset::Group> rocks_magma = std::make_shared<Tileset::Group>(L"rocks-magma");
-	std::shared_ptr<Tileset::Group> magma_lava = std::make_shared<Tileset::Group>(L"magma-lava");
+	std::shared_ptr<Group> ocean = std::make_shared<Group>(L"ocean");
+	std::shared_ptr<Group> ocean_beach = std::make_shared<Group>(L"ocean-beach");
+	std::shared_ptr<Group> beach_grass = std::make_shared<Group>(L"beach-grass");
+	std::shared_ptr<Group> beach_swamp = std::make_shared<Group>(L"beach-swamp");
+	std::shared_ptr<Group> grass_swamp = std::make_shared<Group>(L"grass-swamp");
+	std::shared_ptr<Group> swamp_bog = std::make_shared<Group>(L"swamp-bog");
+	std::shared_ptr<Group> grass_rocks = std::make_shared<Group>(L"grass-rocks");
+	std::shared_ptr<Group> rocks_magma = std::make_shared<Group>(L"rocks-magma");
+	std::shared_ptr<Group> magma_lava = std::make_shared<Group>(L"magma-lava");
 
 	groups.push_back(ocean);
 	groups.push_back(ocean_beach);
@@ -61,9 +61,11 @@ bool areFriends(int group1, int group2) {
 	if (group1 == -1 || group2 == -1) return true;
 	if (group1 == group2) return true;
 
-	for (auto& fr : MapEditor::editor->_tileset->groups[group1]->friends) {
-		if (fr == MapEditor::editor->_tileset->groups[group2])
+	for (auto& fr : tileset->groups[group1]->friends) {
+		if (fr == tileset->groups[group2])
 			return true;
 	}
 	return false;
 }
+
+std::shared_ptr<Tileset> tileset = nullptr;

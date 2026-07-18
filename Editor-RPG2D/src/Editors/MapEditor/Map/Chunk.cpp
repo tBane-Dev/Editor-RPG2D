@@ -80,7 +80,6 @@ void Chunk::generateVertexArray(
 	_vertexArray.clear();
 	_vertexArray.setPrimitiveType(sf::PrimitiveType::Triangles);
 
-	std::shared_ptr<Tileset> tileset = MapEditor::editor->_tileset;
 	if (tileset == nullptr) return;
 
 	float borderWidth = float(Tile::borderWidth);

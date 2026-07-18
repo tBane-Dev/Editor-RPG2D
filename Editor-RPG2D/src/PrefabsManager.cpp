@@ -2,6 +2,7 @@
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
 #include "Objects/Nature.hpp"
+#include "Objects/Wall.hpp"
 #include "BinaryWriter.hpp"
 #include "BinaryReader.hpp"
 #include "Objects/Collider.hpp"
@@ -50,7 +51,7 @@ std::vector<std::shared_ptr<GameObject>> PrefabsManager::getPrefabs(ObjectType t
     for (auto& prefab : _prefabs) {
         if(prefab->_type == type) {
             prefabsOfType.push_back(prefab);
-			}
+		}
     }
 
     return prefabsOfType;
@@ -164,7 +165,7 @@ void PrefabsManager::load(std::ifstream& loader) {
 
 
 
-void PrefabsManager::loadPrefabs() {
+void PrefabsManager::loadBasicPrefabs() {
 	
     {
         std::shared_ptr<GameObject> prefab = std::make_shared<MonsterPrefab>(
@@ -275,7 +276,6 @@ void PrefabsManager::loadPrefabs() {
     }
 
     {
-
         std::shared_ptr<GameObject> prefab = std::make_shared<NaturePrefab>(
             L"boulder_1",
             animations_manager->getAnimations(L"assets\\tex\\boulder_1.png"),
@@ -296,7 +296,6 @@ void PrefabsManager::loadPrefabs() {
         );
         addPrefab(prefab);
     }
-    
 
     std::vector<std::shared_ptr<GameObject>> p;
     for (auto& prefab : _prefabs) {

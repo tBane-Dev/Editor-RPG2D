@@ -1,6 +1,6 @@
 #pragma once
 #include "EditorsManager.hpp"
-#include "Editors/MapEditor/Map/Tileset.hpp"
+#include "Tileset.hpp"
 #include "Editors/MapEditor/Map/Map.hpp"
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
@@ -14,7 +14,6 @@ namespace MapEditor {
 		std::shared_ptr<MapEditor::MainMenu> _main_menu;
 		std::shared_ptr<Palette> _palette;
 
-		std::shared_ptr<Tileset> _tileset;
 		std::shared_ptr<Map> _map;
 		std::shared_ptr<GameObjectsOnMap> _game_objects;
 		std::shared_ptr<CameraOnMap> _camera;
@@ -23,7 +22,6 @@ namespace MapEditor {
 		Editor();
 		~Editor();
 
-		void createTileset();
 		void createMap(int width, int height);
 		void createGameObjects();
 		void createCamera();

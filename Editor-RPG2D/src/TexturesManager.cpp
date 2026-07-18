@@ -63,6 +63,7 @@ void TexturesManager::loadAllTextures() {
     // tileset
     texturePaths.push_back(L"assets\\tex\\tileset.png");
     texturePaths.push_back(L"assets\\tex\\floorset.png");
+	texturePaths.push_back(L"assets\\tex\\wallset.png");
 
 	// controls
     texturePaths.push_back(L"assets\\tex\\controls\\scrollbar32\\up.png");
@@ -265,12 +266,12 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\monsters\\deer.png");
     texturePaths.push_back(L"assets\\tex\\monsters\\goblin.png");
     texturePaths.push_back(L"assets\\tex\\monsters\\bies.png");
-    
     texturePaths.push_back(L"assets\\tex\\monsters\\hero.png");
+    texturePaths.push_back(L"assets\\tex\\monsters\\monster.png");
+
 	texturePaths.push_back(L"assets\\tex\\tree_1.png");
 	texturePaths.push_back(L"assets\\tex\\boulder_1.png");
 	texturePaths.push_back(L"assets\\tex\\boulder_2.png");
-	texturePaths.push_back(L"assets\\tex\\monsters\\monster.png");
 
     // Ghost Chunks
 	texturePaths.push_back(L"assets\\tex\\ghost_chunk_plus.png");

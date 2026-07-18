@@ -81,6 +81,13 @@ namespace BuildingsEditor {
 		_slots->setFunction(
 			[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
 				
+				if(std::dynamic_pointer_cast<Floor>(slot->_object.lock())) {
+					BuildingsEditor::editor->_building_panel->_building->_editState = EditableBuildingEditStates::Floor;
+				}
+				else {
+					BuildingsEditor::editor->_building_panel->_building->_editState = EditableBuildingEditStates::GameObject;
+				}
+
 				_slots->selectSlot(selectedSlotId);
 			}
 		);

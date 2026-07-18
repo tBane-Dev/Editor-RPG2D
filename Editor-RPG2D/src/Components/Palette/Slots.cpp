@@ -1,17 +1,18 @@
 ﻿#include "Components/Palette/Slots.hpp"
 #include "Objects/Terrain.hpp"
 #include "Objects/Floor.hpp"
-
+#include "Wallset.hpp"
 #include "Components/Palette/TerrainSlot.hpp"
 #include "Components/Palette/GameObjectSlot.hpp"
-#include "Components/Palette/FloorSlot.hpp" // TO-DO - to delete
-#include "Components/Palette/Slot.hpp" // TO-DO - to delete
+#include "Components/Palette/FloorSlot.hpp" 
+#include "Components/Palette/WallSlot.hpp"
+#include "Components/Palette/Slot.hpp"
 #include "PrefabsManager.hpp"
 #include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
 #include "Editors/MapEditor/Editor.hpp"
-#include "Editors/MapEditor/Map/Tileset.hpp"
+#include "Tileset.hpp"
 #include "TexturesManager.hpp"
 
 
@@ -135,6 +136,18 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 					slot->setIndex(index);
 					_slots.emplace_back(slot);
 				}
+				else if(_type == ObjectType::Wall) {
+
+					std::shared_ptr<WallSlot> slot = std::make_shared<WallSlot>(
+						slotTexture,
+						slotHoverTexture,
+						slotPressTexture,
+						slotInactiveTexture,
+						position
+					);
+					slot->_object = wallset->getPrefab(y * _slotsCount.x + x);
+					_slots.emplace_back(slot);
+				}
 				else {
 					_slots.emplace_back(std::make_shared<Slot>(
 						slotTexture,
@@ -173,7 +186,7 @@ void Slots::generateScrollbar() {
 	int scrollbarSliderSize;
 
 	if (_type == ObjectType::Terrain) {
-		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
+		rowsTotal = (int)std::ceil(tileset->groups.size() / _slotsCount.x);
 		rowsVisible = _slotsCount.y;
 		rowHeight = rowHeight = 160 + _inner_margin;
 		scrollbarValue = 0;
@@ -181,7 +194,7 @@ void Slots::generateScrollbar() {
 		scrollbarSliderSize = _slotsCount.y * (160 + _inner_margin);
 	}
 	else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
-		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
+		rowsTotal = (int)std::ceil(tileset->groups.size() / _slotsCount.x);
 		rowsVisible = _slotsCount.y;
 		rowHeight = rowHeight = 120 + _inner_margin;
 		scrollbarValue = 0;
@@ -189,7 +202,7 @@ void Slots::generateScrollbar() {
 		scrollbarSliderSize = _slotsCount.y * (120 + _inner_margin);
 	}
 	else {
-		rowsTotal = (int)std::ceil(MapEditor::editor->_tileset->groups.size() / _slotsCount.x);
+		rowsTotal = (int)std::ceil(tileset->groups.size() / _slotsCount.x);
 		rowsVisible = _slotsCount.y;
 		rowHeight = rowHeight = 80 + _inner_margin;
 		scrollbarValue = 0;
@@ -290,10 +303,28 @@ void Slots::loadObjects() {
 		return;
 	}
 
+	if (_type == ObjectType::Wall) {
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i < wallset->_texture->_texture->getSize().y / 32) {
+				_slots[i]->_object = Components::Palette::walls[i];
+				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(true);
+			}
+			else {
+				_slots[i]->_object = std::weak_ptr<Object>();
+				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
+			}
+		}
+		return;
+	}
+
 	std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(_type);
 
 	for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y+1); i++) {
 		if (i < prefabs.size()) {
+			if(prefabs[i]->getAnimations().expired())
+				DebugLog(L"Prefab " + prefabs[i]->_name + L" has no animations");
 			_slots[i]->_object = prefabs[i];
 			_slots[i]->_animator = std::make_shared<Animator>((prefabs[i]->getAnimations().expired())? _emptySlotAnimation : prefabs[i]->getAnimations(), 0.2f);
 			_slots[i]->_animator->play();

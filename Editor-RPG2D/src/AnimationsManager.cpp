@@ -213,7 +213,6 @@ void AnimationsManager::loadAllAnimations() {
     datas.emplace_back(L"assets\\tex\\boulder_1.png", sf::Vector2i(128, 128), 1, 1);
     datas.emplace_back(L"assets\\tex\\boulder_2.png", sf::Vector2i(128, 128), 1, 1);
     
-    
     // load all textures
     for (auto& data : datas) {
         loadAnimations(data._path, data._frameSize, data._animationsCount, data._framesCount);

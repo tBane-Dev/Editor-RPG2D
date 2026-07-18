@@ -48,3 +48,5 @@ public:
 };
 
 bool areFriends(int group1, int group2);
+
+extern std::shared_ptr<Tileset> tileset;
