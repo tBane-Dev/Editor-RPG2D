@@ -1,19 +1,19 @@
-﻿#include "Editors/BuildingsEditor/BuildingShape.hpp"
+﻿#include "Editors/BuildingsEditor/EditableBuilding.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include "Cursor.hpp"
 #include "DebugLog.hpp"
 
 namespace BuildingsEditor {
 
-	BuildingShape::BuildingShape() : ResizableShape() {
-		_state = BuildingEditStates::Idle;
+	EditableBuilding::EditableBuilding() : ResizableShape() {
+		_state = EditableBuildingStates::Idle;
 	}
 
-	BuildingShape::~BuildingShape() {
+	EditableBuilding::~EditableBuilding() {
 
 	}
 
-	void BuildingShape::create() {
+	void EditableBuilding::create() {
 		sf::Vector2i buildingSize = sf::Vector2i(9 * 32, 9 * 32);
 
 		ResizableShape::resize(buildingSize);
@@ -32,7 +32,7 @@ namespace BuildingsEditor {
 		generateFloorVertexArray();
 	}
 
-	void BuildingShape::createFloor() {
+	void EditableBuilding::createFloor() {
 		_floor.clear();
 
 		_floorSize.x = getSize().x / 16;
@@ -45,7 +45,7 @@ namespace BuildingsEditor {
 		}
 	}
 
-	void BuildingShape::resizeFloor(int offsetX, int offsetY) {
+	void EditableBuilding::resizeFloor(int offsetX, int offsetY) {
 		int newWidth = getSize().x / 16;
 		int newHeight = getSize().y / 16;
 
@@ -70,7 +70,7 @@ namespace BuildingsEditor {
 		generateFloorVertexArray();
 	}
 
-	void BuildingShape::generateFloorVertexArray() {
+	void EditableBuilding::generateFloorVertexArray() {
 		_floorVertexArray.clear();
 		_floorVertexArray.setPrimitiveType(sf::PrimitiveType::Triangles);
 
@@ -103,7 +103,7 @@ namespace BuildingsEditor {
 		}
 	}
 
-	void BuildingShape::resize(std::shared_ptr<EdgePoint> edgePoint) {
+	void EditableBuilding::resize(std::shared_ptr<EdgePoint> edgePoint) {
 
 		if (!edgePoint)
 			return;
@@ -191,30 +191,30 @@ namespace BuildingsEditor {
 		resizeFloor(offsetX, offsetY);
 	}
 
-	void BuildingShape::moveFloor(sf::Vector2i offset) {
+	void EditableBuilding::moveFloor(sf::Vector2i offset) {
 		for (int i = 0; i < _floorVertexArray.getVertexCount(); i+=1) {
 			_floorVertexArray[i].position += sf::Vector2f(offset);
 		}
 	}
 
-	void BuildingShape::cursorHover() {
+	void EditableBuilding::cursorHover() {
 		ResizableShape::cursorHover();
 	}
 
-	void BuildingShape::handleEvent(const sf::Event& event) {
+	void EditableBuilding::handleEvent(const sf::Event& event) {
 		for (auto& point : _edgePoints) {
 			point->handleEvent(event);
 
 			if (point == GUI_manager->Element_pressed) {
-				_state = BuildingEditStates::Resizing;
+				_state = EditableBuildingStates::Resizing;
 				return;
 			}
 		}
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			if (BuildingsEditor::editor->_palette->_categories->_selectedCategory->_type == ObjectType::Floor && BuildingsEditor::editor->_palette->_slots->_selectedSlotId > 0) {
+			if (BuildingsEditor::editor->_palette->_categories->_selectedCategory->_type == ObjectType::Floor && BuildingsEditor::editor->_palette->_slots->_selectedSlotId >= 0) {
 				if (GUI_manager->Element_hovered.get() == this) {
-					_state = BuildingEditStates::EditingFloor;
+					_state = EditableBuildingStates::EditingFloor;
 					GUI_manager->Element_pressed = shared_from_this();
 					return;
 				}
@@ -223,28 +223,28 @@ namespace BuildingsEditor {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 			if (GUI_manager->Element_hovered.get() == this) {
-				_state = BuildingEditStates::Moving;
+				_state = EditableBuildingStates::Moving;
 				_offset = Main::cursor->_position - getPosition();
 				GUI_manager->Element_pressed = nullptr;
 			}
 		}
 
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			_state = BuildingEditStates::Idle;
+			_state = EditableBuildingStates::Idle;
 			if (GUI_manager->Element_pressed.get() == this)
 				GUI_manager->Element_pressed = nullptr;
 		}
 
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Middle) {
-			_state = BuildingEditStates::Idle;
+			_state = EditableBuildingStates::Idle;
 			_offset = sf::Vector2i(0, 0);
 			if (GUI_manager->Element_pressed.get() == this)
 				GUI_manager->Element_pressed = nullptr;
 		}
 	}
 
-	void BuildingShape::update() {
-		if (_state == BuildingEditStates::Moving) {
+	void EditableBuilding::update() {
+		if (_state == EditableBuildingStates::Moving) {
 
 			sf::Vector2i oldPosition = getPosition();
 			sf::Vector2i newPosition = Main::cursor->_position - _offset;
@@ -256,7 +256,7 @@ namespace BuildingsEditor {
 			return;
 		}
 
-		if (_state == BuildingEditStates::Resizing) {
+		if (_state == EditableBuildingStates::Resizing) {
 			for (auto& point : _edgePoints) {
 				if(point == GUI_manager->Element_pressed) {
 					resize(point);
@@ -267,7 +267,7 @@ namespace BuildingsEditor {
 			return;
 		}
 
-		if(_state == BuildingEditStates::EditingFloor) {
+		if(_state == EditableBuildingStates::EditingFloor) {
 			if (GUI_manager->Element_pressed.get() == this) {
 				sf::Vector2i cursorPos = Main::cursor->_position;
 				sf::Vector2i localPos = cursorPos - getPosition();
@@ -301,19 +301,19 @@ namespace BuildingsEditor {
 		}
 	}
 
-	void BuildingShape::drawOnlyShape() {
+	void EditableBuilding::drawOnlyShape() {
 		ResizableShape::drawOnlyRect();
 	}
 
-	void BuildingShape::drawOnlyFloor() {
+	void EditableBuilding::drawOnlyFloor() {
 		Main::render_window->draw(_floorVertexArray, sf::RenderStates(_floorset->_texture.get()));
 	}
 
-	void BuildingShape::drawOnlyEdgePoints() {
+	void EditableBuilding::drawOnlyEdgePoints() {
 		ResizableShape::drawOnlyEdgePoints();
 	}
 
-	void BuildingShape::draw() {
+	void EditableBuilding::draw() {
 		drawOnlyShape();
 		drawOnlyFloor();
 		drawOnlyEdgePoints();

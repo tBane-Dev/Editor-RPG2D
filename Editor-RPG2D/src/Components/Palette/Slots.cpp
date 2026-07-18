@@ -130,7 +130,7 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 
 					int index = y * _slotsCount.x + x;
 					if (index >= FloorSlot::_floorset->_texture->getSize().x / 64)
-						index = -1;
+						index = 0;
 
 					slot->setIndex(index);
 					_slots.emplace_back(slot);

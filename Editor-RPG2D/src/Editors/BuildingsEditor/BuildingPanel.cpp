@@ -11,7 +11,7 @@ namespace BuildingsEditor {
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getSize().x + 4, 768 + 4),
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getPosition().x, BuildingsEditor::editor->_name_panel->getPosition().y + BuildingsEditor::editor->_name_panel->getSize().y + 4)) {
 
-		_building = std::make_shared<BuildingShape>();
+		_building = std::make_shared<EditableBuilding>();
 	}
 
 	BuildingPanel::~BuildingPanel() {

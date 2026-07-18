@@ -4,12 +4,12 @@
 
 namespace BuildingsEditor {
 
-	enum class BuildingEditStates { Idle, EditingFloor, Moving, Resizing };
+	enum class EditableBuildingStates { Idle, EditingFloor, Moving, Resizing };
 
-	class BuildingShape : public ResizableShape {
+	class EditableBuilding : public ResizableShape {
 	public:
 
-		BuildingEditStates _state = BuildingEditStates::Idle;
+		EditableBuildingStates _state = EditableBuildingStates::Idle;
 		std::shared_ptr<Texture> _floorset;
 
 		std::vector<int> _floor;
@@ -17,8 +17,8 @@ namespace BuildingsEditor {
 		sf::VertexArray _floorVertexArray;
 
 
-		BuildingShape();
-		~BuildingShape();
+		EditableBuilding();
+		~EditableBuilding();
 
 		void create();
 		void createFloor();

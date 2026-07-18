@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Components/Panel.hpp"
-#include "Editors/BuildingsEditor/BuildingShape.hpp"
+#include "Editors/BuildingsEditor/EditableBuilding.hpp"
 #include "TexturesManager.hpp"
 
 namespace BuildingsEditor {
@@ -13,7 +13,7 @@ namespace BuildingsEditor {
 	class BuildingPanel : public Components::Panel {
 	public:
 
-		std::shared_ptr<BuildingShape> _building;
+		std::shared_ptr<EditableBuilding> _building;
 
 		BuildingPanel(sf::Vector2i margin);
 		~BuildingPanel();
