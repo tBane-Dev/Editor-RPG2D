@@ -585,6 +585,18 @@ namespace BuildingsEditor {
 
 			sf::Vector2i oldPosition = getPosition();
 			sf::Vector2i newPosition = Cursors::cursor->_position - _offset;
+			
+			if (BuildingsEditor::editor->_building_panel->_building.get() == this) {
+				
+				int clampOffset = 256;
+				int x = std::min(getSize().x/2, clampOffset);
+				int y = std::min(getSize().y/2, clampOffset);
+
+				sf::IntRect rect = BuildingsEditor::editor->_building_panel->_rect;
+				newPosition.x = std::clamp(newPosition.x, rect.position.x - getSize().x + x, rect.position.x + rect.size.x - x);
+				newPosition.y = std::clamp(newPosition.y, rect.position.y - getSize().y + y, rect.position.y + rect.size.y - y);
+			}
+
 			sf::Vector2i delta = newPosition - oldPosition;
 
 			setPosition(newPosition);
@@ -637,6 +649,31 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::draw() {
+
+		if (BuildingsEditor::editor->_building_panel->_building.get() == this) {
+			sf::FloatRect fr;
+			fr.size = sf::Vector2f(BuildingsEditor::editor->_building_panel->_rect.size);
+			fr.position = sf::Vector2f(BuildingsEditor::editor->_building_panel->_rect.position);
+
+			sf::View view(fr);
+
+			sf::FloatRect vp(
+				sf::Vector2f(
+					fr.position.x / GUI_manager->_view.getSize().x,
+					fr.position.y / GUI_manager->_view.getSize().y
+				),
+
+				sf::Vector2f(
+					fr.size.x / GUI_manager->_view.getSize().x,
+					fr.size.y / GUI_manager->_view.getSize().y
+				)
+			);
+
+			view.setViewport(vp);
+			Main::render_window->setView(view);
+		}
+		
+
 		drawOnlyShape();
 		drawOnlyFloor();
 		drawOnlyWalls();

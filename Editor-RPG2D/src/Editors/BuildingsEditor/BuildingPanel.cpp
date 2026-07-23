@@ -35,11 +35,35 @@ namespace BuildingsEditor {
 
 	void BuildingPanel::draw() {
 		Components::Panel::draw();
+		
+		// clamp the view
+		sf::FloatRect fr;
+		fr.size = sf::Vector2f(BuildingsEditor::editor->_building_panel->_rect.size - sf::Vector2i(4,4));
+		fr.position = sf::Vector2f(BuildingsEditor::editor->_building_panel->_rect.position + sf::Vector2i(2,2));
 
+		sf::View view(fr);
+
+		sf::FloatRect vp(
+			sf::Vector2f(
+				fr.position.x / GUI_manager->_view.getSize().x,
+				fr.position.y / GUI_manager->_view.getSize().y
+			),
+
+			sf::Vector2f(
+				fr.size.x / GUI_manager->_view.getSize().x,
+				fr.size.y / GUI_manager->_view.getSize().y
+			)
+		);
+
+		view.setViewport(vp);
+		Main::render_window->setView(view);
+
+		// draw building
 		_building->drawOnlyShape();
 		_building->drawOnlyFloor();
 		_building->drawOnlyWalls();
 
+		// draw grid
 		if (BuildingsEditor::editor->_main_menu->_render_grid->_checkbox->_value == 1) {
 			grid2_shader->setUniform("rectPosition", sf::Vector2f(_building->getPosition()));
 			grid2_shader->setUniform("rectSize", sf::Vector2f(_building->getSize()));
@@ -59,6 +83,7 @@ namespace BuildingsEditor {
 			Main::render_window->draw(gridRect, rs);
 		}
 		
+		// draw edge points
 		_building->drawOnlyEdgePoints();
 
 	}
