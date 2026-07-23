@@ -321,7 +321,7 @@ namespace BuildingsEditor {
 			edgePoint == _point_bottom ||
 			edgePoint == _point_right_bottom;
 
-		sf::Vector2i screenDelta = Main::cursor->_position - edgePoint->getPosition();
+		sf::Vector2i screenDelta = Cursors::cursor->_position - edgePoint->getPosition();
 
 		auto screenToLogicalStep = [this](int screenDelta) {
 			int logicalDelta = int(std::round(float(screenDelta) / _scale));
@@ -386,7 +386,7 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::editTileUnderCursor() {
-		sf::Vector2i cursorPos = Main::cursor->_position;
+		sf::Vector2i cursorPos = Cursors::cursor->_position;
 		sf::Vector2i localPos = cursorPos - sf::Vector2i(sf::Vector2f(getPosition()));
 
 		int tileX = localPos.x / int(16.f * _scale);
@@ -413,7 +413,7 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::addWallUnderCursor() {
-		sf::Vector2i cursorPos = Main::cursor->_position;
+		sf::Vector2i cursorPos = Cursors::cursor->_position;
 		sf::Vector2i localPos = cursorPos - sf::Vector2i(sf::Vector2f(getPosition()));
 
 		int tileX = localPos.x / int(32.f * _scale);
@@ -440,7 +440,7 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::removeWallUnderCursor() {
-		sf::Vector2i cursorPos = Main::cursor->_position;
+		sf::Vector2i cursorPos = Cursors::cursor->_position;
 		sf::Vector2i localPos = cursorPos - sf::Vector2i(sf::Vector2f(getPosition()));
 
 		int tileX = localPos.x / int(32.f * _scale);
@@ -490,7 +490,7 @@ namespace BuildingsEditor {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 			if (GUI_manager->Element_hovered.get() == this) {
 				_state = EditableBuildingStates::Moving;
-				_offset = Main::cursor->_position - getPosition();
+				_offset = Cursors::cursor->_position - getPosition();
 				GUI_manager->Element_pressed = nullptr;
 			}
 		}
@@ -569,7 +569,7 @@ namespace BuildingsEditor {
 		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
 			float oldScale = _scale;
 			float newScale = std::clamp(_scale + mws->delta * 0.125f, 0.5f, 4.0f);
-			sf::Vector2f cursorPosition(Main::cursor->_position);
+			sf::Vector2f cursorPosition(Cursors::cursor->_position);
 			sf::Vector2f oldPosition(getPosition());
 			float scaleFactor = newScale / oldScale;
 			sf::Vector2f newPosition = cursorPosition + (oldPosition - cursorPosition) * scaleFactor;
@@ -584,7 +584,7 @@ namespace BuildingsEditor {
 		if (_state == EditableBuildingStates::Moving) {
 
 			sf::Vector2i oldPosition = getPosition();
-			sf::Vector2i newPosition = Main::cursor->_position - _offset;
+			sf::Vector2i newPosition = Cursors::cursor->_position - _offset;
 			sf::Vector2i delta = newPosition - oldPosition;
 
 			setPosition(newPosition);

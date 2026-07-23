@@ -118,7 +118,7 @@ int Scrollbar::getValue() {
 }
 
 void Scrollbar::cursorHover() {
-	if (_rect.contains(Main::cursor->_position)) {
+	if (_rect.contains(Cursors::cursor->_position)) {
 		GUI_manager->Element_hovered = this->shared_from_this();
 	}
 }
@@ -132,17 +132,17 @@ void Scrollbar::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_slider.contains(Main::cursor->_position)) {
+		if (_slider.contains(Cursors::cursor->_position)) {
 			GUI_manager->Element_pressed = this->shared_from_this();
 			if (_slider.size.y < _rect.size.y) {
 				_state = ScrollbarState::Dragging;
-				_dragOffset = Main::cursor->_position - _slider.position;
+				_dragOffset = Cursors::cursor->_position - _slider.position;
 			}
 		}
 		
 	}
 	else if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
-		if ((_rect.contains(Main::cursor->_position) || (_scrollArea != nullptr && _scrollArea->contains(Main::cursor->_position)))) {
+		if ((_rect.contains(Cursors::cursor->_position) || (_scrollArea != nullptr && _scrollArea->contains(Cursors::cursor->_position)))) {
 			_state = ScrollbarState::Scrolled;
 			_deltaScroll = -(int)mws->delta;
 		}
@@ -160,7 +160,7 @@ void Scrollbar::update() {
 		if (movableHeight <= 0)
 			return;
 
-		int newY = Main::cursor->_position.y - _dragOffset.y;
+		int newY = Cursors::cursor->_position.y - _dragOffset.y;
 
 		newY = std::clamp(
 			newY,

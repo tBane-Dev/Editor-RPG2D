@@ -31,7 +31,7 @@ namespace Components {
 
 	void Panel::cursorHover() {
 
-		if (_rect.contains(Main::cursor->_position)) {
+		if (_rect.contains(Cursors::cursor->_position)) {
 			GUI_manager->Element_hovered = shared_from_this();
 		}
 

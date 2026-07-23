@@ -103,7 +103,7 @@ void ResizableShape::resize(std::shared_ptr<EdgePoint> edgePoint) {
 	if (!edgePoint)
 		return;
 
-	sf::Vector2i p = Main::cursor->_position - edgePoint->getPosition();
+	sf::Vector2i p = Cursors::cursor->_position - edgePoint->getPosition();
 	p = p / _step * _step;
 
 	int minX = _point_left->getPosition().x;
@@ -177,7 +177,7 @@ void ResizableShape::cursorHover() {
 
 	sf::IntRect rect = sf::IntRect(getPosition(), getSize());
 
-	if (rect.contains(Main::cursor->_position)) {
+	if (rect.contains(Cursors::cursor->_position)) {
 		GUI_manager->Element_hovered = this->shared_from_this();
 	}
 
@@ -200,7 +200,7 @@ void ResizableShape::handleEvent(const sf::Event& event) {
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 		if(GUI_manager->Element_hovered.get() == this) {
 			_state = ResizableShapeState::Moving;
-			_offset = Main::cursor->_position - getPosition();
+			_offset = Cursors::cursor->_position - getPosition();
 			GUI_manager->Element_pressed = nullptr;
 		}
 	}
@@ -217,7 +217,7 @@ void ResizableShape::handleEvent(const sf::Event& event) {
 void ResizableShape::update() {
 
 	if(_state == ResizableShapeState::Moving) {
-		setPosition(Main::cursor->_position - _offset);
+		setPosition(Cursors::cursor->_position - _offset);
 
 		return;
 	}

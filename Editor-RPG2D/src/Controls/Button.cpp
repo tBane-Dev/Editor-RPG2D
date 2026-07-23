@@ -138,14 +138,14 @@ void Button::cursorHover() {
 			return;
 	}
 
-	if (_rect.contains(Main::cursor->_position)) {
+	if (_rect.contains(Cursors::cursor->_position)) {
 		Main::tooltip->setElement(this->shared_from_this(), _tooltipWidth);
 	}
 
 	if (!_isActive)
 		return;
 
-	if (_rect.contains(Main::cursor->_position)) {
+	if (_rect.contains(Cursors::cursor->_position)) {
 		GUI_manager->Element_hovered = this->shared_from_this();
 	}
 }

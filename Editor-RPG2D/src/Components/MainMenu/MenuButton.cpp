@@ -109,11 +109,11 @@ namespace Components {
 
 			bool clicked_in_menu = false;
 
-			if(_rect.contains(Main::cursor->_position))
+			if(_rect.contains(Cursors::cursor->_position))
 				clicked_in_menu = true;
 
 			for(auto& option : _options) {
-				if (option->_rect.contains(Main::cursor->_position))
+				if (option->_rect.contains(Cursors::cursor->_position))
 					clicked_in_menu = true;
 			}
 

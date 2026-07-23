@@ -709,14 +709,14 @@ void FileDialog::cursorHover() {
 	_navbar->cursorHover();
 
 	// locations (left inner rect)
-	if (_leftInnerRect->contains(Main::cursor->_position)) {
+	if (_leftInnerRect->contains(Cursors::cursor->_position)) {
 		for (auto& location : _visibleLocations) {
 			location->cursorHover();
 		}
 	}
 
 	// files (right inner rect)
-	if (_rightInnerRect->contains(Main::cursor->_position)) {
+	if (_rightInnerRect->contains(Cursors::cursor->_position)) {
 		for (auto& file : _files) {
 			file->cursorHover();
 		}

@@ -1,20 +1,15 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/Object.hpp"
+#include "Cursor.hpp"
 
-enum class CursorOnMapState { Idle, Drawing };
-
-class CursorOnMap {
+class CursorOnMap : public Cursors::CursorWithObject {
 public:
-	sf::Vector2i _position;
-	std::weak_ptr<Object> _object = std::weak_ptr<Object>();
-	int _frame = 0;
-	CursorOnMapState _state;
 
 	CursorOnMap();
 	~CursorOnMap();
 
-	void update();
-	void handleEvent(const sf::Event& event);
-	void draw();
+	virtual void update();
+	virtual void handleEvent(const sf::Event& event);
+	virtual void draw();
 };

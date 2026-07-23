@@ -66,11 +66,11 @@ namespace Components {
 
 	bool MainMenu::cursorOnAnyMenuButton() {
 		for (auto& mb : _menu_boxes) {
-			if (mb->_rect.contains(Main::cursor->_position))
+			if (mb->_rect.contains(Cursors::cursor->_position))
 				return true;
 
 			for (auto& op : mb->_options) {
-				if (op->_rect.contains(Main::cursor->_position))
+				if (op->_rect.contains(Cursors::cursor->_position))
 					return true;
 			}
 		}
@@ -79,7 +79,7 @@ namespace Components {
 
 	void MainMenu::cursorHover() {
 
-		if (_rect.contains(Main::cursor->_position)) {
+		if (_rect.contains(Cursors::cursor->_position)) {
 			GUI_manager->Element_hovered = this->shared_from_this();
 		}
 

@@ -167,7 +167,7 @@ namespace Main {
 
 
 		if (std::dynamic_pointer_cast<Button>(_element.lock())) {
-			if(!std::dynamic_pointer_cast<Button>(_element.lock())->_rect.contains(Main::cursor->_position)) {
+			if(!std::dynamic_pointer_cast<Button>(_element.lock())->_rect.contains(Cursors::cursor->_position)) {
 				_element = std::weak_ptr<Element>();
 			}
 		}

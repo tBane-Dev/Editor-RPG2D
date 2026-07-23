@@ -156,7 +156,7 @@ namespace Components {
 		if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value != 0)
 			return;
 
-		if (_rect.contains(Main::cursor->_position)) {
+		if (_rect.contains(Cursors::cursor->_position)) {
 			GUI_manager->Element_hovered = shared_from_this();
 		}
 

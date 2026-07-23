@@ -15,143 +15,8 @@
 #include <set>
 #include "WindowsManager.hpp"
 
-std::vector<std::vector<std::vector<bool>>> circle_brushes = {
-
-    // 0 - 1x1
-    {
-        {1}
-    },
-
-    // 1 - 3x3
-    {
-        {0, 1, 0},
-        {1, 1, 1},
-        {0, 1, 0}
-    },
-
-    // 2 - 5x5
-    {
-        {0, 1, 1, 1, 0},
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1},
-        {0, 1, 1, 1, 0}
-    },
-
-    // 3 - 7x7
-    {
-        {0, 0, 1, 1, 1, 0, 0},
-        {0, 1, 1, 1, 1, 1, 0},
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1},
-        {0, 1, 1, 1, 1, 1, 0},
-        {0, 0, 1, 1, 1, 0, 0}
-    },
-
-    // 4 - 9x9
-    {
-        {0, 0, 0, 1, 1, 1, 0, 0, 0},
-        {0, 0, 1, 1, 1, 1, 1, 0, 0},
-        {0, 1, 1, 1, 1, 1, 1, 1, 0},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {0, 1, 1, 1, 1, 1, 1, 1, 0},
-        {0, 0, 1, 1, 1, 1, 1, 0, 0},
-        {0, 0, 0, 1, 1, 1, 0, 0, 0}
-    },
-
-    // 5 - 11x11
-    {
-        {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
-        {0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-        {0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-        {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
-
-    }
-};
-
-std::vector<std::vector<std::vector<bool>>> square_brushes = {
-
-    // 0 - 1x1
-    {
-        {1}
-    },
-
-    // 1 - 3x3
-    {
-        {1, 1, 1},
-        {1, 1, 1},
-        {1, 1, 1}
-    },
-
-    // 2 - 5x5
-    {
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1}
-    },
-
-    // 3 - 7x7
-    {
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1}
-    },
-
-    // 4 - 9x9
-    {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1}
-    },
-
-    // 5 - 11x11
-    {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-
-    }
-};
-
-
-CursorOnMap::CursorOnMap() {
-
-    Main::render_window->setView(MapEditor::editor->_camera->_view);
-    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(Main::cursor->_position));
-
-	_object = std::weak_ptr<Object>();
-
-    _state = CursorOnMapState::Idle;
+CursorOnMap::CursorOnMap() : CursorWithObject() {
+	
 }
 
 CursorOnMap::~CursorOnMap() {
@@ -160,7 +25,7 @@ CursorOnMap::~CursorOnMap() {
 
 void CursorOnMap::update() {
     Main::render_window->setView(MapEditor::editor->_camera->_view);
-    _position = sf::Vector2i(Main::render_window->mapPixelToCoords(Main::cursor->_position));
+    CursorWithObject::update();
 }
 
 void CursorOnMap::handleEvent(const sf::Event& event) {
@@ -180,8 +45,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             MapEditor::editor->_palette->_slots->selectSlot(-1);
         }
 
-        if (_state == CursorOnMapState::Drawing) {
-            _state = CursorOnMapState::Idle;
+        if (_state == Cursors::CursorWithObjectState::Drawing) {
+            _state = Cursors::CursorWithObjectState::Idle;
         }
 
         _object = std::weak_ptr<Object>();
@@ -189,8 +54,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
     }
 
     if (const auto* mbl = event.getIf<sf::Event::MouseButtonReleased>(); mbl && mbl->button == sf::Mouse::Button::Left) {
-        if (_state == CursorOnMapState::Drawing) {
-            _state = CursorOnMapState::Idle;
+        if (_state == Cursors::CursorWithObjectState::Drawing) {
+            _state = Cursors::CursorWithObjectState::Idle;
         }
 			
     }
@@ -211,8 +76,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
 
             sf::Vector2i tileCoords;
-			tileCoords.x = (_position.x - mapa->getRect().position.x) / Tile::tileSize;
-			tileCoords.y = (_position.y - mapa->getRect().position.y) / Tile::tileSize;
+			tileCoords.x = (_globalPosition.x - mapa->getRect().position.x) / Tile::tileSize;
+			tileCoords.y = (_globalPosition.y - mapa->getRect().position.y) / Tile::tileSize;
 
 			int type = std::dynamic_pointer_cast<Terrain>(MapEditor::editor->_cursor_on_map->_object.lock())->_id;
 
@@ -222,10 +87,10 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             std::vector<std::vector<bool>> brush;
             
             if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
-                brush = square_brushes[brushSize];
+                brush = Cursors::square_brushes[brushSize];
 
             if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
-                brush = circle_brushes[brushSize];
+                brush = Cursors::circle_brushes[brushSize];
            
 
             for (int yy = 0; yy < brush.size(); yy++) {
@@ -266,7 +131,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 				);
 		
             if(!chunksToEdit.empty())
-                _state = CursorOnMapState::Drawing;
+                _state = Cursors::CursorWithObjectState::Drawing;
         }
 
 		return;
@@ -289,8 +154,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
 			// position of object on the map, aligning to the grid
 			sf::Vector2i position;
-			position.x = (_position.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
-			position.y = (_position.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
+			position.x = (_globalPosition.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
+			position.y = (_globalPosition.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
 
 			if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
 				position.x += prefab->getOrigin().x;
@@ -338,10 +203,10 @@ void CursorOnMap::draw()
         std::vector<std::vector<bool>> brush;
 
         if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
-            brush = square_brushes[brushSize];
+            brush = Cursors::square_brushes[brushSize];
         
 		if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
-            brush = circle_brushes[brushSize];
+            brush = Cursors::circle_brushes[brushSize];
 
 		std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
 
@@ -349,8 +214,8 @@ void CursorOnMap::draw()
             for(int xx = 0; xx < brush[yy].size(); xx++) {
                 if (brush[yy][xx]) {
 
-					int tx = _position.x / Tile::tileSize + (xx - brush[yy].size() / 2);
-					int ty = _position.y / Tile::tileSize + (yy - brush.size() / 2);
+					int tx = _globalPosition.x / Tile::tileSize + (xx - brush[yy].size() / 2);
+					int ty = _globalPosition.y / Tile::tileSize + (yy - brush.size() / 2);
 
                     std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(tx, ty);
                     if (!c) continue;
@@ -390,8 +255,8 @@ void CursorOnMap::draw()
         }
 
 		sf::Vector2i position;
-		position.x = (_position.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
-		position.y = (_position.y - (int)frameHeight/2) / Tile::tileSize * Tile::tileSize;
+		position.x = (_globalPosition.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
+		position.y = (_globalPosition.y - (int)frameHeight/2) / Tile::tileSize * Tile::tileSize;
 
 		sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
 		outlineRect.setPosition(sf::Vector2f(position));

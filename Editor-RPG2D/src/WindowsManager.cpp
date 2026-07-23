@@ -103,7 +103,7 @@ namespace Main {
 
 	void Window::cursorHover() {
 		
-		if (_rect.contains(Main::cursor->_position))
+		if (_rect.contains(Cursors::cursor->_position))
 			GUI_manager->Element_hovered = this->shared_from_this();
 
 		_closeButton->cursorHover();
@@ -111,7 +111,7 @@ namespace Main {
 
 	void Window::handleEvent(const sf::Event& event) {
 
-		if ((event.getIf<sf::Event::MouseButtonReleased>() || event.getIf<sf::Event::MouseButtonPressed>()) && GUI_manager->Element_pressed == nullptr && !_rect.contains(Main::cursor->_position)) {
+		if ((event.getIf<sf::Event::MouseButtonReleased>() || event.getIf<sf::Event::MouseButtonPressed>()) && GUI_manager->Element_pressed == nullptr && !_rect.contains(Cursors::cursor->_position)) {
 			_animationClickedOutside = true;
 			_animationStartTime = currentTime;
 			errorSound.play();
@@ -120,7 +120,7 @@ namespace Main {
 
 		if (_state == WindowState::Moving) {
 			if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
-				setPosition(Main::cursor->_position-_offset);
+				setPosition(Cursors::cursor->_position-_offset);
 				GUI_manager->Element_pressed = this->shared_from_this();
 			}
 
@@ -139,10 +139,10 @@ namespace Main {
 		if(GUI_manager->Element_pressed == _closeButton)
 			return;
 
-		if (_titleRect.contains(Main::cursor->_position)) {
+		if (_titleRect.contains(Cursors::cursor->_position)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 				_state = WindowState::Moving;
-				_offset = Main::cursor->_position - _rect.position;
+				_offset = Cursors::cursor->_position - _rect.position;
 				GUI_manager->Element_pressed = this->shared_from_this();
 			}
 		}

@@ -260,7 +260,7 @@ void Map::load(std::ifstream& loader) {
 
 void Map::cursorHover() {
 
-	if (MapEditor::editor->_cursor_on_map != nullptr && getRect().contains(MapEditor::editor->_cursor_on_map->_position)) {
+	if (MapEditor::editor->_cursor_on_map != nullptr && getRect().contains(MapEditor::editor->_cursor_on_map->_globalPosition)) {
 		GUI_manager->Element_hovered = shared_from_this();
 	}
 

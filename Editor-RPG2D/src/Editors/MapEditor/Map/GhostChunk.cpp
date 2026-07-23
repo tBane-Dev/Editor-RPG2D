@@ -33,7 +33,7 @@ void GhostChunk::cursorHover() {
 	renderWindowRect.position = Main::render_window->getPosition();
 	renderWindowRect.size = sf::Vector2i(Main::render_window->getSize());
 
-	if (!renderWindowRect.contains(Main::cursor->_position + renderWindowRect.position))
+	if (!renderWindowRect.contains(Cursors::cursor->_position + renderWindowRect.position))
 		return;
 
 	sf::Vector2i coords;
@@ -151,7 +151,7 @@ void GhostChunk::update() {
 		return;
 	}
 
-	if (MapEditor::editor->_cursor_on_map->_state == CursorOnMapState::Drawing) {
+	if (MapEditor::editor->_cursor_on_map->_state == Cursors::CursorWithObjectState::Drawing) {
 		_isVisible = false;
 		return;
 	}

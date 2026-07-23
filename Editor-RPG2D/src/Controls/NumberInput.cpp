@@ -199,7 +199,7 @@ void NumberInput::positioningCursorByMouse() {
 
 	for (int i = 0; i < (int)(_textStr.length()); i++) {
 		sf::Vector2f charPos = _text->findCharacterPos(i);
-		if (Main::cursor->_position.x > charPos.x) {
+		if (Cursors::cursor->_position.x > charPos.x) {
 			newCursorPosition = i + 1;
 		}
 	}
@@ -208,7 +208,7 @@ void NumberInput::positioningCursorByMouse() {
 }
 
 void NumberInput::cursorHover() {
-	if (_rect.contains(Main::cursor->_position)) {
+	if (_rect.contains(Cursors::cursor->_position)) {
 		GUI_manager->Element_hovered = this->shared_from_this();
 		return;
 	}
@@ -223,7 +223,7 @@ void NumberInput::cursorHover() {
 void NumberInput::handleEvent(const sf::Event& event) {
 	
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
-		if (_rect.contains(Main::cursor->_position)) {
+		if (_rect.contains(Cursors::cursor->_position)) {
 
 			if (_editState == NumberInputEditState::TextEntered) {
 				if ((currentTime - _lastCLickTime).asSeconds() < 0.2f) {

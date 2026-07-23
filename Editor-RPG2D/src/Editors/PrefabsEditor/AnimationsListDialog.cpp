@@ -305,7 +305,7 @@ void AnimationsListDialog::cursorHover() {
 
 	_scrollbar->cursorHover();
 
-	if (_itemsInnerRect->contains(Main::cursor->_position)) {
+	if (_itemsInnerRect->contains(Cursors::cursor->_position)) {
 		for (auto& item : _animationsItems) {
 			item->cursorHover();
 		}

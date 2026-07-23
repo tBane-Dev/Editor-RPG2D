@@ -56,10 +56,10 @@ void MeshEditor::handleEvent(const sf::Event& event) {
 	int cursorMargin = 8;
 	sf::IntRect rectForCursor = sf::IntRect(_spriteRect.position - sf::Vector2i(cursorMargin, cursorMargin), _spriteRect.size + sf::Vector2i(2 * cursorMargin, 2 * cursorMargin));
 
-	if (rectForCursor.contains(Main::cursor->_position)) {
+	if (rectForCursor.contains(Cursors::cursor->_position)) {
 		int radius = 8;
-		_cursorPosition.x = (float)_spriteRect.position.x + std::round((Main::cursor->_position.x - _spriteRect.position.x) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
-		_cursorPosition.y = (float)_spriteRect.position.y + std::round((Main::cursor->_position.y - _spriteRect.position.y) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
+		_cursorPosition.x = (float)_spriteRect.position.x + std::round((Cursors::cursor->_position.x - _spriteRect.position.x) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
+		_cursorPosition.y = (float)_spriteRect.position.y + std::round((Cursors::cursor->_position.y - _spriteRect.position.y) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
 
 		sf::Vector2i point;
 		point.x = std::round((_cursorPosition.x - _spriteRect.position.x) / _spriteScale);

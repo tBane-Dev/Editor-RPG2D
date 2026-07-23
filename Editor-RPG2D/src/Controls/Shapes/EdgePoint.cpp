@@ -24,7 +24,7 @@ sf::Vector2i EdgePoint::getSize() {
 void EdgePoint::cursorHover() {
 
 	sf::IntRect r(_rect.position - _rect.size / 2, _rect.size);
-	if (r.contains(Main::cursor->_position)) {
+	if (r.contains(Cursors::cursor->_position)) {
 		GUI_manager->Element_hovered = this->shared_from_this();
 	}
 }
@@ -39,7 +39,7 @@ void EdgePoint::handleEvent(const sf::Event& event) {
 	}
 
 	sf::IntRect r(_rect.position - _rect.size / 2, _rect.size);
-	if (r.contains(Main::cursor->_position)) {
+	if (r.contains(Cursors::cursor->_position)) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			GUI_manager->Element_pressed = this->shared_from_this();
