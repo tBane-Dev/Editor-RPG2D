@@ -457,11 +457,31 @@ namespace BuildingsEditor {
 		}
 	}
 
+	sf::Vector2i EditableBuilding::clampPosition(sf::Vector2i position) {
+		int clampOffset = 256;
+		int x = std::min(getSize().x / 2, clampOffset);
+		int y = std::min(getSize().y / 2, clampOffset);
+
+		sf::IntRect rect = BuildingsEditor::editor->_building_panel->_rect;
+
+		sf::Vector2i p;
+		p.x = std::clamp(position.x, rect.position.x - getSize().x + x, rect.position.x + rect.size.x - x);
+		p.y = std::clamp(position.y, rect.position.y - getSize().y + y, rect.position.y + rect.size.y - y);
+		return p;
+	}
+
 	void EditableBuilding::cursorHover() {
-		ResizableShape::cursorHover();
+		if (BuildingsEditor::editor->_building_panel->_rect.contains(Cursors::cursor->_position)) {
+			ResizableShape::cursorHover();
+		}
+		
 	}
 
 	void EditableBuilding::handleEvent(const sf::Event& event) {
+
+		if (!(BuildingsEditor::editor->_building_panel->_building.get() == this && BuildingsEditor::editor->_building_panel->_rect.contains(Cursors::cursor->_position)) && GUI_manager->Element_pressed == nullptr)
+			return;
+
 		for (auto& point : _edgePoints) {
 			point->handleEvent(event);
 
@@ -568,7 +588,7 @@ namespace BuildingsEditor {
 
 		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
 			float oldScale = _scale;
-			float newScale = std::clamp(_scale + mws->delta * 0.125f, 0.5f, 4.0f);
+			float newScale = std::clamp(_scale + mws->delta * 0.125f, 0.5f, 2.0f);
 			sf::Vector2f cursorPosition(Cursors::cursor->_position);
 			sf::Vector2f oldPosition(getPosition());
 			float scaleFactor = newScale / oldScale;
@@ -587,14 +607,7 @@ namespace BuildingsEditor {
 			sf::Vector2i newPosition = Cursors::cursor->_position - _offset;
 			
 			if (BuildingsEditor::editor->_building_panel->_building.get() == this) {
-				
-				int clampOffset = 256;
-				int x = std::min(getSize().x/2, clampOffset);
-				int y = std::min(getSize().y/2, clampOffset);
-
-				sf::IntRect rect = BuildingsEditor::editor->_building_panel->_rect;
-				newPosition.x = std::clamp(newPosition.x, rect.position.x - getSize().x + x, rect.position.x + rect.size.x - x);
-				newPosition.y = std::clamp(newPosition.y, rect.position.y - getSize().y + y, rect.position.y + rect.size.y - y);
+				newPosition = clampPosition(newPosition);
 			}
 
 			sf::Vector2i delta = newPosition - oldPosition;
@@ -609,6 +622,7 @@ namespace BuildingsEditor {
 			for (auto& point : _edgePoints) {
 				if(point == GUI_manager->Element_pressed) {
 					resize(point);
+					setPosition(clampPosition(getPosition()));
 					return;
 				}
 			}

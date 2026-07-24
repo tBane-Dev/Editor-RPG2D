@@ -119,20 +119,19 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 			}
 			else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
 				position = sf::Vector2i(_rect.position.x + _outer_margin + x * (120 + _inner_margin), _rect.position.y + _main_margin + _outer_margin + _top_margin + y * (120 + _inner_margin));
+				
 				if (_type == ObjectType::Floor) {
-					
+					position = sf::Vector2i(_rect.position.x + _outer_margin + x * (120 + _inner_margin), _rect.position.y + _main_margin + _outer_margin + _top_margin + y * (120 + _inner_margin));
 					std::shared_ptr<FloorSlot> slot = std::make_shared<FloorSlot>(
-						slotTexture, 
-						slotHoverTexture, 
-						slotPressTexture, 
-						slotInactiveTexture, 
+						slotTexture,
+						slotHoverTexture,
+						slotPressTexture,
+						slotInactiveTexture,
 						position
 					);
-
 					int index = y * _slotsCount.x + x;
 					if (index >= FloorSlot::_floorset->_texture->getSize().x / 64)
 						index = 0;
-
 					slot->setIndex(index);
 					_slots.emplace_back(slot);
 				}
@@ -415,7 +414,11 @@ void Slots::setCategory(ObjectType type) {
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (160 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
 
 	}
-	else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
+	else if (_type == ObjectType::Floor) {
+		createSlots(sf::Vector2i(4, 5));
+		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (120 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
+	}
+	else if (_type == ObjectType::Wall || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
 		createSlots(sf::Vector2i(4, 6));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (120 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
 

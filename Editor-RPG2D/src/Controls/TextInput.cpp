@@ -111,6 +111,10 @@ void TextInput::positioningCursorByMouse() {
 }
 
 void TextInput::cursorHover() {
+
+	if(GUI_manager->Element_pressed.get() != this && GUI_manager->Element_pressed != nullptr)
+		return;
+
 	if (_rect.contains(Cursors::cursor->_position)) {
 		GUI_manager->Element_hovered = this->shared_from_this();
 		return;

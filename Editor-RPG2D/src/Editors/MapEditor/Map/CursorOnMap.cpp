@@ -24,8 +24,9 @@ CursorOnMap::~CursorOnMap() {
 }
 
 void CursorOnMap::update() {
+    Cursor::update();
     Main::render_window->setView(MapEditor::editor->_camera->_view);
-    CursorWithObject::update();
+    _globalPosition = sf::Vector2i(Main::render_window->mapPixelToCoords(_position));
 }
 
 void CursorOnMap::handleEvent(const sf::Event& event) {

@@ -1,0 +1,269 @@
+﻿#include "Editors/BuildingsEditor/CursorOnBuilding.hpp"
+#include "Cursor.hpp"
+#include "EditorsManager.hpp"
+#include "Editors/BuildingsEditor/Editor.hpp"
+#include "Objects/GameObject.hpp"
+#include "Objects/Floor.hpp"
+#include <typeinfo>
+#include "DebugLog.hpp"
+#include <set>
+#include "WindowsManager.hpp"
+
+CursorOnBuilding::CursorOnBuilding() : CursorWithObject() {
+	
+}
+
+CursorOnBuilding::~CursorOnBuilding() {
+
+}
+
+void CursorOnBuilding::update() {
+    CursorWithObject::update();
+}
+
+void CursorOnBuilding::handleEvent(const sf::Event& event) {
+	
+	if(_object.expired())
+		return;
+
+    if (Main::windows_manager->get_back())
+        return;
+
+    if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
+        //if (MapEditor::editor->_palette->_tools->_selectedTool != nullptr) {
+        //    MapEditor::editor->_palette->_tools->setTool(MapEditor::editor->_palette->_tools->_tools[0], ToolType::None);
+        //}
+        //
+        //if (MapEditor::editor->_palette->_slots->_selectedSlot != nullptr) {
+        //    MapEditor::editor->_palette->_slots->selectSlot(-1);
+        //}
+        //
+        //if (_state == Cursors::CursorWithObjectState::Drawing) {
+        //    _state = Cursors::CursorWithObjectState::Idle;
+        //}
+
+        _object = std::weak_ptr<Object>();
+        return;
+    }
+
+    //if (const auto* mbl = event.getIf<sf::Event::MouseButtonReleased>(); mbl && mbl->button == sf::Mouse::Button::Left) {
+    //    if (_state == Cursors::CursorWithObjectState::Drawing) {
+    //        _state = Cursors::CursorWithObjectState::Idle;
+    //    }
+	//		
+    //}
+    //
+    //if (!(GUI_manager->Element_pressed == nullptr || GUI_manager->Element_pressed == BuildingsEditor::editor->_building_panel->_building))
+    //    return;
+    //
+	//if (_object.lock()->_type == ObjectType::Terrain) {
+    //
+    //    bool conditionToDraw = 
+    //        GUI_manager->Element_hovered == BuildingsEditor::editor->_building_panel->_building &&
+    //        sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && 
+    //        (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle || MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
+    //
+	//	if (conditionToDraw) {
+    //
+	//		std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
+    //
+    //        sf::Vector2i tileCoords;
+	//		tileCoords.x = (_globalPosition.x - mapa->getRect().position.x) / Tile::tileSize;
+	//		tileCoords.y = (_globalPosition.y - mapa->getRect().position.y) / Tile::tileSize;
+    //
+	//		int type = std::dynamic_pointer_cast<Terrain>(MapEditor::editor->_cursor_on_map->_object.lock())->_id;
+    //
+	//		std::set<std::shared_ptr<Chunk>> chunksToEdit;
+    //
+    //        int brushSize = MapEditor::editor->_palette->_brushSize;
+    //        std::vector<std::vector<bool>> brush;
+    //        
+    //        if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
+    //            brush = Cursors::square_brushes[brushSize];
+    //
+    //        if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
+    //            brush = Cursors::circle_brushes[brushSize];
+    //       
+    //
+    //        for (int yy = 0; yy < brush.size(); yy++) {
+    //            for (int xx = 0; xx < brush[yy].size(); xx++) {
+    //                if (brush[yy][xx]) {
+    //
+	//					int tileX = tileCoords.x + (xx - brush[yy].size() / 2);
+	//					int tileY = tileCoords.y + (yy - brush.size() / 2);
+    //
+    //                    std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(tileX, tileY);
+    //                    if (!c) continue;
+    //           
+    //                    std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(tileX, tileY);
+    //                    if (!t) continue;
+    //
+    //                    t->_type = type;
+    //                    chunksToEdit.insert(c);
+    //
+    //                    if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1));
+    //                    if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1));
+    //                    if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1));
+    //
+    //                    if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y));
+    //                    if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y));
+    //
+    //                    if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1));
+    //                    if (mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1));
+    //                    if (mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1));
+    //                }
+    //            }
+    //        }
+    //
+	//		for (auto& c : chunksToEdit)
+	//			c->generateVertexArray(
+	//				mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1), mapa->getChunkByCoords(c->_coords.x, c->_coords.y - 1), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y - 1),
+	//				mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y),
+	//				mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x, c->_coords.y + 1), mapa->getChunkByCoords(c->_coords.x + 1, c->_coords.y + 1)
+	//			);
+	//	
+    //        if(!chunksToEdit.empty())
+    //            _state = Cursors::CursorWithObjectState::Drawing;
+    //    }
+    //
+	//	return;
+	//}
+    //
+	//if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+    //
+	//	if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
+	//		std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+	//		std::shared_ptr<Animations> animations = prefab->getAnimations().lock();
+    //        
+    //        float frameWidth = 128;
+    //        float frameHeight = 128;
+    //
+    //        if (animations) {
+	//			sf::IntRect frameRect = animations->getFrameRect(0, 0);
+    //            frameWidth = (float)(frameRect.size.x);
+    //            frameHeight = (float)(frameRect.size.y);
+    //        }
+    //
+	//		// position of object on the map, aligning to the grid
+	//		sf::Vector2i position;
+	//		position.x = (_globalPosition.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
+	//		position.y = (_globalPosition.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
+    //
+	//		if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
+	//			position.x += prefab->getOrigin().x;
+	//			position.y += prefab->getOrigin().y;
+	//		}
+    //
+	//		// create object on map by type 
+	//		std::shared_ptr<GameObjectOnMap> objectOnMap;
+    //
+	//		if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
+	//		else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
+	//		else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
+    //
+    //
+	//		// positioning and adding object to map
+	//		objectOnMap->setPosition(position);
+	//		MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
+    //        MapEditor::editor->_map->setVisibleChunks();
+	//		return;
+	//	}
+    //
+	//}
+
+}
+
+
+void CursorOnBuilding::draw()
+{
+	
+
+    if(_object.expired())
+		return;
+    
+	if(!(GUI_manager->Element_hovered == BuildingsEditor::editor->_building_panel->_building))
+		return;
+    
+    if(BuildingsEditor::editor->_main_menu->_state != Components::MainMenuStates::Closed)
+		return;
+    
+    GUI_manager->setView();
+    
+    if (_object.lock()->_type == ObjectType::Floor) {
+
+		int brushSize = BuildingsEditor::editor->_palette->_brushSize;
+		
+        std::vector<std::vector<bool>> brush;
+    
+        if (BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
+            brush = Cursors::square_brushes[brushSize];
+        
+		if (BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
+            brush = Cursors::circle_brushes[brushSize];
+        
+        int floorTileSize = 16;
+
+        sf::IntRect buildingRect = BuildingsEditor::editor->_building_panel->_building->_rect;
+
+        for(int yy = 0; yy < brush.size(); yy++) {
+            for(int xx = 0; xx < brush[yy].size(); xx++) {
+                if (brush[yy][xx]) {
+
+					int tx = (_globalPosition.x - buildingRect.position.x) / floorTileSize + (xx - brush[yy].size() / 2);
+					int ty = (_globalPosition.y - buildingRect.position.y) / floorTileSize + (yy - brush.size() / 2);
+  
+					sf::IntRect tileRect(sf::Vector2i(buildingRect.position.x + tx * floorTileSize, buildingRect.position.y + ty * floorTileSize), sf::Vector2i(floorTileSize, floorTileSize));
+
+                    if (buildingRect.findIntersection(tileRect)) {
+                        sf::RectangleShape rect(sf::Vector2f(tileRect.size));
+                        rect.setPosition(sf::Vector2f(tileRect.position));
+                        rect.setFillColor(sf::Color(255, 47, 47, 127));
+                        Main::render_window->draw(rect);
+                    }
+
+                   
+                }
+            }
+		}
+    
+        return;
+    }
+    //
+	//if(dynamic_pointer_cast<GameObject>(_object.lock()) != nullptr) {
+    //
+	//	std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+	//	std::shared_ptr<Animations> animations = prefab->getAnimations().lock();
+    //    
+    //    float frameWidth = 128;
+    //    float frameHeight = 128;
+	//	sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
+    //
+    //    if (animations) {
+    //        frameRect = animations->getFrameRect(0, 0);
+    //        frameWidth = (float)(frameRect.size.x);
+    //        frameHeight = (float)(frameRect.size.y);
+    //    }
+    //
+	//	sf::Vector2i position;
+	//	position.x = (_globalPosition.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
+	//	position.y = (_globalPosition.y - (int)frameHeight/2) / Tile::tileSize * Tile::tileSize;
+    //
+	//	sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
+	//	outlineRect.setPosition(sf::Vector2f(position));
+	//	outlineRect.setFillColor(sf::Color::Transparent);
+	//	outlineRect.setOutlineThickness(2);
+	//	outlineRect.setOutlineColor(sf::Color::Green);
+    //    Main::render_window->draw(outlineRect);
+    //
+    //    if (animations) {
+    //        sf::Sprite sprite(*animations->getTexture()->_texture);
+    //        sprite.setTextureRect(frameRect);
+    //
+    //        sprite.setPosition(sf::Vector2f(position));
+    //        Main::render_window->draw(sprite);
+    //    }
+	//	return;
+	//}
+
+
+}

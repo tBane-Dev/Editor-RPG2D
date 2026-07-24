@@ -43,6 +43,8 @@ namespace BuildingsEditor {
 		void addWallUnderCursor();
 		void removeWallUnderCursor();
 
+		sf::Vector2i clampPosition(sf::Vector2i position);
+
 		virtual void cursorHover();
 		virtual void handleEvent(const sf::Event& event);
 		virtual void update();

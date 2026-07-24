@@ -125,7 +125,7 @@ namespace Components {
 		_categories->setCategory(type);
 
 		sf::Vector2i slotsPosition = sf::Vector2i(_rect.position.x, _categories->getPosition().y + _categories->getSize().y);
-		if (_categories->_selectedType == ObjectType::Terrain) {
+		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor) {
 			slotsPosition.y += _tools->getSize().y + 16;
 		}
 		_slots->setPosition(slotsPosition);
@@ -144,7 +144,7 @@ namespace Components {
 
 		_tools->setPosition(position + sf::Vector2i(0, _categories->getSize().y + margin));
 
-		if (_categories->_selectedCategory != nullptr && _categories->_selectedType == ObjectType::Terrain)
+		if (_categories->_selectedCategory != nullptr && (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor))
 			_slots->setPosition(position + sf::Vector2i(0, _categories->getSize().y + margin + _tools->getSize().y + margin));
 		else
 			_slots->setPosition(position + sf::Vector2i(0, _categories->getSize().y + margin));
@@ -162,7 +162,7 @@ namespace Components {
 
 		_categories->cursorHover();
 
-		if (_categories->_selectedType == ObjectType::Terrain)
+		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor)
 			_tools->cursorHover();
 
 		_slots->cursorHover();
@@ -188,7 +188,7 @@ namespace Components {
 
 		_categories->handleEvent(event);
 
-		if (_categories->_selectedType == ObjectType::Terrain)
+		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor)
 			_tools->handleEvent(event);
 
 		_slots->handleEvent(event);
@@ -213,7 +213,7 @@ namespace Components {
 		Main::render_window->draw(rect);
 
 		_categories->draw();
-		if (_categories->_selectedType == ObjectType::Terrain)
+		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor)
 			_tools->draw();
 		_slots->draw();
 

@@ -54,13 +54,71 @@ namespace BuildingsEditor {
 		);
 
 		_tools = std::make_shared<Tools>();
+
+		_tools->addTool(
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
+			[this]() { _tools->setTool(_tools->_tools[0], ToolType::None); }
+		);
+
+		_tools->addTool(
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\circle.png"),
+			[this]() {
+				_tools->setTool(_tools->_tools[1], ToolType::Circle);
+				if (_slots->_selectedSlot == nullptr) {
+					if (_slots->_slots.size() > 0) {
+						_slots->selectSlot(1);
+						BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_object = _slots->_slots[1]->_object;
+					}
+				}
+			}
+		);
+
+		_tools->addTool(
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\rect.png"),
+			[this]() { _tools->setTool(
+				_tools->_tools[2], ToolType::Rect);
+
+		if (_slots->_selectedSlot == nullptr) {
+			if (_slots->_slots.size() > 0) {
+				_slots->selectSlot(1);
+				BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_object = _slots->_slots[1]->_object;
+			}
+		}
+			}
+		);
+
+		_tools->addTool(
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\decrease.png"),
+			[this]() { BuildingsEditor::editor->_palette->_brushSize = std::clamp(BuildingsEditor::editor->_palette->_brushSize - 1, BuildingsEditor::editor->_palette->_minBrushSize, BuildingsEditor::editor->_palette->_maxBrushSize); }
+		);
+
+		_tools->addTool(
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\increase.png"),
+			[this]() { BuildingsEditor::editor->_palette->_brushSize = std::clamp(BuildingsEditor::editor->_palette->_brushSize + 1, BuildingsEditor::editor->_palette->_minBrushSize, BuildingsEditor::editor->_palette->_maxBrushSize); }
+		);
+
 		_slots = std::make_shared<Slots>();
 
 		setPosition(sf::Vector2i(_rect.position));
 
 		// set the active group
 		loadAll(ObjectType::Wall);
-
+		_tools->setTool(nullptr, ToolType::None);
 		//_slots->setCategory(ObjectType::None);
 	}
 
@@ -72,25 +130,31 @@ namespace BuildingsEditor {
 		_categories->setCategory(type);
 
 		sf::Vector2i slotsPosition = sf::Vector2i(_rect.position.x, _categories->getPosition().y + _categories->getSize().y);
-		if (_categories->_selectedType == ObjectType::Terrain) {
+		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor) {
 			slotsPosition.y += _tools->getSize().y + 16;
 		}
 		_slots->setPosition(slotsPosition);
 		_slots->setCategory(type);
 
-		_slots->setFunction(
-			[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
-				
-				if(std::dynamic_pointer_cast<Floor>(slot->_object.lock())) {
+		if (_categories->_selectedType == ObjectType::Floor) {
+			_slots->setFunction(
+				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
+					if (!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
+						_tools->setTool(_tools->_tools[1], ToolType::Circle);
 					BuildingsEditor::editor->_building_panel->_building->_editState = EditableBuildingEditStates::Floor;
+					BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_object = slot->_object;
+					_slots->selectSlot(selectedSlotId);
 				}
-				else {
+			);
+		}
+		else {
+			_slots->setFunction(
+				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
 					BuildingsEditor::editor->_building_panel->_building->_editState = EditableBuildingEditStates::GameObject;
+					_slots->selectSlot(selectedSlotId);
 				}
-
-				_slots->selectSlot(selectedSlotId);
-			}
-		);
+			);
+		}
 	}
 
 	void Palette::draw() {

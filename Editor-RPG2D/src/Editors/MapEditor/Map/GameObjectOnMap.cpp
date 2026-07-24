@@ -154,10 +154,10 @@ void GameObjectOnMap::cursorHover() {
 	rect.position.x += _position.x;
 	rect.position.y += _position.y;
 
-	if (rect.contains(MapEditor::editor->_cursor_on_map->_position)) {
+	if (rect.contains(MapEditor::editor->_cursor_on_map->_globalPosition)) {
 		if (!_prefab.expired()) {
 			std::shared_ptr<Mesh> mesh = _prefab.lock()->getMesh();
-			if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_position, _position)) {
+			if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, _position)) {
 				MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
 			}
 		}

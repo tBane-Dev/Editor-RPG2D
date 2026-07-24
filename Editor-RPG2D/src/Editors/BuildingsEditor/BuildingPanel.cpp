@@ -12,6 +12,7 @@ namespace BuildingsEditor {
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getPosition().x, BuildingsEditor::editor->_name_panel->getPosition().y + BuildingsEditor::editor->_name_panel->getSize().y + 4)) {
 
 		_building = std::make_shared<EditableBuilding>();
+		_cursorOnBuilding = std::make_shared<CursorOnBuilding>();
 	}
 
 	BuildingPanel::~BuildingPanel() {
@@ -26,11 +27,13 @@ namespace BuildingsEditor {
 	void BuildingPanel::handleEvent(const sf::Event& event) {
 		Components::Panel::handleEvent(event);
 		_building->handleEvent(event);
+		_cursorOnBuilding->handleEvent(event);
 	}
 
 	void BuildingPanel::update() {
 		Components::Panel::update();
 		_building->update();
+		_cursorOnBuilding->update();
 	}
 
 	void BuildingPanel::draw() {
@@ -83,6 +86,9 @@ namespace BuildingsEditor {
 			Main::render_window->draw(gridRect, rs);
 		}
 		
+		// draw cursor on building
+		_cursorOnBuilding->draw();
+
 		// draw edge points
 		_building->drawOnlyEdgePoints();
 
