@@ -138,7 +138,7 @@ void Monster::draw() {
 
 	std::shared_ptr<Collider> collider = _prefab.lock()->getCollider();
 
-	if (collider != nullptr && (renderAllColliders || collider->cursorHover(MapEditor::editor->_cursor_on_map->_position + _prefab.lock()->getOrigin(), _position))) {
+	if (collider != nullptr && (renderAllColliders || collider->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition + _prefab.lock()->getOrigin(), _position))) {
 		_prefab.lock()->getCollider()->draw(_position);
 	}
 	

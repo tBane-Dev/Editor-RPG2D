@@ -26,8 +26,9 @@ namespace BuildingsEditor {
 
 	void BuildingPanel::handleEvent(const sf::Event& event) {
 		Components::Panel::handleEvent(event);
-		_building->handleEvent(event);
 		_cursorOnBuilding->handleEvent(event);
+		_building->handleEvent(event);
+		
 	}
 
 	void BuildingPanel::update() {

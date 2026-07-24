@@ -8,7 +8,6 @@ namespace BuildingsEditor {
 
 	EditableBuilding::EditableBuilding() : ResizableShape() {
 		_state = EditableBuildingStates::Idle;
-		_editState = EditableBuildingEditStates::None;
 	}
 
 	EditableBuilding::~EditableBuilding() {
@@ -385,78 +384,6 @@ namespace BuildingsEditor {
 		}
 	}
 
-	void EditableBuilding::editTileUnderCursor() {
-		sf::Vector2i cursorPos = Cursors::cursor->_position;
-		sf::Vector2i localPos = cursorPos - sf::Vector2i(sf::Vector2f(getPosition()));
-
-		int tileX = localPos.x / int(16.f * _scale);
-		int tileY = localPos.y / int(16.f * _scale);
-
-		if (tileX >= 0 && tileX < _floorSize.x &&
-			tileY >= 0 && tileY < _floorSize.y) {
-
-			std::shared_ptr<Slot> selectedSlot = BuildingsEditor::editor->_palette->_slots->_selectedSlot;
-
-			if (!selectedSlot) return;
-
-			std::shared_ptr<Floor> floor = std::dynamic_pointer_cast<Floor>(selectedSlot->_object.lock());
-
-			if (!floor) return;
-
-			int index = tileY * _floorSize.x + tileX;
-
-			if (_floor[index] != floor->_id) {
-				_floor[index] = floor->_id;
-				generateFloorVertexArray();
-			}
-		}
-	}
-
-	void EditableBuilding::addWallUnderCursor() {
-		sf::Vector2i cursorPos = Cursors::cursor->_position;
-		sf::Vector2i localPos = cursorPos - sf::Vector2i(sf::Vector2f(getPosition()));
-
-		int tileX = localPos.x / int(32.f * _scale);
-		int tileY = localPos.y / int(32.f * _scale);
-
-		if (tileX >= 0 && tileX < _wallsSize.x &&
-			tileY >= 0 && tileY < _wallsSize.y) {
-
-			std::shared_ptr<Slot> selectedSlot = BuildingsEditor::editor->_palette->_slots->_selectedSlot;
-			if (!selectedSlot) return;
-
-			std::shared_ptr<Wall> wall = std::dynamic_pointer_cast<Wall>(selectedSlot->_object.lock());
-			if (!wall) return;
-
-			std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(wall->_prefab.lock());
-			if (!wallPrefab) return;
-
-			int index = tileY * _wallsSize.x + tileX;
-			if (_walls[index] != wallPrefab->_id) {
-				_walls[index] = wallPrefab->_id;
-				generateWalls();
-			}
-		}
-	}
-
-	void EditableBuilding::removeWallUnderCursor() {
-		sf::Vector2i cursorPos = Cursors::cursor->_position;
-		sf::Vector2i localPos = cursorPos - sf::Vector2i(sf::Vector2f(getPosition()));
-
-		int tileX = localPos.x / int(32.f * _scale);
-		int tileY = localPos.y / int(32.f * _scale);
-
-		if (tileX >= 0 && tileX < _wallsSize.x &&
-			tileY >= 0 && tileY < _wallsSize.y) {
-
-			int index = tileY * _wallsSize.x + tileX;
-			if (_walls[index] != -1) {
-				_walls[index] = -1;
-				generateWalls();
-			}
-		}
-	}
-
 	sf::Vector2i EditableBuilding::clampPosition(sf::Vector2i position) {
 		int clampOffset = 256;
 		int x = std::min(getSize().x / 2, clampOffset);
@@ -471,7 +398,9 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::cursorHover() {
-		if (BuildingsEditor::editor->_building_panel->_rect.contains(Cursors::cursor->_position)) {
+
+		sf::IntRect rect = sf::IntRect(BuildingsEditor::editor->_building_panel->getPosition(), BuildingsEditor::editor->_building_panel->getSize());
+		if (rect.contains(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition)) {
 			ResizableShape::cursorHover();
 		}
 		
@@ -479,7 +408,9 @@ namespace BuildingsEditor {
 
 	void EditableBuilding::handleEvent(const sf::Event& event) {
 
-		if (!(BuildingsEditor::editor->_building_panel->_building.get() == this && BuildingsEditor::editor->_building_panel->_rect.contains(Cursors::cursor->_position)) && GUI_manager->Element_pressed == nullptr)
+		sf::IntRect rect = sf::IntRect(BuildingsEditor::editor->_building_panel->getPosition(), BuildingsEditor::editor->_building_panel->getSize());
+
+		if (!(BuildingsEditor::editor->_building_panel->_building.get() == this && rect.contains(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition)) && GUI_manager->Element_pressed == nullptr)
 			return;
 
 		for (auto& point : _edgePoints) {
@@ -495,15 +426,15 @@ namespace BuildingsEditor {
 			 
 			if (GUI_manager->Element_hovered.get() == this) {
 				GUI_manager->Element_pressed = shared_from_this();
-
-				if (_editState == EditableBuildingEditStates::Floor) {
-					editTileUnderCursor();
-					return;
-				}
-				if (_editState == EditableBuildingEditStates::GameObject) {
-					addWallUnderCursor();
-					return;
-				}
+		
+				//if (_editState == EditableBuildingEditStates::Floor) {
+				//	editTileUnderCursor();
+				//	return;
+				//}
+				//if (_editState == EditableBuildingEditStates::GameObject) {
+				//	addWallUnderCursor();
+				//	return;
+				//}
 			}
 		}
 
@@ -518,42 +449,42 @@ namespace BuildingsEditor {
 		if(const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
 			GUI_manager->Element_pressed = shared_from_this();
 
-			if(_editState == EditableBuildingEditStates::Floor) {
-				BuildingsEditor::editor->_palette->_slots->selectSlot(-1);
-				return;
-			}
-
-			if(_editState == EditableBuildingEditStates::GameObject) {
-				BuildingsEditor::editor->_palette->_slots->selectSlot(-1);
-				return;
-			}
-
-			if (_editState == EditableBuildingEditStates::None) {
-				removeWallUnderCursor();
-				return;
-			}
+			//if(_editState == EditableBuildingEditStates::Floor) {
+			//	BuildingsEditor::editor->_palette->_slots->selectSlot(-1);
+			//	return;
+			//}
+			//
+			//if(_editState == EditableBuildingEditStates::GameObject) {
+			//	BuildingsEditor::editor->_palette->_slots->selectSlot(-1);
+			//	return;
+			//}
+			//
+			//if (_editState == EditableBuildingEditStates::None) {
+			//	removeWallUnderCursor();
+			//	return;
+			//}
 		}
 
 		if(const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm) {
 			if (GUI_manager->Element_pressed.get() == this) {
-				if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-					if (_editState == EditableBuildingEditStates::Floor) {
-						editTileUnderCursor();
-						return;
-					}
-
-					if (_editState == EditableBuildingEditStates::GameObject) {
-						addWallUnderCursor();
-						return;
-					}
-				}
-
-				if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
-					if (_editState == EditableBuildingEditStates::None) {
-						removeWallUnderCursor();
-						return;	
-					}
-				}
+				//if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+				//	if (_editState == EditableBuildingEditStates::Floor) {
+				//		editTileUnderCursor();
+				//		return;
+				//	}
+				//
+				//	if (_editState == EditableBuildingEditStates::GameObject) {
+				//		addWallUnderCursor();
+				//		return;
+				//	}
+				//}
+				//
+				//if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
+				//	if (_editState == EditableBuildingEditStates::None) {
+				//		removeWallUnderCursor();
+				//		return;	
+				//	}
+				//}
 			}
 			
 		}
@@ -573,14 +504,6 @@ namespace BuildingsEditor {
 		if(const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
 			if (GUI_manager->Element_pressed.get() == this)
 				GUI_manager->Element_pressed = nullptr;
-
-			if (_editState == EditableBuildingEditStates::Floor) {
-				_editState = EditableBuildingEditStates::None;
-			}
-
-			if (_editState == EditableBuildingEditStates::GameObject) {
-				_editState = EditableBuildingEditStates::None;
-			}
 
 			return;
 		}

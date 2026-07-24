@@ -6,13 +6,11 @@
 namespace BuildingsEditor {
 
 	enum class EditableBuildingStates { Idle, Moving, Resizing };
-	enum class EditableBuildingEditStates { None, Floor, GameObject };
 
 	class EditableBuilding : public ResizableShape {
 	public:
 
 		EditableBuildingStates _state = EditableBuildingStates::Idle;
-		EditableBuildingEditStates _editState = EditableBuildingEditStates::None;
 
 		std::shared_ptr<Texture> _floorset;
 
@@ -39,9 +37,6 @@ namespace BuildingsEditor {
 		virtual void resize(std::shared_ptr<EdgePoint> edgePoint);
 		void moveFloor(sf::Vector2i offset);
 		void moveWalls(sf::Vector2i offset);
-		void editTileUnderCursor();
-		void addWallUnderCursor();
-		void removeWallUnderCursor();
 
 		sf::Vector2i clampPosition(sf::Vector2i position);
 

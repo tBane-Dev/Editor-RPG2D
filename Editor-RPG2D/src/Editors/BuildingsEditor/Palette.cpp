@@ -1,5 +1,6 @@
 ﻿#include "Editors/BuildingsEditor/Palette.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
+#include "DebugLog.hpp"
 
 namespace BuildingsEditor {
 
@@ -141,7 +142,6 @@ namespace BuildingsEditor {
 				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
 					if (!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
 						_tools->setTool(_tools->_tools[1], ToolType::Circle);
-					BuildingsEditor::editor->_building_panel->_building->_editState = EditableBuildingEditStates::Floor;
 					BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_object = slot->_object;
 					_slots->selectSlot(selectedSlotId);
 				}
@@ -150,7 +150,7 @@ namespace BuildingsEditor {
 		else {
 			_slots->setFunction(
 				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
-					BuildingsEditor::editor->_building_panel->_building->_editState = EditableBuildingEditStates::GameObject;
+					BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_object = slot->_object;
 					_slots->selectSlot(selectedSlotId);
 				}
 			);

@@ -4,7 +4,7 @@
 namespace Cursors {
 	Cursor::Cursor() {
 		_position = sf::Mouse::getPosition(*Main::render_window);
-		//_hoveredElementGUI = nullptr;
+
 	}
 
 	Cursor::~Cursor() {
