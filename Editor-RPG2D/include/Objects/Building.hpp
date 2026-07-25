@@ -32,4 +32,5 @@ public:
 	virtual void setPosition(sf::Vector2i position);
 	void generateFloorVertexArray(float scale = 1.0f);
 	void generateWalls(float scale = 1.0f);
+	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
 };

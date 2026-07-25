@@ -55,11 +55,10 @@ namespace BuildingsEditor {
 
 		_addBtn->_onclick_func = [this]() {
 			static int i = 0;
-			std::shared_ptr<BuildingPrefab> newPrefab = std::make_shared<BuildingPrefab>(L"New Building_" + std::to_wstring(i), BuildingsEditor::editor->_building_panel->_buildingPrefab);
+			std::shared_ptr<BuildingPrefab> newPrefab = std::make_shared<BuildingPrefab>(L"New Building_" + std::to_wstring(i++), *BuildingsEditor::editor->_building_panel->_buildingPrefab);
 			prefabs_manager->addPrefab(newPrefab);
 
-			std::wcout << L"added: " << prefabs_manager->getPrefab(L"New Building_" + std::to_wstring(i))->getName() << std::endl;
-			i++;
+			BuildingsEditor::editor->_list_panel->loadAll();
 		};
 
 		_removeBtn->_onclick_func = []() {

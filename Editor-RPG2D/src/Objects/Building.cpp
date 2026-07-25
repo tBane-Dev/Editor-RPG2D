@@ -104,7 +104,6 @@ void Building::generateFloorVertexArray(float scale) {
 	float floorSize = 64.f;
 	float a = s * scale;
 	sf::Vector2f p(getPosition());
-
 	
 	for (int y = 0; y < buildingPrefab->_floorSize.y; y++) {
 		for (int x = 0; x < buildingPrefab->_floorSize.x; x++) {
@@ -267,7 +266,11 @@ void Building::generateWalls(float scale) {
 			}
 			else
 				_wallsObjects.push_back(nullptr);
-
 		}
 	}
+}
+
+void Building::loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab) {
+	_prefab = buildingPrefab;
+	setPosition(getPosition());
 }
