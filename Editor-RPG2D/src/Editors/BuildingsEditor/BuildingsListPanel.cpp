@@ -40,9 +40,12 @@ namespace BuildingsEditor {
 						panel->_buildingPrefab = buildingPrefab;
 						panel->_building->_building->loadPrefab(buildingPrefab);
 
-						sf::Vector2i centeredPosition = panel->getPosition() + (panel->getSize() / 2 - std::dynamic_pointer_cast<BuildingPrefab>(buildingPrefab)->_floorSize * 16 / 2);
+						std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(buildingPrefab);
+						
+						sf::Vector2i centeredPosition = panel->getPosition() + (panel->getSize() / 2 - buildingPrefab->_floorSize * 16 / 2);
+						panel->_building->_rect.position = centeredPosition;
+						panel->_building->_rect.size = buildingPrefab->_floorSize * 16;
 						panel->_building->_scale = 1.0f;
-						panel->_building->setPosition(centeredPosition);
 						panel->_building->_building->setPosition(centeredPosition);
 						panel->_building->generateEdgePoints();
 					}
