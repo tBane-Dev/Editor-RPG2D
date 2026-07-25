@@ -51,18 +51,59 @@ namespace BuildingsEditor {
 		);
 
 		_saveBtn->_onclick_func = []() {
+			BuildingsEditor::editor->_building_panel->_buildingPrefab->_name = BuildingsEditor::editor->_name_panel->_name->getText();
+			prefabs_manager->replacePrefab(BuildingsEditor::editor->_building_panel->_building->_building->_prefab.lock(), BuildingsEditor::editor->_building_panel->_buildingPrefab);
+			BuildingsEditor::editor->_list_panel->loadAll();
 			};
 
 		_addBtn->_onclick_func = [this]() {
-			static int i = 0;
-			std::shared_ptr<BuildingPrefab> newPrefab = std::make_shared<BuildingPrefab>(L"New Building_" + std::to_wstring(i++), *BuildingsEditor::editor->_building_panel->_buildingPrefab);
+			std::shared_ptr<BuildingPrefab> newPrefab = std::make_shared<BuildingPrefab>(BuildingsEditor::editor->_name_panel->_name->getText(), *BuildingsEditor::editor->_building_panel->_buildingPrefab);
 			prefabs_manager->addPrefab(newPrefab);
 
 			BuildingsEditor::editor->_list_panel->loadAll();
+			
+			std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(ObjectType::Building);
+			int newID = std::find(prefabs.begin(), prefabs.end(), newPrefab) - prefabs.begin();
+			editor->_list_panel->selectItem(newID);
 		};
 
-		_removeBtn->_onclick_func = []() {
-			
+		_removeBtn->_onclick_func = [this]() {
+
+			int buildingID = editor->_list_panel->_selectedItemIndex;
+			if (buildingID >= 0) {
+
+				std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(ObjectType::Building);
+
+				if (prefabs.empty())
+					return;
+
+				prefabs_manager->removePrefab(editor->_building_panel->_building->_building->_prefab.lock());
+
+				editor->_list_panel->loadAll();
+				int newID = editor->_list_panel->_selectedItemIndex;
+				if (newID >= prefabs.size())
+					newID = prefabs.size() - 1;
+
+				editor->_list_panel->selectItem(newID);
+
+				auto panel = BuildingsEditor::editor->_building_panel;
+				panel->_buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefabs[newID]);
+				panel->_building->_building->loadPrefab(panel->_buildingPrefab);
+
+				sf::Vector2i centeredPosition = panel->getPosition() + (panel->getSize() / 2 - panel->_buildingPrefab->_floorSize * 16 / 2);
+				panel->_building->_rect.position = centeredPosition;
+				panel->_building->_rect.size = panel->_buildingPrefab->_floorSize * 16;
+				panel->_building->_scale = 1.0f;
+				panel->_building->_building->setPosition(centeredPosition);
+				panel->_building->generateEdgePoints();
+				
+			}
+			else {
+				//editor->_animations = nullptr;
+				//editor->_tempAnimations = nullptr;
+				//editor->_animator = nullptr;
+			}
+
 		};
 
 		setButtonsActivity();
