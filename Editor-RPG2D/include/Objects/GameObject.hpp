@@ -12,7 +12,9 @@ public:
 	std::shared_ptr<Collider> _collider;
 	std::shared_ptr<Mesh> _mesh;
 
+
 	GameObject(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh);
+	GameObject(std::wstring name);
 	virtual ~GameObject();
 
 	std::wstring getName();

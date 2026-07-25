@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/GameObject.hpp"
-#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 
 class NaturePrefab : public GameObject {
 public:

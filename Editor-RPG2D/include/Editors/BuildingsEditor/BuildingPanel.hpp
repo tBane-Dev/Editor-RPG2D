@@ -14,11 +14,13 @@ namespace BuildingsEditor {
 	class BuildingPanel : public Components::Panel {
 	public:
 
+		std::shared_ptr<BuildingPrefab> _buildingPrefab;
 		std::shared_ptr<EditableBuilding> _building;
 		std::shared_ptr<CursorOnBuilding> _cursorOnBuilding;
 
 		BuildingPanel(sf::Vector2i margin);
 		~BuildingPanel();
+		void init();
 
 		virtual void cursorHover();
 		virtual void handleEvent(const sf::Event& event);

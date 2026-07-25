@@ -20,6 +20,8 @@ std::wstring ObjectTypeToWString(ObjectType type) {
 			return L"Monster";
 		case ObjectType::Nature:
 			return L"Nature";
+		case ObjectType::Building:
+			return L"Building";
 		case ObjectType::Wall:
 			return L"Wall";
 		case ObjectType::Floor:
@@ -30,6 +32,7 @@ std::wstring ObjectTypeToWString(ObjectType type) {
 			return L"Window";
 		case ObjectType::WallMounted:
 			return L"WallMounted";
+		
 		default:
 			return L"Unknown";
 	};
@@ -42,6 +45,8 @@ ObjectType WStringToObjectType(std::wstring type) {
 		return ObjectType::Monster;
 	else if (type == L"Nature")
 		return ObjectType::Nature;
+	else if (type == L"Building")
+		return ObjectType::Building;
 	else if(type == L"Wall")
 		return ObjectType::Wall;
 	else if(type == L"Floor")
@@ -52,6 +57,7 @@ ObjectType WStringToObjectType(std::wstring type) {
 		return ObjectType::Window;
 	else if (type == L"WallMounted")
 		return ObjectType::WallMounted;
+	
 	else
 		return ObjectType::None;
 }

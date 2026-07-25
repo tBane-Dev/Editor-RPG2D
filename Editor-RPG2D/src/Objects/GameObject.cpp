@@ -13,6 +13,15 @@ GameObject::GameObject(std::wstring name, std::weak_ptr<Animations> animations, 
 	_mesh = mesh;
 }
 
+GameObject::GameObject(std::wstring name) : Object()
+{
+	_name = name;
+	_animations = std::weak_ptr<Animations>();
+	_origin = sf::Vector2i(0, 0);
+	_collider = nullptr;
+	_mesh = nullptr;
+}
+
 GameObject::~GameObject() {
 
 }

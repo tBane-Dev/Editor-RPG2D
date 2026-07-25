@@ -11,12 +11,17 @@ namespace BuildingsEditor {
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getSize().x + 4, 768 + 4),
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getPosition().x, BuildingsEditor::editor->_name_panel->getPosition().y + BuildingsEditor::editor->_name_panel->getSize().y + 4)) {
 
-		_building = std::make_shared<EditableBuilding>();
+		_buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building", sf::Vector2i(7, 7));
 		_cursorOnBuilding = std::make_shared<CursorOnBuilding>();
 	}
 
 	BuildingPanel::~BuildingPanel() {
 
+	}
+
+	void BuildingPanel::init() {
+		_building = std::make_shared<EditableBuilding>();
+		_building->create(_buildingPrefab);
 	}
 
 	void BuildingPanel::cursorHover() {
