@@ -24,6 +24,8 @@ std::wstring ObjectTypeToWString(ObjectType type) {
 			return L"Building";
 		case ObjectType::Wall:
 			return L"Wall";
+		case ObjectType::Roof:
+			return L"Roof";
 		case ObjectType::Floor:
 			return L"Floor";
 		case ObjectType::Door:
@@ -49,6 +51,8 @@ ObjectType WStringToObjectType(std::wstring type) {
 		return ObjectType::Building;
 	else if(type == L"Wall")
 		return ObjectType::Wall;
+	else if (type == L"Roof")
+		return ObjectType::Roof;
 	else if(type == L"Floor")
 		return ObjectType::Floor;
 	else if(type == L"Door")

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Controls/Shapes/ResizableShape.hpp"
 #include "TexturesManager.hpp"
-#include "Objects/Building.hpp"
+#include "Objects/Building/Building.hpp"
 #include "Objects/Wall.hpp"
 
 namespace BuildingsEditor {
@@ -20,10 +20,9 @@ namespace BuildingsEditor {
 		void create(std::shared_ptr<BuildingPrefab> prefab);
 		void resizeFloor(int offsetX, int offsetY);
 		void resizeWalls(int offsetX, int offsetY);
-		
+		void resizeRoof();
+
 		virtual void resize(std::shared_ptr<EdgePoint> edgePoint);
-		void moveFloor(sf::Vector2i offset);
-		void moveWalls(sf::Vector2i offset);
 
 		sf::Vector2i clampPosition(sf::Vector2i position);
 
@@ -33,6 +32,7 @@ namespace BuildingsEditor {
 		void drawOnlyShape();
 		void drawOnlyFloor();
 		void drawOnlyWalls();
+		void drawOnlyRoof();
 		void drawOnlyEdgePoints();
 		virtual void draw();
 	};

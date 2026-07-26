@@ -20,5 +20,5 @@ public:
 	Wall(std::weak_ptr<GameObject> prefab, sf::IntRect textureBottomRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)), sf::IntRect textureTopRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
 	~Wall();
 
-	virtual void draw(float scale = 1.f);
+	virtual void draw(float scale = 1.f, bool renderOutsideLook = false, int wallHeight = 128);
 };

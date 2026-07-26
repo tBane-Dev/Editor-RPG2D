@@ -32,17 +32,22 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
     bool conditionToRemoveWalls = GUI_manager->Element_hovered == BuildingsEditor::editor->_building_panel->_building && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) && _object.expired();
 
     if (conditionToRemoveWalls) {
+      
+        std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(BuildingsEditor::editor->_building_panel->_building->_building->_prefab.lock());
+        if (!bp) return;
+
         int s = int(32.f * BuildingsEditor::editor->_building_panel->_building->_scale);
 
         int tx = (_globalPosition.x - BuildingsEditor::editor->_building_panel->_building->getPosition().x) / s;
         int ty = (_globalPosition.y - BuildingsEditor::editor->_building_panel->_building->getPosition().y) / s;
 
-        std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(BuildingsEditor::editor->_building_panel->_building->_building->_prefab.lock());
-        if (!bp) return;
+        if (tx < 0 || tx >= bp->_wallsSize.x || ty < 0 || ty >= bp->_wallsSize.y)
+            return;
 
         if (bp->_walls[ty * bp->_wallsSize.x + tx] != -1) {
             bp->_walls[ty * bp->_wallsSize.x + tx] = -1;
-            BuildingsEditor::editor->_building_panel->_building->_building->generateWalls();
+            BuildingsEditor::editor->_building_panel->_building->_building->generateWalls(BuildingsEditor::editor->_building_panel->_building->_scale);
+            BuildingsEditor::editor->_building_panel->_building->_building->generateRoofs(BuildingsEditor::editor->_building_panel->_building->_scale);
             return;
         }
     }
@@ -125,7 +130,7 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
             }
 
 			if(editedFloor) 
-                building->_building->generateFloorVertexArray();
+                building->_building->generateFloorVertexArray(scale);
         }
 		return;
 	}
@@ -161,6 +166,7 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
 
             bp->_walls[ty * bp->_wallsSize.x + tx] = wallPrefab->_id;
             building->_building->generateWalls(building->_scale);
+			building->_building->generateRoofs(building->_scale);
         }
 
         return;

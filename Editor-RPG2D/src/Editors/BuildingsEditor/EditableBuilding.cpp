@@ -3,6 +3,7 @@
 #include "Cursor.hpp"
 #include "DebugLog.hpp"
 #include "Wallset.hpp"
+#include "Roofset.hpp"
 
 namespace BuildingsEditor {
 
@@ -101,13 +102,19 @@ namespace BuildingsEditor {
 		_building->generateWalls();
 	}
 
-	
+	void EditableBuilding::resizeRoof() {
+
+		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+		if (!bp) return;
+
+		_building->generateRoofs(_scale);
+	}
 
 	void EditableBuilding::resize(std::shared_ptr<EdgePoint> edgePoint) {
 
 		if (!edgePoint || _scale <= 0.f)
 			return;
-
+		 
 		sf::Vector2i oldPosition = _rect.position;
 		sf::Vector2i oldSize = _rect.size;
 
@@ -178,22 +185,9 @@ namespace BuildingsEditor {
 
 		resizeFloor(offsetX, offsetY);
 		resizeWalls(offsetX/2, offsetY/2);
+		resizeRoof();
 		setPosition(_rect.position);
 		_building->setPosition(_rect.position);
-	}
-
-	void EditableBuilding::moveFloor(sf::Vector2i offset) {
-		for (int i = 0; i < _building->_floorVertexArray.getVertexCount(); i+=1) {
-			_building->_floorVertexArray[i].position += sf::Vector2f(offset);
-		}
-	}
-
-	void EditableBuilding::moveWalls(sf::Vector2i offset) {
-		for (auto& wall : _building->_wallsObjects) {
-			if (wall) {
-				wall->_position += offset;
-			}
-		}
 	}
 
 	sf::Vector2i EditableBuilding::clampPosition(sf::Vector2i position) {
@@ -331,8 +325,11 @@ namespace BuildingsEditor {
 			_scale = newScale;
 			setPosition(sf::Vector2i(newPosition));
 			_building->setPosition(sf::Vector2i(newPosition));
+
 			_building->generateFloorVertexArray(_scale);
 			_building->generateWalls(_scale);
+			_building->generateRoofs(_scale);
+
 			generateEdgePoints();
 		}
 	}
@@ -351,8 +348,9 @@ namespace BuildingsEditor {
 
 			setPosition(newPosition);
 			_building->setPosition(newPosition);
-			moveFloor(delta);
-			moveWalls(delta);
+			_building->generateFloorVertexArray(_scale);
+			_building->generateWalls(_scale);
+			_building->generateRoofs(_scale);
 			return;
 		}
 
@@ -401,11 +399,19 @@ namespace BuildingsEditor {
 					std::shared_ptr<Wall> wall = _building->_wallsObjects[index];
 					if (wall) {
 						wall->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * _scale, (float)y * 32.f * _scale));
-						wall->draw(_scale);
+						wall->draw(_scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
 					}
 				}
 			}
 		}
+	}
+
+	void EditableBuilding::drawOnlyRoof() {
+
+		if (!_building->_roof) 
+			return;
+		
+		_building->_roof->draw(_scale);
 	}
 
 	void EditableBuilding::drawOnlyEdgePoints() {
@@ -441,6 +447,7 @@ namespace BuildingsEditor {
 		drawOnlyShape();
 		drawOnlyFloor();
 		drawOnlyWalls();
+		drawOnlyRoof();
 		drawOnlyEdgePoints();
 
 		

@@ -53,7 +53,12 @@ namespace BuildingsEditor {
 		_render_grid->addValue(textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
 		_render_grid->_checkbox->setValue(1);
 
+		_render_outside_look = std::make_shared<OptionWithCheckbox>(L"Outside Look", textures_manager->getTexture(L"assets\\tex\\unchecked.png"), textures_manager->getTexture(L"assets\\tex\\unchecked_hover.png"));
+		_render_outside_look->addValue(textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
+		_render_outside_look->_checkbox->setValue(0);
+
 		_render->addOption(_render_grid);
+		_render->addOption(_render_outside_look);
 
 		// POSITIONING
 
