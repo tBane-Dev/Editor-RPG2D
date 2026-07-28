@@ -37,8 +37,9 @@ void GhostChunk::cursorHover() {
 		return;
 
 	sf::Vector2i coords;
-	coords.x = std::floor((float)MapEditor::editor->_cursor_on_map->_position.x / (float)(Chunk::tilesCols * Tile::tileSize));
-	coords.y = std::floor((float)MapEditor::editor->_cursor_on_map->_position.y / (float)(Chunk::tilesRows * Tile::tileSize));
+	coords.x = std::floor((float)MapEditor::editor->_cursor_on_map->_globalPosition.x / (float)(Chunk::tilesCols * Tile::tileSize));
+	coords.y = std::floor((float)MapEditor::editor->_cursor_on_map->_globalPosition.y / (float)(Chunk::tilesRows * Tile::tileSize));
+
 
 	if (
 		MapEditor::editor->_map->getChunkByCoords(coords.x, coords.y) == nullptr && (
@@ -124,11 +125,11 @@ void GhostChunk::cursorHover() {
 			map->setVisibleChunks();
 		};
 
-		if (_rect.contains(MapEditor::editor->_cursor_on_map->_position)) {
+		if (_rect.contains(MapEditor::editor->_cursor_on_map->_globalPosition)) {
 			GUI_manager->Element_hovered = shared_from_this();
 			
 			// manual cursor hover for button
-			if(_button->_rect.contains(MapEditor::editor->_cursor_on_map->_position)) {
+			if(_button->_rect.contains(MapEditor::editor->_cursor_on_map->_globalPosition)) {
 				GUI_manager->Element_hovered = _button;
 			}
 		}
