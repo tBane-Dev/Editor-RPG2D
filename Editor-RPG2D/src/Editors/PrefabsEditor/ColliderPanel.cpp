@@ -3,6 +3,7 @@
 #include "ShadersManager.hpp"
 #include "Theme.hpp"
 #include "RenderWindow.hpp"
+#include "Cursor.hpp"
 
 namespace PrefabsEditor {
 	ColliderPanel::ColliderPanel(sf::Vector2i margin) : Panel(sf::Vector2i(420, 475), sf::Vector2i(840 + margin.x, PrefabsEditor::editor->_main_menu->getSize().y + margin.y)) {
@@ -116,54 +117,151 @@ namespace PrefabsEditor {
 		Components::Panel::draw();
 		Main::render_window->draw(*_title);
 
-		// draw checkerboard
-		sf::RectangleShape rect(sf::Vector2f(sf::Vector2f(192, 192)));
-		rect.setFillColor(sf::Color::Red);
-		rect.setPosition(sf::Vector2f(getPosition().x + (getSize().x - 192) / 2, getPosition().y + _title->getFont().getLineSpacing(20) + 24 + 16));
-
-		sf::RenderStates states;
-		states.shader = &*checkerboard_shader;
-
-		checkerboard_shader->setUniform("rectPos", rect.getPosition());
-
-		Main::render_window->draw(rect, states);
-
-		// draw animation
+		// animator and animations
 		std::shared_ptr<Animator>& animator = PrefabsEditor::editor->_animator;
 		std::shared_ptr<Animations> animations = (animator) ? animator->getAnimations().lock() : nullptr;
 
+		// canvas background
+		sf::IntRect canvasRect = sf::IntRect(sf::Vector2i(getPosition().x + (getSize().x - 192) / 2, getPosition().y + _title->getFont().getLineSpacing(20) + 24 + 16), sf::Vector2i(192, 192));
+		sf::RectangleShape canvasRectShape(sf::Vector2f(canvasRect.size));
+		canvasRectShape.setFillColor(sf::Color(47, 47, 47));
+		canvasRectShape.setPosition(sf::Vector2f(canvasRect.position));
+		Main::render_window->draw(canvasRectShape);
+
+		// sprite
 		if (animator && animations) {
 
-			sf::IntRect frameRect = animations->getFrameRect(0, 0);
+			float spriteScale = std::min((float)canvasRect.size.x / (float)animations->getFrameRect(0, 0).size.x, (float)canvasRect.size.y / (float)animations->getFrameRect(0, 0).size.y);;
 
-			float scale = std::min(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y);
+			// draw checkerboard
+			sf::IntRect spriteRect = (animator && animations) ? animations->getFrameRect(animator->_animation, animator->_frame) : sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(192, 192));
+			spriteRect.position = sf::Vector2i(canvasRect.position.x + (canvasRect.size.x - (float)spriteRect.size.x * spriteScale) / 2, canvasRect.position.y + (canvasRect.size.y - (float)spriteRect.size.y * spriteScale) / 2);
+			sf::RectangleShape rect(sf::Vector2f((float)spriteRect.size.x * spriteScale, (float)spriteRect.size.y * spriteScale));
+			rect.setFillColor(sf::Color::Red);
+			rect.setPosition(sf::Vector2f(spriteRect.position));
 
-			// TO-DO - must be in update
-			if (_type->getText() == L"Rectangular") {
+			sf::RenderStates states;
+			states.shader = &*checkerboard_shader;
+			checkerboard_shader->setUniform("rectPos", sf::Vector2f(spriteRect.position));
+			Main::render_window->draw(rect, states);
 
-				std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
-				editor->_collider = rectCollider;
-				sf::Vector2i colliderPosition(rect.getPosition());
-				editor->_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
+			if (canvasRect.contains(Cursors::cursor->_position)) {
+
+				sf::Sprite sprite(*animations->getTexture()->_texture);
+				sprite.setTextureRect(animations->getFrameRect(0, 0));
+				sprite.setScale(sf::Vector2f(spriteScale, spriteScale));
+				sprite.setPosition(sf::Vector2f(canvasRect.position + sf::Vector2i((canvasRect.size.x - animations->getFrameRect(0, 0).size.x * spriteScale) / 2, (canvasRect.size.y - animations->getFrameRect(0, 0).size.y * spriteScale) / 2)));
+				Main::render_window->draw(sprite);
+
+				if (_type->getText() == L"Rectangular") {
+
+					std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
+					editor->_collider = rectCollider;
+					sf::Vector2i colliderPosition = canvasRect.position + sf::Vector2i((canvasRect.size.x - animations->getFrameRect(0, 0).size.x * spriteScale) / 2, (canvasRect.size.y - animations->getFrameRect(0, 0).size.y * spriteScale) / 2);
+					editor->_collider->draw(colliderPosition, sf::Vector2f(spriteScale, spriteScale));
+				}
+				else if (_type->getText() == L"Circular") {
+
+					std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
+					editor->_collider = circularCollider;
+					sf::Vector2i colliderPosition(
+						rect.getPosition().x + (float)(circularCollider->_x) * spriteScale,
+						rect.getPosition().y + (float)(circularCollider->_y) * spriteScale
+					);
+
+					editor->_collider->draw(colliderPosition, sf::Vector2f(spriteScale, spriteScale));
+				}	
 			}
-			else if (_type->getText() == L"Circular") {
+			else {
 
-				std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
-				editor->_collider = circularCollider;
-				sf::Vector2i colliderPosition(
-					rect.getPosition().x + (float)(circularCollider->_x) * scale,
-					rect.getPosition().y + (float)(circularCollider->_y) * scale
-				);
+				if (_type->getText() == L"Rectangular") {
 
-				editor->_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
+					std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
+					editor->_collider = rectCollider;
+					sf::Vector2i colliderPosition = canvasRect.position + sf::Vector2i((canvasRect.size.x - animations->getFrameRect(0, 0).size.x * spriteScale) / 2, (canvasRect.size.y - animations->getFrameRect(0, 0).size.y * spriteScale) / 2);
+					editor->_collider->draw(colliderPosition, sf::Vector2f(spriteScale, spriteScale));
+				}
+				else if (_type->getText() == L"Circular") {
+
+					std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
+					editor->_collider = circularCollider;
+					sf::Vector2i colliderPosition(
+						rect.getPosition().x + (float)(circularCollider->_x) * spriteScale,
+						rect.getPosition().y + (float)(circularCollider->_y) * spriteScale
+					);
+
+					editor->_collider->draw(colliderPosition, sf::Vector2f(spriteScale, spriteScale));
+				}
+
+				sf::Sprite sprite(*animations->getTexture()->_texture);
+				sprite.setTextureRect(animations->getFrameRect(0, 0));
+				sprite.setScale(sf::Vector2f(spriteScale, spriteScale));
+				sprite.setPosition(sf::Vector2f(canvasRect.position + sf::Vector2i((canvasRect.size.x - animations->getFrameRect(0, 0).size.x * spriteScale) / 2, (canvasRect.size.y - animations->getFrameRect(0, 0).size.y * spriteScale) / 2)));
+				Main::render_window->draw(sprite);
 			}
-
-			sf::Sprite sprite(*animations->getTexture()->_texture);
-			sprite.setTextureRect(frameRect);
-			sprite.setScale(sf::Vector2f(scale, scale));
-			sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
-			Main::render_window->draw(sprite);
 		}
+		else {
+			// draw checkerboard
+			sf::IntRect spriteRect = (animator && animations) ? animations->getFrameRect(animator->_animation, animator->_frame) : sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(192, 192));
+			spriteRect.position = sf::Vector2i(canvasRect.position.x + (canvasRect.size.x - spriteRect.size.x) / 2, canvasRect.position.y + (canvasRect.size.y - spriteRect.size.y) / 2);
+			sf::RectangleShape rect(sf::Vector2f(spriteRect.size));
+			rect.setFillColor(sf::Color::Red);
+			rect.setPosition(sf::Vector2f(spriteRect.position));
+
+			sf::RenderStates states;
+			states.shader = &*checkerboard_shader;
+			checkerboard_shader->setUniform("rectPos", sf::Vector2f(spriteRect.position));
+			Main::render_window->draw(rect, states);
+		}
+
+		//// draw checkerboard
+		//sf::RectangleShape rect(sf::Vector2f(sf::Vector2f(192, 192)));
+		//rect.setFillColor(sf::Color::Red);
+		//rect.setPosition(sf::Vector2f(getPosition().x + (getSize().x - 192) / 2, getPosition().y + _title->getFont().getLineSpacing(20) + 24 + 16));
+		//
+		//sf::RenderStates states;
+		//states.shader = &*checkerboard_shader;
+		//
+		//checkerboard_shader->setUniform("rectPos", rect.getPosition());
+		//
+		//Main::render_window->draw(rect, states);
+		//
+		//// draw animation
+		//std::shared_ptr<Animator>& animator = PrefabsEditor::editor->_animator;
+		//std::shared_ptr<Animations> animations = (animator) ? animator->getAnimations().lock() : nullptr;
+		//
+		//if (animator && animations) {
+		//
+		//	sf::IntRect frameRect = animations->getFrameRect(0, 0);
+		//
+		//	float scale = std::min(rect.getSize().x / (float)frameRect.size.x, rect.getSize().y / (float)frameRect.size.y);
+		//
+		//	// TO-DO - must be in update
+		//	if (_type->getText() == L"Rectangular") {
+		//
+		//		std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
+		//		editor->_collider = rectCollider;
+		//		sf::Vector2i colliderPosition(rect.getPosition());
+		//		editor->_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
+		//	}
+		//	else if (_type->getText() == L"Circular") {
+		//
+		//		std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
+		//		editor->_collider = circularCollider;
+		//		sf::Vector2i colliderPosition(
+		//			rect.getPosition().x + (float)(circularCollider->_x) * scale,
+		//			rect.getPosition().y + (float)(circularCollider->_y) * scale
+		//		);
+		//
+		//		editor->_collider->draw(colliderPosition, sf::Vector2f(scale, scale));
+		//	}
+		//
+		//	sf::Sprite sprite(*animations->getTexture()->_texture);
+		//	sprite.setTextureRect(frameRect);
+		//	sprite.setScale(sf::Vector2f(scale, scale));
+		//	sprite.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y));
+		//	Main::render_window->draw(sprite);
+		//}
 
 		// texts labels
 		Main::render_window->draw(*_typeLabel);
