@@ -58,6 +58,7 @@ void MeshEditor::handleEvent(const sf::Event& event) {
 
 	if (rectForCursor.contains(Cursors::cursor->_position)) {
 		int radius = 8;
+
 		_cursorPosition.x = (float)_spriteRect.position.x + std::round((Cursors::cursor->_position.x - _spriteRect.position.x) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
 		_cursorPosition.y = (float)_spriteRect.position.y + std::round((Cursors::cursor->_position.y - _spriteRect.position.y) / (_tileSize * _spriteScale)) * _tileSize * _spriteScale;
 
@@ -65,6 +66,8 @@ void MeshEditor::handleEvent(const sf::Event& event) {
 		point.x = std::round((_cursorPosition.x - _spriteRect.position.x) / _spriteScale);
 		point.y = std::round((_cursorPosition.y - _spriteRect.position.y) / _spriteScale);
 
+		point.x = std::clamp(point.x, 0, _animations->getFrameRect(0, 0).size.x);
+		point.y = std::clamp(point.y, 0, _animations->getFrameRect(0, 0).size.y);
 
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 

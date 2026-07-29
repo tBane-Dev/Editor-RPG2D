@@ -147,6 +147,7 @@ bool Shape::pointInShape(sf::Vector2i point) {
 
 void Shape::generateConvexShape() {
 
+	convexShape.setOutlineThickness(0.f);
 	convexShape.setPointCount(_points.size());
 
 	for (std::size_t i = 0; i < _points.size(); ++i) {
@@ -158,18 +159,17 @@ void Shape::generateConvexShape() {
 
 
 void Shape::drawConvexShape(sf::Vector2i position, float scale, sf::Color color) {
-	if (_points.size() < 2)
+	if (_points.size() < 3)
 		return;
 
 	convexShape.setPosition(sf::Vector2f(position));
 	convexShape.setScale(sf::Vector2f(scale, scale));
-
 	convexShape.setOutlineColor(color);
 
-	if (scale > 0.f)
+	if (2.f / scale >= 1.f)
 		convexShape.setOutlineThickness(2.f / scale);
 	else
-		convexShape.setOutlineThickness(2.f);
+		convexShape.setOutlineThickness(1.f);
 
 	Main::render_window->draw(convexShape);
 }
