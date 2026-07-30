@@ -420,7 +420,7 @@ namespace PrefabsEditor {
 			Main::render_window->draw(rect, states);
 
 			sf::Sprite sprite(*animations->getTexture()->_texture);
-			sprite.setTextureRect(animations->getFrameRect(0, 0));
+			sprite.setTextureRect(animations->getFrameRect(animator->_animation, animator->_frame));
 			sprite.setScale(sf::Vector2f(spriteScale, spriteScale));
 			sprite.setPosition(sf::Vector2f(canvasRect.position + sf::Vector2i((canvasRect.size.x - animations->getFrameRect(0, 0).size.x * spriteScale) / 2, (canvasRect.size.y - animations->getFrameRect(0, 0).size.y * spriteScale) / 2)));
 			Main::render_window->draw(sprite);

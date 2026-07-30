@@ -159,11 +159,12 @@ void Shape::generateConvexShape() {
 
 
 void Shape::drawConvexShape(sf::Vector2i position, float scale, sf::Color color) {
-	if (_points.size() < 3)
+	if (_points.size() < 2)
 		return;
 
 	convexShape.setPosition(sf::Vector2f(position));
 	convexShape.setScale(sf::Vector2f(scale, scale));
+	convexShape.setMiterLimit(1.f);
 	convexShape.setOutlineColor(color);
 
 	if (2.f / scale >= 1.f)
