@@ -145,6 +145,12 @@ bool Shape::pointInShape(sf::Vector2i point) {
 	return isPointInPolygon(point, _points);
 }
 
+bool Shape::isInsideRect(sf::IntRect rect, sf::Vector2i position) {
+	// TO-DO
+
+	return true;
+}
+
 void Shape::generateConvexShape() {
 
 	convexShape.setOutlineThickness(0.f);
@@ -250,6 +256,35 @@ void Mesh::setRadius(float radius) {
 	_radius = radius;
 }
 
+sf::IntRect Mesh::getRect(sf::Vector2i position) {
+	sf::IntRect rect;
+
+	for(auto& shape : _shapes) {
+		for(auto& point : shape->_points) {
+			if(point.x < rect.position.x) {
+				rect.position.x = point.x;
+			}
+
+			if(point.y < rect.position.y) {
+				rect.position.y = point.y;
+			}
+
+			if(point.x > rect.position.x + rect.size.x) {
+				rect.size.x = point.x - rect.position.x;
+			}
+
+			if(point.y > rect.position.y + rect.size.y) {
+				rect.size.y = point.y - rect.position.y;
+			}
+		}
+	}
+
+	rect.position.x += position.x;
+	rect.position.y += position.y;
+
+	return rect;
+}
+
 int Mesh::getShapeCount() {
 	return _shapes.size();
 }
@@ -309,6 +344,19 @@ bool Mesh::isPointInside(sf::Vector2i point, sf::Vector2i position) {
 	for(auto& shape : _shapes) {
 		if(shape->pointInShape(point - position)) {
 			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Mesh::isInsideRect(sf::IntRect rect, sf::Vector2i position) {
+
+	if(getRect(position).findIntersection(rect)) {
+		for (auto& shape : _shapes) {
+			if (shape->isInsideRect(rect, position)) {
+				return true;
+			}
 		}
 	}
 

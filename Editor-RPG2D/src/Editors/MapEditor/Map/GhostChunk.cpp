@@ -36,10 +36,12 @@ void GhostChunk::cursorHover() {
 	if (!renderWindowRect.contains(Cursors::cursor->_position + renderWindowRect.position))
 		return;
 
+	if (MapEditor::editor->_cursor_on_map->_selectionRect.size.x != 0 || MapEditor::editor->_cursor_on_map->_selectionRect.size.y != 0)
+		return;
+
 	sf::Vector2i coords;
 	coords.x = std::floor((float)MapEditor::editor->_cursor_on_map->_globalPosition.x / (float)(Chunk::tilesCols * Tile::tileSize));
 	coords.y = std::floor((float)MapEditor::editor->_cursor_on_map->_globalPosition.y / (float)(Chunk::tilesRows * Tile::tileSize));
-
 
 	if (
 		MapEditor::editor->_map->getChunkByCoords(coords.x, coords.y) == nullptr && (

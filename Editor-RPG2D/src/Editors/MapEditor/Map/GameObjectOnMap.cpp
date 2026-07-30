@@ -1,4 +1,3 @@
-#pragma once
 #include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 #include "RenderWindow.hpp"
 #include "Editors/MapEditor/Editor.hpp"
@@ -31,6 +30,8 @@ GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 	_animator->play();
 	_position = sf::Vector2i(0, 0);
 
+	_isSelected = false;
+
 	_text = std::make_unique<sf::Text>(basicFont, (_prefab.expired()) ? L"Unknown" : _prefab.lock()->getName(), 14);
 }
 
@@ -38,7 +39,7 @@ GameObjectOnMap::~GameObjectOnMap() {
 
 }
 
-void GameObjectOnMap::drawFrame() {
+void GameObjectOnMap::drawFrame(sf::Color color) {
 
 	auto prefab = _prefab.lock();
 	if (!prefab)
@@ -87,7 +88,7 @@ void GameObjectOnMap::drawFrame() {
 
 	
 
-	sf::Color color = sf::Color(255, 30, 45);
+	
 
 	_text->setString((_prefab.expired()) ? L"Unknown" : _prefab.lock()->getName());
 	_text->setFillColor(color);
@@ -188,7 +189,10 @@ void GameObjectOnMap::draw() {
 		}
 	}
 
-	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
+	if(_isSelected == true) {
+		drawFrame(sf::Color(255, 30, 45));
+	}
+	else if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		drawFrame();
 	}
 
@@ -204,7 +208,11 @@ void GameObjectOnMap::draw() {
 		sprite.setPosition(sf::Vector2f(_position));
 		sprite.setTextureRect(frameRect);
 		if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock().get() == this)
-			sprite.setColor(sf::Color::Red);
+			sprite.setColor(sf::Color(255, 30+64, 45+64)); // TO-DO - must be a shader highlight
+		else if(_isSelected == true)
+			sprite.setColor(sf::Color::White);
+		else
+			sprite.setColor(sf::Color::White);
 		Main::render_window->draw(sprite);
 	}
 

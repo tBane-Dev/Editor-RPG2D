@@ -18,6 +18,8 @@ public:
 	bool hasPoint(sf::Vector2i point);
 	int insidePoint(sf::Vector2i point, float radius, float scale);
 	bool pointInShape(sf::Vector2i point);
+	bool isInsideRect(sf::IntRect rect, sf::Vector2i position);
+
 	void generateConvexShape();
 	void drawConvexShape(sf::Vector2i position, float scale, sf::Color color);
 	void draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes, bool renderPoints = false);
@@ -37,6 +39,7 @@ public:
 
 	void setScale(float scale);
 	void setRadius(float radius);
+	sf::IntRect getRect(sf::Vector2i position);
 
 	int getShapeCount();
 	void addShape(std::shared_ptr<Shape> shape);
@@ -47,6 +50,7 @@ public:
 	void clearShapes();
 	bool everyShapeIsComplete();
 	bool isPointInside(sf::Vector2i point, sf::Vector2i position);
+	bool isInsideRect(sf::IntRect rect, sf::Vector2i position);
 
 	void drawConvexShapes(sf::Vector2i position, float scale, sf::Color color);
 	void draw(sf::Vector2i position, float scale, sf::Color colorOfPoints, bool renderIndexes = true, std::shared_ptr<Shape> activeShape = nullptr);

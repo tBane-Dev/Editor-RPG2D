@@ -11,13 +11,14 @@ public:
 	std::weak_ptr<GameObject> _prefab;
 	std::shared_ptr<Animator> _animator;
     sf::Vector2i _position;
-
+	
+	bool _isSelected;
 	std::unique_ptr<sf::Text> _text;
 
 	GameObjectOnMap(std::weak_ptr<GameObject> prefab);
 	~GameObjectOnMap();
 
-	void drawFrame();
+	void drawFrame(sf::Color color = sf::Color(127, 30, 45));
 
 	virtual sf::Vector2i getPosition();
 	virtual void setPosition(sf::Vector2i position);

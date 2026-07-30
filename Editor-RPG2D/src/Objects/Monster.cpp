@@ -152,7 +152,10 @@ void Monster::draw() {
 
 	sf::IntRect frameRect = anim->getFrameRect(_animator->_animation, _animator->_frame);
 
-	if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
+	if (_isSelected == true) {
+		drawFrame(sf::Color(255, 30, 45));
+	}
+	else if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
 		drawFrame();
 	}
 
