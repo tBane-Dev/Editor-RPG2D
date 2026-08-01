@@ -35,6 +35,27 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
     if (_object.expired()) {
         if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+            
+            
+            _isDragging = false;
+            if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+                for (auto& object : _selectedObjects) {
+                    std::shared_ptr<Mesh> mesh = object->_object.lock()->_prefab.lock()->getMesh();
+                    if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, object->_object.lock()->_position)) {
+
+                        _isDragging = true;
+
+                        for (auto& o : _selectedObjects) {
+                            if (!o->_object.expired()) {
+                                o->_offset = MapEditor::editor->_cursor_on_map->_globalPosition - o->_object.lock()->_position;
+                            }
+                        }
+
+                        return;
+                    }
+                }
+            }
+
             _selectionRect.position = MapEditor::editor->_cursor_on_map->_globalPosition;
             _selectionRect.size = sf::Vector2i(0, 0);
 
@@ -73,7 +94,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                         _selectedObjects.begin(),
                         _selectedObjects.end(),
                         [&](const auto& selectedObject) {
-                            return selectedObject->_object.lock() == selectedGameObject;
+                            return selectedObject->_object.lock().get() == selectedGameObject.get();
                         }
                     );
 
@@ -98,12 +119,37 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 }
 
 
-                DebugLog(std::to_wstring(_selectedObjects.size()));
+                //DebugLog(std::to_wstring(_selectedObjects.size()));
                
             }
         }
         else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 
+            if (_isDragging) {
+                for (auto& object : _selectedObjects) {
+                    if (!object->_object.expired()) {
+
+                        std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(object->_object.lock()->_position);
+                        
+                        if (chunk) {
+							chunk->removeGameObjectOnMap(object->_object.lock());
+                        }
+
+                        sf::Vector2i newPos = MapEditor::editor->_cursor_on_map->_globalPosition - object->_offset;
+						newPos.x = (newPos.x / Tile::tileSize) * Tile::tileSize;
+						newPos.y = (newPos.y / Tile::tileSize) * Tile::tileSize;
+
+						chunk = MapEditor::editor->_map->getChunkByGlobalPosition(newPos);
+                        if (chunk) {
+                            chunk->addGameObjectOnMap(object->_object.lock());
+                        }
+                        object->_object.lock()->setPosition(newPos);
+
+                    }
+                }
+                return;
+            }
+   
             if (GUI_manager->Element_pressed == MapEditor::editor->_map)
                 _selectionRect.size = sf::Vector2i(_globalPosition.x - _selectionRect.position.x, _globalPosition.y - _selectionRect.position.y);
 
@@ -115,6 +161,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 }
                 _selectedObjects.clear();
             }
+
+            
 
             if (_selectionRect.size.x != 0 || _selectionRect.size.y != 0) {
                 std::vector<std::shared_ptr<GameObjectOnMap>> selectedGameObjects;
@@ -196,6 +244,11 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 }
             }
         }
+
+        if(_isDragging) {
+            _isDragging = false;
+            return;
+		}
 
         if(_selectionRect.size.x != 0 || _selectionRect.size.y != 0) {
             _selectionRect.size = sf::Vector2i(0, 0);

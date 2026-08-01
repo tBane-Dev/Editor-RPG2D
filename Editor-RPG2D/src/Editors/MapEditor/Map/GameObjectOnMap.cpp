@@ -210,7 +210,7 @@ void GameObjectOnMap::draw() {
 		if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock().get() == this)
 			sprite.setColor(sf::Color(255, 30+64, 45+64)); // TO-DO - must be a shader highlight
 		else if(_isSelected == true)
-			sprite.setColor(sf::Color::White);
+			sprite.setColor(sf::Color(255, 30 + 64, 45 + 64));
 		else
 			sprite.setColor(sf::Color::White);
 		Main::render_window->draw(sprite);

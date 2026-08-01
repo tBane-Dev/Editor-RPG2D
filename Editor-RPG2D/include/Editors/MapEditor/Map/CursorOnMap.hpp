@@ -8,6 +8,7 @@ class CursorOnMap : public Cursors::CursorWithObject {
 public:
     std::vector<std::shared_ptr<SelectedGameObjectOnMap>> _prevSelectedObjects;
     std::vector<std::shared_ptr<SelectedGameObjectOnMap>> _selectedObjects;
+	bool _isDragging = false;
 	sf::IntRect _selectionRect;
 
 	CursorOnMap();
