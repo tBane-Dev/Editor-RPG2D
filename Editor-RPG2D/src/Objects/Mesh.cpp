@@ -49,7 +49,40 @@ bool isPointInPolygon(sf::Vector2i p, std::vector < sf::Vector2i >& poly)
 	return inside;
 }
 
+int cross(sf::Vector2i a, sf::Vector2i b, sf::Vector2i point) {
+	return int(b.x - a.x) * (point.y - a.y) - int(b.y - a.y) * (point.x - a.x);
+}
 
+
+bool isPointInTriangle(sf::Vector2i point, sf::Vector2i a, sf::Vector2i b, sf::Vector2i c) {
+	int cross1 = cross(a, b, point);
+	int cross2 = cross(b, c, point);
+	int cross3 = cross(c, a, point);
+
+	bool hasNegative =
+		cross1 < 0 || cross2 < 0 || cross3 < 0;
+
+	bool hasPositive =
+		cross1 > 0 || cross2 > 0 || cross3 > 0;
+
+	return !(hasNegative && hasPositive);
+}
+
+bool segmentsIntersect(sf::Vector2i a1, sf::Vector2i a2, sf::Vector2i b1, sf::Vector2i b2) {
+	float d1 = (float)cross(a1, a2, b1);
+	float d2 = (float)cross(a1, a2, b2);
+	float d3 = (float)cross(b1, b2, a1);
+	float d4 = (float)cross(b1, b2, a2);
+
+	if (((d1 > 0.f && d2 < 0.f) || (d1 < 0.f && d2 > 0.f)) && ((d3 > 0.f && d4 < 0.f) || (d3 < 0.f && d4 > 0.f))) {
+		return true;
+	}
+
+	return pointOnSegment(b1, a1, a2) ||
+		pointOnSegment(b2, a1, a2) ||
+		pointOnSegment(a1, b1, b2) ||
+		pointOnSegment(a2, b1, b2);
+}
 
 Shape::Shape() {
 	_points.clear();
@@ -146,9 +179,79 @@ bool Shape::pointInShape(sf::Vector2i point) {
 }
 
 bool Shape::isInsideRect(sf::IntRect rect, sf::Vector2i position) {
-	// TO-DO
 
-	return true;
+	for (int i = 0; i < _points.size() - 2; i++) {
+
+		sf::Vector2i a, b, c;
+		a = _points[i] + position;
+		b = _points[i + 1] + position;
+		c = _points[i + 2] + position;
+
+		if (rect.contains(a) || rect.contains(b) || rect.contains(c))
+			return true;
+
+		if(
+			isPointInTriangle(sf::Vector2i(rect.position.x, rect.position.y), a, b, c) ||
+			isPointInTriangle(sf::Vector2i(rect.position.x + rect.size.x, rect.position.y), a, b, c) ||
+			isPointInTriangle(sf::Vector2i(rect.position.x, rect.position.y + rect.size.y), a, b, c) ||
+			isPointInTriangle(sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y), a, b, c)) {
+			return true;
+		}
+
+		if (
+			segmentsIntersect(a, b,
+				sf::Vector2i(rect.position.x, rect.position.y),
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y)) ||
+
+			segmentsIntersect(a, b,
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y),
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y)) ||
+
+			segmentsIntersect(a, b,
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y),
+				sf::Vector2i(rect.position.x, rect.position.y + rect.size.y)) ||
+
+			segmentsIntersect(a, b,
+				sf::Vector2i(rect.position.x, rect.position.y + rect.size.y),
+				sf::Vector2i(rect.position.x, rect.position.y)) ||
+
+			segmentsIntersect(b, c,
+				sf::Vector2i(rect.position.x, rect.position.y),
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y)) ||
+
+			segmentsIntersect(b, c,
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y),
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y)) ||
+
+			segmentsIntersect(b, c,
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y),
+				sf::Vector2i(rect.position.x, rect.position.y + rect.size.y)) ||
+
+			segmentsIntersect(b, c,
+				sf::Vector2i(rect.position.x, rect.position.y + rect.size.y),
+				sf::Vector2i(rect.position.x, rect.position.y)) ||
+
+			segmentsIntersect(c, a,
+				sf::Vector2i(rect.position.x, rect.position.y),
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y)) ||
+
+			segmentsIntersect(c, a,
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y),
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y)) ||
+
+			segmentsIntersect(c, a,
+				sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y),
+				sf::Vector2i(rect.position.x, rect.position.y + rect.size.y)) ||
+
+			segmentsIntersect(c, a,
+				sf::Vector2i(rect.position.x, rect.position.y + rect.size.y),
+				sf::Vector2i(rect.position.x, rect.position.y))) {
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Shape::generateConvexShape() {

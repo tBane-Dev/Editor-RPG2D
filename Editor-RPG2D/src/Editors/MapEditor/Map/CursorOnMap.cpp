@@ -41,7 +41,18 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
                 for (auto& object : _selectedObjects) {
                     std::shared_ptr<Mesh> mesh = object->_object.lock()->_prefab.lock()->getMesh();
-                    if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, object->_object.lock()->_position)) {
+
+                    sf::Vector2i monsterOffset = sf::Vector2i(0, 0);
+                    if (!object->_object.lock()->_prefab.expired()) {
+                        if (object->_object.lock()->_prefab.lock()->_type == ObjectType::Monster) {
+                            std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(object->_object.lock());
+                            if (monster->_prefab.lock()->getCollider()->_type == ColliderType::Circular) {
+                                monsterOffset = monster->_prefab.lock()->getOrigin();
+                            }
+                        }
+                    }
+
+                    if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, object->_object.lock()->_position - monsterOffset)) {
 
                         _isDragging = true;
 
@@ -71,7 +82,18 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             std::shared_ptr<GameObjectOnMap> selectedGameObject = nullptr;
             for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
                 std::shared_ptr<Mesh> mesh = object->_prefab.lock()->getMesh();
-                if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, object->_position)) {
+
+                sf::Vector2i monsterOffset = sf::Vector2i(0, 0);
+                if (!object->_prefab.expired()) {
+                    if (object->_prefab.lock()->_type == ObjectType::Monster) {
+                        std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(object);
+                        if (monster->_prefab.lock()->getCollider()->_type == ColliderType::Circular) {
+                            monsterOffset = monster->_prefab.lock()->getOrigin();
+                        }
+                    }
+                }
+
+                if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, object->_position - monsterOffset)) {
                     selectedGameObject = object;
                 }
             }
@@ -129,7 +151,11 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 for (auto& object : _selectedObjects) {
                     if (!object->_object.expired()) {
 
-                        std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(object->_object.lock()->_position);
+						sf::Vector2i oldPos = (object->_object.lock()->_prefab.lock()->_type == ObjectType::Monster) ? 
+                            std::dynamic_pointer_cast<Monster>(object->_object.lock())->_basePosition :
+                            object->_object.lock()->_position;
+                        
+                        std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(oldPos);
                         
                         if (chunk) {
 							chunk->removeGameObjectOnMap(object->_object.lock());
@@ -168,7 +194,18 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 std::vector<std::shared_ptr<GameObjectOnMap>> selectedGameObjects;
                 for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
                     std::shared_ptr<Mesh> mesh = object->_prefab.lock()->getMesh();
-                    if (mesh && mesh->isInsideRect(_selectionRect, object->_position)) {
+                    
+                    sf::Vector2i monsterOffset = sf::Vector2i(0, 0);
+                    if (!object->_prefab.expired()) {
+                        if (object->_prefab.lock()->_type == ObjectType::Monster) {
+                            std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(object);
+                            if (monster->_prefab.lock()->getCollider()->_type == ColliderType::Circular) {
+                                monsterOffset = monster->_prefab.lock()->getOrigin();
+                            }
+                        }
+                    }
+
+                    if (mesh && mesh->isInsideRect(_selectionRect, object->_position - monsterOffset)) {
                         selectedGameObjects.push_back(object);
                     }
                 }

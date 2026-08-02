@@ -164,4 +164,10 @@ void Monster::draw() {
 	sprite.setOrigin(sf::Vector2f(_prefab.lock()->getOrigin()));
 	sprite.setTextureRect(frameRect);
 	Main::render_window->draw(sprite);
+
+	if (MapEditor::editor->_main_menu->_render_meshes->_checkbox->_value == 1) {
+		if (_prefab.lock()->getMesh()) {
+			_prefab.lock()->getMesh()->draw(_position - _prefab.lock()->getOrigin(), sf::Color::Red);
+		}
+	}
 }
