@@ -64,3 +64,45 @@ void Wall::draw(float scale, bool renderOutsideLook, int wallHeight) {
 
 
 }
+
+void Wall::draw(sf::RenderTarget& target, float scale, bool renderOutsideLook, int wallHeight) {
+
+	if (_prefab.expired()) return;
+
+	std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(_prefab.lock());
+	if (!wallPrefab) return;
+
+	float height = wallHeight;
+
+	if (renderOutsideLook) {
+		for (int i = 1; i < height / 32.f; i++) {
+			sf::Sprite spriteCenter(*wallset->_texture->_texture);
+			spriteCenter.setPosition(sf::Vector2f(_position.x, _position.y - (32.f * (float)(i - 1) * scale)));
+			spriteCenter.setTextureRect(_textureBottomRect);
+			spriteCenter.setScale(sf::Vector2f(scale, scale));
+			target.draw(spriteCenter);
+		}
+
+
+		sf::Sprite spriteBottom(*wallset->_texture->_texture);
+		spriteBottom.setPosition(sf::Vector2f(_position));
+		spriteBottom.setTextureRect(_textureBottomRect);
+		spriteBottom.setScale(sf::Vector2f(scale, scale));
+		target.draw(spriteBottom);
+	}
+	else {
+		sf::Sprite spriteTop(*wallset->_texture->_texture);
+		spriteTop.setPosition(sf::Vector2f(_position.x, _position.y - (32.f * scale)));
+		spriteTop.setTextureRect(_textureTopRect);
+		spriteTop.setScale(sf::Vector2f(scale, scale));
+		target.draw(spriteTop);
+
+		sf::Sprite spriteBottom(*wallset->_texture->_texture);
+		spriteBottom.setPosition(sf::Vector2f(_position));
+		spriteBottom.setTextureRect(_textureBottomRect);
+		spriteBottom.setScale(sf::Vector2f(scale, scale));
+		target.draw(spriteBottom);
+	}
+
+
+}

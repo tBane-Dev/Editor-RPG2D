@@ -69,14 +69,15 @@ namespace BuildingsEditor {
 
 		// draw building
 		_building->drawOnlyShape();
-		_building->drawOnlyFloor();
-		_building->drawOnlyWalls();
+		_building->_building->drawOnlyFloor(_building->_scale);
+		_building->_building->drawOnlyWalls(_building->_scale);
 
-
-		_building->_building->generateWalls(_building->_scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
+		//_building->_building->generateWalls(_building->_scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
 
 		if (BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
-			_building->drawOnlyRoof();
+			//_building->_building->drawOnlyRoof(_building->_scale);
+			_building->_building->generateOutsideTexture(_building->_scale);
+			_building->_building->drawOutside(*Main::render_window);
 		}
 
 		// draw grid

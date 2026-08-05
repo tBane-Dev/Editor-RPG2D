@@ -19,5 +19,5 @@ public:
 	FlatRoofPart(std::weak_ptr<GameObject> prefab, sf::IntRect textureRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
 	~FlatRoofPart();
 
-	virtual void draw(float scale = 1.f);
+	virtual void draw(sf::RenderTarget& target, float scale = 1.f);
 };

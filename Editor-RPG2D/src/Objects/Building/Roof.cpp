@@ -20,7 +20,7 @@ void Roof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i posi
 	_tiles = tiles;
 }
 
-void Roof::draw(float scale) {
+void Roof::draw(sf::RenderTarget& target, float scale) {
 
 }
 
@@ -332,17 +332,17 @@ void FlatRoof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i 
 	generateOverhang(position, scale);
 }
 
-void FlatRoof::draw(float scale) {
+void FlatRoof::draw(sf::RenderTarget& target, float scale) {
 
 	// overhang
 	sf::RenderStates roofOverhangStates;
 	roofOverhangStates.texture = roofset->_overhangTexture->_texture.get();
-	Main::render_window->draw(_roofOverhangVertexArray, roofOverhangStates);
-	 
+	target.draw(_roofOverhangVertexArray, roofOverhangStates);
+
 	// parts of roof
 	for (auto& part : _parts) {
 		if (part) {
-			part->draw(scale);
+			part->draw(target, scale);
 		}
 	}
 }
@@ -360,6 +360,6 @@ void GableRoof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i
 	Roof::generate(size, tiles, position, scale);
 }
 
-void GableRoof::draw(float scale) {
+void GableRoof::draw(sf::RenderTarget& target, float scale) {
 
 }

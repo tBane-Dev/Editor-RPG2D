@@ -276,6 +276,49 @@ void Building::generateWalls(float scale, bool renderOutsideLook) {
 	}
 }
 
+void Building::generateOutsideTexture(float scale) {
+
+	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	if (!buildingPrefab) return;
+
+	// generate floor texture
+	sf::RenderTexture floorRenderTexture;
+	floorRenderTexture.resize(sf::Vector2u((float)buildingPrefab->_floorSize.x * 16.f * scale, (float)buildingPrefab->_floorSize.y * 16.f * scale));
+	floorRenderTexture.clear(sf::Color::Transparent);
+	floorRenderTexture.draw(_floorVertexArray, sf::RenderStates(buildingPrefab->_floorset->_texture.get()));
+	floorRenderTexture.display();
+
+	// generate walls texture
+	sf::RenderTexture wallsRenderTexture;
+	wallsRenderTexture.clear(sf::Color::Transparent);
+	wallsRenderTexture.resize(sf::Vector2u((float)buildingPrefab->_wallsSize.x * 32.f * scale, (float)buildingPrefab->_wallsSize.y * 32.f * scale));
+	drawOnlyWalls(wallsRenderTexture, scale);
+	wallsRenderTexture.display();
+
+	// generate roof texture
+	sf::RenderTexture roofRenderTexture;
+	roofRenderTexture.clear(sf::Color::Transparent);
+	roofRenderTexture.resize(sf::Vector2u((float)_roof->_size.x * 32.f * scale, (float)_roof->_size.y * 32.f * scale));
+	drawOnlyRoof(roofRenderTexture, scale);
+	roofRenderTexture.display();
+
+	// combine all textures into one
+	sf::RenderTexture combinedRenderTexture;
+	combinedRenderTexture.clear(sf::Color::Transparent);
+	combinedRenderTexture.resize(sf::Vector2u((float)buildingPrefab->_wallsSize.x * 32.f * scale, (float)buildingPrefab->_wallsSize.y * 32.f * scale));
+	sf::Sprite floorSprite(floorRenderTexture.getTexture());
+	floorSprite.setPosition(sf::Vector2f(getPosition()));
+	combinedRenderTexture.draw(floorSprite);
+	sf::Sprite wallsSprite(wallsRenderTexture.getTexture());
+	wallsSprite.setPosition(sf::Vector2f(getPosition()));
+	combinedRenderTexture.draw(wallsSprite);
+	sf::Sprite roofSprite(roofRenderTexture.getTexture());
+	roofSprite.setPosition(sf::Vector2f(getPosition()));
+	combinedRenderTexture.draw(roofSprite);
+	combinedRenderTexture.display();
+
+	_outsideTexture = combinedRenderTexture.getTexture();
+}
 
 
 void Building::loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab) {
@@ -291,4 +334,93 @@ void Building::generateRoofs(float scale) {
 		return;
 
 	_roof->generate(bp->_wallsSize, bp->_walls, _position, scale);
+}
+
+
+
+
+void Building::drawOnlyFloor(float scale) {
+
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	if (!bp) return;
+
+	Main::render_window->draw(_floorVertexArray, sf::RenderStates(bp->_floorset->_texture.get()));
+}
+
+void Building::drawOnlyWalls(float scale) {
+
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	if (!bp) return;
+
+	sf::Vector2i& size = bp->_wallsSize;
+
+	for (int y = 0; y < size.y; y++) {
+		for (int x = 0; x < size.x; x++) {
+			int index = y * size.x + x;
+			if (index < _wallsObjects.size()) {
+				std::shared_ptr<Wall> wall = _wallsObjects[index];
+				if (wall) {
+					wall->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
+					wall->draw(scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
+				}
+			}
+		}
+	}
+}
+
+void Building::drawOnlyWalls(sf::RenderTarget& target, float scale) {
+
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	if (!bp) return;
+
+	sf::Vector2i& size = bp->_wallsSize;
+
+	for (int y = 0; y < size.y; y++) {
+		for (int x = 0; x < size.x; x++) {
+			int index = y * size.x + x;
+			if (index < _wallsObjects.size()) {
+				std::shared_ptr<Wall> wall = _wallsObjects[index];
+				if (wall) {
+					wall->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
+					wall->draw(target, scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
+				}
+			}
+		}
+	}
+}
+
+
+void Building::drawOnlyRoof(float scale) {
+
+	if (!_roof)
+		return;
+
+	_roof->draw(*Main::render_window, scale);
+}
+
+
+void Building::drawOnlyRoof(sf::RenderTarget& target, float scale) {
+
+	if (!_roof)
+		return;
+
+	_roof->draw(target, scale);
+}
+
+void Building::drawOutside(sf::RenderTarget& target) {
+
+	sf::Sprite sprite(_outsideTexture);
+	sprite.setPosition(sf::Vector2f(_position));
+	target.draw(sprite);
+}
+
+void Building::draw() {
+
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+
+	if (!bp) return;
+
+	drawOnlyFloor(1.0f);
+	drawOnlyWalls(1.0f);
+	drawOnlyRoof(1.0f);
 }
