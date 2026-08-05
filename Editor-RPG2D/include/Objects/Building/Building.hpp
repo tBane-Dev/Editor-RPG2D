@@ -30,8 +30,6 @@ public:
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
 
 	std::shared_ptr<Roof> _roof;
-	sf::Texture _outsideTexture;
-
 	//TO-DO - to delete
 	//std::vector<int> _roof;
 	//sf::Vector2i _roofSize;
@@ -45,16 +43,6 @@ public:
 	virtual void setPosition(sf::Vector2i position);
 	void generateFloorVertexArray(float scale = 1.0f);
 	void generateWalls(float scale = 1.0f, bool renderOutsideLook = false);	
-	void generateOutsideTexture(float scale = 1.0f);
 	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
 	void generateRoofs(float scale = 1.0f);
-
-	void drawOnlyFloor(float scale);
-	void drawOnlyWalls(float scale);
-	void drawOnlyWalls(sf::RenderTarget& target, float scale);
-	void drawOnlyRoof(float scale);
-	void drawOnlyRoof(sf::RenderTarget& target, float scale);
-
-	void drawOutside(sf::RenderTarget& target);
-	virtual void draw();
 };

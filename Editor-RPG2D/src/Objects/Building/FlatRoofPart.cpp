@@ -22,7 +22,7 @@ FlatRoofPart::~FlatRoofPart() {
 
 }
 
-void FlatRoofPart::draw(sf::RenderTarget& target, float scale) {
+void FlatRoofPart::draw(float scale) {
 	if (_prefab.expired()) return;
 
 	std::shared_ptr<FlatRoofPartPrefab> roofPrefab = std::dynamic_pointer_cast<FlatRoofPartPrefab>(_prefab.lock());
@@ -32,7 +32,7 @@ void FlatRoofPart::draw(sf::RenderTarget& target, float scale) {
 	sprite.setPosition(sf::Vector2f(_position));
 	sprite.setTextureRect(_textureRect);
 	sprite.setScale(sf::Vector2f(scale, scale));
-	target.draw(sprite);
+	Main::render_window->draw(sprite);
 
 	
 }

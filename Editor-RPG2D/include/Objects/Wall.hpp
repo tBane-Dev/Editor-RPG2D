@@ -21,5 +21,4 @@ public:
 	~Wall();
 
 	virtual void draw(float scale = 1.f, bool renderOutsideLook = false, int wallHeight = 128);
-	virtual void draw(sf::RenderTarget& target, float scale = 1.f, bool renderOutsideLook = false, int wallHeight = 128);
 };

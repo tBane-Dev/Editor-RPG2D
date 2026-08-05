@@ -203,14 +203,6 @@ namespace BuildingsEditor {
 		return p;
 	}
 
-	void EditableBuilding::drawOnlyShape() {
-		ResizableShape::drawOnlyRect();
-	}
-
-	void EditableBuilding::drawOnlyEdgePoints() {
-		ResizableShape::drawOnlyEdgePoints();
-	}
-
 	void EditableBuilding::cursorHover() {
 
 		sf::IntRect rect = sf::IntRect(BuildingsEditor::editor->_building_panel->getPosition(), BuildingsEditor::editor->_building_panel->getSize());
@@ -381,6 +373,50 @@ namespace BuildingsEditor {
 		}
 	}
 
+	void EditableBuilding::drawOnlyShape() {
+		ResizableShape::drawOnlyRect();
+	}
+
+	void EditableBuilding::drawOnlyFloor() {
+
+		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+		if (!bp) return;
+
+		Main::render_window->draw(_building->_floorVertexArray, sf::RenderStates(bp->_floorset->_texture.get()));
+	}
+
+	void EditableBuilding::drawOnlyWalls() {
+
+		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+		if (!bp) return;
+
+		sf::Vector2i& size = bp->_wallsSize;
+
+		for (int y = 0; y < size.y; y++) {
+			for (int x = 0; x < size.x; x++) {
+				int index = y * size.x + x;
+				if (index < _building->_wallsObjects.size()) {
+					std::shared_ptr<Wall> wall = _building->_wallsObjects[index];
+					if (wall) {
+						wall->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * _scale, (float)y * 32.f * _scale));
+						wall->draw(_scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
+					}
+				}
+			}
+		}
+	}
+
+	void EditableBuilding::drawOnlyRoof() {
+
+		if (!_building->_roof) 
+			return;
+		
+		_building->_roof->draw(_scale);
+	}
+
+	void EditableBuilding::drawOnlyEdgePoints() {
+		ResizableShape::drawOnlyEdgePoints();
+	}
 
 	void EditableBuilding::draw() {
 
@@ -406,15 +442,15 @@ namespace BuildingsEditor {
 			view.setViewport(vp);
 			Main::render_window->setView(view);
 		}
-
+		
 
 		drawOnlyShape();
-		_building->drawOnlyFloor(_scale);
-		_building->drawOnlyWalls(_scale);
-		_building->drawOnlyRoof(_scale);
+		drawOnlyFloor();
+		drawOnlyWalls();
+		drawOnlyRoof();
 		drawOnlyEdgePoints();
 
-
+		
 
 	}
 }

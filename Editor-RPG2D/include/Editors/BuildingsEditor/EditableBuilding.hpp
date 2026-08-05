@@ -26,12 +26,14 @@ namespace BuildingsEditor {
 
 		sf::Vector2i clampPosition(sf::Vector2i position);
 
-		void drawOnlyShape();
-		void drawOnlyEdgePoints();
-
 		virtual void cursorHover();
 		virtual void handleEvent(const sf::Event& event);
 		virtual void update();
+		void drawOnlyShape();
+		void drawOnlyFloor();
+		void drawOnlyWalls();
+		void drawOnlyRoof();
+		void drawOnlyEdgePoints();
 		virtual void draw();
 	};
 }

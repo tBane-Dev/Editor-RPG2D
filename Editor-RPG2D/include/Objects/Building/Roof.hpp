@@ -12,7 +12,7 @@ public:
 	~Roof();
 
 	virtual void generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i positiion, float scale = 1.f);
-	virtual void draw(sf::RenderTarget& target, float scale = 1.0f);
+	virtual void draw(float scale = 1.0f);
 };
 
 class FlatRoof : public Roof {
@@ -28,7 +28,7 @@ public:
 	void generateParts(sf::Vector2i position, float scale = 1.0f);
 	void generateOverhang(sf::Vector2i position, float scale = 1.0f);
 	virtual void generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i position, float scale = 1.f);
-	virtual void draw(sf::RenderTarget& target, float scale = 1.0f);
+	virtual void draw(float scale = 1.0f);
 };
 
 class GableRoof : public Roof {
@@ -38,5 +38,5 @@ public:
 	~GableRoof();
 
 	virtual void generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i position, float scale = 1.f);
-	virtual void draw(sf::RenderTarget& target, float scale = 1.0f);
+	virtual void draw(float scale = 1.0f);
 };
