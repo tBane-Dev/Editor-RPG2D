@@ -207,7 +207,7 @@ namespace PrefabsEditor {
 					if (!animations_manager->getAnimations(animName).expired()) {
 
 						if(!editor->_animator)
-							editor->_animator = std::make_shared<Animator>(animations_manager->getAnimations(animName), 0.2f);
+							editor->_animator = std::make_shared<Animator>(animations_manager->getAnimations(animName));
 						else
 							editor->_animator->_animations = animations_manager->getAnimations(animName);
 						

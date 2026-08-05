@@ -40,7 +40,7 @@ namespace AnimationsEditor {
 		
 					editor->_animations = animations;
 					editor->_tempAnimations = std::make_shared<Animations>(*editor->_animations);
-					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
+					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations);
 		
 					editor->_name_panel->loadAnimations();
 					editor->_sprite_sheet_panel->loadAnimations();

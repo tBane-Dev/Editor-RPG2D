@@ -24,7 +24,6 @@ Monster::Monster(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 	_direction = Direction::Down;
 
 	_animator->setRandFrame();
-	_animator->_interval = 0.125f; // monsters are fasters than static animated objects
 
 	_path = std::make_shared<Path>();
 	_path->setStartPoint(_position);
@@ -55,7 +54,7 @@ void Monster::update() {
 	if (_state == MonsterState::Moving) {
 		_animator->_timer += deltaTime.asSeconds();
 
-		if (_animator->_timer >= _animator->_interval) {
+		if (_animator->_timer >= _animator->_animations.lock()->_interval) {
 			_animator->_timer = 0.0f;
 
 			if (_path->isEmpty() || _position == _path->getEndPoint()) {

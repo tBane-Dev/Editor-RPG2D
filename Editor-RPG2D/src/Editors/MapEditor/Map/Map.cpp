@@ -134,8 +134,8 @@ std::shared_ptr<Chunk> Map::getChunkByTileGlobalCoords(int x, int y) {
 
 std::shared_ptr<Chunk> Map::getChunkByGlobalPosition() {
 
-	int x = std::floor((float)MapEditor::editor->_cursor_on_map->_position.x / (float)Tile::tileSize);
-	int y = std::floor((float)MapEditor::editor->_cursor_on_map->_position.y / (float)Tile::tileSize);
+	int x = std::floor((float)MapEditor::editor->_cursor_on_map->_globalPosition.x / (float)Tile::tileSize);
+	int y = std::floor((float)MapEditor::editor->_cursor_on_map->_globalPosition.y / (float)Tile::tileSize);
 
 	return getChunkByTileGlobalCoords(x, y);
 }
@@ -194,6 +194,14 @@ void Map::setVisibleChunks() {
 	MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.clear();
 	
 	for(auto& chunk : _chunks) {
+		
+		for (auto& object : chunk->_gameObjectsOnMap) {
+			if (object->_isSelected) {
+				chunk->setVisible();
+				break;;
+			}
+		}
+
 		if (MapEditor::editor->_camera->_visibleRect.findIntersection(chunk->getGameObjectsOnMapRect())) {
 			chunk->setVisible();
 		}

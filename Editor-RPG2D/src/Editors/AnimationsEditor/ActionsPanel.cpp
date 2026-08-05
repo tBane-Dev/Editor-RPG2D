@@ -78,6 +78,7 @@ namespace AnimationsEditor {
 			editor->_animations->_offsetX = editor->_tempAnimations->_offsetX;
 			editor->_animations->_offsetY = editor->_tempAnimations->_offsetY;
 			editor->_animations->_texture = editor->_tempAnimations->_texture;
+			editor->_animations->_interval = editor->_tempAnimations->_interval;
 
 			editor->_list_panel->loadAll();
 			};
@@ -141,7 +142,7 @@ namespace AnimationsEditor {
 				editor->_animations = animations_manager->getAnimations(editor->_list_panel->_selectedItemIndex).lock();
 				if (editor->_animations) {
 					editor->_tempAnimations = std::make_shared<Animations>(*editor->_animations);
-					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
+					editor->_animator = std::make_shared<Animator>(editor->_tempAnimations);
 				}
 				else {
 					editor->_tempAnimations = nullptr;

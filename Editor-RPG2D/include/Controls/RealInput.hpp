@@ -3,14 +3,14 @@
 #include "SFML//Graphics.hpp"
 #include <functional>
 
-enum class NumberInputState { Idle, Hover };
-enum class NumberInputEditState { None, TextEntered, Selecting, Selected};
+enum class RealInputState { Idle, Hover };
+enum class RealInputEditState { None, TextEntered, Selecting, Selected};
 
-bool isInteger(std::wstring text);
-std::wstring deleteStartZeros(std::wstring text);
-std::wstring clamp(std::wstring numberStr, int min, int max);
+bool haveDot(std::wstring text);
+bool isFloat(std::wstring text);
+std::wstring clamp(std::wstring numberStr, float min, float max);
 
-class NumberInput : public Element {
+class RealInput : public Element {
 public:
 
 	sf::IntRect _rect;
@@ -24,17 +24,18 @@ public:
 	sf::Color _outlineColor;
 
 	int _characterSize;
-	int _limitCharacters;
-	int _minValue = std::numeric_limits<int>::min();
-	int _maxValue = std::numeric_limits<int>::max();
+	int _limitCharactersBeforeDot;
+	int _limitCharactersAfterDot;
+	float _minValue = std::numeric_limits<float>::lowest();
+	float _maxValue = std::numeric_limits<float>::max();
 
 	std::unique_ptr<sf::Text> _defaultText;
 	std::wstring _textStr;
 	std::unique_ptr<sf::Text> _text;
 
-	NumberInputState _state;
+	RealInputState _state;
 	sf::Time _lastCLickTime;
-	NumberInputEditState _editState;
+	RealInputEditState _editState;
 	int _cursorPosition;
 	int _selectionStart, _selectionEnd;
 
@@ -43,19 +44,19 @@ public:
 	std::function<void()> _onEnteredFunction;
 	
 
-	NumberInput(sf::Vector2i size, std::wstring defaultText, int limitCharacters, int characterSize);
-	~NumberInput();
+	RealInput(sf::Vector2i size, std::wstring defaultText, int limitCharactersBeforeDot, int limitCharactersAdterDot, int characterSize);
+	~RealInput();
 	
 	void setColors(sf::Color textEnteredColor, sf::Color hoverColor, sf::Color idleColor, sf::Color outlineColor);
 	void setPosition(sf::Vector2i position);
-	void setMinValue(int minValue);
-	void setMaxValue(int maxValue);
-	void setRange(int min, int max);
+	void setMinValue(float minValue);
+	void setMaxValue(float maxValue);
+	void setRange(float min, float max);
 	void setText(std::wstring text);
 	void setValidatedText(std::wstring text);
 	void setCursorOnEndText();
-	void setLimitCharacters(int limitCharacters);
-	int getNumber();
+	void setLimitCharacters(int limitCharactersBeforeDot, int limitCharactersAfterDot);
+	float getNumber();
 	sf::Vector2i getPosition();
 	sf::Vector2i getSize();
 	void positioningCursorByMouse();

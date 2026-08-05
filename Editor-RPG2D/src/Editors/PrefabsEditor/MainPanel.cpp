@@ -231,7 +231,7 @@ namespace PrefabsEditor {
 						std::shared_ptr<GameObject> newObject = std::dynamic_pointer_cast<GameObject>(PrefabsEditor::editor->_palette->_slots->_selectedSlot->_object.lock());
 
 						editor->_object = newObject;
-						editor->_animator = std::make_shared<Animator>(newObject->getAnimations(), 0.2f);
+						editor->_animator = std::make_shared<Animator>(newObject->getAnimations());
 
 						editor->_main_panel->_name->setText(newObject->_name);
 						editor->_main_panel->_type->setText(ObjectTypeToWString(newObject->_type));

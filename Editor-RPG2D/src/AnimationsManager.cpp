@@ -3,13 +3,14 @@
 #include "BinaryWriter.hpp"
 #include "BinaryReader.hpp"
 
-Animations::Animations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount, bool& loadingStatus, int offsetX, int offsetY) {
+Animations::Animations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount, bool& loadingStatus, int offsetX, int offsetY, float interval) {
 	
 	_path = path;
 
 	_frameSize = frameSize;
 	_animationsCount = animationsCount;
 	_framesCount = framesCount;
+	
 
 	_texture = textures_manager->getTexture(path);
 
@@ -19,9 +20,13 @@ Animations::Animations(std::wstring path, sf::Vector2i frameSize, int animations
 	if (!_texture) {
         loadingStatus = false;
     }
+
+	_interval = interval;
+
+	
 }
 
-Animations::Animations(std::wstring name, std::shared_ptr<Texture> texture, sf::Vector2i frameSize, int animationsCount, int framesCount, int offsetX, int offsetY) {
+Animations::Animations(std::wstring name, std::shared_ptr<Texture> texture, sf::Vector2i frameSize, int animationsCount, int framesCount, int offsetX, int offsetY, float interval) {
 	_path = name;
 
 	_frameSize = frameSize;
@@ -32,6 +37,8 @@ Animations::Animations(std::wstring name, std::shared_ptr<Texture> texture, sf::
 
 	_offsetX = offsetX;
 	_offsetY = offsetY;
+
+	_interval = interval;
 }
 
 Animations::~Animations() {
@@ -105,7 +112,7 @@ int AnimationsManager::getAnimationsCount() {
 	return (int)_animations.size();
 }
 
-int AnimationsManager::addAnimations(std::wstring name, std::shared_ptr<Texture> texture, sf::Vector2i frameSize, int animationsCount, int framesCount) {
+int AnimationsManager::addAnimations(std::wstring name, std::shared_ptr<Texture> texture, sf::Vector2i frameSize, int animationsCount, int framesCount, float interval) {
 	std::shared_ptr<Animations> animations = std::make_shared<Animations>(name, texture, frameSize, animationsCount, framesCount);
 	_animations.push_back(animations);
 	return _animations.size() - 1;
@@ -131,6 +138,7 @@ void AnimationsManager::save(std::ofstream& saver) {
 		writer.write_int32(a->_offsetX);
 		writer.write_int32(a->_offsetY);
 		writer.write_Image(a->_texture->_texture->copyToImage());
+		writer.write_float(a->_interval);
 
 		//DebugLog(L"Saved animations: " + a->_path);
 		//DebugLog(L"Frame size: " + std::to_wstring(a->_frameSize.x) + L"x" + std::to_wstring(a->_frameSize.y));
@@ -138,6 +146,7 @@ void AnimationsManager::save(std::ofstream& saver) {
 		//DebugLog(L"Frames count: " + std::to_wstring(a->_framesCount));
 		//DebugLog(L"Offset: " + std::to_wstring(a->_offsetX) + L"," + std::to_wstring(a->_offsetY));
 		//DebugLog(L"Texture size: " + std::to_wstring(a->_texture->getSize().x) + L"x" + std::to_wstring(a->_texture->getSize().y));
+		//DebugLog(L"Interval: " + std::to_wstring(a->_interval));
 		//DebugLog(L"----");
 	}
 }
@@ -157,8 +166,9 @@ void AnimationsManager::load(std::ifstream& loader) {
 		int offsetX = reader.read_int32();
 		int offsetY = reader.read_int32();
 		std::shared_ptr<sf::Image> image = std::make_shared<sf::Image>(reader.read_Image());
+		float interval = reader.read_float();
 		std::shared_ptr<Texture> texture = std::make_shared<Texture>(path, image);
-		std::shared_ptr<Animations> animations = std::make_shared<Animations>(path, texture, frameSize, animationsCount, framesCount, offsetX, offsetY);
+		std::shared_ptr<Animations> animations = std::make_shared<Animations>(path, texture, frameSize, animationsCount, framesCount, offsetX, offsetY, interval);
 		addAnimations(animations);
 
 		//DebugLog(L"Loaded animations: " + path);
@@ -167,6 +177,7 @@ void AnimationsManager::load(std::ifstream& loader) {
 		//DebugLog(L"Frames count: " + std::to_wstring(framesCount));
 		//DebugLog(L"Offset: " + std::to_wstring(offsetX) + L"," + std::to_wstring(offsetY));
 		//DebugLog(L"Texture size: " + std::to_wstring(texture->getSize().x) + L"x" + std::to_wstring(texture->getSize().y));
+		//DebugLog(L"Interval: " + std::to_wstring(animations->_interval));
 		//DebugLog(L"----");
 	}
 }

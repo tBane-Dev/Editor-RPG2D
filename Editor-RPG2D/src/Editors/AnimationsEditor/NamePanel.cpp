@@ -30,7 +30,7 @@ namespace AnimationsEditor {
 				editor->_tempAnimations = std::make_shared<Animations>(_name->getText(), nullptr, sf::Vector2i(0, 0), 1, 1);
 
 			if (!editor->_animator)
-				editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
+				editor->_animator = std::make_shared<Animator>(editor->_tempAnimations);
 
 			editor->_tempAnimations->_path = _name->getText();
 

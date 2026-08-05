@@ -1,12 +1,11 @@
 #include "Animator.hpp"
 #include "Time.hpp"
 
-Animator::Animator(std::weak_ptr<Animations> animations, float interval) {
+Animator::Animator(std::weak_ptr<Animations> animations) {
 	_animations = animations;
 	_animation = 0;
 	_frame = 0;
 	_timer = 0.0f;
-	_interval = interval;
 	_isPlaying = false;
 }
 
@@ -78,7 +77,7 @@ void Animator::setRandTime() {
 	if (_animations.expired())
 		return;
 
-	_timer = float(rand()%5+3) /  5.f * _interval;
+	_timer = float(rand()%5+3) /  5.f * _animations.lock()->_interval;
 }
 
 void Animator::setRandFrame() {
@@ -114,9 +113,9 @@ void Animator::update() {
 
 	_timer += deltaTime.asSeconds();
 
-	if (_timer >= _interval) {
+	if (_timer >= _animations.lock()->_interval) {
 
-		_timer -= _interval;
+		_timer -= _animations.lock()->_interval;
 		_frame++;
 
 		if (_frame >= _animations.lock()->_framesCount) {

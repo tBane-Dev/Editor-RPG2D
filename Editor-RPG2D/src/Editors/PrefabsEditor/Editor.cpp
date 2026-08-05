@@ -51,7 +51,7 @@ namespace PrefabsEditor {
 
 	void Editor::createAnimator() {
 		if (!_object.expired())
-			_animator = std::make_shared<Animator>(_object.lock()->getAnimations(), 0.2f);
+			_animator = std::make_shared<Animator>(_object.lock()->getAnimations());
 	}
 
 	void Editor::createAnimationPanel() {

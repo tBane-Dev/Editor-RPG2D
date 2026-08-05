@@ -16,14 +16,7 @@ GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 		_type = _prefab.lock()->_type;
 	}
 
-	float animationInterval = 0.2f;
-	if (_prefab.lock()->getName() == L"tree_1") animationInterval = 0.6f;
-	if (_prefab.lock()->getName() == L"bush") animationInterval = 0.7f;
-	if (_prefab.lock()->getName() == L"reed_1") animationInterval = 0.4f;
-	if (_prefab.lock()->getName() == L"reed_2") animationInterval = 0.4f;
-
-	_animator = std::make_shared<Animator>((!_prefab.expired())?prefab.lock()->getAnimations() : std::weak_ptr<Animations>(), animationInterval);
-
+	_animator = std::make_shared<Animator>((!_prefab.expired())?prefab.lock()->getAnimations() : std::weak_ptr<Animations>());
 
 	_animator->setRandFrame();
 	_animator->setRandTime();

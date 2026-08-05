@@ -58,7 +58,7 @@ namespace AnimationsEditor {
 					editor->_tempAnimations->_framesCount = 1;
 				}
 
-				editor->_animator = std::make_shared<Animator>(editor->_tempAnimations, 0.2f);
+				editor->_animator = std::make_shared<Animator>(editor->_tempAnimations);
 
 				AnimationsEditor::editor->_sprite_sheet_panel->setTextInputsRange();
 				AnimationsEditor::editor->_sprite_sheet_panel->loadAnimations();
@@ -104,6 +104,10 @@ namespace AnimationsEditor {
 		_f->setPosition(sf::Vector2i(startPosition.x, _a->getPosition().y + _a->getSize().y + distance));
 		_f->setRange(0, 0);
 
+		_i = std::make_shared<RealInput>(sf::Vector2i(256, 30), L"--", 2, 3, 18);
+		_i->setPosition(sf::Vector2i(startPosition.x, _f->getPosition().y + _f->getSize().y + distance));
+		_i->setRange(0.1f, 10.0f);
+
 		// texts labels
 		int x = _x->getPosition().x - 32;
 
@@ -130,6 +134,10 @@ namespace AnimationsEditor {
 		_fLabel = std::make_unique<sf::Text>(basicFont, L"f", 18);
 		_fLabel->setFillColor(basic_text_color);
 		_fLabel->setPosition(sf::Vector2f(x - _fLabel->getGlobalBounds().size.x / 2, _f->getPosition().y));
+
+		_iLabel = std::make_unique<sf::Text>(basicFont, L"i", 18);
+		_iLabel->setFillColor(basic_text_color);
+		_iLabel->setPosition(sf::Vector2f(x - _iLabel->getGlobalBounds().size.x / 2, _i->getPosition().y));
 
 		// text inputs functions
 		_x->_onEditedFunction = [this]() {
@@ -199,6 +207,17 @@ namespace AnimationsEditor {
 			}
 		};
 
+		_i->_onEditedFunction = [this]() {
+			if (editor->_animations) {
+				float i = _i->getNumber();
+				if (i > 0 && i <= _i->_maxValue) {
+					editor->_tempAnimations->_interval = i;
+					editor->_preview_panel->loadAnimations();
+					editor->_actions_panel->setButtonsActivity();
+				}
+			}
+			};
+
 
 		loadAnimations();
 	}
@@ -215,6 +234,7 @@ namespace AnimationsEditor {
 		_h->setText(L"");
 		_a->setText(L"");
 		_f->setText(L"");
+		_i->setText(L"");
 
 		if (!editor->_tempAnimations)
 			return;
@@ -225,6 +245,12 @@ namespace AnimationsEditor {
 		_h->setText(std::to_wstring(editor->_tempAnimations->_frameSize.y));
 		_a->setText(std::to_wstring(editor->_tempAnimations->_animationsCount));
 		_f->setText(std::to_wstring(editor->_tempAnimations->_framesCount));
+
+		std::ostringstream ss;
+		ss << std::fixed << std::setprecision(3) << editor->_tempAnimations->_interval;
+		std::string text = ss.str();
+		std::wstring intervalText(text.begin(), text.end());
+		_i->setText(intervalText);
 	}
 
 	void SpriteSheetPanel::setTextInputsRange() {
@@ -237,6 +263,7 @@ namespace AnimationsEditor {
 		_h->setMaxValue(editor->_tempAnimations->_texture->getSize().y);
 		_a->setMaxValue(editor->_tempAnimations->_texture->getSize().y);
 		_f->setMaxValue(editor->_tempAnimations->_texture->getSize().x);
+		_i->setMaxValue(10.0f);
 	}
 
 	void SpriteSheetPanel::cursorHover() {
@@ -250,6 +277,7 @@ namespace AnimationsEditor {
 		_h->cursorHover();
 		_a->cursorHover();
 		_f->cursorHover();
+		_i->cursorHover();
 	}
 
 	void SpriteSheetPanel::handleEvent(const sf::Event& event) {
@@ -263,6 +291,7 @@ namespace AnimationsEditor {
 		_h->handleEvent(event);
 		_a->handleEvent(event);
 		_f->handleEvent(event);
+		_i->handleEvent(event);
 	}
 
 	void SpriteSheetPanel::update() {
@@ -276,6 +305,7 @@ namespace AnimationsEditor {
 		_h->update();
 		_a->update();
 		_f->update();
+		_i->update();
 	}
 
 	void SpriteSheetPanel::draw() {
@@ -362,6 +392,7 @@ namespace AnimationsEditor {
 		_h->draw();
 		_a->draw();
 		_f->draw();
+		_i->draw();
 
 		// text labels
 		Main::render_window->draw(*_xLabel);
@@ -370,6 +401,7 @@ namespace AnimationsEditor {
 		Main::render_window->draw(*_hLabel);
 		Main::render_window->draw(*_aLabel);
 		Main::render_window->draw(*_fLabel);
+		Main::render_window->draw(*_iLabel);
 
 		
 	}
