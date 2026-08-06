@@ -307,15 +307,7 @@ void GameObjectsOnMap::cursorHover() {
 void GameObjectsOnMap::update() {
 
 	for (auto& object : _visibleGameObjectsOnMap) {
-		if (object->_type == ObjectType::Building) {
-			object->update();
-		}
-	}
-
-	for (auto& object : _visibleGameObjectsOnMap) {
-		if (object->_type != ObjectType::Building) {
-			object->update();
-		}
+		object->update();
 	}
 }
 

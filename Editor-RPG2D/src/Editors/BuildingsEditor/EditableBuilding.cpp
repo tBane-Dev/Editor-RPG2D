@@ -187,6 +187,7 @@ namespace BuildingsEditor {
 		resizeFloor(offsetX, offsetY);
 		resizeWalls(offsetX/2, offsetY/2);
 		resizeRoof();
+		_building->generateCollider(_scale);
 		setPosition(_rect.position);
 		_building->setPosition(_rect.position);
 	}
@@ -210,6 +211,8 @@ namespace BuildingsEditor {
 		if (rect.contains(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition)) {
 			ResizableShape::cursorHover();
 		}
+
+		_building->cursorHover();
 		
 	}
 
@@ -219,6 +222,10 @@ namespace BuildingsEditor {
 
 		if (!(BuildingsEditor::editor->_building_panel->_building.get() == this && rect.contains(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition)) && GUI_manager->Element_pressed == nullptr)
 			return;
+
+		if (_state == EditableBuildingStates::Resizing) {
+			_state = EditableBuildingStates::Idle;
+		}
 
 		for (auto& point : _edgePoints) {
 			point->handleEvent(event);
@@ -352,31 +359,31 @@ namespace BuildingsEditor {
 			_building->generateFloorVertexArray(_scale);
 			_building->generateWalls(_scale);
 			_building->generateRoofs(_scale);
+			_building->generateCollider(_scale);
 			return;
 		}
-
+		 
 		if (_state == EditableBuildingStates::Resizing) {
+			std::wcout << L"EditableBuilding::update() - _state == Resizing" << std::endl;
 			for (auto& point : _edgePoints) {
 				if(point == GUI_manager->Element_pressed) {
 					resize(point);
 					sf::Vector2i newPos = clampPosition(ResizableShape::getPosition());
 					ResizableShape::setPosition(newPos);
-					_building->setPosition(newPos);
-					
-					
-
+					_building->update();
 					return;
 				}
+			}
+
+			for (auto& point : _edgePoints) {
+				point->update();
 			}
 
 			return;
 		}
 
+		std::wcout << L"EditableBuilding::update() - _state == Idle" << std::endl;
 		_building->update();
-
-		for (auto& point : _edgePoints) {
-			point->update();
-		}
 	}
 
 	void EditableBuilding::drawOnlyShape() {
@@ -413,7 +420,6 @@ namespace BuildingsEditor {
 			Main::render_window->setView(view);
 		}
 		
-
 		drawOnlyShape();
 		_building->drawOnlyFloor();
 		_building->drawOnlyWalls(_scale);

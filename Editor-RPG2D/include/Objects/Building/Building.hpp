@@ -27,7 +27,7 @@ class Building : public GameObjectOnMap {
 public:
 
 
-	bool _renderOutsideLook = true;
+	bool _renderOutsideLook;
 
 	sf::VertexArray _floorVertexArray;
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
@@ -43,6 +43,7 @@ public:
 	void generateWalls(float scale = 1.0f, bool renderOutsideLook = false);	
 	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
 	void generateRoofs(float scale = 1.0f);
+	void generateCollider(float scale = 1.0f);
 
 	void addWallsToGameObjects();
 	void removeWallsFromGameObjects();

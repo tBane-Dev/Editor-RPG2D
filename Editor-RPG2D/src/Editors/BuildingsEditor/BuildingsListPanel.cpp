@@ -39,7 +39,8 @@ namespace BuildingsEditor {
 						auto panel = BuildingsEditor::editor->_building_panel;
 						panel->_buildingPrefab = buildingPrefab;
 						panel->_building->_building->loadPrefab(buildingPrefab);
-						
+						panel->_building->_building->generate();
+
 						sf::Vector2i centeredPosition = panel->getPosition() + (panel->getSize() / 2 - buildingPrefab->_floorSize * 16 / 2);
 						panel->_building->_rect.position = centeredPosition;
 						panel->_building->_rect.size = buildingPrefab->_floorSize * 16;

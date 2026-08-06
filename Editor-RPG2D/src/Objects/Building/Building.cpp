@@ -85,6 +85,7 @@ Building::Building(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefab.lock());
 
+	_renderOutsideLook = true;
 	
 }
 
@@ -96,6 +97,7 @@ void Building::generate() {
 	generateFloorVertexArray();
 	generateWalls();
 	generateRoofs();
+	generateCollider();
 }
 
 void Building::setPosition(sf::Vector2i position) {
@@ -117,13 +119,7 @@ void Building::setPosition(sf::Vector2i position) {
 	}
 
 	generateRoofs(scale);
-
-	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
-
-
-
-	int border = 4;
-	_prefab.lock()->_collider = std::make_shared<RectangularCollider>(-border,-border, buildingPrefab->_floorSize.x * 16 + 2*border, buildingPrefab->_floorSize.y * 16 + 2*border);
+	generateCollider(scale);
 }
 
 void Building::generateFloorVertexArray(float scale) {
@@ -195,105 +191,102 @@ void Building::generateWalls(float scale, bool renderOutsideLook) {
 				// TOP TEXTURE RECT
 
 				sf::IntRect textureTopRect(textureBottomRect.position, sf::Vector2i(32, 32));
-
-				if (renderOutsideLook == false) {
 					
-					int left = (x > 0) ? walls[y * size.x + (x - 1)] : -1;
-					int right = (x < size.x - 1) ? walls[y * size.x + (x + 1)] : -1;
-					int top = (y - 1 >= 0) ? walls[(y - 1) * size.x + x] : -1;
-					int bottom = (y + 1 < size.y) ? walls[(y + 1) * size.x + x] : -1;
+				int left = (x > 0) ? walls[y * size.x + (x - 1)] : -1;
+				int right = (x < size.x - 1) ? walls[y * size.x + (x + 1)] : -1;
+				int top = (y - 1 >= 0) ? walls[(y - 1) * size.x + x] : -1;
+				int bottom = (y + 1 < size.y) ? walls[(y + 1) * size.x + x] : -1;
 
-					int topLeft = (x > 0 && y - 1 >= 0) ? walls[(y - 1) * size.x + (x - 1)] : -1;
-					int topRight = (x < size.x - 1 && y - 1 >= 0) ? walls[(y - 1) * size.x + (x + 1)] : -1;
-					int bottomLeft = (x > 0 && y + 1 < size.y) ? walls[(y + 1) * size.x + (x - 1)] : -1;
-					int bottomRight = (x < size.x - 1 && y + 1 < size.y) ? walls[(y + 1) * size.x + (x + 1)] : -1;
+				int topLeft = (x > 0 && y - 1 >= 0) ? walls[(y - 1) * size.x + (x - 1)] : -1;
+				int topRight = (x < size.x - 1 && y - 1 >= 0) ? walls[(y - 1) * size.x + (x + 1)] : -1;
+				int bottomLeft = (x > 0 && y + 1 < size.y) ? walls[(y + 1) * size.x + (x - 1)] : -1;
+				int bottomRight = (x < size.x - 1 && y + 1 < size.y) ? walls[(y + 1) * size.x + (x + 1)] : -1;
 
-					int i = 0;
-					if (left == -1 && right == -1 && top == -1 && bottom == -1) i = 1;
-					else if (left > -1 && right > -1 && top > -1 && bottom > -1) {
+				int i = 0;
+				if (left == -1 && right == -1 && top == -1 && bottom == -1) i = 1;
+				else if (left > -1 && right > -1 && top > -1 && bottom > -1) {
 
-						int edgeMask = 0;
+					int edgeMask = 0;
 
-						if (topLeft == -1) edgeMask |= 1;
-						if (topRight == -1) edgeMask |= 2;
-						if (bottomRight == -1) edgeMask |= 4;
-						if (bottomLeft == -1) edgeMask |= 8;
+					if (topLeft == -1) edgeMask |= 1;
+					if (topRight == -1) edgeMask |= 2;
+					if (bottomRight == -1) edgeMask |= 4;
+					if (bottomLeft == -1) edgeMask |= 8;
 
-						int crossParts[16] = {
-							0,		// 0000 - no edges 
+					int crossParts[16] = {
+						0,		// 0000 - no edges 
 
-							12,		// 0001 - top-left
-							13,		// 0010 - top-right
-							16,		// 0011 - top-left + top-right
+						12,		// 0001 - top-left
+						13,		// 0010 - top-right
+						16,		// 0011 - top-left + top-right
 
-							14,		// 0100 - bottom-right
-							20,		// 0101 - top-left + bottom-right
-							17,		// 0110 - top-right + bottom-right
-							23,		// 0111 - top-left + top-right + bottom-right
+						14,		// 0100 - bottom-right
+						20,		// 0101 - top-left + bottom-right
+						17,		// 0110 - top-right + bottom-right
+						23,		// 0111 - top-left + top-right + bottom-right
 
-							15,		// 1000 - bottom-left
-							19,		// 1001 - top-left + bottom-left
-							21,		// 1010 - top-right + bottom-left
-							22,		// 1011 - top-left + top-right + bottom-left
+						15,		// 1000 - bottom-left
+						19,		// 1001 - top-left + bottom-left
+						21,		// 1010 - top-right + bottom-left
+						22,		// 1011 - top-left + top-right + bottom-left
 
-							18,		// 1100 - bottom-left + bottom-right
-							25,		// 1101 - top-left + bottom-left + bottom-right
-							24,		// 1110 - top-right + bottom-left + bottom-right
-							38		// 1111 - all four edges
-						};
+						18,		// 1100 - bottom-left + bottom-right
+						25,		// 1101 - top-left + bottom-left + bottom-right
+						24,		// 1110 - top-right + bottom-left + bottom-right
+						38		// 1111 - all four edges
+					};
 
-						i = crossParts[edgeMask];
-					}
-					else if (left > -1 && right > -1 && top > -1 && bottom > -1 && topLeft == -1 && topRight == -1 && bottomLeft == -1 && bottomRight == -1) i = 38;
-
-					// H rotated
-					else if (topLeft > -1 && top > -1 && topRight == -1 && left > -1 && right > -1 && bottom == -1) i = 30;
-					else if (topLeft == -1 && top > -1 && topRight > -1 && left > -1 && right > -1 && bottom == -1) i = 26;
-					else if (top == -1 && bottom > -1 && left > -1 && right > -1 && bottomLeft > -1 && bottomRight == -1) i = 28;
-					else if (top == -1 && bottom > -1 && left > -1 && right > -1 && bottomLeft == -1 && bottomRight > -1) i = 32;
-
-					// H
-					else if (top > -1 && bottom > -1 && left > -1 && right == -1 && topLeft > -1 && bottomLeft == -1) i = 29;
-					else if (top > -1 && bottom > -1 && left > -1 && right == -1 && topLeft == -1 && bottomLeft > -1) i = 33;
-					else if (top > -1 && bottom > -1 && right > -1 && left == -1 && topRight == -1 && bottomRight > -1) i = 27;
-					else if (top > -1 && bottom > -1 && right > -1 && left == -1 && topRight > -1 && bottomRight == -1) i = 31;
-
-					// T przypadki
-					else if (top > -1 && left > -1 && right > -1 && bottom == -1 && topLeft == -1 && topRight == -1) i = 34;
-					else if (bottom > -1 && left > -1 && right > -1 && top == -1 && bottomLeft == -1 && bottomRight == -1) i = 36;
-					else if (top > -1 && bottom > -1 && left > -1 && right == -1 && topLeft == -1 && bottomLeft == -1) i = 37;
-					else if (top > -1 && bottom > -1 && right > -1 && left == -1 && topRight == -1 && bottomRight == -1) i = 35;
-
-					else if (top == -1 && bottom == -1) {
-						if (left > -1 && right > -1) i = 7;
-						if (left == -1 && right > -1) i = 2;
-						if (left > -1 && right == -1) i = 3;
-					}
-					else if (left == -1 && right == -1) {
-						if (top > -1 && bottom > -1) i = 6;
-						if (top == -1 && bottom > -1) i = 4;
-						if (top > -1 && bottom == -1) i = 5;
-					}
-					else if (top == -1 && bottom > -1) {
-						if (left > -1 && right > -1) i = 44;
-						if (left == -1 && right > -1) { (bottomRight == -1) ? i = 8 : i = 39; }
-						if (left > -1 && right == -1) { (bottomLeft == -1) ? i = 9 : i = 40; };
-					}
-					else if (top > -1 && bottom == -1) {
-						if (left > -1 && right > -1) i = 46;
-						if (left == -1 && right > -1) { (topRight == -1) ? i = 10 : i = 41; }
-						if (left > -1 && right == -1) { (topLeft == -1) ? i = 11 : i = 42; };
-					}
-					else if (left == -1) {
-						i = 43;
-					}
-					else if (right == -1) {
-						i = 45;
-					}
-
-					textureTopRect.position = wallset->_groups[id]->walls[i].get();
+					i = crossParts[edgeMask];
 				}
-				
+				else if (left > -1 && right > -1 && top > -1 && bottom > -1 && topLeft == -1 && topRight == -1 && bottomLeft == -1 && bottomRight == -1) i = 38;
+
+				// H rotated
+				else if (topLeft > -1 && top > -1 && topRight == -1 && left > -1 && right > -1 && bottom == -1) i = 30;
+				else if (topLeft == -1 && top > -1 && topRight > -1 && left > -1 && right > -1 && bottom == -1) i = 26;
+				else if (top == -1 && bottom > -1 && left > -1 && right > -1 && bottomLeft > -1 && bottomRight == -1) i = 28;
+				else if (top == -1 && bottom > -1 && left > -1 && right > -1 && bottomLeft == -1 && bottomRight > -1) i = 32;
+
+				// H
+				else if (top > -1 && bottom > -1 && left > -1 && right == -1 && topLeft > -1 && bottomLeft == -1) i = 29;
+				else if (top > -1 && bottom > -1 && left > -1 && right == -1 && topLeft == -1 && bottomLeft > -1) i = 33;
+				else if (top > -1 && bottom > -1 && right > -1 && left == -1 && topRight == -1 && bottomRight > -1) i = 27;
+				else if (top > -1 && bottom > -1 && right > -1 && left == -1 && topRight > -1 && bottomRight == -1) i = 31;
+
+				// T przypadki
+				else if (top > -1 && left > -1 && right > -1 && bottom == -1 && topLeft == -1 && topRight == -1) i = 34;
+				else if (bottom > -1 && left > -1 && right > -1 && top == -1 && bottomLeft == -1 && bottomRight == -1) i = 36;
+				else if (top > -1 && bottom > -1 && left > -1 && right == -1 && topLeft == -1 && bottomLeft == -1) i = 37;
+				else if (top > -1 && bottom > -1 && right > -1 && left == -1 && topRight == -1 && bottomRight == -1) i = 35;
+
+				else if (top == -1 && bottom == -1) {
+					if (left > -1 && right > -1) i = 7;
+					if (left == -1 && right > -1) i = 2;
+					if (left > -1 && right == -1) i = 3;
+				}
+				else if (left == -1 && right == -1) {
+					if (top > -1 && bottom > -1) i = 6;
+					if (top == -1 && bottom > -1) i = 4;
+					if (top > -1 && bottom == -1) i = 5;
+				}
+				else if (top == -1 && bottom > -1) {
+					if (left > -1 && right > -1) i = 44;
+					if (left == -1 && right > -1) { (bottomRight == -1) ? i = 8 : i = 39; }
+					if (left > -1 && right == -1) { (bottomLeft == -1) ? i = 9 : i = 40; };
+				}
+				else if (top > -1 && bottom == -1) {
+					if (left > -1 && right > -1) i = 46;
+					if (left == -1 && right > -1) { (topRight == -1) ? i = 10 : i = 41; }
+					if (left > -1 && right == -1) { (topLeft == -1) ? i = 11 : i = 42; };
+				}
+				else if (left == -1) {
+					i = 43;
+				}
+				else if (right == -1) {
+					i = 45;
+				}
+
+				textureTopRect.position = wallset->_groups[id]->walls[i].get();
+								
 				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), std::dynamic_pointer_cast<Building>(shared_from_this()), textureBottomRect, textureTopRect, 3));
 				_wallsObjects.back()->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
 			}
@@ -319,6 +312,24 @@ void Building::generateRoofs(float scale) {
 
 	_roof = std::make_shared<FlatRoof>();
 	_roof->generate(bp->_wallsSize, bp->_walls, _position, scale);
+}
+
+void Building::generateCollider(float scale) {
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+
+	if (!bp)
+		return;
+
+	int border = 8;
+
+	int x = -float(border) * scale;
+	int y = -float(border) * scale;
+
+	int w = (float)(bp->_floorSize.x * 16 + 2 * border) * scale;
+	int h = (float)(bp->_floorSize.y * 16 + 2 * border) * scale;
+
+	_prefab.lock()->_collider = std::make_shared<RectangularCollider>(x, y, w, h);
+
 }
 
 void Building::addWallsToGameObjects() {
@@ -348,6 +359,7 @@ void Building::drawOnlyCollider() {
 	if (MapEditor::editor && MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1) {
 		_prefab.lock()->getCollider()->draw(getPosition());
 	}
+
 }
 
 void Building::drawOnlyFloor() {
@@ -384,25 +396,12 @@ void Building::drawOnlyRoof(float scale) {
 	if (!_roof)
 		return;
 
-	if (MapEditor::editor && Main::editor_manager->get_back() == MapEditor::editor) {
-		if (!_floorVertexArray.getBounds().contains(sf::Vector2f(MapEditor::editor->_cursor_on_map->_globalPosition))) {
-			_roof->draw(_position, scale);
-		};
-	}
-
-	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
-		if(BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
-			_roof->draw(_position, scale);
-		}
-		else if (!_floorVertexArray.getBounds().contains(sf::Vector2f(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition))) {
-			_roof->draw(_position, scale);
-		};
+	if (_renderOutsideLook) {
+		_roof->draw(_position, scale);
 	}
 }
 
 void Building::cursorHover() {
-
-	_renderOutsideLook = false;
 
 	if (_prefab.expired())
 		return;
@@ -410,66 +409,35 @@ void Building::cursorHover() {
 	std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(_prefab.lock()->getCollider());
 	if (!collider) return;
 
-	if(collider->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
-		MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
-		_renderOutsideLook = true;
+	bool oldRenderOutsideLook = _renderOutsideLook;
+
+	if (MapEditor::editor && Main::editor_manager->get_back() == MapEditor::editor) {
+		if (collider->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
+			MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+			_renderOutsideLook = false;
+		}
+		else {
+			_renderOutsideLook = true;
+		}
 	}
-	else {
-		_renderOutsideLook = false;
+
+	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
+
+		if(BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
+			_renderOutsideLook = true;
+		}
+		else if (collider->cursorHover(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition, getPosition())) {
+			_renderOutsideLook = false;
+		}
+		else {
+			_renderOutsideLook = true;
+		}
 	}
+
+	
 }
 
 void Building::update() {
-
-	bool newRenderOutsideLook = _renderOutsideLook;
-
-	auto prefab = _prefab.lock();
-
-	if (!prefab || !prefab->getCollider()) {
-		GameObjectOnMap::update();
-		return;
-	}
-
-	if (Main::editor_manager->get_back() == BuildingsEditor::editor) {
-
-		if (BuildingsEditor::editor
-			->_main_menu
-			->_render_outside_look
-			->_checkbox
-			->_value == 1)
-		{
-			newRenderOutsideLook = true;
-		}
-		else {
-			const bool cursorHover =
-				prefab->getCollider()->cursorHover(
-					BuildingsEditor::editor
-					->_building_panel
-					->_cursorOnBuilding
-					->_globalPosition,
-					getPosition()
-				);
-
-			newRenderOutsideLook = !cursorHover;
-		}
-	}
-	else if (Main::editor_manager->get_back() == MapEditor::editor) {
-
-		std::shared_ptr<GameObjectOnMap> hoveredObject =
-			MapEditor::editor
-			->_game_objects
-			->_hoveredGameObjectOnMap
-			.lock();
-
-		const bool cursorHover =
-			hoveredObject && hoveredObject.get() == this;
-
-		newRenderOutsideLook = !cursorHover;
-	}
-
-	if (newRenderOutsideLook != _renderOutsideLook) {
-		_renderOutsideLook = newRenderOutsideLook;
-	}
 
 	GameObjectOnMap::update();
 }
