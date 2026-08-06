@@ -292,13 +292,30 @@ void GameObjectsOnMap::load(std::ifstream& loader) {
 
 void GameObjectsOnMap::cursorHover() {
 	for (auto& object : _visibleGameObjectsOnMap) {
-		object->cursorHover();
+		if (object->_type == ObjectType::Building) {
+			object->cursorHover();
+		}
+	}
+
+	for (auto& object : _visibleGameObjectsOnMap) {
+		if (object->_type != ObjectType::Building) {
+			object->cursorHover();
+		}
 	}
 }
 
 void GameObjectsOnMap::update() {
+
 	for (auto& object : _visibleGameObjectsOnMap) {
-		object->update();
+		if (object->_type == ObjectType::Building) {
+			object->update();
+		}
+	}
+
+	for (auto& object : _visibleGameObjectsOnMap) {
+		if (object->_type != ObjectType::Building) {
+			object->update();
+		}
 	}
 }
 
@@ -307,6 +324,35 @@ void GameObjectsOnMap::draw() {
 	MapEditor::editor->_camera->setView();
 
 	for (auto& object : _visibleGameObjectsOnMap) {
-		object->draw();
+		if (object->_type == ObjectType::Building) {
+			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+			if (building) {
+				building->drawOnlyCollider();
+			}
+		}
+	}
+
+	for(auto& object : _visibleGameObjectsOnMap) {
+		if (object->_type == ObjectType::Building) {
+			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+			if (building) {
+				building->drawOnlyFloor();
+			}
+		}
+	}
+
+	for (auto& object : _visibleGameObjectsOnMap) {
+		if(object->_type != ObjectType::Building) {
+			object->draw();
+		}
+	}
+
+	for (auto& object : _visibleGameObjectsOnMap) {
+		if (object->_type == ObjectType::Building) {
+			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+			if (building) {
+				building->drawOnlyRoof();
+			}
+		}
 	}
 }

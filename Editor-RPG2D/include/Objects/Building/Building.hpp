@@ -16,7 +16,7 @@ public:
 	std::vector<int> _walls;
 	sf::Vector2i _wallsSize;
 
-	int _wallHeight = 128;
+	int _wallHeight = 3;
 
 	BuildingPrefab(std::wstring name, sf::Vector2i size);
 	BuildingPrefab(std::wstring name, const BuildingPrefab& other);
@@ -26,16 +26,12 @@ public:
 class Building : public GameObjectOnMap {
 public:
 
+
+	bool _renderOutsideLook = true;
+
 	sf::VertexArray _floorVertexArray;
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
-
 	std::shared_ptr<Roof> _roof;
-	//TO-DO - to delete
-	//std::vector<int> _roof;
-	//sf::Vector2i _roofSize;
-	//sf::VertexArray _roofVertexArray;
-	//std::vector<std::shared_ptr<Roof>> _roofsObjects;
-	//sf::VertexArray _roofOverhangVertexArray;
 
 	Building(std::weak_ptr<GameObject> prefab);
 	~Building();
@@ -45,4 +41,16 @@ public:
 	void generateWalls(float scale = 1.0f, bool renderOutsideLook = false);	
 	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
 	void generateRoofs(float scale = 1.0f);
+
+	void addWallsToGameObjects();
+	void removeWallsFromGameObjects();
+
+	void drawOnlyCollider();
+	void drawOnlyFloor();
+	void drawOnlyWalls(float scale = 1.0f);
+	void drawOnlyRoof(float scale = 1.0f);
+
+	virtual void cursorHover();
+	virtual void update();
+	virtual void draw(); // draw only roof
 };

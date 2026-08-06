@@ -10,6 +10,7 @@
 #include "Objects/Terrain.hpp"
 #include "Objects/Floor.hpp"
 #include "Objects/Wall.hpp"
+#include "Objects/Building/Building.hpp"
 
 
 namespace Components {
@@ -19,6 +20,7 @@ namespace Components {
 		static std::vector<std::shared_ptr<Terrain>> terrains;
 		static std::vector<std::shared_ptr<Floor>> floors;
 		static std::vector<std::shared_ptr<Wall>> walls;
+		static std::vector<std::shared_ptr<BuildingPrefab>> buildings;
 
 		sf::IntRect _rect;
 		std::shared_ptr<Categories> _categories;

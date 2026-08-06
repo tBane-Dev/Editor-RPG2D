@@ -3,6 +3,7 @@
 #include "Objects/Monster.hpp"
 #include "Objects/Nature.hpp"
 #include "Objects/Wall.hpp"
+#include "Objects/Building/Building.hpp"
 #include "BinaryWriter.hpp"
 #include "BinaryReader.hpp"
 #include "Objects/Collider.hpp"
@@ -161,6 +162,10 @@ void PrefabsManager::load(std::ifstream& loader) {
             addPrefab(prefab);
 		}
     }
+
+	// TO-DO - to delete after testing
+	std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"building", sf::Vector2i(8,8));
+	addPrefab(buildingPrefab);
 }
 
 
@@ -296,6 +301,10 @@ void PrefabsManager::loadBasicPrefabs() {
         );
         addPrefab(prefab);
     }
+
+    // TO-DO - to delete after testing
+    std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"building", sf::Vector2i(8, 8));
+    addPrefab(buildingPrefab);
 
     std::vector<std::shared_ptr<GameObject>> p;
     for (auto& prefab : _prefabs) {

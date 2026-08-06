@@ -3,39 +3,45 @@
 #include "Wallset.hpp"
 #include "RenderWindow.hpp"
 #include "DebugLog.hpp"
+#include "EditorsManager.hpp"
+#include "Editors/MapEditor/Editor.hpp"
+#include "Editors/BuildingsEditor/Editor.hpp"
 
-WallPrefab::WallPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh, int id) : GameObject(name, animations, origin, collider, mesh) {
+WallPrefab::WallPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh, int id, int height) : GameObject(name, animations, origin, collider, mesh) {
 	_type = ObjectType::Wall;
 	_id = id;
+	_height = height;
 }
 
 WallPrefab::~WallPrefab() {
 
 }
 
-Wall::Wall(std::weak_ptr<GameObject> prefab, sf::IntRect textureBottomRect, sf::IntRect textureTopRect) : GameObjectOnMap(prefab) {
+Wall::Wall(std::weak_ptr<GameObject> prefab, sf::IntRect textureBottomRect, sf::IntRect textureTopRect, int height) : GameObjectOnMap(prefab) {
 	_type = ObjectType::Wall;
 	_textureBottomRect = textureBottomRect;
 	_textureTopRect = textureTopRect;
+	_height = height;
 }
+
 
 Wall::~Wall() {
 
 }
 
-void Wall::draw(float scale, bool renderOutsideLook, int wallHeight) {
+void Wall::draw(float scale, bool renderOutsideLook) {
 
 	if (_prefab.expired()) return;
 
 	std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(_prefab.lock());
 	if (!wallPrefab) return;
 
-	float height = wallHeight;
 
 	if (renderOutsideLook) {
-		for (int i = 1; i < height / 32.f; i++) {
-			sf::Sprite spriteCenter(*wallset->_texture->_texture);
-			spriteCenter.setPosition(sf::Vector2f(_position.x, _position.y - (32.f * (float)(i - 1) * scale)));
+
+		sf::Sprite spriteCenter(*wallset->_texture->_texture);
+		for (int i = 1; i < _height ; i++) {
+			spriteCenter.setPosition(sf::Vector2f(_position.x, _position.y - (32.f * i * scale)));			
 			spriteCenter.setTextureRect(_textureBottomRect);
 			spriteCenter.setScale(sf::Vector2f(scale, scale));
 			Main::render_window->draw(spriteCenter);
@@ -61,6 +67,10 @@ void Wall::draw(float scale, bool renderOutsideLook, int wallHeight) {
 		spriteBottom.setScale(sf::Vector2f(scale, scale));
 		Main::render_window->draw(spriteBottom);
 	}
+}
 
-
+void Wall::draw() {
+	if (MapEditor::editor && Main::editor_manager->get_back() == MapEditor::editor) {
+		draw(1.f, true);
+	}
 }

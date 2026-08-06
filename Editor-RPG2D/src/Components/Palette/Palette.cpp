@@ -15,6 +15,7 @@ namespace Components {
 	std::vector<std::shared_ptr<Terrain>> Palette::terrains;
 	std::vector<std::shared_ptr<Floor>> Palette::floors;
 	std::vector<std::shared_ptr<Wall>> Palette::walls;
+	std::vector<std::shared_ptr<BuildingPrefab>> Palette::buildings;
 
 	Palette::Palette() : Element() {
 
@@ -34,6 +35,18 @@ namespace Components {
 		if(Palette::walls.empty()) {
 			for (int i = 0; i < wallset->_groups.size(); i += 1) {
 				Palette::walls.emplace_back(std::make_shared<Wall>(wallset->getPrefab(i)));
+			}
+		}
+
+		if(Palette::buildings.empty()) {
+
+			std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(ObjectType::Building);
+
+			for (int i = 0; i < prefabs.size(); i++) {
+				std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefabs[i]);
+
+				if (buildingPrefab)
+					Palette::buildings.emplace_back(buildingPrefab);
 			}
 		}
 

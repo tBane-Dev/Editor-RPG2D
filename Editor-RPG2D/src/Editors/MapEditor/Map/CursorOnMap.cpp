@@ -8,6 +8,8 @@
 #include "Objects/Terrain.hpp"
 #include "Objects/Monster.hpp"
 #include "Objects/Nature.hpp"
+#include "Objects/Building/Building.hpp"
+#include "PrefabsManager.hpp"
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 #include <typeinfo>
 #include "Animator.hpp"
@@ -144,6 +146,14 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
                     //DebugLog(std::to_wstring(_selectedObjects.size()));
 
+                }
+                else {
+                    std::shared_ptr<Building> building = std::make_shared<Building>(MapEditor::editor->_palette->buildings[0]);
+					building->setPosition(MapEditor::editor->_cursor_on_map->_globalPosition);
+					MapEditor::editor->_game_objects->addGameObject(building);
+					building->addWallsToGameObjects();
+
+                    
                 }
             }
             else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); (mm || MapEditor::editor->_camera->_isMoving) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {

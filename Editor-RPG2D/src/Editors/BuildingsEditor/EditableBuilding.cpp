@@ -29,8 +29,8 @@ namespace BuildingsEditor {
 		setOutlineColor(sf::Color(47, 47, 47));
 
 		setStep(32);
-		setMinSize(sf::Vector2i(7 * 32, 7 * 32));
-		setMaxSize(sf::Vector2i(19 * 32, 19 * 32));
+		setMinSize(sf::Vector2i(8 * 32, 8 * 32));
+		setMaxSize(sf::Vector2i(24 * 32, 24 * 32));
 
 		sf::Vector2i panelSize = BuildingsEditor::editor->_building_panel->getSize();
 		sf::Vector2i panelPosition = BuildingsEditor::editor->_building_panel->getPosition();
@@ -377,43 +377,7 @@ namespace BuildingsEditor {
 		ResizableShape::drawOnlyRect();
 	}
 
-	void EditableBuilding::drawOnlyFloor() {
-
-		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
-		if (!bp) return;
-
-		Main::render_window->draw(_building->_floorVertexArray, sf::RenderStates(bp->_floorset->_texture.get()));
-	}
-
-	void EditableBuilding::drawOnlyWalls() {
-
-		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
-		if (!bp) return;
-
-		sf::Vector2i& size = bp->_wallsSize;
-
-		for (int y = 0; y < size.y; y++) {
-			for (int x = 0; x < size.x; x++) {
-				int index = y * size.x + x;
-				if (index < _building->_wallsObjects.size()) {
-					std::shared_ptr<Wall> wall = _building->_wallsObjects[index];
-					if (wall) {
-						wall->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * _scale, (float)y * 32.f * _scale));
-						wall->draw(_scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
-					}
-				}
-			}
-		}
-	}
-
-	void EditableBuilding::drawOnlyRoof() {
-
-		if (!_building->_roof) 
-			return;
-		
-		_building->_roof->draw(_scale);
-	}
-
+	
 	void EditableBuilding::drawOnlyEdgePoints() {
 		ResizableShape::drawOnlyEdgePoints();
 	}
@@ -445,9 +409,9 @@ namespace BuildingsEditor {
 		
 
 		drawOnlyShape();
-		drawOnlyFloor();
-		drawOnlyWalls();
-		drawOnlyRoof();
+		_building->drawOnlyFloor();
+		_building->drawOnlyWalls(_scale);
+		_building->drawOnlyRoof(_scale);
 		drawOnlyEdgePoints();
 
 		

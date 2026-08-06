@@ -4,6 +4,7 @@
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include "Editors/BuildingsEditor/NamePanel.hpp"
 #include "ShadersManager.hpp"
+#include "EditorsManager.hpp"
 
 namespace BuildingsEditor {
 
@@ -11,7 +12,7 @@ namespace BuildingsEditor {
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getSize().x + 4, 768 + 4),
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getPosition().x, BuildingsEditor::editor->_name_panel->getPosition().y + BuildingsEditor::editor->_name_panel->getSize().y + 4)) {
 
-		_buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building", sf::Vector2i(9, 9));
+		_buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building", sf::Vector2i(10, 10));
 		_cursorOnBuilding = std::make_shared<CursorOnBuilding>();
 	}
 
@@ -69,14 +70,12 @@ namespace BuildingsEditor {
 
 		// draw building
 		_building->drawOnlyShape();
-		_building->drawOnlyFloor();
-		_building->drawOnlyWalls();
+		_building->_building->drawOnlyFloor();
+		_building->_building->drawOnlyWalls(_building->_scale);
 
-
-		_building->_building->generateWalls(_building->_scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
 
 		if (BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
-			_building->drawOnlyRoof();
+			_building->_building->drawOnlyRoof(_building->_scale);
 		}
 
 		// draw grid

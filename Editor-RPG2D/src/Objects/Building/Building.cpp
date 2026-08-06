@@ -2,9 +2,13 @@
 #include "Objects/Building/Building.hpp"
 #include "Wallset.hpp"
 #include "Roofset.hpp"
+#include "EditorsManager.hpp"
+#include "Editors/BuildingsEditor/Editor.hpp"
+#include "Editors/MapEditor/Editor.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include "Editors/BuildingsEditor/BuildingPanel.hpp"
 #include <queue>
+#include "DebugLog.hpp"
 
 std::shared_ptr<Texture> BuildingPrefab::_floorset = nullptr;	
 
@@ -37,12 +41,14 @@ BuildingPrefab::BuildingPrefab(std::wstring name, sf::Vector2i size) : GameObjec
 	for (int y = 0; y < _wallsSize.y; ++y) {
 		for (int x = 0; x < _wallsSize.x; ++x) {
 			if (x == 0 || y == 0 || x == _wallsSize.x - 1 || y == _wallsSize.y - 1) {
-				if (!(y == _wallsSize.y - 1 && x == _wallsSize.x / 2)) {
+				if (!(y == _wallsSize.y - 1 && x == _wallsSize.x / 2 || y == _wallsSize.y - 1 && x == _wallsSize.x / 2 - 1)) {
 					_walls[y * _wallsSize.x + x] = 1;
 				}
 			}
 		}
 	}
+
+	_collider = std::make_shared<RectangularCollider>(0, 0, _floorSize.x, _floorSize.y);
 }
 
 BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) : GameObject(name) {
@@ -79,8 +85,9 @@ Building::Building(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefab.lock());
 
-	_roof = std::make_shared<FlatRoof>();
-	_roof->generate(buildingPrefab->_wallsSize, buildingPrefab->_walls, _position, 1.0f);
+	generateFloorVertexArray();
+	generateWalls();
+	generateRoofs();
 }
 
 Building::~Building() {
@@ -88,16 +95,29 @@ Building::~Building() {
 }
 
 void Building::setPosition(sf::Vector2i position) {
+	
+	sf::Vector2i delta = position - getPosition();
+
 	GameObjectOnMap::setPosition(position);
 
 	float scale = 1.0f;
-	if (BuildingsEditor::editor->_building_panel->_building->_building.get() == this) {
+	if (BuildingsEditor::editor && BuildingsEditor::editor->_building_panel->_building->_building.get() == this) {
 		scale = BuildingsEditor::editor->_building_panel->_building->_scale;
 	}
 
 	generateFloorVertexArray(scale);
-	generateWalls(scale);
+
+	for(auto& wall : _wallsObjects) {
+		if (wall)
+			wall->setPosition(wall->getPosition() + delta);
+	}
+
 	generateRoofs(scale);
+
+	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+
+	int border = 4;
+	_prefab.lock()->_collider = std::make_shared<RectangularCollider>(-border,-border, buildingPrefab->_floorSize.x * 16 + 2*border, buildingPrefab->_floorSize.y * 16 + 2*border);
 }
 
 void Building::generateFloorVertexArray(float scale) {
@@ -268,7 +288,8 @@ void Building::generateWalls(float scale, bool renderOutsideLook) {
 					textureTopRect.position = wallset->_groups[id]->walls[i].get();
 				}
 				
-				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), textureBottomRect, textureTopRect));
+				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), textureBottomRect, textureTopRect, 3));
+				_wallsObjects.back()->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
 			}
 			else
 				_wallsObjects.push_back(nullptr);
@@ -290,5 +311,125 @@ void Building::generateRoofs(float scale) {
 	if (!bp)
 		return;
 
+	_roof = std::make_shared<FlatRoof>();
 	_roof->generate(bp->_wallsSize, bp->_walls, _position, scale);
+}
+
+void Building::addWallsToGameObjects() {
+
+	for (auto& wall : _wallsObjects) {
+		if (wall != nullptr) { // because some walls can be nullptr if they are not present in the prefab
+			MapEditor::editor->_game_objects->addGameObject(wall);
+		}
+	}
+}
+
+void Building::removeWallsFromGameObjects() {
+	for (auto& wall : _wallsObjects) {
+		if(wall != nullptr) { // because some walls can be nullptr if they are not present in the prefab
+			MapEditor::editor->_game_objects->removeGameObject(wall);
+		}
+	}
+}
+
+void Building::drawOnlyCollider() {
+	if (_prefab.expired()) return;
+	
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	
+	if (!bp) return;
+
+	if (MapEditor::editor && MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1) {
+		_prefab.lock()->getCollider()->draw(getPosition());
+	}
+}
+
+void Building::drawOnlyFloor() {
+
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	if (!bp) return;
+
+	Main::render_window->draw(_floorVertexArray, sf::RenderStates(bp->_floorset->_texture.get()));
+}
+
+void Building::drawOnlyWalls(float scale) {
+
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	if (!bp) return;
+
+	sf::Vector2i& size = bp->_wallsSize;
+
+	for (int y = 0; y < size.y; y++) {
+		for (int x = 0; x < size.x; x++) {
+			int index = y * size.x + x;
+			if (index < _wallsObjects.size()) {
+				std::shared_ptr<Wall> wall = _wallsObjects[index];
+				if (wall) {
+					wall->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
+					if(Main::editor_manager->get_back() == MapEditor::editor) {
+						wall->draw(scale, !_floorVertexArray.getBounds().contains(sf::Vector2f(MapEditor::editor->_cursor_on_map->_globalPosition)));
+					}
+					else if(Main::editor_manager->get_back() == BuildingsEditor::editor) {
+						wall->draw(scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Building::drawOnlyRoof(float scale) {
+
+	if (!_roof)
+		return;
+
+	if (MapEditor::editor && Main::editor_manager->get_back() == MapEditor::editor) {
+		if (!_floorVertexArray.getBounds().contains(sf::Vector2f(MapEditor::editor->_cursor_on_map->_globalPosition))) {
+			_roof->draw(_position, scale);
+		};
+	}
+
+	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
+		if (!_floorVertexArray.getBounds().contains(sf::Vector2f(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition))) {
+			_roof->draw(_position, scale);
+		};
+	}
+}
+
+void Building::cursorHover() {
+
+	_renderOutsideLook = false;
+
+	if (_prefab.expired())
+		return;
+
+	std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(_prefab.lock()->getCollider());
+	if (!collider) return;
+
+	if(collider->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
+		MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+		_renderOutsideLook = true;
+	}
+	else {
+		_renderOutsideLook = false;
+	}
+}
+
+void Building::update() {
+
+	bool newRenderOutsideLook = !_prefab.lock()->getCollider()->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition());
+
+	if (newRenderOutsideLook != _renderOutsideLook) {
+		_renderOutsideLook = newRenderOutsideLook;
+
+		removeWallsFromGameObjects();
+		generateWalls(1.0f, _renderOutsideLook);
+		addWallsToGameObjects();
+	}
+
+	GameObjectOnMap::update();
+}
+
+void Building::draw() {
+	// NOTHING
 }
