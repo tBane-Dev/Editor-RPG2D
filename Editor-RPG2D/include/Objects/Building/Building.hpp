@@ -36,6 +36,8 @@ public:
 	Building(std::weak_ptr<GameObject> prefab);
 	~Building();
 
+	void generate();
+
 	virtual void setPosition(sf::Vector2i position);
 	void generateFloorVertexArray(float scale = 1.0f);
 	void generateWalls(float scale = 1.0f, bool renderOutsideLook = false);	

@@ -20,6 +20,7 @@ namespace BuildingsEditor {
 		if (!prefab) return;
 
 		_building = std::make_shared<Building>(prefab);
+		_building->generate();
 
 		sf::Vector2i buildingSize = sf::Vector2i(prefab->_wallsSize.x * 32,prefab->_wallsSize.y * 32);
 
@@ -361,12 +362,17 @@ namespace BuildingsEditor {
 					sf::Vector2i newPos = clampPosition(ResizableShape::getPosition());
 					ResizableShape::setPosition(newPos);
 					_building->setPosition(newPos);
+					
+					
+
 					return;
 				}
 			}
 
 			return;
 		}
+
+		_building->update();
 
 		for (auto& point : _edgePoints) {
 			point->update();

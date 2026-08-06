@@ -149,6 +149,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 }
                 else {
                     std::shared_ptr<Building> building = std::make_shared<Building>(MapEditor::editor->_palette->buildings[0]);
+                    building->generate();
 					building->setPosition(MapEditor::editor->_cursor_on_map->_globalPosition);
 					MapEditor::editor->_game_objects->addGameObject(building);
 					building->addWallsToGameObjects();

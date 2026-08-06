@@ -39,8 +39,9 @@ namespace BuildingsEditor {
 
 	void BuildingPanel::update() {
 		Components::Panel::update();
-		_building->update();
 		_cursorOnBuilding->update();
+		_building->update();
+		
 	}
 
 	void BuildingPanel::draw() {

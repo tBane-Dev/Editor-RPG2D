@@ -85,13 +85,17 @@ Building::Building(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefab.lock());
 
-	generateFloorVertexArray();
-	generateWalls();
-	generateRoofs();
+	
 }
 
 Building::~Building() {
 
+}
+
+void Building::generate() {
+	generateFloorVertexArray();
+	generateWalls();
+	generateRoofs();
 }
 
 void Building::setPosition(sf::Vector2i position) {
@@ -115,6 +119,8 @@ void Building::setPosition(sf::Vector2i position) {
 	generateRoofs(scale);
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+
+
 
 	int border = 4;
 	_prefab.lock()->_collider = std::make_shared<RectangularCollider>(-border,-border, buildingPrefab->_floorSize.x * 16 + 2*border, buildingPrefab->_floorSize.y * 16 + 2*border);
@@ -288,7 +294,7 @@ void Building::generateWalls(float scale, bool renderOutsideLook) {
 					textureTopRect.position = wallset->_groups[id]->walls[i].get();
 				}
 				
-				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), textureBottomRect, textureTopRect, 3));
+				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), std::dynamic_pointer_cast<Building>(shared_from_this()), textureBottomRect, textureTopRect, 3));
 				_wallsObjects.back()->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
 			}
 			else
@@ -366,12 +372,7 @@ void Building::drawOnlyWalls(float scale) {
 				std::shared_ptr<Wall> wall = _wallsObjects[index];
 				if (wall) {
 					wall->setPosition(getPosition() + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
-					if(Main::editor_manager->get_back() == MapEditor::editor) {
-						wall->draw(scale, !_floorVertexArray.getBounds().contains(sf::Vector2f(MapEditor::editor->_cursor_on_map->_globalPosition)));
-					}
-					else if(Main::editor_manager->get_back() == BuildingsEditor::editor) {
-						wall->draw(scale, BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1);
-					}
+					wall->draw(scale);
 				}
 			}
 		}
@@ -390,7 +391,10 @@ void Building::drawOnlyRoof(float scale) {
 	}
 
 	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
-		if (!_floorVertexArray.getBounds().contains(sf::Vector2f(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition))) {
+		if(BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
+			_roof->draw(_position, scale);
+		}
+		else if (!_floorVertexArray.getBounds().contains(sf::Vector2f(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition))) {
 			_roof->draw(_position, scale);
 		};
 	}
@@ -417,14 +421,54 @@ void Building::cursorHover() {
 
 void Building::update() {
 
-	bool newRenderOutsideLook = !_prefab.lock()->getCollider()->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition());
+	bool newRenderOutsideLook = _renderOutsideLook;
+
+	auto prefab = _prefab.lock();
+
+	if (!prefab || !prefab->getCollider()) {
+		GameObjectOnMap::update();
+		return;
+	}
+
+	if (Main::editor_manager->get_back() == BuildingsEditor::editor) {
+
+		if (BuildingsEditor::editor
+			->_main_menu
+			->_render_outside_look
+			->_checkbox
+			->_value == 1)
+		{
+			newRenderOutsideLook = true;
+		}
+		else {
+			const bool cursorHover =
+				prefab->getCollider()->cursorHover(
+					BuildingsEditor::editor
+					->_building_panel
+					->_cursorOnBuilding
+					->_globalPosition,
+					getPosition()
+				);
+
+			newRenderOutsideLook = !cursorHover;
+		}
+	}
+	else if (Main::editor_manager->get_back() == MapEditor::editor) {
+
+		std::shared_ptr<GameObjectOnMap> hoveredObject =
+			MapEditor::editor
+			->_game_objects
+			->_hoveredGameObjectOnMap
+			.lock();
+
+		const bool cursorHover =
+			hoveredObject && hoveredObject.get() == this;
+
+		newRenderOutsideLook = !cursorHover;
+	}
 
 	if (newRenderOutsideLook != _renderOutsideLook) {
 		_renderOutsideLook = newRenderOutsideLook;
-
-		removeWallsFromGameObjects();
-		generateWalls(1.0f, _renderOutsideLook);
-		addWallsToGameObjects();
 	}
 
 	GameObjectOnMap::update();

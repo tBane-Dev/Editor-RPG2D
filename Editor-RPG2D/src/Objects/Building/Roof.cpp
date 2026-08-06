@@ -324,44 +324,42 @@ void FlatRoof::generateOverhang(sf::Vector2i position, float scale) {
 	}
 }
 
-void FlatRoof::generateTexture(sf::Vector2i position) {
+void FlatRoof::generateTexture(sf::Vector2i position, float scale) {
+
+	const float tileSize = 32.f * scale;
+	const float topPadding = 96.f * scale;
+	const float overhangWidth = 4.f * scale;
+
+	sf::Vector2f textureOrigin(
+		position.x - overhangWidth,
+		position.y - topPadding - overhangWidth
+	);
+
+	int width = std::ceil(_size.x * tileSize + 2.f * overhangWidth) + 1;
+	int height = std::ceil(_size.y * tileSize + 2.f * overhangWidth) + 1;
 
 	sf::RenderTexture rtex;
-	rtex.resize(sf::Vector2u(_roofOverhangVertexArray.getBounds().size.x, _roofOverhangVertexArray.getBounds().size.y));
-	rtex.clear(sf::Color::Transparent);
-
-	const sf::FloatRect bounds = _roofOverhangVertexArray.getBounds();
-
-	float topPadding = 96.f;
-	float overhangWidth = 4;
-	int width = std::ceil(bounds.size.x) + 1 + 2*overhangWidth;
-	int height = std::ceil(bounds.size.y + topPadding) + 1 + 2 * overhangWidth;
-
 	rtex.resize(sf::Vector2u(width, height));
 	rtex.clear(sf::Color::Transparent);
 
 	sf::RenderStates states;
 	states.texture = roofset->_overhangTexture->_texture.get();
-
-	states.transform.translate({
-		-bounds.position.x,
-		-bounds.position.y
-		});
-
+	states.transform.translate(sf::Vector2f(-textureOrigin.x, -textureOrigin.y));
+	
 	rtex.draw(_roofOverhangVertexArray, states);
-	rtex.display();
 
-	for(auto& part : _parts) {
-		if (part) {
-			sf::Sprite sprite(*roofset->_texture->_texture);
-			sprite.setPosition(sf::Vector2f(part->_position - position + sf::Vector2i(overhangWidth, topPadding + overhangWidth)));
-			sprite.setTextureRect(part->_textureRect);
-			sprite.setScale(sf::Vector2f(1.0f, 1.0f));
-			rtex.draw(sprite);
-		}
+	for (auto& part : _parts) {
+		if (!part) continue;
+
+		sf::Sprite sprite(*roofset->_texture->_texture);
+		sprite.setPosition(sf::Vector2f(part->_position) - textureOrigin);
+		sprite.setTextureRect(part->_textureRect);
+		sprite.setScale(sf::Vector2f(scale, scale));
+		rtex.draw(sprite);
 	}
 
 	rtex.display();
+
 	_roofTexture = rtex.getTexture();
 }
 
@@ -371,26 +369,16 @@ void FlatRoof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i 
 	generateMask(tiles);
 	generateParts(position, scale);
 	generateOverhang(position, scale);
-	generateTexture(position);
+	generateTexture(position, scale);
 }
 
 void FlatRoof::draw(sf::Vector2i position, float scale) {
 
-	// overhang
-	//sf::RenderStates roofOverhangStates;
-	//roofOverhangStates.texture = roofset->_overhangTexture->_texture.get();
-	//Main::render_window->draw(_roofOverhangVertexArray, roofOverhangStates);
-	 
-	// parts of roof
-	//for (auto& part : _parts) {
-	//	if (part) {
-	//		part->draw(scale);
-	//	}
-	//}
-	float overhangWidth = 4;
+	float topPadding = 96.f * scale;
+	float overhangWidth = 4.f * scale;
+
 	sf::Sprite sprite(_roofTexture);
-	sprite.setPosition(sf::Vector2f(position.x - overhangWidth, position.y - 96 - overhangWidth));
-	sprite.setScale(sf::Vector2f(scale, scale));
+	sprite.setPosition(sf::Vector2f(position.x - overhangWidth, position.y - topPadding - overhangWidth));
 	Main::render_window->draw(sprite);
 }
 

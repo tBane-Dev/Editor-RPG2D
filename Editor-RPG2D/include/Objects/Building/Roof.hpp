@@ -28,7 +28,7 @@ public:
 	void generateMask(std::vector<int> tiles);
 	void generateParts(sf::Vector2i position, float scale = 1.0f);
 	void generateOverhang(sf::Vector2i position, float scale = 1.0f);
-	void generateTexture(sf::Vector2i position);
+	void generateTexture(sf::Vector2i position, float scale);
 	virtual void generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i position, float scale = 1.f);
 	virtual void draw(sf::Vector2i position, float scale = 1.0f);
 };
