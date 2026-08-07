@@ -1,4 +1,4 @@
-# Editor-RPG2D v0.04
+# Editor-RPG2D v0.069
 
 ## Contents
 - [Description](#description)
@@ -21,6 +21,8 @@
 ![Screenshot](screenshots/08.png)
 ![Screenshot](screenshots/09.png)
 ![Screenshot](screenshots/10.png)
+![Screenshot](screenshots/11.png)
+![Screenshot](screenshots/12.png)
 
 ## Installation
 1. Download and install Visual Studio 2022
