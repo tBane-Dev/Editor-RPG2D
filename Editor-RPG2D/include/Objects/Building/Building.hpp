@@ -10,11 +10,8 @@ public:
 
 	static std::shared_ptr<Texture> _floorset;
 
-	std::vector<int> _floor;
-	sf::Vector2i _floorSize;
-
-	std::vector<int> _walls;
-	sf::Vector2i _wallsSize;
+	std::vector<std::vector<int>> _floor;
+	std::vector<std::vector<int>> _walls;
 
 	int _wallHeight = 3;
 

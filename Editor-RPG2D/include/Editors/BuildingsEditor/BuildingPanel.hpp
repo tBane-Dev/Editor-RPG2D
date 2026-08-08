@@ -15,6 +15,7 @@ namespace BuildingsEditor {
 	public:
 
 		std::shared_ptr<BuildingPrefab> _buildingPrefab;
+		std::shared_ptr<BuildingPrefab> _editablePrefab;
 		std::shared_ptr<EditableBuilding> _building;
 		std::shared_ptr<CursorOnBuilding> _cursorOnBuilding;
 

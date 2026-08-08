@@ -41,11 +41,11 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
         int tx = (_globalPosition.x - BuildingsEditor::editor->_building_panel->_building->getPosition().x) / s;
         int ty = (_globalPosition.y - BuildingsEditor::editor->_building_panel->_building->getPosition().y) / s;
 
-        if (tx < 0 || tx >= bp->_wallsSize.x || ty < 0 || ty >= bp->_wallsSize.y)
+        if (tx < 0 || tx >= bp->_walls[0].size() || ty < 0 || ty >= bp->_walls.size())
             return;
 
-        if (bp->_walls[ty * bp->_wallsSize.x + tx] != -1) {
-            bp->_walls[ty * bp->_wallsSize.x + tx] = -1;
+        if (bp->_walls[ty][tx] != -1) {
+            bp->_walls[ty][tx] = -1;
             BuildingsEditor::editor->_building_panel->_building->_building->generateWalls(BuildingsEditor::editor->_building_panel->_building->_scale);
             BuildingsEditor::editor->_building_panel->_building->_building->generateRoofs(BuildingsEditor::editor->_building_panel->_building->_scale);
             return;
@@ -120,10 +120,10 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
                         int tx = (_globalPosition.x - buildingRect.position.x) / floorTileSize + (xx - brush[yy].size() / 2);
                         int ty = (_globalPosition.y - buildingRect.position.y) / floorTileSize + (yy - brush.size() / 2);
 
-                        if(tx < 0 || tx > bp->_floorSize.x - 1 || ty < 0 || ty > bp->_floorSize.y - 1)
+                        if(tx < 0 || tx > bp->_floor[0].size() - 1 || ty < 0 || ty > bp->_floor.size() - 1)
 							continue;
 
-                        bp->_floor[ty * bp->_floorSize.x + tx] = index;
+                        bp->_floor[ty][tx] = index;
 						editedFloor = true;
                     }
                 }
@@ -158,13 +158,13 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
             int tx = (_globalPosition.x - building->getPosition().x) / s;
             int ty = (_globalPosition.y - building->getPosition().y) / s;
 
-            if (tx < 0 || tx > bp->_wallsSize.x - 1 || ty < 0 || ty > bp->_wallsSize.y - 1)
+            if (tx < 0 || tx > bp->_walls[0].size() - 1 || ty < 0 || ty > bp->_walls.size() - 1)
                 return;
 
             std::shared_ptr<Wall> wall = std::dynamic_pointer_cast<Wall>(_object.lock());
             std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(wall->_prefab.lock());
 
-            bp->_walls[ty * bp->_wallsSize.x + tx] = wallPrefab->_id;
+            bp->_walls[ty][tx] = wallPrefab->_id;
             building->_building->generateWalls(building->_scale);
 			building->_building->generateRoofs(building->_scale);
         }

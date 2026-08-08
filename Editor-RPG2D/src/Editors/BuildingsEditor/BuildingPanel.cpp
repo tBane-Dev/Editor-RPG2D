@@ -12,7 +12,7 @@ namespace BuildingsEditor {
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getSize().x + 4, 768 + 4),
 		sf::Vector2i(BuildingsEditor::editor->_name_panel->getPosition().x, BuildingsEditor::editor->_name_panel->getPosition().y + BuildingsEditor::editor->_name_panel->getSize().y + 4)) {
 
-		_buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building", sf::Vector2i(10, 10));
+		_buildingPrefab = nullptr;
 		_cursorOnBuilding = std::make_shared<CursorOnBuilding>();
 	}
 
@@ -22,7 +22,7 @@ namespace BuildingsEditor {
 
 	void BuildingPanel::init() {
 		_building = std::make_shared<EditableBuilding>();
-		_building->create(_buildingPrefab);
+		_building->create(nullptr);
 	}
 
 	void BuildingPanel::cursorHover() {
@@ -78,6 +78,7 @@ namespace BuildingsEditor {
 
 		// draw grid
 		if (BuildingsEditor::editor->_main_menu->_render_grid->_checkbox->_value == 1) {
+
 			grid2_shader->setUniform("rectPosition", sf::Vector2f(_building->getPosition()));
 			grid2_shader->setUniform("rectSize", sf::Vector2f(_building->getSize()));
 			grid2_shader->setUniform("gridSize", sf::Vector2f(32.f, 32.f) * _building->_scale);
@@ -100,7 +101,8 @@ namespace BuildingsEditor {
 		_cursorOnBuilding->draw();
 
 		// draw edge points
-		_building->drawOnlyEdgePoints();
+		if(_buildingPrefab != nullptr)
+			_building->drawOnlyEdgePoints();
 
 	}
 }

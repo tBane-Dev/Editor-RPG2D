@@ -33,7 +33,7 @@ namespace Components {
 
 		std::shared_ptr<Scrollbar> _scrollbar;
 
-		ListPanel(sf::Vector2i margin, sf::Vector2i size, sf::Vector2i position);
+		ListPanel(sf::Vector2i margin, sf::Vector2i size, sf::Vector2i position, int itemCount);
 		~ListPanel();
 
 		void selectItem(int index);
@@ -41,8 +41,8 @@ namespace Components {
 
 		virtual void loadList();
 
-		void loadScrollbar();
-		void loadAll();
+		void loadScrollbar(int itemCount);
+		void loadAll(int itemsCount);
 		sf::FloatRect getListRect();
 
 		virtual void cursorHover();

@@ -6,7 +6,6 @@
 
 
 Roof::Roof() {
-	_size = sf::Vector2i(0, 0);
 	_tiles.clear();
 }
 
@@ -15,8 +14,7 @@ Roof::~Roof() {
 }
 
 
-void Roof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i position, float scale) {
-	_size = size;
+void Roof::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
 	_tiles = tiles;
 }
 
@@ -33,21 +31,21 @@ FlatRoof::~FlatRoof() {
 }
 
 
-void FlatRoof::generateMask(std::vector<int> tiles) {
+void FlatRoof::generateMask(std::vector<std::vector<int>> tiles) {
 
-	if(_size.x <= 0 || _size.y <= 0)
+	if(tiles.size() <= 0 || tiles[0].size() <= 0)
 		return;
 
-	int w = _size.x;
-	int h = _size.y;
+	int w = tiles[0].size();
+	int h = tiles.size();
 
-	std::vector<bool> solid(w * h, false);
+	std::vector<std::vector<bool>> solid(h, std::vector<bool>(w, false));
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
 
-			if (tiles[y * w + x] > -1)
-				solid[y * w + x] = true;
+			if (tiles[y][x] > -1)
+				solid[y][x] = true;
 
 		}
 	}
@@ -55,11 +53,11 @@ void FlatRoof::generateMask(std::vector<int> tiles) {
 	int fw = w + 2;
 	int fh = h + 2;
 
-	std::vector<bool> outside(fw * fh, false);
+	std::vector<std::vector<bool>> outside(fh, std::vector<bool>(fw, false));
 	std::queue<sf::Vector2i> q;
 
 	q.push(sf::Vector2i(0, 0));
-	outside[0] = true;
+	outside[0][0] = true;
 
 	const int dx[4] = { 1, -1, 0, 0 };
 	const int dy[4] = { 0, 0, 1, -1 };
@@ -77,7 +75,7 @@ void FlatRoof::generateMask(std::vector<int> tiles) {
 			if (nx < 0 || ny < 0 || nx >= fw || ny >= fh)
 				continue;
 
-			if (outside[ny * fw + nx])
+			if (outside[ny][nx])
 				continue;
 
 			int ox = nx - 1;
@@ -86,25 +84,25 @@ void FlatRoof::generateMask(std::vector<int> tiles) {
 			bool blocked = false;
 
 			if (ox >= 0 && oy >= 0 && ox < w && oy < h)
-				blocked = solid[oy * w + ox];
+				blocked = solid[oy][ox];
 
 			if (blocked)
 				continue;
 
-			outside[ny * fw + nx] = true;
+			outside[ny][nx] = true;
 			q.push(sf::Vector2i(nx, ny));
 		}
 	}
 
-	_mask.assign(w * h, -1);
+	_mask.assign(h, std::vector<int>(w, -1));
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
 
-			bool isOutside = outside[(y + 1) * fw + (x + 1)];
+			bool isOutside = outside[y + 1][x + 1];
 
 			if (!isOutside)
-				_mask[y * w + x] = 0;   // pole wewnątrz budynku
+				_mask[y][x] = 0;   // pole wewnątrz budynku
 		}
 	}
 }
@@ -113,29 +111,29 @@ void FlatRoof::generateParts(sf::Vector2i position, float scale) {
 
 	_parts.clear();
 
-	for (int y = 0; y < _size.y; y++) {
-		for (int x = 0; x < _size.x; x++) {
+	sf::Vector2i size = sf::Vector2i(_mask[0].size(), _mask.size());
 
-			int id = _mask[y * _size.x + x];
-			int left = (x > 0) ? _mask[y * _size.x + (x - 1)] : -1;
-			int right = (x < _size.x - 1) ? _mask[y * _size.x + (x + 1)] : -1;
-			int top = (y - 1 >= 0) ? _mask[(y - 1) * _size.x + x] : -1;
-			int bottom = (y + 1 < _size.y) ? _mask[(y + 1) * _size.x + x] : -1;
-
+	for (int y = 0; y < size.y; y++) {
+		for (int x = 0; x < size.x; x++) {
+			int id = _mask[y][x];
+			int left = (x > 0) ? _mask[y][x - 1] : -1;
+			int right = (x < size.x - 1) ? _mask[y][x + 1] : -1;
+			int top = (y - 1 >= 0) ? _mask[y - 1][x] : -1;
+			int bottom = (y + 1 < size.y) ? _mask[y + 1][x] : -1;
 			if (id > -1) {
 
 
 				sf::IntRect textureRect(roofset->_groups[id]->roofs[0].get(), sf::Vector2i(32, 32));
 
-				int left = (x > 0) ? _mask[y * _size.x + (x - 1)] : -1;
-				int right = (x < _size.x - 1) ? _mask[y * _size.x + (x + 1)] : -1;
-				int top = (y - 1 >= 0) ? _mask[(y - 1) * _size.x + x] : -1;
-				int bottom = (y + 1 < _size.y) ? _mask[(y + 1) * _size.x + x] : -1;
+				int left = (x > 0) ? _mask[y][x-1] : -1;
+				int right = (x < size.x - 1) ? _mask[y][x + 1] : -1;
+				int top = (y - 1 >= 0) ? _mask[y - 1][x] : -1;
+				int bottom = (y + 1 < size.y) ? _mask[y + 1][x] : -1;
 
-				int topLeft = (x > 0 && y - 1 >= 0) ? _mask[(y - 1) * _size.x + (x - 1)] : -1;
-				int topRight = (x < _size.x - 1 && y - 1 >= 0) ? _mask[(y - 1) * _size.x + (x + 1)] : -1;
-				int bottomLeft = (x > 0 && y + 1 < _size.y) ? _mask[(y + 1) * _size.x + (x - 1)] : -1;
-				int bottomRight = (x < _size.x - 1 && y + 1 < _size.y) ? _mask[(y + 1) * _size.x + (x + 1)] : -1;
+				int topLeft = (x > 0 && y - 1 >= 0) ? _mask[y - 1][x - 1] : -1;
+				int topRight = (x < size.x - 1 && y - 1 >= 0) ? _mask[y - 1][x + 1] : -1;
+				int bottomLeft = (x > 0 && y + 1 < size.y) ? _mask[y + 1][x - 1] : -1;
+				int bottomRight = (x < size.x - 1 && y + 1 < size.y) ? _mask[y + 1][x + 1] : -1;
 
 				int i = 0;
 				if (left == -1 && right == -1 && top == -1 && bottom == -1) i = 1;
@@ -239,8 +237,8 @@ void FlatRoof::generateOverhang(sf::Vector2i position, float scale) {
 	int miniSize = 4;
 	int miniCount = 32 / miniSize;
 	
-	int width = _size.x * miniCount + 2;
-	int height = _size.y * miniCount + 2;
+	int width = _mask[0].size() * miniCount + 2;
+	int height = _mask.size() * miniCount + 2;
 	
 	std::vector<uint8_t> occupied(width * height, 0);
 	std::vector<uint8_t> border(width * height, 0);
@@ -249,9 +247,9 @@ void FlatRoof::generateOverhang(sf::Vector2i position, float scale) {
 		return y * width + x;
 	};
 	
-	for (int y = 0; y < _size.y; ++y) {
-		for (int x = 0; x < _size.x; ++x) {
-			if (_mask[y * _size.x + x] < 0)
+	for (int y = 0; y < _mask.size(); ++y) {
+		for (int x = 0; x < _mask[0].size(); ++x) {
+			if (_mask[y][x] < 0)
 				continue;
 	
 			for (int yy = 0; yy < miniCount; ++yy) {
@@ -335,8 +333,8 @@ void FlatRoof::generateTexture(sf::Vector2i position, float scale) {
 		position.y - topPadding - overhangWidth
 	);
 
-	int width = std::ceil(_size.x * tileSize + 2.f * overhangWidth) + 1;
-	int height = std::ceil(_size.y * tileSize + 2.f * overhangWidth) + 1;
+	int width = std::ceil(_mask[0].size() * tileSize + 2.f * overhangWidth) + 1;
+	int height = std::ceil(_mask.size() * tileSize + 2.f * overhangWidth) + 1;
 
 	sf::RenderTexture rtex;
 	rtex.resize(sf::Vector2u(width, height));
@@ -363,8 +361,8 @@ void FlatRoof::generateTexture(sf::Vector2i position, float scale) {
 	_roofTexture = rtex.getTexture();
 }
 
-void FlatRoof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i position, float scale) {
-	Roof::generate(size, tiles, position, scale);
+void FlatRoof::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
+	Roof::generate(tiles, position, scale);
 
 	generateMask(tiles);
 	generateParts(position, scale);
@@ -391,8 +389,8 @@ GableRoof::~GableRoof() {
 }
 
 
-void GableRoof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i position, float scale) {
-	Roof::generate(size, tiles, position, scale);
+void GableRoof::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
+	Roof::generate(tiles, position, scale);
 }
 
 void GableRoof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {

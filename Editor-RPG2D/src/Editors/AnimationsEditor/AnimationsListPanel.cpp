@@ -6,9 +6,9 @@
 
 namespace AnimationsEditor {
 
-	AnimationsListPanel::AnimationsListPanel(sf::Vector2i margin) : Components::ListPanel(margin, sf::Vector2i(420, 600), sf::Vector2i(margin.x, AnimationsEditor::editor->_main_menu->getSize().y + margin.y)) {
+	AnimationsListPanel::AnimationsListPanel(sf::Vector2i margin) : Components::ListPanel(margin, sf::Vector2i(420, 600), sf::Vector2i(margin.x, AnimationsEditor::editor->_main_menu->getSize().y + margin.y), animations_manager->getAnimationsCount()) {
 		_title->setString(L"Animations List");
-		loadAll();
+		loadAll(animations_manager->getAnimationsCount());
 	}
 
 	AnimationsListPanel::~AnimationsListPanel() {

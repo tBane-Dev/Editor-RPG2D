@@ -29,6 +29,9 @@ void PrefabsManager::removePrefab(std::weak_ptr<GameObject> prefab)
     std::erase_if(_prefabs,
         [&](const std::shared_ptr<GameObject>& p)
         {
+			if(p == prefabPtr)
+                DebugLog(L"usunieto prefab: " + p->_name);
+            
             return p == prefabPtr;
         });
 }
@@ -301,10 +304,6 @@ void PrefabsManager::loadBasicPrefabs() {
         );
         addPrefab(prefab);
     }
-
-    // TO-DO - to delete after testing
-    std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"building", sf::Vector2i(8, 8));
-    addPrefab(buildingPrefab);
 
     std::vector<std::shared_ptr<GameObject>> p;
     for (auto& prefab : _prefabs) {

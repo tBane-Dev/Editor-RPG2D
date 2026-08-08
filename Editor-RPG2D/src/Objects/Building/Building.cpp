@@ -21,34 +21,28 @@ BuildingPrefab::BuildingPrefab(std::wstring name, sf::Vector2i size) : GameObjec
 
 	// create floor
 	_floor.clear();;
-	_floorSize = sf::Vector2i(size.x*2, size.y*2);
-	for (int y = 0; y < _floorSize.y; y += 1) {
-		for (int x = 0; x < _floorSize.x; x += 1) {
-			_floor.push_back(1);
-		}
+	for (int y = 0; y < size.y * 2; y += 1) {
+		_floor.push_back(std::vector<int>(size.x*2, 1));
 	}
 
 	// create empty walls
-	_walls.clear();;
-	_wallsSize = size;
-	for (int y = 0; y < _wallsSize.y; y += 1) {
-		for (int x = 0; x < _wallsSize.x; x += 1) {
-			_walls.push_back(-1);
-		}
+	_walls.clear();
+	for (int y = 0; y < size.y; y += 1) {
+		_walls.push_back(std::vector<int>(size.x, -1));
 	}
 
 	// create outline walls
-	for (int y = 0; y < _wallsSize.y; ++y) {
-		for (int x = 0; x < _wallsSize.x; ++x) {
-			if (x == 0 || y == 0 || x == _wallsSize.x - 1 || y == _wallsSize.y - 1) {
-				if (!(y == _wallsSize.y - 1 && x == _wallsSize.x / 2 || y == _wallsSize.y - 1 && x == _wallsSize.x / 2 - 1)) {
-					_walls[y * _wallsSize.x + x] = 1;
+	for (int y = 0; y < size.y; ++y) {
+		for (int x = 0; x < size.x; ++x) {
+			if (x == 0 || y == 0 || x == _walls[0].size() - 1 || y == _walls.size() - 1) {
+				if (!(y == _walls.size() - 1 && x == _walls[0].size() / 2 || y == _walls.size() - 1 && x == _walls[0].size() / 2 - 1)) {
+					_walls[y][x] = 1;
 				}
 			}
 		}
 	}
 
-	_collider = std::make_shared<RectangularCollider>(0, 0, _floorSize.x, _floorSize.y);
+	_collider = std::make_shared<RectangularCollider>(0, 0, _floor[0].size(), _floor.size());
 }
 
 BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) : GameObject(name) {
@@ -58,19 +52,19 @@ BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) :
 
 	// copy the floor
 	_floor.clear();;
-	_floorSize = other._floorSize;
-	for (int y = 0; y < _floorSize.y; y += 1) {
-		for (int x = 0; x < _floorSize.x; x += 1) {
-			_floor.push_back(other._floor[y * _floorSize.x + x]);
+	for (int y = 0; y < other._floor.size(); y += 1) {
+		_floor.push_back(std::vector<int>());
+		for (int x = 0; x < other._floor[0].size(); x += 1) {
+			_floor[y].push_back(other._floor[y][x]);
 		}
 	}
 
 	// copy the walls
 	_walls.clear();;
-	_wallsSize = other._wallsSize;
-	for (int y = 0; y < _wallsSize.y; y += 1) {
-		for (int x = 0; x < _wallsSize.x; x += 1) {
-			_walls.push_back(other._walls[y*_wallsSize.x + x]);
+	for (int y = 0; y < other._walls.size(); y += 1) {
+		_walls.push_back(std::vector<int>(other._walls[0].size(), -1));
+		for (int x = 0; x < other._walls[0].size(); x += 1) {
+			_walls[y][x] = other._walls[y][x];
 		}
 	}
 
@@ -134,9 +128,9 @@ void Building::generateFloorVertexArray(float scale) {
 	float floorSize = 64.f;
 	float a = s * scale;
 	
-	for (int y = 0; y < buildingPrefab->_floorSize.y; y++) {
-		for (int x = 0; x < buildingPrefab->_floorSize.x; x++) {
-			int t = buildingPrefab->_floor[y * buildingPrefab->_floorSize.x + x];
+	for (int y = 0; y < buildingPrefab->_floor.size(); y++) {
+		for (int x = 0; x < buildingPrefab->_floor[0].size(); x++) {
+			int t = buildingPrefab->_floor[y][x];
 
 			float px = x * s * scale;
 			float py = y * s * scale;
@@ -165,16 +159,17 @@ void Building::generateWalls(float scale, bool renderOutsideLook) {
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
 	if (!buildingPrefab) return;
 
-	sf::Vector2i size = buildingPrefab->_wallsSize;
-	std::vector<int>& walls = buildingPrefab->_walls;
+	sf::Vector2i size = sf::Vector2i(buildingPrefab->_walls[0].size(), buildingPrefab->_walls.size());
+	std::vector<std::vector<int>>& walls = buildingPrefab->_walls;
+
 	for (int y = 0; y < size.y; y++) {
 		for (int x = 0; x < size.x; x++) {
 
-			int id = walls[y * size.x + x];
-			int left = (x > 0) ? walls[y * size.x + (x - 1)] : -1;
-			int right = (x < size.x - 1) ? walls[y * size.x + (x + 1)] : -1;
-			int top = (y - 1 >= 0) ? walls[(y - 1) * size.x + x] : -1;
-			int bottom = (y + 1 < size.y) ? walls[(y + 1) * size.x + x] : -1;
+			int id = walls[y][x];
+			int left = (x > 0) ? walls[y][x-1] : -1;
+			int right = (x < size.x - 1) ? walls[y][x+1] : -1;
+			int top = (y - 1 >= 0) ? walls[y-1][x] : -1;
+			int bottom = (y + 1 < size.y) ? walls[y+1][x] : -1;
 
 			if (id > -1) {
 
@@ -191,15 +186,15 @@ void Building::generateWalls(float scale, bool renderOutsideLook) {
 
 				sf::IntRect textureTopRect(textureBottomRect.position, sf::Vector2i(32, 32));
 					
-				int left = (x > 0) ? walls[y * size.x + (x - 1)] : -1;
-				int right = (x < size.x - 1) ? walls[y * size.x + (x + 1)] : -1;
-				int top = (y - 1 >= 0) ? walls[(y - 1) * size.x + x] : -1;
-				int bottom = (y + 1 < size.y) ? walls[(y + 1) * size.x + x] : -1;
+				int left = (x > 0) ? walls[y][x-1] : -1;
+				int right = (x < size.x - 1) ? walls[y][x+1] : -1;
+				int top = (y - 1 >= 0) ? walls[y-1][x] : -1;
+				int bottom = (y + 1 < size.y) ? walls[y+1][x] : -1;
 
-				int topLeft = (x > 0 && y - 1 >= 0) ? walls[(y - 1) * size.x + (x - 1)] : -1;
-				int topRight = (x < size.x - 1 && y - 1 >= 0) ? walls[(y - 1) * size.x + (x + 1)] : -1;
-				int bottomLeft = (x > 0 && y + 1 < size.y) ? walls[(y + 1) * size.x + (x - 1)] : -1;
-				int bottomRight = (x < size.x - 1 && y + 1 < size.y) ? walls[(y + 1) * size.x + (x + 1)] : -1;
+				int topLeft = (x > 0 && y - 1 >= 0) ? walls[y-1][x-1] : -1;
+				int topRight = (x < size.x - 1 && y - 1 >= 0) ? walls[y-1][x+1] : -1;
+				int bottomLeft = (x > 0 && y + 1 < size.y) ? walls[y+1][x-1] : -1;
+				int bottomRight = (x < size.x - 1 && y + 1 < size.y) ? walls[y+1][x+1] : -1;
 
 				int i = 0;
 				if (left == -1 && right == -1 && top == -1 && bottom == -1) i = 1;
@@ -310,7 +305,7 @@ void Building::generateRoofs(float scale) {
 		return;
 
 	_roof = std::make_shared<FlatRoof>();
-	_roof->generate(bp->_wallsSize, bp->_walls, _position, scale);
+	_roof->generate(bp->_walls, _position, scale);
 }
 
 void Building::generateCollider(float scale) {
@@ -324,8 +319,8 @@ void Building::generateCollider(float scale) {
 	int x = -float(border) * scale;
 	int y = -float(border) * scale;
 
-	int w = (float)(bp->_floorSize.x * 16 + 2 * border) * scale;
-	int h = (float)(bp->_floorSize.y * 16 + 2 * border) * scale;
+	int w = (float)(bp->_floor[0].size() * 16 + 2 * border) * scale;
+	int h = (float)(bp->_floor.size() * 16 + 2 * border) * scale;
 
 	_prefab.lock()->_collider = std::make_shared<RectangularCollider>(x, y, w, h);
 
@@ -378,11 +373,9 @@ void Building::drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, fl
 	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
 	if (!bp) return;
 
-	sf::Vector2i& size = bp->_wallsSize;
-
-	for (int y = 0; y < size.y; y++) {
-		for (int x = 0; x < size.x; x++) {
-			int index = y * size.x + x;
+	for (int y = 0; y < bp->_walls.size(); y++) {
+		for (int x = 0; x < bp->_walls[0].size(); x++) {
+			int index = y * bp->_walls[0].size() + x;
 			if (index < _wallsObjects.size()) {
 				std::shared_ptr<Wall> wall = _wallsObjects[index];
 				if (wall) {
@@ -418,20 +411,6 @@ void Building::cursorHover() {
 		}
 	}
 
-	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
-
-		if(BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
-			_renderOutsideLook = true;
-		}
-		else if (collider->cursorHover(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition, getPosition())) {
-			_renderOutsideLook = false;
-		}
-		else {
-			_renderOutsideLook = true;
-		}
-	}
-
-	
 }
 
 void Building::update() {
@@ -442,6 +421,16 @@ void Building::update() {
 		_renderOutsideLook = true;
 
 		if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock() == shared_from_this()) {
+			_renderOutsideLook = false;
+		}
+	}
+
+	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
+
+		if (BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
+			_renderOutsideLook = true;
+		}
+		else {
 			_renderOutsideLook = false;
 		}
 	}

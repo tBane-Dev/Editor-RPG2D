@@ -17,14 +17,17 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::create(std::shared_ptr<BuildingPrefab> prefab) {
-		if (!prefab) return;
 
 		_building = std::make_shared<Building>(prefab);
 		_building->generate();
 
-		sf::Vector2i buildingSize = sf::Vector2i(prefab->_wallsSize.x * 32,prefab->_wallsSize.y * 32);
+		sf::Vector2i panelSize = BuildingsEditor::editor->_building_panel->getSize();
+		sf::Vector2i panelPosition = BuildingsEditor::editor->_building_panel->getPosition();
 
-		ResizableShape::resize(buildingSize);
+		setPosition(sf::Vector2i(
+			panelPosition.x + (panelSize.x - getSize().x) / 2,
+			panelPosition.y + (panelSize.y - getSize().y) / 2
+		));
 
 		setColor(sf::Color(79, 79, 79));
 		setOutlineColor(sf::Color(47, 47, 47));
@@ -33,8 +36,11 @@ namespace BuildingsEditor {
 		setMinSize(sf::Vector2i(8 * 32, 8 * 32));
 		setMaxSize(sf::Vector2i(24 * 32, 24 * 32));
 
-		sf::Vector2i panelSize = BuildingsEditor::editor->_building_panel->getSize();
-		sf::Vector2i panelPosition = BuildingsEditor::editor->_building_panel->getPosition();
+		if (!prefab) return;
+
+		sf::Vector2i buildingSize = sf::Vector2i(prefab->_walls[0].size() * 32, prefab->_walls.size() * 32);
+
+		ResizableShape::resize(buildingSize);
 
 		setPosition(sf::Vector2i(
 			panelPosition.x + (panelSize.x - getSize().x) / 2,
@@ -53,23 +59,22 @@ namespace BuildingsEditor {
 		int newWidth = _rect.size.x / 16;
 		int newHeight = _rect.size.y / 16;
 
-		std::vector<int> newFloor(newWidth * newHeight, 0);
+		std::vector<std::vector<int>> newFloor(newHeight, std::vector<int>(newWidth, 0));
 
 		for (int y = 0; y < newHeight; ++y) {
 			for (int x = 0; x < newWidth; ++x) {
 				int oldX = x - offsetX;
 				int oldY = y - offsetY;
 
-				if (oldX >= 0 && oldX < bp->_floorSize.x &&
-					oldY >= 0 && oldY < bp->_floorSize.y) {
+				if (oldX >= 0 && oldX < bp->_floor[0].size() &&
+					oldY >= 0 && oldY < bp->_floor.size()) {
 
-					newFloor[y * newWidth + x] = bp->_floor[oldY * bp->_floorSize.x + oldX];
+					newFloor[y][x] = bp->_floor[oldY][oldX];
 				}
 			}
 		}
 
 		bp->_floor = newFloor;
-		bp->_floorSize = sf::Vector2i(newWidth, newHeight);
 
 		_building->generateFloorVertexArray();
 	}
@@ -82,23 +87,22 @@ namespace BuildingsEditor {
 		int newWidth = _rect.size.x / 32;
 		int newHeight = _rect.size.y / 32;
 
-		std::vector<int> newWalls(newWidth * newHeight, -1);
+		std::vector<std::vector<int>> newWalls(newHeight, std::vector<int>(newWidth, -1));
 
 		for (int y = 0; y < newHeight; y++) {
 			for (int x = 0; x < newWidth; x++) {
-				int oldX = x - offsetX;
+				int oldX = x - offsetX;	
 				int oldY = y - offsetY;
 
-				if (oldX >= 0 && oldX < bp->_wallsSize.x &&
-					oldY >= 0 && oldY < bp->_wallsSize.y) {
+				if (oldX >= 0 && oldX < bp->_walls[0].size() &&
+					oldY >= 0 && oldY < bp->_walls.size()) {
 
-					newWalls[y * newWidth + x] = bp->_walls[oldY * bp->_wallsSize.x + oldX];
+					newWalls[y][x] = bp->_walls[oldY][oldX];
 				}
 			}
 		}
 
 		bp->_walls = newWalls;
-		bp->_wallsSize = sf::Vector2i(newWidth, newHeight);
 
 		_building->generateWalls();
 	}
@@ -206,13 +210,16 @@ namespace BuildingsEditor {
 	}
 
 	void EditableBuilding::cursorHover() {
-
-		sf::IntRect rect = sf::IntRect(BuildingsEditor::editor->_building_panel->getPosition(), BuildingsEditor::editor->_building_panel->getSize());
-		if (rect.contains(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition)) {
-			ResizableShape::cursorHover();
+		if (BuildingsEditor::editor->_building_panel->_buildingPrefab != nullptr) {
+			sf::IntRect rect = sf::IntRect(BuildingsEditor::editor->_building_panel->getPosition(), BuildingsEditor::editor->_building_panel->getSize());
+			if (rect.contains(BuildingsEditor::editor->_building_panel->_cursorOnBuilding->_globalPosition)) {
+				ResizableShape::cursorHover();
+			}
 		}
+		
 
-		_building->cursorHover();
+		if(_building)
+			_building->cursorHover();
 		
 	}
 
@@ -381,7 +388,8 @@ namespace BuildingsEditor {
 			return;
 		}
 
-		_building->update();
+		if(_building)
+			_building->update();
 	}
 
 	void EditableBuilding::drawOnlyShape() {

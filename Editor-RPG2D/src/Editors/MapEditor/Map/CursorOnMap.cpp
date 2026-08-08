@@ -148,11 +148,16 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
                 }
                 else {
-                    std::shared_ptr<Building> building = std::make_shared<Building>(MapEditor::editor->_palette->buildings[0]);
+                    static int i = 1;
+					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building no " + std::to_wstring(i++), *MapEditor::editor->_palette->buildings[0]);
+                    prefabs_manager->addPrefab(buildingPrefab);
+
+                    std::shared_ptr<Building> building = std::make_shared<Building>(buildingPrefab);
                     building->generate();
 					building->setPosition(MapEditor::editor->_cursor_on_map->_globalPosition);
 					MapEditor::editor->_game_objects->addGameObject(building);
 					building->addWallsToGameObjects();
+					
 
                     
                 }

@@ -3,7 +3,7 @@
 
 ResizableShape::ResizableShape() : Element() {
 
-	int size = 512;
+	int size = 256;
 
 	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(size, size));
 	_state = ResizableShapeState::Idle;

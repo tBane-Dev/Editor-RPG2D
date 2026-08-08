@@ -40,14 +40,19 @@ namespace Components {
 
 		if(Palette::buildings.empty()) {
 
-			std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(ObjectType::Building);
+			std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building", sf::Vector2i(8, 8));
+			buildingPrefab->_walls = {
+				{ 1, 1, 1, 1, 1, 1, 1, 1},
+				{ 1, -1, -1, -1, -1, -1, -1, 1},
+				{ 1, -1, -1, -1, -1, -1, -1, 1},
+				{ 1, -1, -1, -1, -1, -1, -1, 1},
+				{ 1, -1, -1, -1, -1, -1, -1, 1},
+				{ 1, -1, -1, -1, -1, -1, -1, 1},
+				{ 1, -1, -1, -1, -1, -1, -1, 1},
+				{ 1, 1, 1, 1, 1, 1, 1, 1}
+			};
+			Palette::buildings.emplace_back(buildingPrefab);
 
-			for (int i = 0; i < prefabs.size(); i++) {
-				std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefabs[i]);
-
-				if (buildingPrefab)
-					Palette::buildings.emplace_back(buildingPrefab);
-			}
 		}
 
 		sf::Vector2i size;

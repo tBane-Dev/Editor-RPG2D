@@ -80,7 +80,7 @@ namespace AnimationsEditor {
 			editor->_animations->_texture = editor->_tempAnimations->_texture;
 			editor->_animations->_interval = editor->_tempAnimations->_interval;
 
-			editor->_list_panel->loadAll();
+			editor->_list_panel->loadAll(animations_manager->getAnimationsCount());
 			};
 
 		_addBtn->_onclick_func = []() {
@@ -110,11 +110,11 @@ namespace AnimationsEditor {
 			editor->_tempAnimations = std::make_shared<Animations>(*editor->_animations);
 			editor->_animator->_animations = editor->_tempAnimations;
 
-			editor->_list_panel->loadAll();
+			editor->_list_panel->loadAll(animations_manager->getAnimationsCount());
 
 			if (newID >= std::floor((float)editor->_list_panel->_scrollbar->getValue() / (float)basic_text_rect_height) + editor->_list_panel->_items.size() - 2) {
 				editor->_list_panel->_scrollbar->setValue(editor->_list_panel->_scrollbar->_max_value);
-				editor->_list_panel->loadAll();
+				editor->_list_panel->loadAll(animations_manager->getAnimationsCount());
 			}
 
 			editor->_list_panel->selectItem(newID);
@@ -132,7 +132,7 @@ namespace AnimationsEditor {
 
 				animations_manager->removeAnimations(animationID);
 
-				editor->_list_panel->loadAll();
+				editor->_list_panel->loadAll(animations_manager->getAnimationsCount());
 				int newID = editor->_list_panel->_selectedItemIndex;
 				if (newID >= animations_manager->getAnimationsCount()) 
 					newID = animations_manager->getAnimationsCount() - 1;

@@ -31,8 +31,6 @@ namespace Components {
 		int _maxBrushSize = 4;
 		int _brushSize = 1;
 
-		
-
 		Palette();
 		~Palette();
 

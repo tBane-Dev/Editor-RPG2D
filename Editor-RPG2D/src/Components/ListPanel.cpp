@@ -50,10 +50,10 @@ namespace Components {
 		Main::render_window->draw(*_text);
 	}
 
-	ListPanel::ListPanel(sf::Vector2i margin, sf::Vector2i size, sf::Vector2i position) : Panel(size, position) {
+	ListPanel::ListPanel(sf::Vector2i margin, sf::Vector2i size, sf::Vector2i position, int itemCount) : Panel(size, position) {
 
 		// title
-		_title = std::make_unique<sf::Text>(basicFont, L"Animations List", 20);
+		_title = std::make_unique<sf::Text>(basicFont, L"List", 20);
 		_title->setFillColor(basic_text_color);
 		_title->setPosition(sf::Vector2f(_rect.position.x + 16 , _rect.position.y + 16));
 		
@@ -90,7 +90,7 @@ namespace Components {
 		}
 
 		loadList();
-		loadScrollbar();
+		loadScrollbar(itemCount);
 	}
 
 	ListPanel::~ListPanel() {
@@ -105,7 +105,7 @@ namespace Components {
 		_selectedItem = nullptr;
 		_selectedItemIndex = -1;
 
-		if(index >= 0 && index < animations_manager->getAnimationsCount()) {
+		if(index >= 0 && index < std::max(_scrollbar->_slider_size, _scrollbar->_max_value)) {
 			
 			_selectedItemIndex = index;
 
@@ -152,7 +152,7 @@ namespace Components {
 
 	}
 
-	void ListPanel::loadScrollbar() {
+	void ListPanel::loadScrollbar(int itemsCount) {
 
 		int x = _list_rect.position.x + _list_rect.size.x;
 		int y = _list_rect.position.y;
@@ -160,7 +160,7 @@ namespace Components {
 		int h = _list_rect.size.y;
 
 		int min = 0;
-		int max = animations_manager->getAnimationsCount() * basic_text_rect_height - _list_rect.size.y;
+		int max = itemsCount * basic_text_rect_height - _list_rect.size.y;
 		if (max < 0) max = 0;
 		int slider_size = _list_rect.size.y;
 		int value = 0;
@@ -180,9 +180,9 @@ namespace Components {
 			};
 	}
 
-	void ListPanel::loadAll() {
+	void ListPanel::loadAll(int itemCount) {
 		
-		loadScrollbar();
+		loadScrollbar(itemCount);
 		loadList();
 	}
 
