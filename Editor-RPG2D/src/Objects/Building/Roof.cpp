@@ -20,7 +20,7 @@ void Roof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i posi
 	_tiles = tiles;
 }
 
-void Roof::draw(sf::Vector2i position, float scale) {
+void Roof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 
 }
 
@@ -372,14 +372,14 @@ void FlatRoof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i 
 	generateTexture(position, scale);
 }
 
-void FlatRoof::draw(sf::Vector2i position, float scale) {
+void FlatRoof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 
 	float topPadding = 96.f * scale;
 	float overhangWidth = 4.f * scale;
 
 	sf::Sprite sprite(_roofTexture);
 	sprite.setPosition(sf::Vector2f(position.x - overhangWidth, position.y - topPadding - overhangWidth));
-	Main::render_window->draw(sprite);
+	target.draw(sprite);
 }
 
 GableRoof::GableRoof() : Roof() {
@@ -395,6 +395,6 @@ void GableRoof::generate(sf::Vector2i size, std::vector<int> tiles, sf::Vector2i
 	Roof::generate(size, tiles, position, scale);
 }
 
-void GableRoof::draw(sf::Vector2i position, float scale) {
+void GableRoof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 
 }

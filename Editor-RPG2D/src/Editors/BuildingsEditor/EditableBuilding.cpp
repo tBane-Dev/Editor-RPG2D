@@ -364,7 +364,6 @@ namespace BuildingsEditor {
 		}
 		 
 		if (_state == EditableBuildingStates::Resizing) {
-			std::wcout << L"EditableBuilding::update() - _state == Resizing" << std::endl;
 			for (auto& point : _edgePoints) {
 				if(point == GUI_manager->Element_pressed) {
 					resize(point);
@@ -382,7 +381,6 @@ namespace BuildingsEditor {
 			return;
 		}
 
-		std::wcout << L"EditableBuilding::update() - _state == Idle" << std::endl;
 		_building->update();
 	}
 
@@ -421,9 +419,9 @@ namespace BuildingsEditor {
 		}
 		
 		drawOnlyShape();
-		_building->drawOnlyFloor();
-		_building->drawOnlyWalls(_scale);
-		_building->drawOnlyRoof(_scale);
+		_building->drawOnlyFloor(*Main::render_window, _building->getPosition());
+		_building->drawOnlyWalls(*Main::render_window, _building->getPosition(), _scale);
+		_building->drawOnlyRoof(*Main::render_window, _building->getPosition(), _scale);
 		drawOnlyEdgePoints();
 
 		

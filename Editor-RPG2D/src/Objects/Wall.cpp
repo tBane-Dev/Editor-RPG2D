@@ -31,7 +31,7 @@ Wall::~Wall() {
 
 }
 
-void Wall::draw(float scale) {
+void Wall::draw(sf::RenderTarget& target, float scale) {
 
 	if (_prefab.expired())
 		return;
@@ -61,7 +61,7 @@ void Wall::draw(float scale) {
 				_position.y - 32.f * i * scale
 			));
 
-			Main::render_window->draw(spriteCenter);
+			target.draw(spriteCenter);
 		}
 
 		sf::Sprite spriteBottom(*wallset->_texture->_texture);
@@ -69,7 +69,7 @@ void Wall::draw(float scale) {
 		spriteBottom.setTextureRect(_textureBottomRect);
 		spriteBottom.setScale(sf::Vector2f(scale, scale));
 
-		Main::render_window->draw(spriteBottom);
+		target.draw(spriteBottom);
 	}
 	else {
 
@@ -82,17 +82,17 @@ void Wall::draw(float scale) {
 		spriteTop.setTextureRect(_textureTopRect);
 		spriteTop.setScale(sf::Vector2f(scale, scale));
 
-		Main::render_window->draw(spriteTop);
+		target.draw(spriteTop);
 
 		sf::Sprite spriteBottom(*wallset->_texture->_texture);
 		spriteBottom.setPosition(sf::Vector2f(_position));
 		spriteBottom.setTextureRect(_textureBottomRect);
 		spriteBottom.setScale(sf::Vector2f(scale, scale));
 
-		Main::render_window->draw(spriteBottom);
+		target.draw(spriteBottom);
 	}
 }
 
 void Wall::draw() {
-	draw(1.f);
+	draw(*Main::render_window, 1.f);
 }

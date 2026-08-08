@@ -72,9 +72,9 @@ namespace BuildingsEditor {
 		// draw building
 		//_building->_building->_prefab.lock()->getCollider()->draw(_building->_building->getPosition());
 		_building->drawOnlyShape();
-		_building->_building->drawOnlyFloor();
-		_building->_building->drawOnlyWalls(_building->_scale);
-		_building->_building->drawOnlyRoof(_building->_scale);
+		_building->_building->drawOnlyFloor(*Main::render_window, _building->_building->getPosition());
+		_building->_building->drawOnlyWalls(*Main::render_window, _building->_building->getPosition(), _building->_scale);
+		_building->_building->drawOnlyRoof(*Main::render_window, _building->_building->getPosition(), _building->_scale);
 
 		// draw grid
 		if (BuildingsEditor::editor->_main_menu->_render_grid->_checkbox->_value == 1) {

@@ -49,9 +49,9 @@ public:
 	void removeWallsFromGameObjects();
 
 	void drawOnlyCollider();
-	void drawOnlyFloor();
-	void drawOnlyWalls(float scale = 1.0f);
-	void drawOnlyRoof(float scale = 1.0f);
+	void drawOnlyFloor(sf::RenderTarget& target, sf::Vector2i position);
+	void drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
+	void drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
 
 	virtual void cursorHover();
 	virtual void update();

@@ -328,7 +328,7 @@ void GameObjectsOnMap::draw() {
 		if (object->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			if (building) {
-				building->drawOnlyFloor();
+				building->drawOnlyFloor(*Main::render_window, building->getPosition());
 			}
 		}
 	}
@@ -343,7 +343,7 @@ void GameObjectsOnMap::draw() {
 		if (object->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			if (building) {
-				building->drawOnlyRoof();
+				building->drawOnlyRoof(*Main::render_window, building->getPosition());
 			}
 		}
 	}
