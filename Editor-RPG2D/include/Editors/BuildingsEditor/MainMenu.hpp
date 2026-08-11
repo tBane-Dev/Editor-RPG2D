@@ -17,7 +17,7 @@ namespace BuildingsEditor {
 
 		// RENDER
 		std::shared_ptr<OptionWithCheckbox>	_render_grid;
-		std::shared_ptr<OptionWithCheckbox>	_render_outside_look;
+		std::shared_ptr<OptionWithCheckbox>	_render_walls_look;
 
 		MainMenu();
 		~MainMenu();

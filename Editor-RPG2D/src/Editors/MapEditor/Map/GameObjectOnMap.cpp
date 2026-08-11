@@ -76,6 +76,11 @@ void GameObjectOnMap::drawFrame(sf::Color color) {
 			y = _position.y + rect.position.y - static_cast<int>(thickness);
 			w = rect.size.x + static_cast<int>(2.f * thickness);
 			h = rect.size.y + static_cast<int>(2.f * thickness);
+
+			if (_type == ObjectType::Building) {
+				y -= 32;
+				h += 32;
+			}
 		}
 	}
 

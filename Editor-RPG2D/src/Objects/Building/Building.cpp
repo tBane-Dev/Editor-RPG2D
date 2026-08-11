@@ -92,6 +92,7 @@ void Building::generate() {
 	generateWalls();
 	generateRoofs();
 	generateCollider();
+	generateMesh();
 }
 
 void Building::setPosition(sf::Vector2i position) {
@@ -326,6 +327,113 @@ void Building::generateCollider(float scale) {
 
 }
 
+void Building::generateMesh(float scale) {
+
+	std::vector<std::vector<bool>> mask;
+
+	std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+
+	if (!bp) return;
+
+	// create mash using floor size
+	for (auto& row : bp->_floor)
+		mask.push_back(std::vector<bool>(row.size(), false));
+
+	// fill mask with floor
+	for (int y = 0; y < bp->_floor.size(); y+=1) {
+		for(int x = 0; x < bp->_floor[0].size(); x+=1) {
+			if (bp->_floor[y][x] > 0)
+				mask[y][x] = true;
+		}
+	}
+
+	// fill mask with walls
+	for (int y = 0; y < bp->_walls.size(); y += 1) {
+		for (int x = 0; x < bp->_walls[0].size(); x += 1) {
+			if (bp->_walls[y][x] > -1) {
+				mask[y*2][x*2] = true;
+				mask[y*2][x*2+1] = true;
+				mask[y*2+1][x*2] = true;
+				mask[y*2+1][x*2+1] = true;
+			}
+		}
+	}
+
+	/*
+	// draw mask
+	for(int y=0;y<mask.size();y+=1){
+		for(int x=0;x<mask[0].size();x+=1){
+			std::wcout << (mask[y][x] ? L"1" : L"0");
+		}
+		std::wcout << std::endl;
+	}
+	*/
+
+	// divide mask into rectangles
+	std::vector<sf::IntRect> rects;
+
+	for (int y = 0; y < mask.size(); y += 1) {
+		for (int x = 0; x < mask[y].size(); x += 1) {
+			if (!mask[y][x])
+				continue;
+
+			int width = 0;
+			while (x + width < mask[y].size() && mask[y][x + width]) {
+				width += 1;
+			}
+
+			int height = 0;
+			while( y + height < mask.size()) {
+
+				bool fullRow = true;
+
+				for (int xx = x; xx < x + width; xx++) {
+					if (!mask[y + height][xx]) {
+						fullRow = false;
+						break;
+					}
+				}
+
+				if (!fullRow)
+					break;
+
+				height += 1;
+			}
+
+			rects.push_back(sf::IntRect(sf::Vector2i(x, y), sf::Vector2i(width, height)));
+
+			// unselect the rectangle in the mask
+			for (int yy = y; yy < y + height; yy++) {
+				for (int xx = x; xx < x + width; xx++) {
+					mask[yy][xx] = false;
+				}
+			}
+		}
+	}
+
+	/*
+	// draw debug rectangles
+	for(auto& rect : rects) {
+		std::wcout << L"Rect: " << rect.position.x << L"," << rect.position.y << L" - " << rect.size.x << L"x" << rect.size.y << std::endl;
+	}
+	*/
+
+	// Add rectangles to mesh
+	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(2.0f, 1.0f);
+
+	for(auto& rect : rects) {
+
+		std::shared_ptr<Shape> shape = std::make_shared<Shape>();
+		shape->addPoint(sf::Vector2i(rect.position.x * 16, rect.position.y * 16), -1, scale);
+		shape->addPoint(sf::Vector2i((rect.position.x + rect.size.x) * 16, rect.position.y * 16), -1, scale);
+		shape->addPoint(sf::Vector2i((rect.position.x + rect.size.x) * 16, (rect.position.y + rect.size.y) * 16), -1, scale);
+		shape->addPoint(sf::Vector2i(rect.position.x * 16, (rect.position.y + rect.size.y) * 16), -1, scale);
+		mesh->addShape(shape);
+	}
+	
+	bp->_mesh = mesh;
+}
+
 void Building::addWallsToGameObjects() {
 
 	for (auto& wall : _wallsObjects) {
@@ -395,6 +503,17 @@ void Building::drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, flo
 	if (_renderOutsideLook) {
 		_roof->draw(target, position, scale);
 	}
+	
+	// draw the mesh
+	// std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
+	// bp->getMesh()->draw(position, sf::Color::Red);
+
+	if(MapEditor::editor) {
+		if(_isSelected)
+			drawFrame(sf::Color(255, 30, 45));
+		else if(MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1)
+			drawFrame();
+	}
 }
 
 void Building::cursorHover() {
@@ -402,11 +521,21 @@ void Building::cursorHover() {
 	if (_prefab.expired())
 		return;
 
-	std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(_prefab.lock()->getCollider());
-	if (!collider) return;
-
 	if (MapEditor::editor && Main::editor_manager->get_back() == MapEditor::editor) {
-		if (collider->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
+		
+		std::shared_ptr<Mesh> mesh = std::dynamic_pointer_cast<Mesh>(_prefab.lock()->getMesh());
+
+		if (!mesh) {
+			// if mesh is not present, use collider instead
+			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(_prefab.lock()->getCollider());
+			if (!collider) return;
+			if (collider->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
+				MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+			}
+			return;
+		}
+
+		if(mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
 			MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
 		}
 	}
@@ -427,7 +556,7 @@ void Building::update() {
 
 	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
 
-		if (BuildingsEditor::editor->_main_menu->_render_outside_look->_checkbox->_value == 1) {
+		if (BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value == 2) {
 			_renderOutsideLook = true;
 		}
 		else {

@@ -89,7 +89,15 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\main_menu\\exit.png");
     texturePaths.push_back(L"assets\\tex\\main_menu\\undo.png");
     texturePaths.push_back(L"assets\\tex\\main_menu\\redo.png");
-    
+
+    // Buildings Editor Main Menu
+    texturePaths.push_back(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_1.png");
+    texturePaths.push_back(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_1_hover.png");
+    texturePaths.push_back(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_2.png");
+    texturePaths.push_back(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_2_hover.png");
+    texturePaths.push_back(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_3.png");
+    texturePaths.push_back(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_3_hover.png");
+
     // check
     texturePaths.push_back(L"assets\\tex\\checked.png");
     texturePaths.push_back(L"assets\\tex\\checked_hover.png");

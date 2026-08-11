@@ -18,7 +18,7 @@ public:
 	GameObjectOnMap(std::weak_ptr<GameObject> prefab);
 	~GameObjectOnMap();
 
-	void drawFrame(sf::Color color = sf::Color(127, 30, 45));
+	void drawFrame(sf::Color color = sf::Color(127+64, 30, 45));
 
 	virtual sf::Vector2i getPosition();
 	virtual void setPosition(sf::Vector2i position);

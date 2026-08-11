@@ -41,6 +41,7 @@ public:
 	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
 	void generateRoofs(float scale = 1.0f);
 	void generateCollider(float scale = 1.0f);
+	void generateMesh(float scale = 1.0f);
 
 	void addWallsToGameObjects();
 	void removeWallsFromGameObjects();

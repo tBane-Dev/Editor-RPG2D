@@ -53,13 +53,13 @@ namespace BuildingsEditor {
 		_render_grid->addValue(textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
 		_render_grid->_checkbox->setValue(1);
 
-		_render_outside_look = std::make_shared<OptionWithCheckbox>(L"Outside Look", textures_manager->getTexture(L"assets\\tex\\unchecked.png"), textures_manager->getTexture(L"assets\\tex\\unchecked_hover.png"));
-		_render_outside_look->addValue(textures_manager->getTexture(L"assets\\tex\\checked.png"), textures_manager->getTexture(L"assets\\tex\\checked_hover.png"));
-		_render_outside_look->_checkbox->setValue(0);
+		_render_walls_look = std::make_shared<OptionWithCheckbox>(L"Walls Look", textures_manager->getTexture(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_1.png"), textures_manager->getTexture(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_1_hover.png"));
+		_render_walls_look->addValue(textures_manager->getTexture(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_2.png"), textures_manager->getTexture(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_2_hover.png"));
+		_render_walls_look->addValue(textures_manager->getTexture(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_3.png"), textures_manager->getTexture(L"assets\\tex\\BuildingsEditor\\main_menu\\walls_3_hover.png"));
+		_render_walls_look->_checkbox->setValue(1);
 
 		_render->addOption(_render_grid);
-		_render->addOption(_render_outside_look);
-
+		_render->addOption(_render_walls_look);
 		// POSITIONING
 
 		setPosition(sf::Vector2i(0, 0));

@@ -42,6 +42,16 @@ void Wall::draw(sf::RenderTarget& target, float scale) {
 	if (!wallPrefab)
 		return;
 
+	if (BuildingsEditor::editor && BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value == 0) {
+		sf::Sprite spriteBottom(*wallset->_texture->_texture);
+		spriteBottom.setPosition(sf::Vector2f(_position));
+		spriteBottom.setTextureRect(_textureBottomRect);
+		spriteBottom.setScale(sf::Vector2f(scale, scale));
+
+		target.draw(spriteBottom);
+		return;
+	}
+
 	// ?ciana bez budynku zawsze renderuje wygl?d zewn?trzny.
 	bool renderOutsideLook = true;
 
