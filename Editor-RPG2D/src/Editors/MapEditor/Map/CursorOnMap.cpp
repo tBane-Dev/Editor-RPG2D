@@ -147,7 +147,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                     //DebugLog(std::to_wstring(_selectedObjects.size()));
 
                 }
-                else {
+                else if(MapEditor::editor->_palette->_categories->getCategory(ObjectType::Building)->_isSelected){
                     static int i = 1;
 					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building no " + std::to_wstring(i++), *MapEditor::editor->_palette->buildings[0]);
                     prefabs_manager->addPrefab(buildingPrefab);

@@ -22,6 +22,15 @@ namespace MapEditor {
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\buildings.png"),
+			ObjectType::Building,
+			[this]() { loadAll(ObjectType::Building); } // TO-DO - must be - selectCategory
+		);
+
+		_categories->addCategory(
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
+			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\natures.png"),
 			ObjectType::Nature,
 			[this]() { loadAll(ObjectType::Nature); } // TO-DO - must be - selectCategory
@@ -35,15 +44,6 @@ namespace MapEditor {
 			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\monsters.png"),
 			ObjectType::Monster,
 			[this]() { loadAll(ObjectType::Monster); } // TO-DO - must be - selectCategory
-		);
-
-		_categories->addCategory(
-			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\categories\\category_press.png"),
-			nullptr,
-			ObjectType::None,
-			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
 		);
 
 		_categories->addCategory(

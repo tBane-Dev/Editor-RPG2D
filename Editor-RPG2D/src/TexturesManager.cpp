@@ -168,6 +168,7 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\selected_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\selected_press.png");
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\terrain.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\categories\\buildings.png");
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\natures.png");
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\monsters.png");
     texturePaths.push_back(L"assets\\tex\\palette\\categories\\walls.png");
@@ -218,6 +219,14 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_160_press.png");
     
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_240.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_240_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_240_press.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\slot_240_inactive.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_240.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_240_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\slots\\selected_240_press.png");
+
     texturePaths.push_back(L"assets\\tex\\palette\\none.png");
 
     // preview panel
