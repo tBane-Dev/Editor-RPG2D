@@ -319,7 +319,11 @@ void GameObjectsOnMap::draw() {
 		if (object->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			if (building) {
-				building->drawOnlyCollider();
+				std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+				if(buildingPrefab)
+					buildingPrefab->drawOnlyCollider(*Main::render_window, building->getPosition());
+
+				building->draw(); // draw selected frame
 			}
 		}
 	}
@@ -328,7 +332,9 @@ void GameObjectsOnMap::draw() {
 		if (object->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			if (building) {
-				building->drawOnlyFloor(*Main::render_window, building->getPosition());
+				std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+				if (buildingPrefab)
+					buildingPrefab->drawOnlyFloor(*Main::render_window, building->getPosition());
 			}
 		}
 	}
@@ -343,7 +349,9 @@ void GameObjectsOnMap::draw() {
 		if (object->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			if (building) {
-				building->drawOnlyRoof(*Main::render_window, building->getPosition());
+				std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+				if (buildingPrefab)
+					buildingPrefab->drawOnlyRoof(*Main::render_window, building->getPosition(), 1.0f, building);
 			}
 		}
 	}

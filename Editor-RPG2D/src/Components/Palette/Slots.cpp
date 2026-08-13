@@ -2,10 +2,12 @@
 #include "Objects/Terrain.hpp"
 #include "Objects/Floor.hpp"
 #include "Wallset.hpp"
+#include "Components/Palette/Palette.hpp"
 #include "Components/Palette/TerrainSlot.hpp"
 #include "Components/Palette/GameObjectSlot.hpp"
 #include "Components/Palette/FloorSlot.hpp" 
 #include "Components/Palette/WallSlot.hpp"
+#include "Components/Palette/BuildingSlot.hpp"
 #include "Components/Palette/Slot.hpp"
 #include "PrefabsManager.hpp"
 #include "RenderWindow.hpp"
@@ -82,28 +84,28 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 	std::shared_ptr<Texture> slotInactiveTexture;
 
 	if(_type == ObjectType::Terrain) {
-		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 3;
+		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 4;
 		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160.png");
 		slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_hover.png");
 		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_press.png");
 		slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
 	}
 	else if (_type == ObjectType::Building) {
-		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 2 * 240) / 2;
+		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 2 * 240) / 3;
 		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240.png");
 		slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240_hover.png");
 		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240_press.png");
 		slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240_inactive.png");
 	}
 	else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
-		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 120) / 4;
+		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 120) / 5;
 		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120.png");
 		slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_hover.png");
 		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_press.png");
 		slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_inactive.png");
 	}
 	else {
-		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 6;
+		_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 7;
 		slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80.png");
 		slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_hover.png");
 		slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_press.png");
@@ -126,13 +128,23 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 			}
 			else if (_type == ObjectType::Building) {
 				position = sf::Vector2i(_rect.position.x + _outer_margin + x * (240 + _inner_margin), _rect.position.y + _main_margin + _outer_margin + _top_margin + y * (240 + _inner_margin));
-				_slots.emplace_back(std::make_shared<Slot>(
+				
+				int index = y * _slotsCount.x + x;
+				std::shared_ptr<BuildingPrefab> b = nullptr;
+				if (index < Components::Palette::buildings.size())
+					b = Components::Palette::buildings[index];
+
+				std::shared_ptr<BuildingSlot> slot = std::make_shared<BuildingSlot>(
 					slotTexture,
 					slotHoverTexture,
 					slotPressTexture,
 					slotInactiveTexture,
-					position
-				));
+					position,
+					b
+				);
+
+				
+				_slots.emplace_back(slot);	
 			}
 			else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
 				position = sf::Vector2i(_rect.position.x + _outer_margin + x * (120 + _inner_margin), _rect.position.y + _main_margin + _outer_margin + _top_margin + y * (120 + _inner_margin));
@@ -204,15 +216,15 @@ void Slots::generateScrollbar() {
 	if (_type == ObjectType::Terrain) {
 		rowsTotal = (int)std::ceil(tileset->groups.size() / _slotsCount.x);
 		rowsVisible = _slotsCount.y;
-		rowHeight = rowHeight = 160 + _inner_margin;
+		rowHeight = 160 + _inner_margin;
 		scrollbarValue = 0;
 		scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
 		scrollbarSliderSize = _slotsCount.y * (160 + _inner_margin);
 	}
 	else if (_type == ObjectType::Building) {
-		rowsTotal = (int)std::ceil(0 / _slotsCount.x);
+		rowsTotal = (int)std::ceil(Components::Palette::buildings.size() / _slotsCount.x);
 		rowsVisible = _slotsCount.y;
-		rowHeight = rowHeight = 240 + _inner_margin;
+		rowHeight = 240 + _inner_margin;
 		scrollbarValue = 0;
 		scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
 		scrollbarSliderSize = _slotsCount.y * (240 + _inner_margin);
@@ -220,7 +232,7 @@ void Slots::generateScrollbar() {
 	else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
 		rowsTotal = (int)std::ceil(tileset->groups.size() / _slotsCount.x);
 		rowsVisible = _slotsCount.y;
-		rowHeight = rowHeight = 120 + _inner_margin;
+		rowHeight = 120 + _inner_margin;
 		scrollbarValue = 0;
 		scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
 		scrollbarSliderSize = _slotsCount.y * (120 + _inner_margin);
@@ -228,7 +240,7 @@ void Slots::generateScrollbar() {
 	else {
 		rowsTotal = (int)std::ceil(tileset->groups.size() / _slotsCount.x);
 		rowsVisible = _slotsCount.y;
-		rowHeight = rowHeight = 80 + _inner_margin;
+		rowHeight = 80 + _inner_margin;
 		scrollbarValue = 0;
 		scrollbarMaxValue = std::max(0, (rowsTotal - rowsVisible) * rowHeight);
 		scrollbarSliderSize = _slotsCount.y * (80 + _inner_margin);
@@ -342,8 +354,8 @@ void Slots::loadObjects() {
 
 	if (_type == ObjectType::Building) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i < 0) {
-				_slots[i]->_object = std::weak_ptr<Object>();
+			if (i < Components::Palette::buildings.size()) {
+				_slots[i]->_object = Components::Palette::buildings[i];
 				_slots[i]->_animator = nullptr;
 				_slots[i]->setActive(true);
 			}
@@ -397,6 +409,10 @@ void Slots::updateObjects() {
 	
 	if(_type == ObjectType::Terrain)
 		startIndex = _scrollbar->getValue() / (160 + _inner_margin) * _slotsCount.x;
+	else if (_type == ObjectType::Building)
+		startIndex = _scrollbar->getValue() / (240 + _inner_margin) * _slotsCount.x;
+	else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted)
+		startIndex = _scrollbar->getValue() / (120 + _inner_margin) * _slotsCount.x;
 	else
 		startIndex = _scrollbar->getValue() / (80 + _inner_margin) * _slotsCount.x;
 
@@ -405,8 +421,8 @@ void Slots::updateObjects() {
 	if (_type == ObjectType::Terrain) {
 
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i < Components::Palette::terrains.size()) {
-				_slots[i]->_object = Components::Palette::terrains[i];
+			if (i + startIndex < Components::Palette::terrains.size()) {
+				_slots[i]->_object = Components::Palette::terrains[i + startIndex];
 				_slots[i]->_animator = nullptr;
 				_slots[i]->setActive(true);
 			}
@@ -419,11 +435,12 @@ void Slots::updateObjects() {
 
 		return;
 	}
+
 
 	if (_type == ObjectType::Floor) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i < FloorSlot::_floorset->_texture->getSize().x / 64) {
-				_slots[i]->_object = Components::Palette::floors[i];
+			if (i + startIndex < FloorSlot::_floorset->_texture->getSize().x / 64) {
+				_slots[i]->_object = Components::Palette::floors[i + startIndex];
 				_slots[i]->_animator = nullptr;
 				_slots[i]->setActive(true);
 			}
@@ -436,12 +453,33 @@ void Slots::updateObjects() {
 		return;
 	}
 
-	if (_type == ObjectType::Building) {
+	if (_type == ObjectType::Wall) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i < 0) {
-				_slots[i]->_object = std::weak_ptr<Object>();
+			if (i + startIndex < wallset->_texture->_texture->getSize().y / 32) {
+				_slots[i]->_object = Components::Palette::walls[i + startIndex];
 				_slots[i]->_animator = nullptr;
 				_slots[i]->setActive(true);
+			}
+			else {
+				_slots[i]->_object = std::weak_ptr<Object>();
+				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
+			}
+		}
+		return;
+	}
+
+
+	if (_type == ObjectType::Building) {
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i + startIndex < Components::Palette::buildings.size()) {
+				if (_slots[i]->_object.lock() != Components::Palette::buildings[i + startIndex]) {
+					_slots[i]->_object = Components::Palette::buildings[i + startIndex];
+					std::dynamic_pointer_cast<BuildingSlot>(_slots[i])->generate();
+					_slots[i]->_animator = nullptr;
+					_slots[i]->setActive(true);
+				}
+				
 			}
 			else {
 				_slots[i]->_object = std::weak_ptr<Object>();
@@ -522,6 +560,8 @@ void Slots::setFunction(std::function<void(std::shared_ptr<Slot> slot, int selec
 				int slotHeight;
 				if(_type == ObjectType::Terrain)
 					slotHeight = 160 + _inner_margin;
+				else if (_type == ObjectType::Building)
+					slotHeight = 240 + _inner_margin;
 				else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted)
 					slotHeight = 120 + _inner_margin;
 				else
@@ -542,28 +582,28 @@ void Slots::selectSlot(int selectedSlotId) {
 		std::shared_ptr<Texture> slotInactiveTexture;
 
 		if (_type == ObjectType::Terrain) {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 2;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 4;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_press.png");
 			slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_160_inactive.png");
 		}
 		else if (_type == ObjectType::Building) {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 240) / 1;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 2 * 240) / 3;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240_press.png");
 			slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_240_inactive.png");
 		}
 		else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 120) / 3;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 120) / 5;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_press.png");
 			slotInactiveTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_120_inactive.png");
 		}
 		else {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 5;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 7;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\slot_80_press.png");
@@ -606,25 +646,25 @@ void Slots::selectSlot(int selectedSlotId) {
 		std::shared_ptr<Texture> slotPressTexture;
 
 		if (_type == ObjectType::Terrain) {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 2;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 160) / 4;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_160.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_160_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_160_press.png");
 		}
 		else if (_type == ObjectType::Building) {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 3 * 240) / 1;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 2 * 240) / 3;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_240.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_240_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_240_press.png");
 		}
 		else if(_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 120) / 3;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 4 * 120) / 5;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_120.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_120_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_120_press.png");
 		}
 		else {
-			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 5;
+			_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - 32 - 6 * 80) / 7;
 			slotTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_80.png");
 			slotHoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_80_hover.png");
 			slotPressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\slots\\selected_80_press.png");

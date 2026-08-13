@@ -147,49 +147,76 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                     //DebugLog(std::to_wstring(_selectedObjects.size()));
 
                 }
-                else if(MapEditor::editor->_palette->_categories->getCategory(ObjectType::Building)->_isSelected){
-                    static int i = 1;
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building no " + std::to_wstring(i++), *MapEditor::editor->_palette->buildings[0]);
-                    prefabs_manager->addPrefab(buildingPrefab);
-
-                    std::shared_ptr<Building> building = std::make_shared<Building>(buildingPrefab);
-                    building->generate();
-					building->setPosition(MapEditor::editor->_cursor_on_map->_globalPosition);
-					MapEditor::editor->_game_objects->addGameObject(building);
-					building->addWallsToGameObjects();
-					
-
-                    
-                }
+               
             }
             else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); (mm || MapEditor::editor->_camera->_isMoving) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 
                 if (_isDragging) {
                     for (auto& object : _selectedObjects) {
-                        if (!object->_object.expired()) {
 
-                            sf::Vector2i oldPos = (object->_object.lock()->_prefab.lock()->_type == ObjectType::Monster) ?
-                                std::dynamic_pointer_cast<Monster>(object->_object.lock())->_basePosition :
-                                object->_object.lock()->_position;
+                        if (object->_object.expired())
+                            continue;
 
-                            std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(oldPos);
+                        std::shared_ptr<GameObjectOnMap> gameObject =
+                            object->_object.lock();
 
-                            if (chunk) {
-                                chunk->removeGameObjectOnMap(object->_object.lock());
-                            }
+                        sf::Vector2i oldPos =
+                            (gameObject->_prefab.lock()->_type == ObjectType::Monster)
+                            ? std::dynamic_pointer_cast<Monster>(gameObject)->_basePosition
+                            : gameObject->_position;
 
-                            sf::Vector2i newPos = MapEditor::editor->_cursor_on_map->_globalPosition - object->_offset;
-                            newPos.x = (newPos.x / Tile::tileSize) * Tile::tileSize;
-                            newPos.y = (newPos.y / Tile::tileSize) * Tile::tileSize;
 
-                            chunk = MapEditor::editor->_map->getChunkByGlobalPosition(newPos);
-                            if (chunk) {
-                                chunk->addGameObjectOnMap(object->_object.lock());
-                            }
-                            object->_object.lock()->setPosition(newPos);
+                        // 1. USUŃ ŚCIANY JESZCZE ZE STARYCH POZYCJI
+                        if (gameObject->_type == ObjectType::Building) {
 
+                            std::shared_ptr<Building> building =
+                                std::dynamic_pointer_cast<Building>(gameObject);
+
+                            building->removeWallsFromGameObjects();
+                        }
+
+
+                        // 2. USUŃ OBIEKT ZE STAREGO CHUNKA
+                        std::shared_ptr<Chunk> chunk =
+                            MapEditor::editor->_map->getChunkByGlobalPosition(oldPos);
+
+                        if (chunk)
+                            chunk->removeGameObjectOnMap(gameObject);
+
+
+                        // 3. WYLICZ NOWĄ POZYCJĘ
+                        sf::Vector2i newPos =
+                            MapEditor::editor->_cursor_on_map->_globalPosition -
+                            object->_offset;
+                         
+                        newPos.x = (newPos.x / Tile::tileSize) * Tile::tileSize;
+                        newPos.y = (newPos.y / Tile::tileSize) * Tile::tileSize;
+
+
+                        // 4. PRZESUŃ BUDYNEK
+                        // Building::setPosition przesunie też _wallsObjects
+                        gameObject->setPosition(newPos);
+
+
+                        // 5. DODAJ BUDYNEK DO NOWEGO CHUNKA
+                        chunk =
+                            MapEditor::editor->_map->getChunkByGlobalPosition(newPos);
+
+                        if (chunk)
+                            chunk->addGameObjectOnMap(gameObject);
+
+
+                        // 6. DOPIERO TERAZ DODAJ ŚCIANY
+                        // mają już nowe pozycje
+                        if (gameObject->_type == ObjectType::Building) {
+
+                            std::shared_ptr<Building> building =
+                                std::dynamic_pointer_cast<Building>(gameObject);
+
+                            building->addWallsToGameObjects();
                         }
                     }
+
                     return;
                 }
 
@@ -273,8 +300,6 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             }
         }
     }
-
-	// TO-DO - end
     
     if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
         if (!_selectedObjects.empty()) {
@@ -433,20 +458,31 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 frameHeight = (float)(frameRect.size.y);
             }
 
+            if (prefab->_type == ObjectType::Building) {
+				std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
+                frameWidth = bp->getPreviewOutsideTexture(true)->getSize().x;
+                frameHeight = bp->getPreviewOutsideTexture(true)->getSize().y;
+            }
+
 			// position of object on the map, aligning to the grid
 			sf::Vector2i position;
 			position.x = (_globalPosition.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
 			position.y = (_globalPosition.y - (int)frameHeight / 2) / Tile::tileSize * Tile::tileSize;
 
-			if (dynamic_cast<MonsterPrefab*>(prefab.get())) {
+			if (prefab->_type == ObjectType::Monster) {
 				position.x += prefab->getOrigin().x;
 				position.y += prefab->getOrigin().y;
 			}
 
+            if (prefab->_type == ObjectType::Building) {
+				position.y += 96; // offset for building preview
+            }
+
 			// create object on map by type 
 			std::shared_ptr<GameObjectOnMap> objectOnMap;
 
-			if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
+			if (prefab->_type == ObjectType::Building) objectOnMap = std::make_shared<Building>(prefab);
+			else if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
 			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
 			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
 
@@ -454,6 +490,12 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			// positioning and adding object to map
 			objectOnMap->setPosition(position);
 			MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
+            if (objectOnMap->_type == ObjectType::Building) {
+                std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectOnMap);
+                building->generate();
+                building->addWallsToGameObjects();
+				prefabs_manager->addPrefab(prefab);
+            }
             MapEditor::editor->_map->setVisibleChunks();
 			return;
 		}
@@ -546,6 +588,13 @@ void CursorOnMap::draw()
             frameHeight = (float)(frameRect.size.y);
         }
 
+        if (prefab->_type == ObjectType::Building) {
+			std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
+            frameWidth = (float)(buildingPrefab->getPreviewOutsideTexture(true)->getSize().x);
+            frameHeight = (float)(buildingPrefab->getPreviewOutsideTexture(true)->getSize().y);
+			frameRect.size = sf::Vector2i((int)frameWidth, (int)frameHeight);
+        }
+
 		sf::Vector2i position;
 		position.x = (_globalPosition.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
 		position.y = (_globalPosition.y - (int)frameHeight/2) / Tile::tileSize * Tile::tileSize;
@@ -563,8 +612,30 @@ void CursorOnMap::draw()
 
             sprite.setPosition(sf::Vector2f(position));
             Main::render_window->draw(sprite);
+            return;
         }
-		return;
+		
+        if (prefab->_type == ObjectType::Building) {
+
+            std::shared_ptr<BuildingPrefab> buildingPrefab =
+                std::dynamic_pointer_cast<BuildingPrefab>(prefab);
+
+            if (!buildingPrefab)
+                return;
+
+            std::shared_ptr<sf::Texture> texture =
+                buildingPrefab->getPreviewOutsideTexture(true);
+
+            if (!texture)
+                return;
+
+            sf::Sprite sprite(*texture);
+
+            sprite.setPosition(sf::Vector2f(position));
+            Main::render_window->draw(sprite);
+
+            return;
+        }
 	}
 
 

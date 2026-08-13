@@ -81,7 +81,8 @@ namespace BuildingsEditor {
 
 				if (building && building->_prefab.lock() == oldPrefab) {
 					building->loadPrefab(newPrefab);
-					building->generate();
+					std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock())->generate(building->getPosition(), 1.0f, building);
+					building->setPosition(building->getPosition());
 					building->addWallsToGameObjects();
 				}
 			}

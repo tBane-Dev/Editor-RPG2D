@@ -72,9 +72,12 @@ namespace BuildingsEditor {
 		// draw building
 		//_building->_building->_prefab.lock()->getCollider()->draw(_building->_building->getPosition());
 		_building->drawOnlyShape();
-		_building->_building->drawOnlyFloor(*Main::render_window, _building->_building->getPosition());
-		_building->_building->drawOnlyWalls(*Main::render_window, _building->_building->getPosition(), _building->_scale);
-		_building->_building->drawOnlyRoof(*Main::render_window, _building->_building->getPosition(), _building->_scale);
+		std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_building->_building->_prefab.lock());
+		if (buildingPrefab) {
+			buildingPrefab->drawOnlyFloor(*Main::render_window, _building->_building->getPosition());
+			buildingPrefab->drawOnlyWalls(*Main::render_window, _building->_building->getPosition(), _building->_scale);
+			buildingPrefab->drawOnlyRoof(*Main::render_window, _building->_building->getPosition(), _building->_scale, _building->_building);
+		}
 
 		// draw grid
 		if (BuildingsEditor::editor->_main_menu->_render_grid->_checkbox->_value == 1) {

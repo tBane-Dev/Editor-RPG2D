@@ -149,6 +149,15 @@ namespace MapEditor {
 
 				}
 			);
+		}else if(_categories->_selectedType == ObjectType::Building) {
+			_slots->setFunction(
+				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
+					MapEditor::editor->_cursor_on_map->_object = slot->_object;
+					std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(MapEditor::editor->_cursor_on_map->_object.lock());
+					buildingPrefab->generate(MapEditor::editor->_cursor_on_map->_globalPosition, 1.0f, nullptr);
+					_slots->selectSlot(selectedSlotId);
+				}
+			);
 		}
 		else {
 			_slots->setFunction(

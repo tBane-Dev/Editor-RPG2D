@@ -8,6 +8,8 @@
 #include "DebugLog.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp""
 #include "Wallset.hpp"
+#include <queue>
+
 
 
 namespace Components {
@@ -39,20 +41,7 @@ namespace Components {
 		}
 
 		if(Palette::buildings.empty()) {
-
-			std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building", sf::Vector2i(8, 8));
-			buildingPrefab->_walls = {
-				{ 1, 1, 1, 1, 1, 1, 1, 1},
-				{ 1, -1, -1, -1, -1, -1, -1, 1},
-				{ 1, -1, -1, -1, -1, -1, -1, 1},
-				{ 1, -1, -1, -1, -1, -1, -1, 1},
-				{ 1, -1, -1, -1, -1, -1, -1, 1},
-				{ 1, -1, -1, -1, -1, -1, -1, 1},
-				{ 1, -1, -1, -1, -1, -1, -1, 1},
-				{ 1, 1, 1, 1, 1, 1, 1, 1}
-			};
-			Palette::buildings.emplace_back(buildingPrefab);
-
+			createBuildingsPrefabs();
 		}
 
 		sf::Vector2i size;
@@ -134,6 +123,180 @@ namespace Components {
 
 	}
 
+	void Palette::createBuildingsPrefabs() {
+
+		auto generateFloor = [](std::vector<std::vector<int>> walls, int tile) {
+			if (walls.empty() || walls[0].empty())
+				return std::vector<std::vector<int>>();
+
+			int wallsW = (int)walls[0].size();
+			int wallsH = (int)walls.size();
+
+			// floor jest 2x większy od walls
+			int w = wallsW * 2;
+			int h = wallsH * 2;
+
+			// -1 = brak floor
+			std::vector<std::vector<int>> floor(h, std::vector<int>(w, -1));
+
+			// Maska ścian już w rozdzielczości floor
+			std::vector<std::vector<bool>> solid(h, std::vector<bool>(w, false));
+
+			for (int y = 0; y < wallsH; y++) {
+				for (int x = 0; x < wallsW; x++) {
+
+					if (walls[y][x] >= 0) {
+
+						int fx = x * 2;
+						int fy = y * 2;
+
+						solid[fy][fx] = true;
+						solid[fy][fx + 1] = true;
+						solid[fy + 1][fx] = true;
+						solid[fy + 1][fx + 1] = true;
+					}
+				}
+			}
+
+			int fw = w + 2;
+			int fh = h + 2;
+
+			std::vector<std::vector<bool>> outside(
+				fh,
+				std::vector<bool>(fw, false)
+			);
+
+			std::queue<sf::Vector2i> q;
+
+			q.push(sf::Vector2i(0, 0));
+			outside[0][0] = true;
+
+			const int dx[4] = { 1, -1, 0, 0 };
+			const int dy[4] = { 0, 0, 1, -1 };
+
+			while (!q.empty()) {
+
+				sf::Vector2i p = q.front();
+				q.pop();
+
+				for (int dir = 0; dir < 4; dir++) {
+
+					int nx = p.x + dx[dir];
+					int ny = p.y + dy[dir];
+
+					if (nx < 0 || ny < 0 || nx >= fw || ny >= fh) continue;
+
+					if (outside[ny][nx]) continue;
+
+					int ox = nx - 1;
+					int oy = ny - 1;
+
+					bool blocked = false;
+
+					if (ox >= 0 && oy >= 0 && ox < w && oy < h)
+						blocked = solid[oy][ox];
+
+					if (blocked) continue;
+
+					outside[ny][nx] = true;
+					q.push(sf::Vector2i(nx, ny));
+				}
+			}
+
+			for (int y = 0; y < h; y++) {
+				for (int x = 0; x < w; x++) {
+					bool isOutside = outside[y + 1][x + 1];
+					if (!isOutside)
+						floor[y][x] = tile;
+				}
+			}
+
+			return floor;
+		};
+
+		for(int wallType = 0; wallType < wallset->_groups.size(); wallType += 1) {
+			for (int floorType = 1; floorType < floors.size(); floorType += 1) {
+
+				{
+					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building1", sf::Vector2i(8, 8));
+					int X = wallType;
+					int O = -1;
+					buildingPrefab->_walls = {
+						{ X, X, X, X, X, X, X, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, X, X, X, X, X, X, X}
+					};
+					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
+					Palette::buildings.emplace_back(buildingPrefab);
+				}
+
+				{
+					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building2", sf::Vector2i(8, 8));
+					int X = wallType;
+					int O = -1;
+					buildingPrefab->_walls = {
+						{ X, X, X, X, X, X, X, X, X, X, X, X},
+						{ X, O, O, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, O, O, X},
+						{ X, X, X, X, X, X, X, X, X, X, X, X}
+					};
+					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
+					Palette::buildings.emplace_back(buildingPrefab);
+				}
+
+				{
+					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building3", sf::Vector2i(8, 8));
+					int X = wallType;
+					int O = -1;
+					buildingPrefab->_walls = {
+						{ X, X, X, X, X, X, X, X, X, X},
+						{ X, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, X, X, X, X, X},
+						{ X, O, O, O, O, X, O, O, O, O},
+						{ X, O, O, O, O, X, O, O, O, O},
+						{ X, X, X, X, X, X, O, O, O, O}
+					};
+					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
+					Palette::buildings.emplace_back(buildingPrefab);
+				}
+
+				{
+					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building4", sf::Vector2i(8, 8));
+					int X = wallType;
+					int O = -1;
+					buildingPrefab->_walls = {
+						{ X, X, X, X, X, X, X, X, X, X},
+						{ X, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, O, O, X},
+						{ X, X, X, X, X, O, O, O, O, X},
+						{ O, O, O, O, X, O, O, O, O, X},
+						{ O, O, O, O, X, O, O, O, O, X},
+						{ O, O, O, O, X, X, X, X, X, X}
+					};
+					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
+					Palette::buildings.emplace_back(buildingPrefab);
+				}
+
+			}
+
+			
+
+		}
+
+		
+	}
 
 	sf::Vector2i Palette::getSize() {
 		return _rect.size;

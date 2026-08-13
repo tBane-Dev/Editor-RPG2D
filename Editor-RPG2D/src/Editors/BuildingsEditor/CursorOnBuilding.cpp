@@ -46,8 +46,10 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
 
         if (bp->_walls[ty][tx] != -1) {
             bp->_walls[ty][tx] = -1;
-            BuildingsEditor::editor->_building_panel->_building->_building->generateWalls(BuildingsEditor::editor->_building_panel->_building->_scale);
-            BuildingsEditor::editor->_building_panel->_building->_building->generateRoofs(BuildingsEditor::editor->_building_panel->_building->_scale);
+			std::shared_ptr<Building> building = BuildingsEditor::editor->_building_panel->_building->_building;
+			std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+            buildingPrefab->generateWalls(building->_position, BuildingsEditor::editor->_building_panel->_building->_scale, building);
+            buildingPrefab->generateRoofs(building->_position, BuildingsEditor::editor->_building_panel->_building->_scale);
             return;
         }
     }
@@ -129,8 +131,12 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
                 }
             }
 
-			if(editedFloor) 
-                building->_building->generateFloorVertexArray(scale);
+            if (editedFloor) {
+				std::shared_ptr<Building> building = BuildingsEditor::editor->_building_panel->_building->_building;
+                std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+                buildingPrefab->generateFloorVertexArray(scale);
+            }
+                
         }
 		return;
 	}
@@ -148,7 +154,8 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
 
             std::shared_ptr<BuildingsEditor::EditableBuilding> building = BuildingsEditor::editor->_building_panel->_building;
 
-            std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(building->_building->_prefab.lock());
+			std::shared_ptr<Building> bb = std::dynamic_pointer_cast<Building>(building->_building);
+            std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(bb->_prefab.lock());
             if (!bp) return;
 
             
@@ -165,8 +172,9 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
             std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(wall->_prefab.lock());
 
             bp->_walls[ty][tx] = wallPrefab->_id;
-            building->_building->generateWalls(building->_scale);
-			building->_building->generateRoofs(building->_scale);
+  
+            bp->generateWalls(bb->_position, building->_scale, bb);
+            bp->generateRoofs(bb->_position, building->_scale);
         }
 
         return;

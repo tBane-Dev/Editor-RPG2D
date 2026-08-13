@@ -7,6 +7,7 @@
 
 Roof::Roof() {
 	_tiles.clear();
+	_roofOverhangSize = 0;
 }
 
 Roof::~Roof() {
@@ -234,7 +235,10 @@ void FlatRoof::generateOverhang(sf::Vector2i position, float scale) {
 	_roofOverhangVertexArray.clear();
 	_roofOverhangVertexArray.setPrimitiveType(sf::PrimitiveType::Triangles);
 	
-	int miniSize = 4;
+	if (_roofOverhangSize <= 0)
+		return;
+
+	int miniSize = _roofOverhangSize;
 	int miniCount = 32 / miniSize;
 	
 	int width = _mask[0].size() * miniCount + 2;

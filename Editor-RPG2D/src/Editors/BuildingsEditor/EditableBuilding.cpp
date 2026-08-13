@@ -76,7 +76,7 @@ namespace BuildingsEditor {
 
 		bp->_floor = newFloor;
 
-		_building->generateFloorVertexArray();
+		bp->generateFloorVertexArray(_scale);
 	}
 
 	void EditableBuilding::resizeWalls(int offsetX, int offsetY) {
@@ -104,7 +104,7 @@ namespace BuildingsEditor {
 
 		bp->_walls = newWalls;
 
-		_building->generateWalls();
+		bp->generateWalls(_building->_position, _scale, _building);
 	}
 
 	void EditableBuilding::resizeRoof() {
@@ -112,7 +112,7 @@ namespace BuildingsEditor {
 		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
 		if (!bp) return;
 
-		_building->generateRoofs(_scale);
+		bp->generateRoofs(_building->_position, _scale);
 	}
 
 	void EditableBuilding::resize(std::shared_ptr<EdgePoint> edgePoint) {
@@ -191,7 +191,8 @@ namespace BuildingsEditor {
 		resizeFloor(offsetX, offsetY);
 		resizeWalls(offsetX/2, offsetY/2);
 		resizeRoof();
-		_building->generateCollider(_scale);
+		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+		bp->generateCollider(_scale);
 		setPosition(_rect.position);
 		_building->setPosition(_rect.position);
 	}
@@ -341,9 +342,10 @@ namespace BuildingsEditor {
 			setPosition(sf::Vector2i(newPosition));
 			_building->setPosition(sf::Vector2i(newPosition));
 
-			_building->generateFloorVertexArray(_scale);
-			_building->generateWalls(_scale);
-			_building->generateRoofs(_scale);
+			std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+			bp->generateFloorVertexArray(_scale);
+			bp->generateWalls(_building->_position, _scale, _building);
+			bp->generateRoofs(_building->_position, _scale);
 
 			generateEdgePoints();
 		}
@@ -363,10 +365,12 @@ namespace BuildingsEditor {
 
 			setPosition(newPosition);
 			_building->setPosition(newPosition);
-			_building->generateFloorVertexArray(_scale);
-			_building->generateWalls(_scale);
-			_building->generateRoofs(_scale);
-			_building->generateCollider(_scale);
+
+			std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+			bp->generateFloorVertexArray(_scale);
+			bp->generateWalls(_building->_position, _scale, _building);
+			bp->generateRoofs(_building->_position, _scale);
+			bp->generateCollider(_scale);
 			return;
 		}
 		 
@@ -427,9 +431,10 @@ namespace BuildingsEditor {
 		}
 		
 		drawOnlyShape();
-		_building->drawOnlyFloor(*Main::render_window, _building->getPosition());
-		_building->drawOnlyWalls(*Main::render_window, _building->getPosition(), _scale);
-		_building->drawOnlyRoof(*Main::render_window, _building->getPosition(), _scale);
+		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+		bp->drawOnlyFloor(*Main::render_window, _building->getPosition());
+		bp->drawOnlyWalls(*Main::render_window, _building->getPosition(), _scale);
+		bp->drawOnlyRoof(*Main::render_window, _building->getPosition(), _scale);
 		drawOnlyEdgePoints();
 
 		

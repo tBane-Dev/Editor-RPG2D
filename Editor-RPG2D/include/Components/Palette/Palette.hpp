@@ -34,6 +34,8 @@ namespace Components {
 		Palette();
 		~Palette();
 
+		void createBuildingsPrefabs();
+
 		sf::Vector2i getSize();
 		virtual void loadAll(ObjectType type);
 		void setPosition(sf::Vector2i position);

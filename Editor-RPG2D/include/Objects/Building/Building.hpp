@@ -15,9 +15,28 @@ public:
 
 	int _wallHeight = 3;
 
+	sf::VertexArray _floorVertexArray;
+	std::vector<std::shared_ptr<Wall>> _wallsObjects;
+	std::shared_ptr<Roof> _roof;
+
 	BuildingPrefab(std::wstring name, sf::Vector2i size);
 	BuildingPrefab(std::wstring name, const BuildingPrefab& other);
 	~BuildingPrefab();
+
+	void generate(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
+
+	void generateFloorVertexArray(float scale = 1.0f);
+	void generateWalls(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
+	void generateRoofs(sf::Vector2i position, float scale = 1.0f);
+	void generateCollider(float scale = 1.0f);
+	void generateMesh(float scale = 1.0f);
+
+	void drawOnlyCollider(sf::RenderTarget& target, sf::Vector2i position);
+	void drawOnlyFloor(sf::RenderTarget& target, sf::Vector2i position);
+	void drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, int drawType = -1);
+	void drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
+
+	std::shared_ptr<sf::Texture> getPreviewOutsideTexture(bool drawOutside);
 };
 
 class Building : public GameObjectOnMap {
@@ -25,10 +44,8 @@ public:
 
 
 	bool _renderOutsideLook;
-
-	sf::VertexArray _floorVertexArray;
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
-	std::shared_ptr<Roof> _roof;
+	
 
 	Building(std::weak_ptr<GameObject> prefab);
 	~Building();
@@ -36,20 +53,14 @@ public:
 	void generate();
 
 	virtual void setPosition(sf::Vector2i position);
-	void generateFloorVertexArray(float scale = 1.0f);
-	void generateWalls(float scale = 1.0f, bool renderOutsideLook = false);	
+	
 	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
-	void generateRoofs(float scale = 1.0f);
-	void generateCollider(float scale = 1.0f);
-	void generateMesh(float scale = 1.0f);
+	
 
 	void addWallsToGameObjects();
 	void removeWallsFromGameObjects();
 
-	void drawOnlyCollider();
-	void drawOnlyFloor(sf::RenderTarget& target, sf::Vector2i position);
-	void drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
-	void drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
+	
 
 	virtual void cursorHover();
 	virtual void update();

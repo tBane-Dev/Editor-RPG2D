@@ -6,6 +6,9 @@ class Roof {
 public:
 
 	std::vector<std::vector<int>> _tiles;
+	int  _roofOverhangSize;
+	sf::VertexArray _roofOverhangVertexArray;
+	sf::Texture _roofTexture;
 
 	Roof();
 	~Roof();
@@ -18,9 +21,7 @@ class FlatRoof : public Roof {
 public:
 	std::vector<std::vector<int>> _mask;
 	std::vector<std::shared_ptr<FlatRoofPart>> _parts;
-	sf::VertexArray _roofOverhangVertexArray;
-	sf::Texture _roofTexture;
-
+	
 	FlatRoof();
 	~FlatRoof();
 
