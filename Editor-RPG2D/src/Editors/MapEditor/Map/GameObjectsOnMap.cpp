@@ -11,26 +11,7 @@ GameObjectsOnMap::GameObjectsOnMap() {
 	_visibleGameObjectsOnMap.clear();
 	_hoveredGameObjectOnMap = std::weak_ptr<GameObjectOnMap>();
 	 
-	std::shared_ptr<Map> map = MapEditor::editor->_map;
-	sf::IntRect mapRect = map->getRect();
-	sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations().lock()->getTexture()->_texture->getSize());
-
-	std::shared_ptr<GameObjectOnMap> tree_1 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-	tree_1->setPosition(sf::Vector2i(0, 0));
-	MapEditor::editor->_map->getChunkByGlobalPosition(tree_1->getPosition())->addGameObjectOnMap(tree_1);
 	
-	std::shared_ptr<GameObjectOnMap> tree_2 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-	tree_2->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, 0));
-	MapEditor::editor->_map->getChunkByGlobalPosition(tree_2->getPosition())->addGameObjectOnMap(tree_2);
-
-	std::shared_ptr<GameObjectOnMap> tree_3 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-	tree_3->setPosition(sf::Vector2i(0, mapRect.size.y-texSize.y));
-	MapEditor::editor->_map->getChunkByGlobalPosition(tree_3->getPosition())->addGameObjectOnMap(tree_3);
-
-	std::shared_ptr<GameObjectOnMap> tree_4 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-	tree_4->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, mapRect.size.y - texSize.y));
-	MapEditor::editor->_map->getChunkByGlobalPosition(tree_4->getPosition())->addGameObjectOnMap(tree_4);
-
 }
 
 GameObjectsOnMap::~GameObjectsOnMap() {
@@ -152,25 +133,27 @@ void GameObjectsOnMap::sort() {
 
 		// OBJECT A
 		sf::Vector2i posA = a->_position;
-		if (!dynamic_pointer_cast<MonsterPrefab>(a->_prefab.lock())) {
-			posA += a->_prefab.lock()->getOrigin();
-		}
 
 		if (a->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
-			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->_collider);
-			posA += collider->_rect.position + collider->_rect.size/2;
+			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
+			posA += collider->_rect.position + collider->_rect.size / 2;
+		}
+		else if (!dynamic_pointer_cast<MonsterPrefab>(a->_prefab.lock())) {
+			posA += a->_prefab.lock()->getOrigin();
 		}
 		
 		// OBJECT B
 		sf::Vector2i posB = b->_position;
-		if (!dynamic_pointer_cast<MonsterPrefab>(b->_prefab.lock())) {
+
+		if (b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
+			posB += collider->_rect.position + collider->_rect.size / 2;
+		}
+		else if (!dynamic_pointer_cast<MonsterPrefab>(b->_prefab.lock())) {
 			posB += b->_prefab.lock()->getOrigin();
 		}
 
-		if (b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
-			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->_collider);
-			posB += collider->_rect.position + collider->_rect.size / 2;
-		}
+		
 		
 		if (posA.y == posB.y)
 			return posA.x < posB.x;

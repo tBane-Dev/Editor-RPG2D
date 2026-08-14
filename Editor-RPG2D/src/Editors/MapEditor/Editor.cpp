@@ -1,6 +1,7 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Monster.hpp"
+#include "Objects/Nature.hpp"
 #include "PrefabsManager.hpp"
 #include "WindowsManager.hpp"
 
@@ -32,52 +33,33 @@ namespace MapEditor {
 	void Editor::createGameObjects() {
 		_game_objects = std::make_shared<GameObjectsOnMap>();
 
-		std::shared_ptr<GameObjectOnMap> golem1 = std::make_shared<Monster>(prefabs_manager->getPrefab(L"golem"));
-		std::shared_ptr<GameObjectOnMap> golem2 = std::make_shared<Monster>(prefabs_manager->getPrefab(L"golem"));
-		std::shared_ptr<GameObjectOnMap> golem3 = std::make_shared<Monster>(prefabs_manager->getPrefab(L"golem"));
-		std::shared_ptr<GameObjectOnMap> golem4 = std::make_shared<Monster>(prefabs_manager->getPrefab(L"golem"));
+		std::shared_ptr<Map> map = MapEditor::editor->_map;
+		sf::IntRect mapRect = map->getRect();
+		sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations().lock()->getTexture()->_texture->getSize());
 
-		std::shared_ptr<GameObjectOnMap> dziobak1 = std::make_shared<Monster>(prefabs_manager->getPrefab(L"dziobak"));
-		std::shared_ptr<GameObjectOnMap> goblin1 = std::make_shared<Monster>(prefabs_manager->getPrefab(L"goblin"));
+		std::shared_ptr<GameObjectOnMap> tree_1 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		tree_1->setPosition(sf::Vector2i(0, 0));
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_1->getPosition())->addGameObjectOnMap(tree_1);
 
-		golem1->setPosition(sf::Vector2i(256, 128));
-		golem2->setPosition(sf::Vector2i(1024, 128));
-		golem3->setPosition(sf::Vector2i(256, 512));
-		golem4->setPosition(sf::Vector2i(1024, 512));
+		std::shared_ptr<GameObjectOnMap> tree_2 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		tree_2->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, 0));
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_2->getPosition())->addGameObjectOnMap(tree_2);
 
-		dziobak1->setPosition(sf::Vector2i(576 - 128, 320 + 64));
-		goblin1->setPosition(sf::Vector2i(576 + 128, 320 + 64));
+		std::shared_ptr<GameObjectOnMap> tree_3 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		tree_3->setPosition(sf::Vector2i(0, mapRect.size.y - texSize.y));
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_3->getPosition())->addGameObjectOnMap(tree_3);
 
-		std::shared_ptr<GameObjectOnMap> tree1 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
-		std::shared_ptr<GameObjectOnMap> tree2 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
-		std::shared_ptr<GameObjectOnMap> tree3 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
-		std::shared_ptr<GameObjectOnMap> tree4 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"tree_1"));
+		std::shared_ptr<GameObjectOnMap> tree_4 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		tree_4->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, mapRect.size.y - texSize.y));
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_4->getPosition())->addGameObjectOnMap(tree_4);
 
-		std::shared_ptr<GameObjectOnMap> boulder1 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"boulder_1"));
-		std::shared_ptr<GameObjectOnMap> boulder2 = std::make_shared<GameObjectOnMap>(prefabs_manager->getPrefab(L"boulder_2"));
 
-		sf::IntRect rect = _map->getRect();
-
-		tree1->setPosition(sf::Vector2i(0, 0));
-		tree2->setPosition(sf::Vector2i(rect.position.x + rect.size.x - 256, 0));
-		tree3->setPosition(sf::Vector2i(0, rect.position.y + rect.size.y - 256));
-		tree4->setPosition(sf::Vector2i(rect.position.x + rect.size.x - 256, rect.position.y + rect.size.y - 256));
-
-		boulder1->setPosition(sf::Vector2i(rect.position.x + rect.size.x / 2 - 128, rect.position.y + rect.size.y / 2 - 128));
-		boulder2->setPosition(sf::Vector2i(rect.position.x + rect.size.x / 2 + 128, rect.position.y + rect.size.y / 2 - 128));
-
-		//_game_objects->addGameObject(golem1);
-		//_game_objects->addGameObject(golem2);
-		//_game_objects->addGameObject(golem3);
-		//_game_objects->addGameObject(golem4);
-		//_game_objects->addGameObject(dziobak1);
-		//_game_objects->addGameObject(goblin1);
-		//_game_objects->addGameObject(tree1);
-		//_game_objects->addGameObject(tree2);
-		//_game_objects->addGameObject(tree3);
-		//_game_objects->addGameObject(tree4);
-		//_game_objects->addGameObject(boulder1);
-		//_game_objects->addGameObject(boulder2);
+		//for (int i = 0; i < 1000; i += 1) {
+		//	std::shared_ptr<GameObjectOnMap> boulder = std::make_shared<Nature>(prefabs_manager->getPrefab(L"boulder_1"));
+		//	boulder->setPosition(sf::Vector2i(rand() % mapRect.size.x, rand() % mapRect.size.y));
+		//	MapEditor::editor->_map->getChunkByGlobalPosition(boulder->getPosition())->addGameObjectOnMap(boulder);
+		//}
+		
 	}
 
 	void Editor::createCamera() {
