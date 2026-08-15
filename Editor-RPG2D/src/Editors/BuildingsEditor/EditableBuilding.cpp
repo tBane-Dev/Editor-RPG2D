@@ -19,7 +19,7 @@ namespace BuildingsEditor {
 	void EditableBuilding::create(std::shared_ptr<BuildingPrefab> prefab) {
 
 		_building = std::make_shared<Building>(prefab);
-		_building->generate();
+		_building->generate(_building->getPosition());
 
 		sf::Vector2i panelSize = BuildingsEditor::editor->_building_panel->getSize();
 		sf::Vector2i panelPosition = BuildingsEditor::editor->_building_panel->getPosition();

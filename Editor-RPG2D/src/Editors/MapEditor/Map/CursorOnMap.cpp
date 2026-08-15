@@ -494,8 +494,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
             if (prefab->_type == ObjectType::Building) {
 				std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
-                frameWidth = bp->getPreviewOutsideTexture(true)->getSize().x;
-                frameHeight = bp->getPreviewOutsideTexture(true)->getSize().y;
+                frameWidth = bp->getPreviewOutsideTexture()->getSize().x;
+                frameHeight = bp->getPreviewOutsideTexture()->getSize().y;
             }
 
 			// position of object on the map, aligning to the grid
@@ -521,7 +521,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 objectOnMap = std::make_shared<Building>(buildingPrefab);
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectOnMap);
                 objectOnMap->setPosition(position);
-                building->generate();
+                building->generate(position);
                 building->addWallsToGameObjects();
                 prefabs_manager->addPrefab(buildingPrefab);
                 MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
@@ -629,8 +629,8 @@ void CursorOnMap::draw()
 
         if (prefab->_type == ObjectType::Building) {
 			std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
-            frameWidth = (float)(buildingPrefab->getPreviewOutsideTexture(true)->getSize().x);
-            frameHeight = (float)(buildingPrefab->getPreviewOutsideTexture(true)->getSize().y);
+            frameWidth = (float)(buildingPrefab->getPreviewOutsideTexture()->getSize().x);
+            frameHeight = (float)(buildingPrefab->getPreviewOutsideTexture()->getSize().y);
 			frameRect.size = sf::Vector2i((int)frameWidth, (int)frameHeight);
         }
 
@@ -656,14 +656,12 @@ void CursorOnMap::draw()
 		
         if (prefab->_type == ObjectType::Building) {
 
-            std::shared_ptr<BuildingPrefab> buildingPrefab =
-                std::dynamic_pointer_cast<BuildingPrefab>(prefab);
+            std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
 
             if (!buildingPrefab)
                 return;
 
-            std::shared_ptr<sf::Texture> texture =
-                buildingPrefab->getPreviewOutsideTexture(true);
+            std::shared_ptr<sf::Texture> texture = buildingPrefab->getPreviewOutsideTexture();
 
             if (!texture)
                 return;

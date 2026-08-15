@@ -19,6 +19,9 @@ public:
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
 	std::shared_ptr<Roof> _roof;
 
+	std::shared_ptr<sf::Texture> _insideTexture;
+	std::shared_ptr<sf::Texture> _outsideTexture;
+
 	BuildingPrefab(std::wstring name, sf::Vector2i size);
 	BuildingPrefab(std::wstring name, const BuildingPrefab& other);
 	~BuildingPrefab();
@@ -30,13 +33,15 @@ public:
 	void generateRoofs(sf::Vector2i position, float scale = 1.0f);
 	void generateCollider(float scale = 1.0f);
 	void generateMesh(float scale = 1.0f);
+	void generatePreviewTexture(std::shared_ptr<sf::Texture>& texture, bool drawOutside = true);
+	void generatePreviewTextures();
+	std::shared_ptr<sf::Texture> getPreviewInsideTexture();
+	std::shared_ptr<sf::Texture> getPreviewOutsideTexture();
 
 	void drawOnlyCollider(sf::RenderTarget& target, sf::Vector2i position);
 	void drawOnlyFloor(sf::RenderTarget& target, sf::Vector2i position);
 	void drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, int drawType = -1);
 	void drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
-
-	std::shared_ptr<sf::Texture> getPreviewOutsideTexture(bool drawOutside);
 };
 
 class Building : public GameObjectOnMap {
@@ -50,7 +55,7 @@ public:
 	Building(std::weak_ptr<GameObject> prefab);
 	~Building();
 
-	void generate();
+	void generate(sf::Vector2i position);
 
 	virtual void setPosition(sf::Vector2i position);
 	

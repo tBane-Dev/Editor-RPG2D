@@ -94,7 +94,7 @@ namespace BuildingsEditor {
 			panel->_buildingPrefab = newPrefab;
 			panel->_editablePrefab = std::make_shared<BuildingPrefab>(newPrefab->getName(), *newPrefab);
 			panel->_building->_building->loadPrefab(panel->_editablePrefab);
-			panel->_building->_building->generate();
+			panel->_building->_building->generate(panel->_building->getPosition());
 		};
 
 		_addBtn->_onclick_func = [this]() {
@@ -153,7 +153,7 @@ namespace BuildingsEditor {
 					panel->_buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefabs[newID]);
 					panel->_editablePrefab = std::make_shared<BuildingPrefab>(panel->_buildingPrefab->getName(), *panel->_buildingPrefab);
 					panel->_building->_building->loadPrefab(panel->_buildingPrefab);
-					panel->_building->_building->generate();
+					panel->_building->_building->generate(panel->_building->getPosition());
 
 					sf::Vector2i floorSize(panel->_editablePrefab->_floor[0].size(), panel->_editablePrefab->_floor.size());
 					sf::Vector2i centeredPosition = panel->getPosition() + (panel->getSize() / 2 - floorSize * 16 / 2);

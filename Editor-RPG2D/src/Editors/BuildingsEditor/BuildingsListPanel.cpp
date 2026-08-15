@@ -43,7 +43,7 @@ namespace BuildingsEditor {
 						panel->_buildingPrefab = buildingPrefab;
 						panel->_editablePrefab = editablePrefab;
 						panel->_building->_building->loadPrefab(editablePrefab);
-						panel->_building->_building->generate();
+						panel->_building->_building->generate(panel->_building->_building->getPosition());
 
 						BuildingsEditor::editor->_name_panel->_name->setText(buildingPrefab->getName());
 

@@ -86,7 +86,7 @@ void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_pt
 
 			if (wall) {
 				std::shared_ptr<Wall> newWall = std::make_shared<Wall>(wall->_prefab, wall->_building, wall->_textureBottomRect, wall->_textureTopRect, wall->_height);
-				newWall->setPosition(wall->_position);
+				newWall->setPosition(sf::Vector2i(wall->_position.x, wall->_position.y));
 				building->_wallsObjects.push_back(newWall);
 			}
 			else
@@ -97,6 +97,7 @@ void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_pt
 	generateRoofs(position, scale);
 	generateCollider(scale);
 	generateMesh(scale);
+	generatePreviewTextures();
 }
 
 void BuildingPrefab::generateFloorVertexArray(float scale) {
@@ -458,9 +459,7 @@ void BuildingPrefab::drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i positio
 
 }
 
-std::shared_ptr<sf::Texture> BuildingPrefab::getPreviewOutsideTexture(bool drawOutside) {
-
-	generate(sf::Vector2i(0,0), 1.0f, nullptr);
+void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& texture, bool drawOutside) {
 
 	const float scale = 1.0f;
 
@@ -521,10 +520,21 @@ std::shared_ptr<sf::Texture> BuildingPrefab::getPreviewOutsideTexture(bool drawO
 
 	resultTexture.display();
 
-	return std::make_shared<sf::Texture>(resultTexture.getTexture());
+	texture = std::make_shared<sf::Texture>(resultTexture.getTexture());
 }
 
+void BuildingPrefab::generatePreviewTextures() {
+	generatePreviewTexture(_insideTexture, false);
+	generatePreviewTexture(_outsideTexture, true);
+}
 
+std::shared_ptr<sf::Texture> BuildingPrefab::getPreviewInsideTexture() {
+	return _insideTexture;
+}
+
+std::shared_ptr<sf::Texture> BuildingPrefab::getPreviewOutsideTexture() {
+	return _outsideTexture;
+}
 
 Building::Building(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
 	_type = ObjectType::Building;
@@ -539,13 +549,12 @@ Building::~Building() {
 
 }
 
-void Building::generate() {
+void Building::generate(sf::Vector2i position) {
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
 
 	if (buildingPrefab) {
-		buildingPrefab->generate(_position, 1.0f, std::dynamic_pointer_cast<Building>(shared_from_this()));
-		_wallsObjects = buildingPrefab->_wallsObjects;
+		buildingPrefab->generate(position, 1.0f, std::dynamic_pointer_cast<Building>(shared_from_this()));
 	}
 		
 
@@ -590,10 +599,7 @@ void Building::addWallsToGameObjects() {
 		if (!wall)
 			continue;
 
-		std::shared_ptr<Chunk> chunk =
-			MapEditor::editor->_map->getChunkByGlobalPosition(
-				wall->getPosition()
-			);
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(wall->getPosition());
 
 		if (chunk) {
 			chunk->addGameObjectOnMap(wall);
@@ -610,10 +616,7 @@ void Building::removeWallsFromGameObjects() {
 		if (!wall)
 			continue;
 
-		std::shared_ptr<Chunk> chunk =
-			MapEditor::editor->_map->getChunkByGlobalPosition(
-				wall->getPosition()
-			);
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(wall->getPosition());
 
 		if (chunk)
 			chunk->removeGameObjectOnMap(wall);

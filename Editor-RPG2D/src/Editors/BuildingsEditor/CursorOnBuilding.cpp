@@ -271,42 +271,4 @@ void CursorOnBuilding::draw()
     
         return;
     }
-    //
-	//if(dynamic_pointer_cast<GameObject>(_object.lock()) != nullptr) {
-    //
-	//	std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
-	//	std::shared_ptr<Animations> animations = prefab->getAnimations().lock();
-    //    
-    //    float frameWidth = 128;
-    //    float frameHeight = 128;
-	//	sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
-    //
-    //    if (animations) {
-    //        frameRect = animations->getFrameRect(0, 0);
-    //        frameWidth = (float)(frameRect.size.x);
-    //        frameHeight = (float)(frameRect.size.y);
-    //    }
-    //
-	//	sf::Vector2i position;
-	//	position.x = (_globalPosition.x - (int)frameWidth/2) / Tile::tileSize * Tile::tileSize;
-	//	position.y = (_globalPosition.y - (int)frameHeight/2) / Tile::tileSize * Tile::tileSize;
-    //
-	//	sf::RectangleShape outlineRect(sf::Vector2f(frameRect.size));
-	//	outlineRect.setPosition(sf::Vector2f(position));
-	//	outlineRect.setFillColor(sf::Color::Transparent);
-	//	outlineRect.setOutlineThickness(2);
-	//	outlineRect.setOutlineColor(sf::Color::Green);
-    //    Main::render_window->draw(outlineRect);
-    //
-    //    if (animations) {
-    //        sf::Sprite sprite(*animations->getTexture()->_texture);
-    //        sprite.setTextureRect(frameRect);
-    //
-    //        sprite.setPosition(sf::Vector2f(position));
-    //        Main::render_window->draw(sprite);
-    //    }
-	//	return;
-	//}
-
-
 }
