@@ -52,12 +52,15 @@ void Wall::draw(sf::RenderTarget& target, float scale) {
 		return;
 	}
 
-	// ?ciana bez budynku zawsze renderuje wygl?d zewn?trzny.
 	bool renderOutsideLook = true;
 
-	if (std::shared_ptr<Building> building = _building.lock()) {
+	if(BuildingsEditor::editor) {
+		renderOutsideLook = BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value == 2;
+	}
+	else if (std::shared_ptr<Building> building = _building.lock()) {
 		renderOutsideLook = building->_renderOutsideLook;
 	}
+	
 
 	if (renderOutsideLook) {
 
