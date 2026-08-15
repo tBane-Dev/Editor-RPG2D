@@ -9,6 +9,7 @@ public:
     std::vector<std::shared_ptr<SelectedGameObjectOnMap>> _prevSelectedObjects;
     std::vector<std::shared_ptr<SelectedGameObjectOnMap>> _selectedObjects;
 	bool _isDragging = false;
+	bool _isSelecting = false;
 	sf::IntRect _selectionRect;
 
 	CursorOnMap();

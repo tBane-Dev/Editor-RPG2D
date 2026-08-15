@@ -24,7 +24,7 @@ void Roof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 }
 
 FlatRoof::FlatRoof() : Roof() {
-	
+	_roofOverhangSize = 4;
 }
 
 FlatRoof::~FlatRoof() {
