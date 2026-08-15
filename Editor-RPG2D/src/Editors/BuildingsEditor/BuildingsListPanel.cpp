@@ -34,7 +34,6 @@ namespace BuildingsEditor {
 
 				item->setName(buildingPrefab->getName());
 				item->_onclick_func = [this, index, item, buildingPrefab]() {
-					if (_selectedItemIndex != index) {
 
 						selectItem(index);
 
@@ -54,8 +53,7 @@ namespace BuildingsEditor {
 						panel->_building->_scale = 1.0f;
 						panel->_building->_building->setPosition(centeredPosition);
 						panel->_building->generateEdgePoints();
-					}
-					};
+				};
 			}
 			else {
 				item->setName(L"");

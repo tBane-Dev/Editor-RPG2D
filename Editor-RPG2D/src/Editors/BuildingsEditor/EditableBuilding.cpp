@@ -23,6 +23,8 @@ namespace BuildingsEditor {
 
 		sf::Vector2i panelSize = BuildingsEditor::editor->_building_panel->getSize();
 		sf::Vector2i panelPosition = BuildingsEditor::editor->_building_panel->getPosition();
+		
+		ResizableShape::resize(sf::Vector2i(8 * 32, 8 * 32));
 
 		setPosition(sf::Vector2i(
 			panelPosition.x + (panelSize.x - getSize().x) / 2,
@@ -332,20 +334,23 @@ namespace BuildingsEditor {
 
 
 		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
-			float oldScale = _scale;
-			float newScale = std::clamp(_scale + mws->delta * 0.125f, 0.5f, 2.0f);
-			sf::Vector2f cursorPosition(Cursors::cursor->_position);
-			sf::Vector2f oldPosition(ResizableShape::getPosition());
-			float scaleFactor = newScale / oldScale;
-			sf::Vector2f newPosition = cursorPosition + (oldPosition - cursorPosition) * scaleFactor;
-			_scale = newScale;
-			setPosition(sf::Vector2i(newPosition));
-			_building->setPosition(sf::Vector2i(newPosition));
-
 			std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
-			bp->generateFloorVertexArray(_scale);
-			bp->generateWalls(_building->_position, _scale, _building);
-			bp->generateRoofs(_building->_position, _scale);
+			
+			if (bp) {
+				float oldScale = _scale;
+				float newScale = std::clamp(_scale + mws->delta * 0.125f, 0.5f, 2.0f);
+				sf::Vector2f cursorPosition(Cursors::cursor->_position);
+				sf::Vector2f oldPosition(ResizableShape::getPosition());
+				float scaleFactor = newScale / oldScale;
+				sf::Vector2f newPosition = cursorPosition + (oldPosition - cursorPosition) * scaleFactor;
+				_scale = newScale;
+				setPosition(sf::Vector2i(newPosition));
+				_building->setPosition(sf::Vector2i(newPosition));
+
+				bp->generateFloorVertexArray(_scale);
+				bp->generateWalls(_building->_position, _scale, _building);
+				bp->generateRoofs(_building->_position, _scale);
+			}
 
 			generateEdgePoints();
 		}

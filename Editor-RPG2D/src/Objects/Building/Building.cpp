@@ -47,7 +47,6 @@ BuildingPrefab::BuildingPrefab(std::wstring name, sf::Vector2i size) : GameObjec
 
 BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) : GameObject(name) {
 	
-	_name = name;
 	_type = ObjectType::Building;
 
 	// copy the floor

@@ -1,4 +1,4 @@
-#include "Editors/BuildingsEditor/ActionsPanel.hpp"
+﻿#include "Editors/BuildingsEditor/ActionsPanel.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include "Editors/BuildingsEditor/BuildingsListPanel.hpp"
 #include "Theme.hpp"
@@ -74,6 +74,10 @@ namespace BuildingsEditor {
 
 			prefabs_manager->replacePrefab(oldPrefab, newPrefab);
 
+			int selectedID = BuildingsEditor::editor->_list_panel->_selectedItemIndex;
+			BuildingsEditor::editor->_list_panel->loadAll(prefabs_manager->getPrefabs(ObjectType::Building).size());
+			BuildingsEditor::editor->_list_panel->selectItem(selectedID);
+
 			visibleObjects = MapEditor::editor->_game_objects->_visibleGameObjectsOnMap;
 			for (auto& object : visibleObjects) {
 
@@ -88,6 +92,9 @@ namespace BuildingsEditor {
 			}
 
 			panel->_buildingPrefab = newPrefab;
+			panel->_editablePrefab = std::make_shared<BuildingPrefab>(newPrefab->getName(), *newPrefab);
+			panel->_building->_building->loadPrefab(panel->_editablePrefab);
+			panel->_building->_building->generate();
 		};
 
 		_addBtn->_onclick_func = [this]() {
@@ -108,9 +115,11 @@ namespace BuildingsEditor {
 
 				for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
 					std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
-					if (building && building->_prefab.lock().get() == BuildingsEditor::editor->_building_panel->_building->_building->_prefab.lock().get()) {
+					if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
 						building->removeWallsFromGameObjects();
+						//DebugLog(L"Removed walls from objects" + building->_prefab.lock()->getName());
 						MapEditor::editor->_game_objects->removeGameObject(building);
+						//DebugLog(L"Removed building from objects: " + building->_prefab.lock()->getName());
 					}
 					
 				}
@@ -120,23 +129,22 @@ namespace BuildingsEditor {
 						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 						if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
 							chunk->removeGameObjectOnMap(building);
+							//DebugLog(L"remove building from chunk: " + building->_prefab.lock()->getName());
 						}
 					}
 				}
 
 
-				if (prefabs_manager->getPrefabs(ObjectType::Building).empty())
-					return;
+				
 
-				prefabs_manager->removePrefab(editor->_building_panel->_building->_building->_prefab.lock());
+				prefabs_manager->removePrefab(editor->_building_panel->_buildingPrefab);
 
 				std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(ObjectType::Building);
 
-				editor->_list_panel->loadAll(prefabs_manager->getPrefabs(ObjectType::Building).size());
+				editor->_list_panel->loadAll(prefabs.size());
 				int newID = editor->_list_panel->_selectedItemIndex;
 				if (newID >= prefabs.size())
 					newID = prefabs.size() - 1;
-
 
 				editor->_list_panel->selectItem(newID);
 
@@ -145,7 +153,7 @@ namespace BuildingsEditor {
 					panel->_buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefabs[newID]);
 					panel->_editablePrefab = std::make_shared<BuildingPrefab>(panel->_buildingPrefab->getName(), *panel->_buildingPrefab);
 					panel->_building->_building->loadPrefab(panel->_buildingPrefab);
-
+					panel->_building->_building->generate();
 
 					sf::Vector2i floorSize(panel->_editablePrefab->_floor[0].size(), panel->_editablePrefab->_floor.size());
 					sf::Vector2i centeredPosition = panel->getPosition() + (panel->getSize() / 2 - floorSize * 16 / 2);
@@ -159,14 +167,10 @@ namespace BuildingsEditor {
 					auto panel = BuildingsEditor::editor->_building_panel;
 					panel->_buildingPrefab = nullptr;
 					panel->_editablePrefab = nullptr;
-					panel->_building->_building->loadPrefab(panel->_editablePrefab);
+					panel->_building->create(nullptr);
+					panel->_building->_building->loadPrefab(nullptr);
 				}
 				
-			}
-			else {
-				//editor->_animations = nullptr;
-				//editor->_tempAnimations = nullptr;
-				//editor->_animator = nullptr;
 			}
 
 		};

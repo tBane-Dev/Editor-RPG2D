@@ -515,21 +515,26 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 			// create object on map by type 
 			std::shared_ptr<GameObjectOnMap> objectOnMap;
 
-			if (prefab->_type == ObjectType::Building) objectOnMap = std::make_shared<Building>(prefab);
+            if (prefab->_type == ObjectType::Building) {
+                static int i = 0;
+				std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"building " + std::to_wstring(i++), *std::dynamic_pointer_cast<BuildingPrefab>(prefab));
+                objectOnMap = std::make_shared<Building>(buildingPrefab);
+				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectOnMap);
+                objectOnMap->setPosition(position);
+                building->generate();
+                building->addWallsToGameObjects();
+                prefabs_manager->addPrefab(buildingPrefab);
+                MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
+                MapEditor::editor->_map->setVisibleChunks();
+                return;
+            }
 			else if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
 			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
 			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
 
-
 			// positioning and adding object to map
 			objectOnMap->setPosition(position);
 			MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
-            if (objectOnMap->_type == ObjectType::Building) {
-                std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectOnMap);
-                building->generate();
-                building->addWallsToGameObjects();
-				prefabs_manager->addPrefab(prefab);
-            }
             MapEditor::editor->_map->setVisibleChunks();
 			return;
 		}
