@@ -185,6 +185,15 @@ sf::IntRect Map::getRect() {
 	return rect;
 }
 
+void Map::removeGameObjectsFromChunksByPrefab(std::shared_ptr<GameObject> object) {
+
+	for (auto& chunk : _chunks) {
+		std::erase_if(chunk->_gameObjectsOnMap, [&](const std::shared_ptr<GameObjectOnMap>& objectOnMap) {
+			return objectOnMap->_prefab.lock().get() == object.get();
+		});
+	}
+
+}
 void Map::setVisibleChunks() {
 
 	for (auto& chunk : _visibleChunks)

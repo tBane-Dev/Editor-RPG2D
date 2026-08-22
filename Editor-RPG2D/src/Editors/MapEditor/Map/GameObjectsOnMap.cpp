@@ -21,6 +21,10 @@ GameObjectsOnMap::~GameObjectsOnMap() {
 void GameObjectsOnMap::addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap) {
 
 	_visibleGameObjectsOnMap.push_back(gameObjectOnMap.lock());
+	if(gameObjectOnMap.lock()->_type == ObjectType::Building) {
+		std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(gameObjectOnMap.lock());
+		building->addWallsToVisibleGameObjects();
+	}
 }
 
 void GameObjectsOnMap::removeGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap) {
@@ -32,6 +36,12 @@ void GameObjectsOnMap::removeGameObject(std::weak_ptr<GameObjectOnMap> gameObjec
 	std::erase_if(_visibleGameObjectsOnMap,
 		[&](const std::shared_ptr<GameObjectOnMap>& object)
 		{
+			if (objectToRemove->_type == ObjectType::Building && object->_type == ObjectType::Wall) {
+				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectToRemove);
+				std::shared_ptr<Wall> wall = std::dynamic_pointer_cast<Wall>(object);
+				return wall->_building.lock() == building;
+			}
+
 			return object == objectToRemove;
 		});
 }
@@ -129,6 +139,8 @@ void GameObjectsOnMap::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std:
 }
 
 void GameObjectsOnMap::sort() {
+
+	
 	std::sort(_visibleGameObjectsOnMap.begin(), _visibleGameObjectsOnMap.end(), [](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
 
 		// OBJECT A

@@ -188,6 +188,13 @@ void Chunk::addGameObjectOnMap(std::shared_ptr<GameObjectOnMap> object) {
 
 void Chunk::removeGameObjectOnMap(std::shared_ptr<GameObjectOnMap> object) {
 	std::erase_if(_gameObjectsOnMap, [&](const std::shared_ptr<GameObjectOnMap>& obj) {
+		
+		if (object->_type == ObjectType::Building && obj->_type == ObjectType::Wall) {
+			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+			std::shared_ptr<Wall> wall = std::dynamic_pointer_cast<Wall>(obj);
+			return wall->_building.lock() == building;
+		}
+
 		return obj == object;
 		});
 

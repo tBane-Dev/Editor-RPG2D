@@ -196,11 +196,14 @@ namespace PrefabsEditor {
 
 				int objectID = editor->_palette->_slots->_selectedSlotId;
 				if (objectID >= 0) {
-					// remove from map
-					MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<GameObject>();
-					MapEditor::editor->_game_objects->removeGameObjectsByPrefab(object);
 
-					// remove prefab
+					MapEditor::editor->_cursor_on_map->_object = std::weak_ptr<GameObject>();
+
+					// rove from all places where this prefab is used
+					
+					MapEditor::editor->_cursor_on_map->removeFromSelected(object);
+					MapEditor::editor->_map->removeGameObjectsFromChunksByPrefab(object);
+					MapEditor::editor->_game_objects->removeGameObjectsByPrefab(object);
 					prefabs_manager->removePrefab(object);
 
 					// reload Prefabs Editor Palette

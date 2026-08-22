@@ -6,7 +6,7 @@ class Roof {
 public:
 
 	std::vector<std::vector<int>> _tiles;
-	int  _roofOverhangSize;
+	sf::Vector2i _roofOverhangSize;
 	sf::VertexArray _roofOverhangVertexArray;
 	sf::Texture _roofTexture;
 
@@ -35,10 +35,18 @@ public:
 
 class GableRoof : public Roof {
 public:
+	std::vector<sf::ConvexShape> _bottomTriangle;
+	std::vector<sf::ConvexShape> _topTriangle;
+	std::vector<sf::ConvexShape> _rect;
 
 	GableRoof();
 	~GableRoof();
 
+	float getTopOffset(int wallHeight, float scale);
+
+	void generateShape(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.0f);
+	void generateOverhang(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.0f);
+	void generateTexture(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale);
 	virtual void generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.f);
 	virtual void draw(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
 };

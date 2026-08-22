@@ -65,7 +65,7 @@ public:
 	void addWallsToGameObjects();
 	void removeWallsFromGameObjects();
 
-	
+	void addWallsToVisibleGameObjects();	
 
 	virtual void cursorHover();
 	virtual void update();

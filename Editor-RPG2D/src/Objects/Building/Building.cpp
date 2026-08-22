@@ -272,7 +272,7 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
 
-	_roof = std::make_shared<FlatRoof>();
+	_roof = std::make_shared<GableRoof>();
 	_roof->generate(_walls, position, scale);
 }
 
@@ -463,8 +463,8 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 
 	const float scale = 1.0f;
 
-	int overhang = (_roof)? _roof->_roofOverhangSize : 0;
-	int topPadding = 96;
+	sf::Vector2i overhang = (_roof)? _roof->_roofOverhangSize : sf::Vector2i(0, 0);
+	
 
 	sf::FloatRect floorBounds = _floorVertexArray.getBounds();
 
@@ -473,47 +473,55 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 		(int)std::ceil(floorBounds.size.y)
 	);
 
-	int width = floorSize.x + overhang * 2;
-	int height = floorSize.y + topPadding + overhang;
-
-
 	sf::RenderTexture resultTexture = sf::RenderTexture();
-	resultTexture.resize(sf::Vector2u(width, height));
-	resultTexture.clear(sf::Color::Transparent);
 
-	sf::Vector2i buildingPosition(
-		overhang,
-		topPadding + overhang
-	);
+	if (auto flatRoof = std::dynamic_pointer_cast<FlatRoof>(_roof)) {
 
-	
-	drawOnlyFloor(
-		resultTexture,
-		buildingPosition
-	);
+		int topOffset = _wallHeight * 32.0f;
+		int width = floorSize.x + overhang.x * 2;
+		int height = floorSize.y + topOffset + overhang.y;
 
-	if (!drawOutside) {
-		drawOnlyWalls(
-			resultTexture,
-			buildingPosition,
-			scale,
-			1
-		);
+		resultTexture.resize(sf::Vector2u(width, height));
+		resultTexture.clear(sf::Color::Transparent);
+
+		sf::Vector2i buildingPosition(overhang.x, topOffset + overhang.y);
+
+		drawOnlyFloor(resultTexture, buildingPosition);
+
+		if (!drawOutside) {
+			drawOnlyWalls(resultTexture, buildingPosition, scale, 1);
+		}
+		else {
+			drawOnlyWalls(resultTexture, buildingPosition, scale, 2);
+
+			if (_roof) {
+				_roof->draw(resultTexture, buildingPosition, scale);
+			}
+		}
 	}
-	else {
-		drawOnlyWalls(
-			resultTexture,
-			buildingPosition,
-			scale,
-			2
-		);
 
-		if (_roof) {
-			_roof->draw(
-				resultTexture,
-				buildingPosition,
-				scale
-			);
+	if (auto gableRoof = std::dynamic_pointer_cast<GableRoof>(_roof)) {
+
+		int topOffset = gableRoof->getTopOffset(_wallHeight, scale);
+		int width = floorSize.x + gableRoof->_roofOverhangSize.x * 2.f;
+		int height = floorSize.y + topOffset;
+
+		resultTexture.resize(sf::Vector2u(width, height));
+		resultTexture.clear(sf::Color::Transparent);
+
+		sf::Vector2i buildingPosition(gableRoof->_roofOverhangSize.x, topOffset);
+
+		drawOnlyFloor(resultTexture, buildingPosition);
+
+		if (!drawOutside) {
+			drawOnlyWalls(resultTexture, buildingPosition, scale, 1);
+		}
+		else {
+			drawOnlyWalls(resultTexture, buildingPosition, scale, 2);
+			
+			if (_roof) {
+				_roof->draw(resultTexture, buildingPosition, scale);
+			}
 		}
 	}
 	
@@ -599,7 +607,7 @@ void Building::addWallsToGameObjects() {
 		if (!wall)
 			continue;
 
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(wall->getPosition());
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk) {
 			chunk->addGameObjectOnMap(wall);
@@ -616,12 +624,23 @@ void Building::removeWallsFromGameObjects() {
 		if (!wall)
 			continue;
 
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(wall->getPosition());
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk)
 			chunk->removeGameObjectOnMap(wall);
 
 		MapEditor::editor->_game_objects->removeGameObject(wall);
+	}
+}
+
+void Building::addWallsToVisibleGameObjects() {
+
+	for (auto& wall : _wallsObjects) {
+
+		if (!wall)
+			continue;
+
+		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(wall);
 	}
 }
 
