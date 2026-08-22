@@ -26,6 +26,8 @@ public:
 	std::shared_ptr<Tile> getTileByTileGlobalCoords(int x, int y);
 	sf::IntRect getRect();
 
+	void removeGameObjectsFromChunksByPrefab(std::shared_ptr<GameObject> object);
+
 	void setVisibleChunks();
 
 	void save(std::ofstream& saver);

@@ -15,6 +15,8 @@ public:
 	CursorOnMap();
 	~CursorOnMap();
 
+	void removeFromSelected(std::shared_ptr<GameObject> object);
+
 	virtual void update();
 	virtual void handleEvent(const sf::Event& event);
 	virtual void draw();

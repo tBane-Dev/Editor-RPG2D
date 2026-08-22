@@ -236,6 +236,28 @@ namespace Components {
 				}
 
 				{
+					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building1", sf::Vector2i(8, 8));
+					int X = wallType;
+					int O = -1;
+					buildingPrefab->_walls = {
+						{ X, X, X, X, X, X, X, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, O, O, O, O, O, O, X},
+						{ X, X, X, X, X, X, X, X}
+					};
+					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
+					Palette::buildings.emplace_back(buildingPrefab);
+				}
+
+				{
 					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building2", sf::Vector2i(8, 8));
 					int X = wallType;
 					int O = -1;

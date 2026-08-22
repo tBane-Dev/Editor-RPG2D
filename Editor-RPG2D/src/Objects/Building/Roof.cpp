@@ -7,7 +7,7 @@
 
 Roof::Roof() {
 	_tiles.clear();
-	_roofOverhangSize = 0;
+	_roofOverhangSize = sf::Vector2i(0, 0);
 }
 
 Roof::~Roof() {
@@ -24,7 +24,7 @@ void Roof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 }
 
 FlatRoof::FlatRoof() : Roof() {
-	_roofOverhangSize = 4;
+	_roofOverhangSize = sf::Vector2i(4, 4);
 }
 
 FlatRoof::~FlatRoof() {
@@ -235,10 +235,10 @@ void FlatRoof::generateOverhang(sf::Vector2i position, float scale) {
 	_roofOverhangVertexArray.clear();
 	_roofOverhangVertexArray.setPrimitiveType(sf::PrimitiveType::Triangles);
 	
-	if (_roofOverhangSize <= 0)
+	if (_roofOverhangSize.x <= 0 || _roofOverhangSize.y <= 0)
 		return;
 
-	int miniSize = _roofOverhangSize;
+	int miniSize = _roofOverhangSize.x;
 	int miniCount = 32 / miniSize;
 	
 	int width = _mask[0].size() * miniCount + 2;
@@ -377,10 +377,11 @@ void FlatRoof::generate(std::vector<std::vector<int>> tiles, sf::Vector2i positi
 void FlatRoof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 
 	float topPadding = 96.f * scale;
-	float overhangWidth = 4.f * scale;
+	float overhangWidth = _roofOverhangSize.x * scale;
+	float overhangHeight = _roofOverhangSize.y * scale;
 
 	sf::Sprite sprite(_roofTexture);
-	sprite.setPosition(sf::Vector2f(position.x - overhangWidth, position.y - topPadding - overhangWidth));
+	sprite.setPosition(sf::Vector2f(position.x - overhangWidth, position.y - topPadding - overhangHeight));
 	target.draw(sprite);
 }
 
@@ -395,8 +396,112 @@ GableRoof::~GableRoof() {
 
 void GableRoof::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
 	Roof::generate(tiles, position, scale);
+	
+	generateOverhang(tiles, position, scale);
+	generateShape(tiles, position, scale);
+	generateTexture(tiles, position, scale);
 }
 
-void GableRoof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
+void GableRoof::generateOverhang(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
+	_roofOverhangSize = sf::Vector2i(16, 12);
+}
 
+float GableRoof::getTopOffset(int wallHeight, float scale)
+{
+	float tileSize = 32.f * scale;
+	float roofWidth = _tiles[0].size() * tileSize + _roofOverhangSize.x * 2.f * scale;
+	float roofHeight = (roofWidth / 2.f) * (24.f / 32.f);
+
+	float topOffset = wallHeight * tileSize + _roofOverhangSize.y * scale + roofHeight - tileSize;
+	return topOffset;
+}
+
+void GableRoof::generateShape(
+	std::vector<std::vector<int>> tiles,
+	sf::Vector2i position,
+	float scale)
+{
+	const float tileSize = 32.f * scale;
+
+	const float overhangX = _roofOverhangSize.x * scale;
+	const float overhangY = _roofOverhangSize.y * scale;
+
+	const float roofWidth =
+		tiles[0].size() * tileSize + 2.f * overhangX;
+
+	// długość połaci w osi Y
+	const float roofDepth =
+		(tiles.size() - 1) * tileSize + 2.f * overhangY;
+
+	const float roofHeight =
+		(roofWidth / 2.f) * (24.f / 32.f);
+
+	const float centerX = roofWidth / 2.f;
+
+	sf::Color roofColor(127, 15, 15);
+	sf::Color frontColor(95, 15, 15);
+
+	_topTriangle.setPointCount(3);
+	_topTriangle.setPoint(0, sf::Vector2f(0.f, roofHeight));
+	_topTriangle.setPoint(1, sf::Vector2f(roofWidth, roofHeight));
+	_topTriangle.setPoint(2, sf::Vector2f(centerX, 0.f));
+	_topTriangle.setFillColor(roofColor);
+ 
+	_bottomTriangle.setPointCount(3);
+	_bottomTriangle.setPoint(0, sf::Vector2f(0.f, roofHeight + roofDepth));
+	_bottomTriangle.setPoint(1, sf::Vector2f(roofWidth, roofHeight + roofDepth));
+	_bottomTriangle.setPoint(2, sf::Vector2f(centerX, roofDepth));
+	_bottomTriangle.setFillColor(frontColor);
+
+	_rect.setPointCount(4);
+	_rect.setPoint(0, _topTriangle.getPoint(0));
+	_rect.setPoint(1, _topTriangle.getPoint(1));
+	_rect.setPoint(2,_bottomTriangle.getPoint(1));
+	_rect.setPoint(3, _bottomTriangle.getPoint(0));
+	_rect.setFillColor(roofColor);
+}
+
+void GableRoof::generateTexture(
+	std::vector<std::vector<int>> tiles,
+	sf::Vector2i position,
+	float scale)
+{
+	float tileSize = 32.f * scale;
+
+	float overhangX = _roofOverhangSize.x * scale;
+	float overhangY = _roofOverhangSize.y * scale;
+
+	float roofWidth = tiles[0].size() * tileSize + 2.f * overhangX;
+	float roofDepth = (tiles.size() - 1) * tileSize + 2.f * overhangY;
+	float roofHeight = (roofWidth / 2.f) * (24.f / 32.f);
+
+	int width = roofWidth;
+	int height = roofHeight + roofDepth;
+
+	sf::RenderTexture rtex;
+	rtex.resize(sf::Vector2u(width, height));
+	rtex.clear(sf::Color::Transparent);
+
+	rtex.draw(_topTriangle);
+	rtex.draw(_rect);
+	rtex.draw(_bottomTriangle);
+
+	rtex.display();
+
+	_roofTexture = rtex.getTexture();
+}
+
+
+void GableRoof::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
+	
+	float wallsHeight = 3.f * 32.f * scale;
+	float overhangX = _roofOverhangSize.x * scale;
+	float overhangY = _roofOverhangSize.y * scale;
+
+	float roofWidth = _tiles[0].size() * 32.f * scale + 2.f * overhangX;
+	float roofHeight = (roofWidth / 2.f) * (24.f / 32.f);
+
+	sf::Sprite sprite(_roofTexture);
+	sprite.setPosition(sf::Vector2f(position.x - overhangX, position.y - wallsHeight - overhangY - roofHeight + 32.f * scale));
+	target.draw(sprite);
 }
