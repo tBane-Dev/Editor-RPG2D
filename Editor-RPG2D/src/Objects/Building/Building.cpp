@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "Objects/Building/Building.hpp"
+#include "Objects/Building/Roof1.hpp"
+#include "Objects/Building/Roof2.hpp"
 #include "Wallset.hpp"
 #include "Roofset.hpp"
 #include "EditorsManager.hpp"
@@ -272,7 +274,7 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
 
-	_roof = std::make_shared<GableRoof>();
+	_roof = std::make_shared<Roof2>();
 	_roof->generate(_walls, position, scale);
 }
 
@@ -475,7 +477,7 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 
 	sf::RenderTexture resultTexture = sf::RenderTexture();
 
-	if (auto flatRoof = std::dynamic_pointer_cast<FlatRoof>(_roof)) {
+	if (auto flatRoof = std::dynamic_pointer_cast<Roof1>(_roof)) {
 
 		int topOffset = _wallHeight * 32.0f;
 		int width = floorSize.x + overhang.x * 2;
@@ -500,7 +502,7 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 		}
 	}
 
-	if (auto gableRoof = std::dynamic_pointer_cast<GableRoof>(_roof)) {
+	if (auto gableRoof = std::dynamic_pointer_cast<Roof2>(_roof)) {
 
 		int topOffset = gableRoof->getTopOffset(_wallHeight, scale);
 		int width = floorSize.x + gableRoof->_roofOverhangSize.x * 2.f;
