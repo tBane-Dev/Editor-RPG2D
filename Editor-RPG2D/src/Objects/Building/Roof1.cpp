@@ -346,6 +346,11 @@ void Roof1::generateTexture(sf::Vector2i position, float scale) {
 	_roofTexture = rtex.getTexture();
 }
 
+int Roof1::getTopOffset(int wallHeight, float scale) {
+
+	return (wallHeight * 32.f + (float)_roofOverhangSize.y) * scale;
+}
+
 void Roof1::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
 	Roof::generate(tiles, position, scale);
 

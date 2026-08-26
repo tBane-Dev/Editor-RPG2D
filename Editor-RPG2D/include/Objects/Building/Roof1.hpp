@@ -16,6 +16,8 @@ public:
 	void generateParts(sf::Vector2i position, float scale = 1.0f);
 	void generateOverhang(sf::Vector2i position, float scale = 1.0f);
 	void generateTexture(sf::Vector2i position, float scale);
+
+	virtual int getTopOffset(int wallHeight, float scale);
 	virtual void generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.f);
 	virtual void draw(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
 };

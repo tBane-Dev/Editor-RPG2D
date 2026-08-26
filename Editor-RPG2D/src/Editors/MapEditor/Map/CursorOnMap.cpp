@@ -502,16 +502,9 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
             if (prefab->_type == ObjectType::Building) {
                 std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
+                
                 position.x += bp->_roof->_roofOverhangSize.x;
-
-                if (std::shared_ptr<Roof1> roof =
-                    std::dynamic_pointer_cast<Roof1>(bp->_roof)) {
-                    position.y += bp->_wallHeight * 32 + roof->_roofOverhangSize.y;
-                }
-
-                if (std::shared_ptr<Roof2> roof = std::dynamic_pointer_cast<Roof2>(bp->_roof)) {
-                    position.y += (int)std::round(roof->getTopOffset(bp->_wallHeight, 1.f) + roof->_roofOverhangSize.y / 2.f);
-                }
+                position.y += bp->_roof->getTopOffset(bp->_wallHeight, 1.f);
 
                 position.x = (position.x / Tile::tileSize) * Tile::tileSize;
                 position.y = (position.y / Tile::tileSize) * Tile::tileSize;
@@ -648,14 +641,8 @@ void CursorOnMap::draw()
             std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
             sf::Vector2i offset(0, 0);
             offset.x = bp->_roof->_roofOverhangSize.x;
+            offset.y = bp->_roof->getTopOffset(bp->_wallHeight, 1.f);
 
-            if (std::shared_ptr<Roof1> roof = std::dynamic_pointer_cast<Roof1>(bp->_roof)) {
-                offset.y = bp->_wallHeight * 32 + roof->_roofOverhangSize.y;
-            }
-
-            if (std::shared_ptr<Roof2> roof = std::dynamic_pointer_cast<Roof2>(bp->_roof)) {
-                offset.y = roof->getTopOffset(bp->_wallHeight, 1.f);
-            }
 
             sf::Vector2i buildingPosition = position + offset;
             buildingPosition.x = (buildingPosition.x / Tile::tileSize) * Tile::tileSize;

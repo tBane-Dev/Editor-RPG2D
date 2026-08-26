@@ -11,11 +11,11 @@ public:
 	Roof2();
 	~Roof2();
 
-	float getTopOffset(int wallHeight, float scale);
-
 	void generateShape(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.0f);
 	void generateOverhang(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.0f);
 	void generateTexture(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale);
+
+	virtual int getTopOffset(int wallHeight, float scale);
 	virtual void generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.f);
 	virtual void draw(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
 };

@@ -9,6 +9,14 @@ Roof2::~Roof2() {
 
 }
 
+int Roof2::getTopOffset(int wallHeight, float scale) {
+	float tileSize = 32.f * scale;
+	float roofWidth = _tiles[0].size() * tileSize + _roofOverhangSize.x * 2.f * scale;
+	float roofHeight = (roofWidth / 2.f) * (24.f / 32.f);
+
+	float topOffset = wallHeight * tileSize + _roofOverhangSize.y * scale + roofHeight - tileSize;
+	return topOffset;
+}
 
 void Roof2::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
 	Roof::generate(tiles, position, scale);
@@ -20,16 +28,6 @@ void Roof2::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position,
 
 void Roof2::generateOverhang(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
 	_roofOverhangSize = sf::Vector2i(16, 12);
-}
-
-float Roof2::getTopOffset(int wallHeight, float scale)
-{
-	float tileSize = 32.f * scale;
-	float roofWidth = _tiles[0].size() * tileSize + _roofOverhangSize.x * 2.f * scale;
-	float roofHeight = (roofWidth / 2.f) * (24.f / 32.f);
-
-	float topOffset = wallHeight * tileSize + _roofOverhangSize.y * scale + roofHeight - tileSize;
-	return topOffset;
 }
 
 void Roof2::generateShape(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale)
