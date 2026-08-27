@@ -695,18 +695,22 @@ sf::FloatRect Slots::getSlotsRect() {
 
 void Slots::cursorHover() {
 
-	for (auto& slot : _slots) {
-		slot->cursorHover();
+	if (sf::IntRect(getSlotsRect()).contains(Cursors::cursor->_position)) {
+		for (auto& slot : _slots) {
+			slot->cursorHover();
+		}
 	}
-
+	
 	_scrollbar->cursorHover();
 }
 
 void Slots::handleEvent(const sf::Event& event) {
-
-	for (auto& slot : _slots) {
-		slot->handleEvent(event);
+	if (sf::IntRect(getSlotsRect()).contains(Cursors::cursor->_position)) {
+		for (auto& slot : _slots) {
+			slot->handleEvent(event);
+		}
 	}
+
 
 	_scrollbar->handleEvent(event);
 }

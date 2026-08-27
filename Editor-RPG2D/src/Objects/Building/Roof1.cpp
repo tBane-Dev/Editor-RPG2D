@@ -332,11 +332,11 @@ void Roof1::generateTexture(sf::Vector2i position, float scale) {
 	rtex.draw(_roofOverhangVertexArray, states);
 
 	for (auto& part : _parts) {
-		if (!part) continue;
+		if (!part) continue; 
 
 		sf::Sprite sprite(*roofset->_texture->_texture);
 		sprite.setPosition(sf::Vector2f(part->_position) - textureOrigin);
-		sprite.setTextureRect(part->_textureRect);
+		sprite.setTextureRect(sf::IntRect(part->_textureRect.position + sf::Vector2i(0, 32), part->_textureRect.size)); // TO-DO - to delete 32 because _textureRect has already the correct position
 		sprite.setScale(sf::Vector2f(scale, scale));
 		rtex.draw(sprite);
 	}

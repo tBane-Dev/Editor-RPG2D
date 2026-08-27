@@ -274,7 +274,7 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
 
-	_roof = std::make_shared<Roof2>();
+	_roof = std::make_shared<Roof1>();
 	_roof->generate(_walls, position, scale);
 }
 
