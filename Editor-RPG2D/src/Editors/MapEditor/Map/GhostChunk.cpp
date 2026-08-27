@@ -75,6 +75,10 @@ void GhostChunk::cursorHover() {
 			// move the gameobjects
 			for(auto& chunk : MapEditor::editor->_map->_chunks) {
 				for(auto& go : chunk->_gameObjectsOnMap) {
+
+					if (go->_type == ObjectType::Wall) // because walls are moved by Building::setPosition()
+						continue;
+
 					sf::Vector2i pos = go->getPosition();
 					if(offsetX != 0) pos.x += pixelOffsetX;
 					if(offsetY != 0) pos.y += pixelOffsetY;
