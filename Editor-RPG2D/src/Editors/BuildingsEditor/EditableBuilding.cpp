@@ -3,7 +3,6 @@
 #include "Cursor.hpp"
 #include "DebugLog.hpp"
 #include "Wallset.hpp"
-#include "Roofset.hpp"
 
 namespace BuildingsEditor {
 

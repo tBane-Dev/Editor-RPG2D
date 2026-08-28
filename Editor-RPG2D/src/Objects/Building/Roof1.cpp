@@ -1,8 +1,118 @@
 ﻿#include "Objects/Building/Roof1.hpp"
-#include "Roofset.hpp"
 #include "RenderWindow.hpp"
 #include <queue>
 #include "DebugLog.hpp" 
+
+Roof1set::Roof1set() {
+
+	_texture = textures_manager->getTexture(L"assets\\tex\\roof1.png");
+	_overhangTexture = textures_manager->getTexture(L"assets\\tex\\roof1_overhang.png");
+
+	_animations = std::make_shared<Animations>(L"roof1set", _texture, sf::Vector2i(32, 32), _texture->getSize().y / 32, _texture->getSize().x / 32);
+
+	std::shared_ptr<Group> red_roof = std::make_shared<Group>(L"red roof");
+	std::shared_ptr<Group> stone_roof = std::make_shared<Group>(L"stone roof");
+
+	_groups.push_back(red_roof);
+	_groups.push_back(stone_roof);
+	//groups.push_back(brick_roof);
+	//groups.push_back(fortified_roof);
+
+
+	for (int i = 0; i < _groups.size(); i++) {
+		// Basic wall segments
+		_groups[i]->SetPart(0, 0, i * 32);        // Empty / black tile
+		_groups[i]->SetPart(1, 32, i * 32);       // Isolated wall tile
+
+		_groups[i]->SetPart(2, 64, i * 32);       // Horizontal wall: left end
+		_groups[i]->SetPart(3, 96, i * 32);       // Horizontal wall: right end
+		_groups[i]->SetPart(4, 128, i * 32);      // Vertical wall: top end
+		_groups[i]->SetPart(5, 160, i * 32);      // Vertical wall: bottom end
+		_groups[i]->SetPart(6, 192, i * 32);      // Vertical wall: middle
+		_groups[i]->SetPart(7, 224, i * 32);      // Horizontal wall: middle
+
+		// Outer L-shaped corners
+		_groups[i]->SetPart(8, 256, i * 32);      // Outer corner: top-left
+		_groups[i]->SetPart(9, 288, i * 32);      // Outer corner: top-right
+		_groups[i]->SetPart(10, 320, i * 32);     // Outer corner: bottom-left
+		_groups[i]->SetPart(11, 352, i * 32);     // Outer corner: bottom-right
+
+		// Inner L-shaped corners
+		_groups[i]->SetPart(12, 384, i * 32);     // Inner corner: top-left
+		_groups[i]->SetPart(13, 416, i * 32);     // Inner corner: top-right
+		_groups[i]->SetPart(14, 448, i * 32);     // Inner corner: bottom-right
+		_groups[i]->SetPart(15, 480, i * 32);     // Inner corner: bottom-left
+
+		// 
+		_groups[i]->SetPart(16, 512, i * 32);     // Missing bottom; top-right diagonal connected
+		_groups[i]->SetPart(17, 544, i * 32);     // Missing left; bottom-right diagonal connected
+		_groups[i]->SetPart(18, 576, i * 32);     // Missing top; bottom-left diagonal connected
+		_groups[i]->SetPart(19, 608, i * 32);     // Missing right; top-left diagonal connected
+		_groups[i]->SetPart(20, 640, i * 32);     // Missing bottom; top-left diagonal connected
+		_groups[i]->SetPart(21, 672, i * 32);     // Missing left; top-right diagonal connected
+
+		//
+		_groups[i]->SetPart(22, 704, i * 32);     // Missing top; bottom-right diagonal connected
+		_groups[i]->SetPart(23, 736, i * 32);     // Missing right; bottom-left diagonal connected
+		_groups[i]->SetPart(24, 768, i * 32);     // T-junction: missing bottom
+		_groups[i]->SetPart(25, 800, i * 32);     // T-junction: missing left
+
+		// T-junctions without connected diagonals
+		_groups[i]->SetPart(26, 832, i * 32);     // T-junction: missing bottom
+		_groups[i]->SetPart(27, 864, i * 32);     // T-junction: missing left
+
+		//
+
+		// T-junctions with one connected diagonal
+		_groups[i]->SetPart(28, 896, i * 32);     // Missing bottom; top-right diagonal connected
+		_groups[i]->SetPart(29, 928, i * 32);     // Missing left; bottom-right diagonal connected
+		_groups[i]->SetPart(30, 960, i * 32);     // Missing top; bottom-left diagonal connected
+		_groups[i]->SetPart(31, 992, i * 32);     // Missing right; top-left diagonal connected
+
+		_groups[i]->SetPart(32, 1024, i * 32);     // Missing bottom; top-left diagonal connected
+		_groups[i]->SetPart(33, 1056, i * 32);     // Missing left; top-right diagonal connected
+		_groups[i]->SetPart(34, 1088, i * 32);     // Missing top; bottom-right diagonal connected
+		_groups[i]->SetPart(35, 1120, i * 32);     // Missing right; bottom-left diagonal connected
+
+		// T-junctions without connected diagonals
+		_groups[i]->SetPart(36, 1152, i * 32);     // T-junction: missing bottom
+		_groups[i]->SetPart(37, 1184, i * 32);     // T-junction: missing left
+		_groups[i]->SetPart(38, 1216, i * 32);     // T-junction: missing top
+		_groups[i]->SetPart(39, 1248, i * 32);     // T-junction: missing right
+
+		// Four-way junction
+		_groups[i]->SetPart(40, 1280, i * 32);     // Cross: no connected diagonals
+
+		// Extended outer L-shaped corners
+		_groups[i]->SetPart(41, 1312, i * 32);     // Extended outer corner: top-left
+		_groups[i]->SetPart(42, 1344, i * 32);     // Extended outer corner: top-right
+		_groups[i]->SetPart(43, 1376, i * 32);     // Extended outer corner: bottom-left
+		_groups[i]->SetPart(44, 1408, i * 32);    // Extended outer corner: bottom-right
+
+		// Extended straight edges
+		_groups[i]->SetPart(45, 1440, i * 32);    // Extended edge: left
+		_groups[i]->SetPart(46, 1472, i * 32);    // Extended edge: top
+		_groups[i]->SetPart(47, 1504, i * 32);    // Extended edge: right
+		_groups[i]->SetPart(48, 1536, i * 32);    // Extended edge: bottom
+
+	}
+
+}
+
+Roof1Part::Roof1Part(int id, sf::IntRect textureRect) {
+	_id = id;
+	_textureRect = textureRect;
+}
+
+Roof1Part::~Roof1Part() {
+
+}
+
+void Roof1Part::setPosition(sf::Vector2i position) {
+	_position = position;
+}
+
+std::shared_ptr<Roof1set> roof1set = nullptr;
 
 Roof1::Roof1() : Roof() {
 	_roofOverhangSize = sf::Vector2i(4, 4);
@@ -105,7 +215,7 @@ void Roof1::generateParts(sf::Vector2i position, float scale) {
 			if (id > -1) {
 
 
-				sf::IntRect textureRect(roofset->_groups[id]->roofs[0].get(), sf::Vector2i(32, 32));
+				sf::IntRect textureRect(roof1set->_groups[id]->roofs[0].get(), sf::Vector2i(32, 32));
 
 				int left = (x > 0) ? _mask[y][x-1] : -1;
 				int right = (x < size.x - 1) ? _mask[y][x + 1] : -1;
@@ -200,8 +310,8 @@ void Roof1::generateParts(sf::Vector2i position, float scale) {
 					i = 45;
 				}
 
-				textureRect.position = roofset->_groups[id]->roofs[i].get();
-				std::shared_ptr<FlatRoofPart> part = std::make_shared<FlatRoofPart>(roofset->getPrefab(id), textureRect);
+				textureRect.position = roof1set->_groups[id]->roofs[i].get();
+				std::shared_ptr<Roof1Part> part = std::make_shared<Roof1Part>(id, textureRect);
 				part->setPosition(sf::Vector2i(position.x + int((float)x * 32.f * scale), position.y + int(((float)y * 32.f - 96.0f) * scale)));
 				_parts.push_back(part);
 				
@@ -326,7 +436,7 @@ void Roof1::generateTexture(sf::Vector2i position, float scale) {
 	rtex.clear(sf::Color::Transparent);
 
 	sf::RenderStates states;
-	states.texture = roofset->_overhangTexture->_texture.get();
+	states.texture = roof1set->_overhangTexture->_texture.get();
 	states.transform.translate(sf::Vector2f(-textureOrigin.x, -textureOrigin.y));
 	
 	rtex.draw(_roofOverhangVertexArray, states);
@@ -334,7 +444,7 @@ void Roof1::generateTexture(sf::Vector2i position, float scale) {
 	for (auto& part : _parts) {
 		if (!part) continue; 
 
-		sf::Sprite sprite(*roofset->_texture->_texture);
+		sf::Sprite sprite(*roof1set->_texture->_texture);
 		sprite.setPosition(sf::Vector2f(part->_position) - textureOrigin);
 		sprite.setTextureRect(sf::IntRect(part->_textureRect.position + sf::Vector2i(0, 32), part->_textureRect.size)); // TO-DO - to delete 32 because _textureRect has already the correct position
 		sprite.setScale(sf::Vector2f(scale, scale));
@@ -343,7 +453,7 @@ void Roof1::generateTexture(sf::Vector2i position, float scale) {
 
 	rtex.display();
 
-	_roofTexture = rtex.getTexture();
+	_texture = rtex.getTexture();
 }
 
 int Roof1::getTopOffset(int wallHeight, float scale) {
@@ -366,7 +476,7 @@ void Roof1::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 	float overhangWidth = _roofOverhangSize.x * scale;
 	float overhangHeight = _roofOverhangSize.y * scale;
 
-	sf::Sprite sprite(_roofTexture);
+	sf::Sprite sprite(_texture);
 	sprite.setPosition(sf::Vector2f(position.x - overhangWidth, position.y - topPadding - overhangHeight));
 	target.draw(sprite);
 }

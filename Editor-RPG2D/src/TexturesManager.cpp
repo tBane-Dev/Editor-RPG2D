@@ -64,8 +64,8 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\tileset.png");
     texturePaths.push_back(L"assets\\tex\\floorset.png");
 	texturePaths.push_back(L"assets\\tex\\wallset.png");
-	texturePaths.push_back(L"assets\\tex\\roofset.png");
-	texturePaths.push_back(L"assets\\tex\\roofset_overhang.png");
+	texturePaths.push_back(L"assets\\tex\\roof1.png");
+	texturePaths.push_back(L"assets\\tex\\roof1_overhang.png");
 
 	// controls
     texturePaths.push_back(L"assets\\tex\\controls\\scrollbar32\\up.png");

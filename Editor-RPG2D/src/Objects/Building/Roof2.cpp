@@ -256,7 +256,7 @@ void Roof2::generateTexture(std::vector<std::vector<int>> tiles, sf::Vector2i po
 
 	rtex.display();
 
-	_roofTexture = rtex.getTexture();
+	_texture = rtex.getTexture();
 }
 
 int Roof2::getRoofHeight(float scale)
@@ -314,7 +314,7 @@ void Roof2::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 
 	float roofHeight = getRoofHeight(scale);
 
-	sf::Sprite sprite(_roofTexture);
+	sf::Sprite sprite(_texture);
 	sprite.setPosition(sf::Vector2f(position.x, position.y - wallsHeight - roofHeight + 32.f * scale));
 	target.draw(sprite);
 }

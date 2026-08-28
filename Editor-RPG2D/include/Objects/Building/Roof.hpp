@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Objects/Building/FlatRoofPart.hpp"
 
 class Roof {
 public:
@@ -8,7 +7,7 @@ public:
 	std::vector<std::vector<int>> _tiles;
 	sf::Vector2i _roofOverhangSize;
 	sf::VertexArray _roofOverhangVertexArray;
-	sf::Texture _roofTexture;
+	sf::Texture _texture;
 
 	Roof();
 	~Roof();

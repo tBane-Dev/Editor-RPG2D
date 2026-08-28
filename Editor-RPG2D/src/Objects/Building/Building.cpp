@@ -3,7 +3,6 @@
 #include "Objects/Building/Roof1.hpp"
 #include "Objects/Building/Roof2.hpp"
 #include "Wallset.hpp"
-#include "Roofset.hpp"
 #include "EditorsManager.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include "Editors/MapEditor/Editor.hpp"

@@ -18,7 +18,7 @@
 #include "ShadersManager.hpp"
 #include "Tileset.hpp"
 #include "Wallset.hpp"
-#include "Roofset.hpp"
+#include "Objects/Building/Roof1.hpp"
 #include "PrefabsManager.hpp"
 
 #include "Cursor.hpp"
@@ -65,7 +65,7 @@ int main() {
 	tileset = std::make_shared<Tileset>();
 	wallset = std::make_shared<Wallset>();
 	//floorset = std::make_shared<Floorset>();
-	roofset = std::make_shared<Roofset>();
+	roof1set = std::make_shared<Roof1set>();
 
     MapEditor::editor = std::make_shared<MapEditor::Editor>();
     MapEditor::editor->createMap(5, 3);
