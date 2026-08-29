@@ -7,7 +7,7 @@ namespace PrefabsEditor {
 
 		Palette();
 		~Palette();
-
+		
 		virtual void loadAll(ObjectType type);
 		virtual void draw();
 

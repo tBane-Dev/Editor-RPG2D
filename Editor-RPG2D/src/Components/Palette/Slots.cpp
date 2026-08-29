@@ -9,11 +9,15 @@
 #include "Components/Palette/WallSlot.hpp"
 #include "Components/Palette/BuildingSlot.hpp"
 #include "Components/Palette/Slot.hpp"
+#include "Components/Palette/Tools.hpp"
+#include "Components/Palette/Tools-Terrain.hpp"	
+#include "Components/Palette/Tools-Building.hpp"	
 #include "PrefabsManager.hpp"
 #include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
 #include "Editors/MapEditor/Editor.hpp"
+#include "Editors/BuildingsEditor/Editor.hpp"
 #include "Tileset.hpp"
 #include "TexturesManager.hpp"
 
@@ -65,12 +69,41 @@ sf::Vector2i Slots::getSize() {
 void Slots::setPosition(sf::Vector2i position) {
 
 	_rect.position = position + sf::Vector2i(_main_margin, _main_margin);
-	
+
 	int x = _rect.position.x + _outer_margin;
 	int y = _rect.position.y + _outer_margin;
-	
+
 	_text->setPosition(sf::Vector2f(x, y));
 
+	// Scrollbar
+	if (_scrollbar) {
+		sf::Vector2i scrollbarPosition(_rect.position.x + _rect.size.x - 32 - _outer_margin, _rect.position.y + _main_margin + _top_margin);
+		_scrollbar->setPosition(scrollbarPosition);
+	}
+
+	// Slots
+	int slotSize = 80;
+
+	if (_type == ObjectType::Terrain)
+		slotSize = 160;
+	else if (_type == ObjectType::Building)
+		slotSize = 240;
+	else if (_type == ObjectType::Wall || _type == ObjectType::Floor || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted)
+		slotSize = 120;
+
+	int scrollOffset = 0;
+
+	if (_scrollbar)
+		scrollOffset = _scrollbar->getValue() % (slotSize + _inner_margin);
+
+	for (int i = 0; i < _slots.size(); i++) {
+
+		int slotX = i % _slotsCount.x;
+		int slotY = i / _slotsCount.x;
+
+		sf::Vector2i slotPosition(_rect.position.x + _outer_margin + slotX * (slotSize + _inner_margin), _rect.position.y + _main_margin + _top_margin + _outer_margin + slotY * (slotSize + _inner_margin) -scrollOffset);
+		_slots[i]->setPosition(slotPosition);
+	}
 }
 
 void Slots::createSlots(sf::Vector2i slotsCount) {
@@ -514,37 +547,33 @@ void Slots::setCategory(ObjectType type) {
 		selectSlot(-1);
 	}
 
-
-
 	// +1 because scrollbar takes one slot space
 	if (_type == ObjectType::Terrain) {
 		createSlots(sf::Vector2i(3, 3));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (160 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
-
 	}
 	else if (_type == ObjectType::Floor) {
 		createSlots(sf::Vector2i(4, 5));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (120 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
 	}
 	else if (_type == ObjectType::Building) {
-		createSlots(sf::Vector2i(2, 3));
+		createSlots(sf::Vector2i(2, 2));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (240 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
-
 	}
 	else if (_type == ObjectType::Wall || _type == ObjectType::Door || _type == ObjectType::Window || _type == ObjectType::WallMounted) {
 		createSlots(sf::Vector2i(4, 6));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (120 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
-
 	}
 	else {
 		createSlots(sf::Vector2i(6, 9));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (80 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
-
 	}
 
 
 	generateScrollbar();
 	loadObjects();
+
+	setPosition(getPosition() - sf::Vector2i(_main_margin, _main_margin));
 }
 
 void Slots::setFunction(std::function<void(std::shared_ptr<Slot> slot, int selectedSlotId)> function) {

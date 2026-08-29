@@ -58,8 +58,8 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
         return;
 
     if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
-        if (BuildingsEditor::editor->_palette->_tools->_selectedTool != nullptr) {
-            BuildingsEditor::editor->_palette->_tools->setTool(BuildingsEditor::editor->_palette->_tools->_tools[0], ToolType::None);
+        if (auto tools = std::dynamic_pointer_cast<ToolsTerrain>(BuildingsEditor::editor->_palette->_tools); tools && tools->_selectedTool != nullptr) {
+            tools->setTool(tools->_tools[0], ToolTerrainType::None);
         }
         
         if (BuildingsEditor::editor->_palette->_slots->_selectedSlot != nullptr) {
@@ -86,11 +86,12 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
         return;
     
 	if (_object.lock()->_type == ObjectType::Floor) {
-    
+        std::shared_ptr<ToolsTerrain> tools = std::dynamic_pointer_cast<ToolsTerrain>(BuildingsEditor::editor->_palette->_tools);
+
         bool conditionToDrawFloor = 
             GUI_manager->Element_hovered == BuildingsEditor::editor->_building_panel->_building &&
             sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && 
-            (BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Circle || BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
+            (tools->_toolType == ToolTerrainType::Circle || tools->_toolType == ToolTerrainType::Rect);
     
         if (conditionToDrawFloor) {
             std::shared_ptr<BuildingsEditor::EditableBuilding> building = BuildingsEditor::editor->_building_panel->_building;
@@ -102,10 +103,10 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
             int brushSize = BuildingsEditor::editor->_palette->_brushSize;
             std::vector<std::vector<bool>> brush;
 
-            if (BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
+            if (tools->_toolType == ToolTerrainType::Rect)
                 brush = Cursors::square_brushes[brushSize];
 
-            if (BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
+            if (tools->_toolType == ToolTerrainType::Circle)
                 brush = Cursors::circle_brushes[brushSize];
 
 
@@ -232,14 +233,14 @@ void CursorOnBuilding::draw()
     
     if (_object.lock()->_type == ObjectType::Floor) {
 
+		std::shared_ptr<ToolsTerrain> tools = std::dynamic_pointer_cast<ToolsTerrain>(BuildingsEditor::editor->_palette->_tools);
 		int brushSize = BuildingsEditor::editor->_palette->_brushSize;
-		
         std::vector<std::vector<bool>> brush;
     
-        if (BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
+        if (tools->_toolType == ToolTerrainType::Rect)
             brush = Cursors::square_brushes[brushSize];
         
-		if (BuildingsEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
+		if (tools->_toolType == ToolTerrainType::Circle)
             brush = Cursors::circle_brushes[brushSize];
         
         std::shared_ptr<BuildingsEditor::EditableBuilding> building = BuildingsEditor::editor->_building_panel->_building;

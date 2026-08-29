@@ -8,6 +8,7 @@ namespace BuildingsEditor {
 		Palette();
 		~Palette();
 
+		virtual void addTools();
 		virtual void loadAll(ObjectType type);
 		virtual void draw();
 

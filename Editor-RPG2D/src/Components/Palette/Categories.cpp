@@ -2,6 +2,9 @@
 #include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
+#include "Editors/MapEditor/Editor.hpp"
+#include "Editors/BuildingsEditor/Editor.hpp"
+
 
 CategoryButton::CategoryButton(ObjectType type, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> categoryTexture, sf::Vector2i position) : ButtonWithSprite(texture, hoverTexture, pressTexture, nullptr, position) {
 	_type = type;
@@ -108,12 +111,25 @@ void Categories::setCategory(ObjectType type) {
 	_selectedCategory = getCategory(type);
 
 	if (_selectedCategory) {
+
 		_selectedCategory->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected.png");
 		_selectedCategory->_hoverTexture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected_hover.png");
 		_selectedCategory->_pressTexture = textures_manager->getTexture(L"assets\\tex\\palette\\categories\\selected_press.png");
+
+		if (MapEditor::editor && Main::editor_manager->get_back() == MapEditor::editor && MapEditor::editor->_palette) {
+			MapEditor::editor->_palette->addTools();
+			MapEditor::editor->_palette->setPosition(MapEditor::editor->_palette->getPosition());
+		}
+
+		if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor && BuildingsEditor::editor->_palette) {
+			BuildingsEditor::editor->_palette->addTools();
+			BuildingsEditor::editor->_palette->setPosition(BuildingsEditor::editor->_palette->getPosition());
+		}
+			
 	}
 	
 }
+
 
 void Categories::setPosition(sf::Vector2i position) {
 

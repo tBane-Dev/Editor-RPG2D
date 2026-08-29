@@ -55,73 +55,13 @@ namespace MapEditor {
 			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
 		);
 
-		_tools = std::make_shared<Tools>();
-
-		_tools->addTool(
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
-			[this]() { _tools->setTool(_tools->_tools[0], ToolType::None); }
-		);
-
-		_tools->addTool(
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\circle.png"),
-			[this]() {
-				_tools->setTool(_tools->_tools[1], ToolType::Circle);
-				if (_slots->_selectedSlot == nullptr) {
-					if (_slots->_slots.size() > 0) {
-						_slots->selectSlot(1);
-						MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
-					}
-				}
-			}
-		);
-
-		_tools->addTool(
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\rect.png"),
-			[this]() { _tools->setTool(
-				_tools->_tools[2], ToolType::Rect);
-
-				if (_slots->_selectedSlot == nullptr) {
-					if (_slots->_slots.size() > 0) {
-						_slots->selectSlot(1);
-						MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
-					}
-				}
-			}
-		);
-
-		_tools->addTool(
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\decrease.png"),
-			[this]() { MapEditor::editor->_palette->_brushSize = std::clamp(MapEditor::editor->_palette->_brushSize - 1, MapEditor::editor->_palette->_minBrushSize, MapEditor::editor->_palette->_maxBrushSize); }
-		);
-
-		_tools->addTool(
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-			textures_manager->getTexture(L"assets\\tex\\palette\\tools\\increase.png"),
-			[this]() { MapEditor::editor->_palette->_brushSize = std::clamp(MapEditor::editor->_palette->_brushSize + 1, MapEditor::editor->_palette->_minBrushSize, MapEditor::editor->_palette->_maxBrushSize); }
-		);
-
 		_slots = std::make_shared<Slots>();
-
-		setPosition(sf::Vector2i(_rect.position));
 
 		// set the active group
 		loadAll(ObjectType::Terrain); // TO-DO - must be - selectCategory
-		_tools->setTool(_tools->_tools[0], ToolType::None);
 
+		std::shared_ptr<ToolsTerrain> t = std::dynamic_pointer_cast<ToolsTerrain>(_tools);
+		t->setTool(t->_tools[0], ToolTerrainType::None);
 		//_slots->setCategory(ObjectType::Terrain);
 	}
 
@@ -129,44 +69,184 @@ namespace MapEditor {
 
 	}
 
+	void Palette::addTools() {
+
+		_tools = nullptr;
+
+		if (!_categories || !_categories->_selectedCategory) return;
+
+		if(_categories->_selectedType == ObjectType::Terrain) {
+			std::shared_ptr<ToolsTerrain> t = std::make_shared<ToolsTerrain>();
+			_tools = t;
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
+				[this, t]() { t->setTool(t->_tools[0], ToolTerrainType::None); }
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\circle.png"),
+				[this, t]() {
+					t->setTool(t->_tools[1], ToolTerrainType::Circle);
+					if (_slots->_selectedSlot == nullptr) {
+						if (_slots->_slots.size() > 0) {
+							_slots->selectSlot(1);
+							MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
+						}
+					}
+				}
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\rect.png"),
+				[this, t]() { t->setTool(
+					t->_tools[2], ToolTerrainType::Rect);
+
+			if (_slots->_selectedSlot == nullptr) {
+				if (_slots->_slots.size() > 0) {
+					_slots->selectSlot(1);
+					MapEditor::editor->_cursor_on_map->_object = _slots->_slots[1]->_object;
+				}
+			}
+				}
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\decrease.png"),
+				[this, t]() { MapEditor::editor->_palette->_brushSize = std::clamp(MapEditor::editor->_palette->_brushSize - 1, MapEditor::editor->_palette->_minBrushSize, MapEditor::editor->_palette->_maxBrushSize); }
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\increase.png"),
+				[this, t]() { MapEditor::editor->_palette->_brushSize = std::clamp(MapEditor::editor->_palette->_brushSize + 1, MapEditor::editor->_palette->_minBrushSize, MapEditor::editor->_palette->_maxBrushSize); }
+			);
+
+			t->setTool(t->_tools[0], ToolTerrainType::None);
+		}
+
+		if (_categories->_selectedType == ObjectType::Building) {
+			std::shared_ptr<ToolsBuilding> t = std::make_shared<ToolsBuilding>();
+			_tools = t;	
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
+				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
+				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
+				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
+				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
+			);
+
+			t->addTool(
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
+				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
+				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
+			);
+		}
+	}
+
 	void Palette::loadAll(ObjectType type) {
 		_categories->setCategory(type);
+		addTools();
+		
 
-		sf::Vector2i slotsPosition = sf::Vector2i(_rect.position.x, _categories->getPosition().y + _categories->getSize().y);
-		if (_categories->_selectedType == ObjectType::Terrain) {
-			slotsPosition.y += _tools->getSize().y + 16;
+		if (auto tools = std::dynamic_pointer_cast<ToolsTerrain>(_tools); tools) {
+			if (tools->_toolType == ToolTerrainType::None) {
+				tools->setTool(tools->_tools[0], ToolTerrainType::None);
+			}
 		}
-		_slots->setPosition(slotsPosition);
+
+		if (auto tools = std::dynamic_pointer_cast<ToolsBuilding>(_tools); tools) {
+			if (tools->_toolType == ToolBuildingType::None) {
+				tools->setTool(tools->_tools[0], ToolBuildingType::None);
+			}
+		}
+
 		_slots->setCategory(type);
 
 		if (_categories->_selectedType == ObjectType::Terrain) {
+
 			_slots->setFunction(
 				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
-					if (!(_tools->_toolType == ToolType::Circle || _tools->_toolType == ToolType::Rect))
-						_tools->setTool(_tools->_tools[1], ToolType::Circle);
+
+					if (auto tools = std::dynamic_pointer_cast<ToolsTerrain>(_tools); !(tools && (tools->_toolType == ToolTerrainType::Circle || tools->_toolType == ToolTerrainType::Rect))) {
+						if (tools)
+							tools->setTool(tools->_tools[1], ToolTerrainType::Circle);
+					}
+
 					MapEditor::editor->_cursor_on_map->_object = slot->_object;
 					_slots->selectSlot(selectedSlotId);
-
 				}
 			);
-		}else if(_categories->_selectedType == ObjectType::Building) {
+		}
+		else if (_categories->_selectedType == ObjectType::Building) {
+
 			_slots->setFunction(
 				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
+
 					MapEditor::editor->_cursor_on_map->_object = slot->_object;
 					std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(MapEditor::editor->_cursor_on_map->_object.lock());
-					buildingPrefab->generate(MapEditor::editor->_cursor_on_map->_globalPosition, 1.0f, nullptr);
+
+					if (buildingPrefab) {
+						buildingPrefab->generate(MapEditor::editor->_cursor_on_map->_globalPosition, 1.0f, nullptr);
+					}
+
 					_slots->selectSlot(selectedSlotId);
 				}
 			);
 		}
 		else {
+
 			_slots->setFunction(
 				[this](std::shared_ptr<Slot> slot, int selectedSlotId) {
+
 					MapEditor::editor->_cursor_on_map->_object = slot->_object;
 					_slots->selectSlot(selectedSlotId);
 				}
 			);
 		}
+
+		setPosition(getPosition());
 	}
 
 	void Palette::draw() {

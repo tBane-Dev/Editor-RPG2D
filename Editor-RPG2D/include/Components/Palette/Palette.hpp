@@ -6,6 +6,8 @@
 #include "Controls/Scrollbar.hpp"
 #include "Components/Palette/Categories.hpp"
 #include "Components/Palette/Tools.hpp"
+#include "Components/Palette/Tools-Terrain.hpp"
+#include "Components/Palette/Tools-Building.hpp"
 #include "Components/Palette/Slots.hpp"
 #include "Objects/Terrain.hpp"
 #include "Objects/Floor.hpp"
@@ -36,7 +38,9 @@ namespace Components {
 
 		void createBuildingsPrefabs();
 
+		sf::Vector2i getPosition();
 		sf::Vector2i getSize();
+		virtual void addTools();
 		virtual void loadAll(ObjectType type);
 		void setPosition(sf::Vector2i position);
 

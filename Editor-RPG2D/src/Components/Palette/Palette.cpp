@@ -50,7 +50,7 @@ namespace Components {
 		_rect = sf::IntRect(sf::Vector2i(Main::render_window->getSize().x - size.x, MapEditor::editor->_main_menu->getSize().y), size);
 
 		_categories = std::make_shared<Categories>();
-		_tools = std::make_shared<Tools>();
+		_tools = std::make_shared<ToolsTerrain>();
 		_slots = std::make_shared<Slots>();
 
 		_minBrushSize = 0;
@@ -112,11 +112,12 @@ namespace Components {
 			}
 		);
 
-		setPosition(sf::Vector2i(_rect.position));
-
 		// set the active group
-		loadAll(ObjectType::None); // TO-DO - must be - selectCategory
-		_tools->setTool(nullptr, ToolType::None);
+		loadAll(ObjectType::None);
+
+		if (auto tools = std::dynamic_pointer_cast<ToolsTerrain>(_tools)) {
+			tools->setTool(nullptr, ToolTerrainType::None);
+		}
 	}
 
 	Palette::~Palette() {
@@ -356,21 +357,26 @@ namespace Components {
 		
 	}
 
+	sf::Vector2i Palette::getPosition() {
+		return _rect.position;
+	}
+
 	sf::Vector2i Palette::getSize() {
 		return _rect.size;
 	}
 
+	void Palette::addTools() {
+		_tools = nullptr;
+	}
+
 	void Palette::loadAll(ObjectType type) {
 		_categories->setCategory(type);
-
-		sf::Vector2i slotsPosition = sf::Vector2i(_rect.position.x, _categories->getPosition().y + _categories->getSize().y);
-		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor) {
-			slotsPosition.y += _tools->getSize().y + 16;
-		}
-		_slots->setPosition(slotsPosition);
-		_slots->setCategory(type);
-
+		addTools();
 		
+
+		_slots->setCategory(type);
+		
+		setPosition(getPosition());
 	}
 
 	void Palette::setPosition(sf::Vector2i position) {
@@ -379,16 +385,17 @@ namespace Components {
 
 		int margin = 16;
 
+		// Categories
 		_categories->setPosition(position);
 
-		_tools->setPosition(position + sf::Vector2i(0, _categories->getSize().y + margin));
-
-		if (_categories->_selectedCategory != nullptr && (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor))
+		// Tools + Slots
+		if (_tools) {
+			_tools->setPosition(position + sf::Vector2i(0, _categories->getSize().y + margin));
 			_slots->setPosition(position + sf::Vector2i(0, _categories->getSize().y + margin + _tools->getSize().y + margin));
-		else
+		}
+		else {
 			_slots->setPosition(position + sf::Vector2i(0, _categories->getSize().y + margin));
-
-
+		}
 	}
 
 	void Palette::cursorHover() {
@@ -401,7 +408,7 @@ namespace Components {
 
 		_categories->cursorHover();
 
-		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor)
+		if (_tools != nullptr)
 			_tools->cursorHover();
 
 		_slots->cursorHover();
@@ -427,7 +434,7 @@ namespace Components {
 
 		_categories->handleEvent(event);
 
-		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor)
+		if (_tools != nullptr)
 			_tools->handleEvent(event);
 
 		_slots->handleEvent(event);
@@ -437,7 +444,10 @@ namespace Components {
 	void Palette::update() {
 
 		_categories->update();
-		_tools->update();
+
+		if (_tools != nullptr)
+			_tools->update();
+
 		_slots->update();
 
 	}
@@ -452,14 +462,11 @@ namespace Components {
 		Main::render_window->draw(rect);
 
 		_categories->draw();
-		if (_categories->_selectedType == ObjectType::Terrain || _categories->_selectedType == ObjectType::Floor)
+		if (_tools != nullptr)
 			_tools->draw();
 		_slots->draw();
 
 		GUI_manager->setView();
-
-
-
 
 	}
 

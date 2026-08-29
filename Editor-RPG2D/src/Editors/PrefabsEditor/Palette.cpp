@@ -53,7 +53,8 @@ namespace PrefabsEditor {
 			[this]() { loadAll(ObjectType::None); } // TO-DO - must be - selectCategory
 		);
 
-		_tools = std::make_shared<Tools>();
+		_tools = nullptr;
+
 		_slots = std::make_shared<Slots>();
 
 		setPosition(sf::Vector2i(_rect.position));
@@ -72,7 +73,7 @@ namespace PrefabsEditor {
 		_categories->setCategory(type);
 
 		sf::Vector2i slotsPosition = sf::Vector2i(_rect.position.x, _categories->getPosition().y + _categories->getSize().y);
-		if (_categories->_selectedType == ObjectType::Terrain) {
+		if (_tools != nullptr) {
 			slotsPosition.y += _tools->getSize().y + 16;
 		}
 		_slots->setPosition(slotsPosition);

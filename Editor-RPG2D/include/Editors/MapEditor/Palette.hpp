@@ -8,6 +8,7 @@ namespace MapEditor {
 		Palette();
 		~Palette();
 
+		virtual void addTools();
 		virtual void loadAll(ObjectType type);
 		virtual void draw();
 	};

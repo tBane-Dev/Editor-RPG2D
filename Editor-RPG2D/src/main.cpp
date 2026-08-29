@@ -68,15 +68,14 @@ int main() {
 	roof1set = std::make_shared<Roof1set>();
 
     MapEditor::editor = std::make_shared<MapEditor::Editor>();
+    Main::editor_manager->push_back(MapEditor::editor);
+
     MapEditor::editor->createMap(5, 3);
     MapEditor::editor->createGameObjects();
     MapEditor::editor->createCamera();
     MapEditor::editor->createCursorOnMap();
     MapEditor::editor->createMainMenu();
     MapEditor::editor->createPalette();
-    
-
-    Main::editor_manager->push_back(MapEditor::editor);
 
 	// TO-DO - to delete (center the camera on the map at the start of the program)
     sf::Vector2f camPos;

@@ -368,8 +368,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
         return;
 
     if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
-        if (MapEditor::editor->_palette->_tools->_selectedTool != nullptr) {
-            MapEditor::editor->_palette->_tools->setTool(MapEditor::editor->_palette->_tools->_tools[0], ToolType::None);
+        if (auto tools = std::dynamic_pointer_cast<ToolsTerrain>(MapEditor::editor->_palette->_tools); tools && tools->_selectedTool != nullptr) {
+            tools->setTool(tools->_tools[0], ToolTerrainType::None);
         }
 
         if (MapEditor::editor->_palette->_slots->_selectedSlot != nullptr) {
@@ -397,11 +397,13 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
 	if (_object.lock()->_type == ObjectType::Terrain) {
 
+		std::shared_ptr<ToolsTerrain> tools = std::dynamic_pointer_cast<ToolsTerrain>(MapEditor::editor->_palette->_tools);
+
         bool conditionToDraw = 
             GUI_manager->Element_hovered == MapEditor::editor->_map &&
             sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && 
             MapEditor::editor->_map->getChunkByGlobalPosition() != nullptr &&
-            (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle || MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect);
+            (tools && tools->_toolType == ToolTerrainType::Circle || tools->_toolType == ToolTerrainType::Rect);
 
 		if (conditionToDraw) {
 
@@ -418,10 +420,10 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             int brushSize = MapEditor::editor->_palette->_brushSize;
             std::vector<std::vector<bool>> brush;
             
-            if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
+            if (tools->_toolType == ToolTerrainType::Rect)
                 brush = Cursors::square_brushes[brushSize];
 
-            if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
+            if (tools->_toolType == ToolTerrainType::Circle)
                 brush = Cursors::circle_brushes[brushSize];
            
 
@@ -569,14 +571,15 @@ void CursorOnMap::draw()
 
     if (_object.lock()->_type == ObjectType::Terrain) {
 
+        std::shared_ptr<ToolsTerrain> tools = std::dynamic_pointer_cast<ToolsTerrain>(MapEditor::editor->_palette->_tools);
 		int brushSize = MapEditor::editor->_palette->_brushSize;
-		
         std::vector<std::vector<bool>> brush;
+		
 
-        if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Rect)
+        if (tools->_toolType == ToolTerrainType::Rect)
             brush = Cursors::square_brushes[brushSize];
         
-		if (MapEditor::editor->_palette->_tools->_toolType == ToolType::Circle)
+		if (tools->_toolType == ToolTerrainType::Circle)
             brush = Cursors::circle_brushes[brushSize];
 
 		std::shared_ptr<Map> mapa = std::dynamic_pointer_cast<Map>(MapEditor::editor->_map);
