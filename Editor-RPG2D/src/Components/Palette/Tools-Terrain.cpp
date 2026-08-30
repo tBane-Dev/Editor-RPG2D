@@ -37,7 +37,7 @@ void ToolTerrainButton::draw() {
 
 ToolsTerrain::ToolsTerrain() : Tools() {
 
-	_text = std::make_unique<sf::Text>(basicFont, L"Tools", 20);
+	_text->setString(L"Tools");
 
 	_prev = std::make_shared<ButtonWithSprite>(
 		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev.png"),

@@ -183,12 +183,42 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\next.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\next_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\next_press.png");
+
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\tool.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\tool_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\tool_press.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\selected.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\selected_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\selected_press.png");
+
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_category.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_category_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_category_press.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_category_selected.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_category_selected_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_category_selected_press.png");
+
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_type.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_type_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_type_press.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_type_selected.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_type_selected_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_type_selected_press.png");
+
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_shape.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_shape_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_shape_press.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_shape_selected.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_shape_selected_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_shape_selected_press.png");
+
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type_press.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type_selected.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type_selected_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type_selected_press.png");
+
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\cursor.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\circle.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\rect.png");

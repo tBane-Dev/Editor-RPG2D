@@ -2,35 +2,52 @@
 #include "Controls/ButtonWithSprite.hpp"
 #include "Components/Palette/Tools.hpp"
 #include "Objects/Object.hpp"
+#include "Controls/ButtonWithTextAndSprite.hpp"
 
-enum class ToolBuildingType { None, Circle, Rect };
+enum class ToolBuildingWallType {Wooden, Stone, Mulch, Mud, Brick};
 
-class ToolBuildingButton : public ButtonWithSprite {
+class ToolBuildingWallTypeOption: public ButtonWithTextAndSprite {
 public:
-	std::shared_ptr<Texture> _toolTexture;
 
-	ToolBuildingButton(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> toolTexture, sf::Vector2i position = sf::Vector2i(0, 0));
-	~ToolBuildingButton();
+	ToolBuildingWallType _type;
 
-	void cursorHover();
-	void handleEvent(const sf::Event& event);
-	void update();
-	void draw();
+	ToolBuildingWallTypeOption(std::wstring text, ToolBuildingWallType type, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position = sf::Vector2i(0,0));
+	~ToolBuildingWallTypeOption();
 };
+
 
 class ToolsBuilding : public Tools {
 public:
 
+	std::shared_ptr<ButtonWithTextAndSprite> _wallsType, _height, _roofShape, _roofType;
+	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _categories;
+	int _selectedCategoryIndex = -1;
+	
 	std::shared_ptr<ButtonWithSprite> _prev, _next;
-	std::vector<std::shared_ptr<ToolBuildingButton>> _tools;
-	std::shared_ptr<ToolBuildingButton> _selectedTool = nullptr;
-	ToolBuildingType _toolType = ToolBuildingType::None;
+	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _options;
+	int _visibleOptionsCount;
+	
+	int _startWallTypeIndex = 0; // scrollbar offset for options
+	int _startHeightIndex = 0;
+	int _startRoofShapeIndex = 0;
+	int _startRoofTypeIndex = 0;
+
+	int _selectedWallTypeIndex = -1;
+	int _selectedHeightIndex = -1;
+	int _selectedRoofShapeIndex = -1;
+	int _selectedRoofTypeIndex = -1;
+	int _inner_margin2;
 
 	ToolsBuilding();
 	~ToolsBuilding();
 
-	void addTool(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> toolTexture, std::function<void()> function);
-	void setTool(std::shared_ptr<ToolBuildingButton> button, ToolBuildingType type);
+	void createCategories();
+	void selectCategory(int id);
+	void createNavButtons();
+	void createOptions();
+	void selectOption();
+	void selectOption(int id);
+
 	virtual void setPosition(sf::Vector2i position);
 
 	virtual void cursorHover();

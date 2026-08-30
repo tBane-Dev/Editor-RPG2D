@@ -61,7 +61,7 @@ Categories::Categories() {
 		textures_manager->getTexture(L"assets\\tex\\palette\\categories\\next_press.png")
 	);
 
-	_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - _prev->getSize().x - _next->getSize().x - 5 * 64) / 8;
+	_inner_margin = (600 - 2 * _main_margin - 2 * _outer_margin - _prev->getSize().x - _next->getSize().x - 5 * 64) / 6;
 	_rect.size = sf::Vector2i(600 - 2 * _main_margin, 64 + 2 * _main_margin + _top_margin + _inner_margin);
 
 	_selectedCategory = nullptr;

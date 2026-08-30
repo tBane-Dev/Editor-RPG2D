@@ -142,46 +142,6 @@ namespace MapEditor {
 		if (_categories->_selectedType == ObjectType::Building) {
 			std::shared_ptr<ToolsBuilding> t = std::make_shared<ToolsBuilding>();
 			_tools = t;	
-
-			t->addTool(
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
-				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
-			);
-
-			t->addTool(
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
-				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
-			);
-
-			t->addTool(
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
-				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
-			);
-
-			t->addTool(
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
-				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
-			);
-
-			t->addTool(
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
-				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\cursor.png"),
-				[this, t]() { t->setTool(t->_tools[0], ToolBuildingType::None); }
-			);
 		}
 	}
 
@@ -197,9 +157,7 @@ namespace MapEditor {
 		}
 
 		if (auto tools = std::dynamic_pointer_cast<ToolsBuilding>(_tools); tools) {
-			if (tools->_toolType == ToolBuildingType::None) {
-				tools->setTool(tools->_tools[0], ToolBuildingType::None);
-			}
+			// TO-DO
 		}
 
 		_slots->setCategory(type);
