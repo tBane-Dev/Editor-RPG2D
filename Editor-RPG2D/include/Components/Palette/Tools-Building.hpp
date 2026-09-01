@@ -27,6 +27,13 @@ public:
 	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _options;
 	int _visibleOptionsCount;
 	
+	std::vector<std::wstring> _wallTypes;
+	std::vector<std::wstring> _heights;
+	std::vector<std::wstring> _roofShapes;
+	std::vector<std::wstring> _roofTypes;
+
+	int _optionsCount = 0;
+
 	int _startWallTypeIndex = 0; // scrollbar offset for options
 	int _startHeightIndex = 0;
 	int _startRoofShapeIndex = 0;
@@ -41,10 +48,16 @@ public:
 	ToolsBuilding();
 	~ToolsBuilding();
 
+	int getWallType();
+	int getHeight();
+	int getRoofShape();
+	int getRoofType();
+
 	void createCategories();
 	void selectCategory(int id);
 	void createNavButtons();
 	void createOptions();
+	void updateOptions();
 	void selectOption();
 	void selectOption(int id);
 

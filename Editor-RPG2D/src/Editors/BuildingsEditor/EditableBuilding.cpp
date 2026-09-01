@@ -23,7 +23,7 @@ namespace BuildingsEditor {
 		sf::Vector2i panelSize = BuildingsEditor::editor->_building_panel->getSize();
 		sf::Vector2i panelPosition = BuildingsEditor::editor->_building_panel->getPosition();
 		
-		ResizableShape::resize(sf::Vector2i(8 * 32, 8 * 32));
+		ResizableShape::resize(sf::Vector2i(8 * 32, 6 * 32));
 
 		setPosition(sf::Vector2i(
 			panelPosition.x + (panelSize.x - getSize().x) / 2,
@@ -34,7 +34,7 @@ namespace BuildingsEditor {
 		setOutlineColor(sf::Color(47, 47, 47));
 
 		setStep(32);
-		setMinSize(sf::Vector2i(8 * 32, 8 * 32));
+		setMinSize(sf::Vector2i(8 * 32, 6 * 32));
 		setMaxSize(sf::Vector2i(24 * 32, 24 * 32));
 
 		if (!prefab) return;

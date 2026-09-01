@@ -6,9 +6,11 @@
 #include "Cursor.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
 #include "DebugLog.hpp"
-#include "Editors/BuildingsEditor/Editor.hpp""
+#include "Editors/BuildingsEditor/Editor.hpp"
 #include "Wallset.hpp"
 #include <queue>
+#include "Objects/Building/Roof1.hpp"
+#include "Objects/Building/Roof2.hpp"
 
 
 
@@ -41,7 +43,7 @@ namespace Components {
 		}
 
 		if(Palette::buildings.empty()) {
-			createBuildingsPrefabs();
+			createBuildingsPrefabs(1, 0, 3, 0, 0);
 		}
 
 		sf::Vector2i size;
@@ -124,7 +126,7 @@ namespace Components {
 
 	}
 
-	void Palette::createBuildingsPrefabs() {
+	void Palette::createBuildingsPrefabs(int floor, int wall, int height, int roof, int type) {
 
 		auto generateFloor = [](std::vector<std::vector<int>> walls, int tile) {
 			if (walls.empty() || walls[0].empty())
@@ -213,149 +215,123 @@ namespace Components {
 			}
 
 			return floor;
-		};
+			};
 
-		for(int wallType = 0; wallType < wallset->_groups.size(); wallType += 1) {
-			for (int floorType = 1; floorType < floors.size(); floorType += 1) {
+		auto addBuildingPrefab = [generateFloor](std::wstring name, std::vector<std::vector<int>>walls, int floor, int height, int roof, int type) {
+			std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(name, sf::Vector2i(walls[0].size(), walls.size()));
 
-				{
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building1", sf::Vector2i(8, 8));
-					int X = wallType;
-					int O = -1;
-					buildingPrefab->_walls = {
-						{ X, X, X, X, X, X, X, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, X, X, X, X, X, X, X}
-					};
-					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
-					Palette::buildings.emplace_back(buildingPrefab);
-				}
+			buildingPrefab->_walls = walls;
+			buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floor);
+			buildingPrefab->_wallHeight = height;
 
-				{
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building1", sf::Vector2i(8, 8));
-					int X = wallType;
-					int O = -1;
-					buildingPrefab->_walls = {
-						{ X, X, X, X, X, X, X, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, X},
-						{ X, X, X, X, X, X, X, X}
-					};
-					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
-					Palette::buildings.emplace_back(buildingPrefab);
-				}
-
-				{
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building2", sf::Vector2i(8, 8));
-					int X = wallType;
-					int O = -1;
-					buildingPrefab->_walls = {
-						{ X, X, X, X, X, X, X, X, X, X, X, X},
-						{ X, O, O, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, O, O, X},
-						{ X, X, X, X, X, X, X, X, X, X, X, X}
-					};
-					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
-					Palette::buildings.emplace_back(buildingPrefab);
-				}
-
-				{
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building3", sf::Vector2i(8, 8));
-					int X = wallType;
-					int O = -1;
-					buildingPrefab->_walls = {
-						{ X, X, X, X, X, X, X, X, X, X},
-						{ X, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, X, X, X, X, X},
-						{ X, O, O, O, O, X, O, O, O, O},
-						{ X, O, O, O, O, X, O, O, O, O},
-						{ X, X, X, X, X, X, O, O, O, O}
-					};
-					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
-					Palette::buildings.emplace_back(buildingPrefab);
-				}
-
-				{
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building4", sf::Vector2i(8, 8));
-					int X = wallType;
-					int O = -1;
-					buildingPrefab->_walls = {
-						{ X, X, X, X, X, X, X, X, X, X},
-						{ X, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, X},
-						{ X, O, O, O, O, O, O, O, O, X},
-						{ X, X, X, X, X, O, O, O, O, X},
-						{ O, O, O, O, X, O, O, O, O, X},
-						{ O, O, O, O, X, O, O, O, O, X},
-						{ O, O, O, O, X, X, X, X, X, X}
-					};
-					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
-					Palette::buildings.emplace_back(buildingPrefab);
-				}
-
-				{
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building4", sf::Vector2i(8, 8));
-					int X = wallType;
-					int O = -1;
-					buildingPrefab->_walls = {
-						{ X, X, X, X, X, X,  X, X, X, X, X, X, X, X, X, X },
-						{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
-						{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
-						{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
-						{ X, X, X, X, X, X, O, O, O, O, X, X, X, X, X, X },
-						{ O, O, O, O, O, X, O, O, O, O, X, O, O, O, O, O },
-						{ O, O, O, O, O, X, O, O, O, O, X, O, O, O, O, O },
-						{ O, O, O, O, O, X, X, X, X, X, X, O, O, O, O, O }
-					};
-					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
-					Palette::buildings.emplace_back(buildingPrefab);
-				}
-
-				{
-					std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"New Building4", sf::Vector2i(8, 8));
-					int X = wallType;
-					int O = -1;
-					buildingPrefab->_walls = {
-						{ X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X },
-						{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
-						{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
-						{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
-						{ X, O, O, O, O, X, X, X, X, X, X, O, O, O, O, X },
-						{ X, O, O, O, O, X, O, O, O, O, X, O, O, O, O, X },
-						{ X, O, O, O, O, X, O, O, O, O, X, O, O, O, O, X },
-						{ X, X, X, X, X, X, O, O, O, O, X, X, X, X, X, X }
-					};
-					buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floorType);
-					Palette::buildings.emplace_back(buildingPrefab);
-				}
-
+			if (roof == 0) {
+				buildingPrefab->_roof = std::make_shared<Roof1>(type, buildingPrefab->_wallHeight);
+			}
+			else if (roof == 1) {
+				buildingPrefab->_roof = std::make_shared<Roof2>(type, buildingPrefab->_wallHeight);
+			}
+			else {
+				buildingPrefab->_roof = std::make_shared<Roof1>(type, buildingPrefab->_wallHeight);
 			}
 
-			
+			buildingPrefab->_roof->generate(buildingPrefab->_walls, sf::Vector2i(0, 0), 1.0f);
+			Palette::buildings.emplace_back(buildingPrefab);
+		};
 
-		}
+		///////////////////////////
 
-		
+		buildings.clear();
+
+		int X = wall;
+		int O = -1;
+
+		addBuildingPrefab(
+			L"New Building1", {
+			{ X, X, X, X, X, X, X, X },
+			{ X, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, O, O, X },
+			{ X, X, X, X, X, X, X, X }
+			}, floor, height, roof, type);
+
+		addBuildingPrefab(
+			L"New Building1", {
+			{ X, X, X, X, X, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, O, O, O, O, X},
+			{ X, X, X, X, X, X}
+			}, floor, height, roof, type);
+
+		addBuildingPrefab(
+			L"New Building2", {
+			{ X, X, X, X, X, X, X, X, X, X, X, X},
+			{ X, O, O, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, O, O, X},
+			{ X, X, X, X, X, X, X, X, X, X, X, X}
+			}, floor, height, roof, type);
+
+		addBuildingPrefab(
+			L"New Building3", {
+			{ X, X, X, X, X, X, X, X, X, X},
+			{ X, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, X, X, X, X, X},
+			{ X, O, O, O, O, X, O, O, O, O},
+			{ X, O, O, O, O, X, O, O, O, O},
+			{ X, X, X, X, X, X, O, O, O, O}
+			}, floor, height, roof, type);
+
+		addBuildingPrefab(
+			L"New Building4", {
+			{ X, X, X, X, X, X, X, X, X, X},
+			{ X, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, X},
+			{ X, O, O, O, O, O, O, O, O, X},
+			{ X, X, X, X, X, O, O, O, O, X},
+			{ O, O, O, O, X, O, O, O, O, X},
+			{ O, O, O, O, X, O, O, O, O, X},
+			{ O, O, O, O, X, X, X, X, X, X}
+			}, floor, height, roof, type);
+
+		addBuildingPrefab(
+			L"New Building5", {
+			{ X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X },
+			{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
+			{ X, X, X, X, X, X, O, O, O, O, X, X, X, X, X, X },
+			{ O, O, O, O, O, X, O, O, O, O, X, O, O, O, O, O },
+			{ O, O, O, O, O, X, O, O, O, O, X, O, O, O, O, O },
+			{ O, O, O, O, O, X, X, X, X, X, X, O, O, O, O, O }
+			}, floor, height, roof, type);
+
+		addBuildingPrefab(
+			L"New Building6", {
+			{ X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X },
+			{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, O, O, O, O, O, O, O, O, O, O, X },
+			{ X, O, O, O, O, X, X, X, X, X, X, O, O, O, O, X },
+			{ X, O, O, O, O, X, O, O, O, O, X, O, O, O, O, X },
+			{ X, O, O, O, O, X, O, O, O, O, X, O, O, O, O, X },
+			{ X, X, X, X, X, X, O, O, O, O, X, X, X, X, X, X }
+			}, floor, height, roof, type);
 	}
+	
 
 	sf::Vector2i Palette::getPosition() {
 		return _rect.position;

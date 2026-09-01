@@ -2,6 +2,10 @@
 #include "RenderWindow.hpp"
 #include "Theme.hpp"
 #include "DebugLog.hpp"
+#include "Components/Palette/Palette.hpp"
+#include "Editors/MapEditor/Editor.hpp"
+#include "Editors/MapEditor/Palette.hpp"
+
 
 ToolBuildingWallTypeOption::ToolBuildingWallTypeOption(std::wstring text, ToolBuildingWallType type, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : ButtonWithTextAndSprite(text, texture, hoverTexture, pressTexture, nullptr, position) {
 	_type = type;
@@ -24,9 +28,10 @@ ToolsBuilding::ToolsBuilding() : Tools() {
 
 	createNavButtons();
 	createOptions();
+	updateOptions();
 
 	_selectedWallTypeIndex = 0;
-	_selectedHeightIndex = 2;
+	_selectedHeightIndex = 1;
 	_selectedRoofShapeIndex = 0;
 	_selectedRoofTypeIndex = 0;
 
@@ -37,6 +42,22 @@ ToolsBuilding::ToolsBuilding() : Tools() {
 
 ToolsBuilding::~ToolsBuilding() {
 
+}
+
+int ToolsBuilding::getWallType() {
+	return _selectedWallTypeIndex;
+}
+
+int ToolsBuilding::getHeight() {
+	return _selectedHeightIndex + 2;
+}
+
+int ToolsBuilding::getRoofShape() {
+	return _selectedRoofShapeIndex;
+}
+
+int ToolsBuilding::getRoofType() {
+	return _selectedRoofTypeIndex;
 }
 
 void ToolsBuilding::createCategories() {
@@ -75,10 +96,11 @@ void ToolsBuilding::createCategories() {
 	);
 	_categories.push_back(_roofType);
 
+
 	for (int i = 0; i < _categories.size(); i += 1) {
 		_categories[i]->_onclick_func = [this, i]() { 
 			selectCategory(i); 
-			createOptions();
+			updateOptions();
 			selectOption();
 			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin)); // Update positions of options
 			};
@@ -131,59 +153,86 @@ void ToolsBuilding::createNavButtons() {
 	_prev->_onclick_func = [this]() {
 
 		int* startIndex = nullptr;
+		int* selectedIndex = nullptr;
 
-		if (_categories[_selectedCategoryIndex] == _wallsType)
+		if (_categories[_selectedCategoryIndex] == _wallsType) {
 			startIndex = &_startWallTypeIndex;
-		else if (_categories[_selectedCategoryIndex] == _height)
+			selectedIndex = &_selectedWallTypeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _height) {
 			startIndex = &_startHeightIndex;
-		else if (_categories[_selectedCategoryIndex] == _roofShape)
+			selectedIndex = &_selectedHeightIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofShape) {
 			startIndex = &_startRoofShapeIndex;
-		else if (_categories[_selectedCategoryIndex] == _roofType)
+			selectedIndex = &_selectedRoofShapeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofType) {
 			startIndex = &_startRoofTypeIndex;
+			selectedIndex = &_selectedRoofTypeIndex;
+		}
 
-		if (startIndex && *startIndex > 0) {
+		if (startIndex && selectedIndex && *startIndex > 0) {
 			*startIndex -= 1;
-			createOptions();
+			updateOptions();
+			selectOption(*selectedIndex);
 			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
 		}
-		};
+	};
 
 	_next->_onclick_func = [this]() {
 
 		int* startIndex = nullptr;
+		int* selectedIndex = nullptr;
 
-		if (_categories[_selectedCategoryIndex] == _wallsType)
+		if (_categories[_selectedCategoryIndex] == _wallsType) {
 			startIndex = &_startWallTypeIndex;
-		else if (_categories[_selectedCategoryIndex] == _height)
+			selectedIndex = &_selectedWallTypeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _height) {
 			startIndex = &_startHeightIndex;
-		else if (_categories[_selectedCategoryIndex] == _roofShape)
+			selectedIndex = &_selectedHeightIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofShape) {
 			startIndex = &_startRoofShapeIndex;
-		else if (_categories[_selectedCategoryIndex] == _roofType)
+			selectedIndex = &_selectedRoofShapeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofType) {
 			startIndex = &_startRoofTypeIndex;
+			selectedIndex = &_selectedRoofTypeIndex;
+		}
 
-		if (startIndex && _options.size() > _visibleOptionsCount + *startIndex) {
+		if (startIndex && selectedIndex && _visibleOptionsCount + *startIndex < _optionsCount) {
 			*startIndex += 1;
-			createOptions();
+			updateOptions();
+			selectOption(*selectedIndex);
 			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
 		}
-		};
+	};
 }
 
 void ToolsBuilding::createOptions() {
+	_wallTypes = { L"Wooden", L"Stone", L"Mulch", L"Mud", L"Brick" };
+	_heights = { L"2", L"3", L"4", L"5", L"6", L"7", L"8" };
+	_roofShapes = { L"flat", L"gable", L"flanks", L"gable2" };
+	_roofTypes = { L"red", L"stone", L"green", L"blue", L"sand" };
+}
+
+void ToolsBuilding::updateOptions() {
 	_options.clear();
 	_visibleOptionsCount = 0;
 
 	if (_categories[_selectedCategoryIndex] == _wallsType) {
 
-		std::vector<std::wstring> names = { L"Wooden", L"Stone", L"Mulch", L"Mud", L"Brick" };
 		_visibleOptionsCount = 3;
+		_optionsCount = _wallTypes.size();
 
-		for (int i = 0; i + _startWallTypeIndex < names.size(); i++) {
+		for (int i = 0; i + _startWallTypeIndex < _wallTypes.size(); i++) {
 
 			int optionIndex = i + _startWallTypeIndex;
 
 			auto option = std::make_shared<ToolBuildingWallTypeOption>(
-				names[optionIndex],
+				_wallTypes[optionIndex],
 				ToolBuildingWallType(optionIndex),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_walls_type.png"),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_walls_type_hover.png"),
@@ -192,6 +241,8 @@ void ToolsBuilding::createOptions() {
 
 			option->_onclick_func = [this, optionIndex]() {
 				selectOption(optionIndex);
+				Components::Palette::createBuildingsPrefabs(1, getWallType(), getHeight(), getRoofShape(), getRoofType());
+				MapEditor::editor->_palette->_slots->updateObjects();
 				};
 			
 			_options.push_back(option);
@@ -202,13 +253,13 @@ void ToolsBuilding::createOptions() {
 	}
 
 	if(_categories[_selectedCategoryIndex] == _height) {
-		std::vector<std::wstring> names = { L"2", L"3", L"4", L"5", L"6" };
 		_visibleOptionsCount = 5;
+		_optionsCount = _heights.size();
 
-		for (int i = 0; i + _startHeightIndex < names.size(); i++) {
+		for (int i = 0; i + _startHeightIndex < _heights.size(); i++) {
 			int optionIndex = i + _startHeightIndex;
 			auto option = std::make_shared<ButtonWithTextAndSprite>(
-				names[optionIndex],
+				_heights[optionIndex],
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool.png"),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_hover.png"),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\tool_press.png"),
@@ -216,6 +267,8 @@ void ToolsBuilding::createOptions() {
 			);
 			option->_onclick_func = [this, optionIndex]() {
 				selectOption(optionIndex);
+				Components::Palette::createBuildingsPrefabs(1, getWallType(), getHeight(), getRoofShape(), getRoofType());
+				MapEditor::editor->_palette->_slots->updateObjects();
 				};
 			_options.push_back(option);
 		}
@@ -225,13 +278,14 @@ void ToolsBuilding::createOptions() {
 	}
 
 	if (_categories[_selectedCategoryIndex] == _roofShape) {
-		std::vector<std::wstring> names = { L"flat", L"gable", L"flanks", L"gable2"};
+		
 		_visibleOptionsCount = 3;
+		_optionsCount = _roofShapes.size();
 
-		for (int i = 0; i + _startRoofShapeIndex < names.size(); i++) {
+		for (int i = 0; i + _startRoofShapeIndex < _roofShapes.size(); i++) {
 			int optionIndex = i + _startRoofShapeIndex;
 			auto option = std::make_shared<ButtonWithTextAndSprite>(
-				names[optionIndex],
+				_roofShapes[optionIndex],
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_roof_shape.png"),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_roof_shape_hover.png"),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_roof_shape_press.png"),
@@ -239,6 +293,8 @@ void ToolsBuilding::createOptions() {
 			);
 			option->_onclick_func = [this, optionIndex]() {
 				selectOption(optionIndex);
+				Components::Palette::createBuildingsPrefabs(1, getWallType(), getHeight(), getRoofShape(), getRoofType());
+				MapEditor::editor->_palette->_slots->updateObjects();
 				};
 			_options.push_back(option);
 		}
@@ -248,13 +304,14 @@ void ToolsBuilding::createOptions() {
 	}
 
 	if (_categories[_selectedCategoryIndex] == _roofType) {
-		std::vector<std::wstring> names = { L"red", L"stone", L"green", L"blue", L"sand"};
+		
 		_visibleOptionsCount = 5;
+		_optionsCount = _roofTypes.size();
 
-		for (int i = 0; i + _startRoofTypeIndex < names.size(); i++) {
+		for (int i = 0; i + _startRoofTypeIndex < _roofTypes.size(); i++) {
 			int optionIndex = i + _startRoofTypeIndex;
 			auto option = std::make_shared<ButtonWithTextAndSprite>(
-				names[optionIndex],
+				_roofTypes[optionIndex],
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_roof_type.png"),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_roof_type_hover.png"),
 				textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_roof_type_press.png"),
@@ -262,6 +319,8 @@ void ToolsBuilding::createOptions() {
 			);
 			option->_onclick_func = [this, optionIndex]() {
 				selectOption(optionIndex);
+				Components::Palette::createBuildingsPrefabs(1, getWallType(), getHeight(), getRoofShape(), getRoofType());
+				MapEditor::editor->_palette->_slots->updateObjects();
 				};
 			_options.push_back(option);
 		}
@@ -309,7 +368,7 @@ void ToolsBuilding::selectOption() {
 
 	*startIndex = std::clamp(*startIndex, 0, maxStartIndex);
 
-	createOptions();
+	updateOptions();
 	selectOption(*selectedIndex);
 }
 

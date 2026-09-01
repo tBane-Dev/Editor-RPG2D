@@ -2,8 +2,10 @@
 #include "RenderWindow.hpp"
 #include <queue>
 #include <iostream>
+#include "DebugLog.hpp"
+#include "TexturesManager.hpp"
 
-Roof2::Roof2() : Roof() {
+Roof2::Roof2(int type, int wallHeight) : Roof(type, wallHeight) {
 
 }
 
@@ -201,7 +203,7 @@ void Roof2::generateShape(std::vector<std::vector<int>> tiles, sf::Vector2i posi
 		// długość połaci w osi Y
 		float roofDepth = (rect.size.y - 1) * tileSize;
 
-		float roofHeight = (roofWidth / 2.f) * (24.f / 32.f);
+		float roofHeight = (roofWidth / 2.f/* + 20.f*/);
 		float centerX = roofWidth / 2.f;
 
 		sf::Vector2f rectPosition;
@@ -248,12 +250,123 @@ void Roof2::generateTexture(std::vector<std::vector<int>> tiles, sf::Vector2i po
 	rtex.resize(sf::Vector2u(width, height));
 	rtex.clear(sf::Color::Transparent);
 
+	// TO-DO - to delete, this is just for testing
+	sf::Texture wallTexture = *textures_manager->getTexture(L"assets\\tex\\wallset.png")->_texture;
+	sf::RenderTexture tileRtex;
+	tileRtex.resize(sf::Vector2u(32, 32));
+	tileRtex.clear(sf::Color::Transparent);
+	sf::Sprite tileSprite(wallTexture);
+	tileSprite.setTextureRect(sf::IntRect(sf::Vector2i(1568, 0), sf::Vector2i(32, 32)));
+	tileRtex.draw(tileSprite);
+	tileRtex.display();
+	sf::Texture repeatedTexture = tileRtex.getTexture();
+	repeatedTexture.setRepeated(true);
+	//
+
 	for(int i=0; i < _rects.size(); i++) {
 		rtex.draw(_topTriangle[i]);
 		rtex.draw(_rect[i]);
+		_bottomTriangle[i].setFillColor(sf::Color::White);
+		_bottomTriangle[i].setTexture(&repeatedTexture);
+		_bottomTriangle[i].setTextureRect(sf::IntRect(sf::Vector2i(0, 0),sf::Vector2i(int(_bottomTriangle[i].getLocalBounds().size.x), int(_bottomTriangle[i].getLocalBounds().size.y))));
 		rtex.draw(_bottomTriangle[i]);
 	}
 
+	sf::Sprite tileLeft(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	tileLeft.setTextureRect(sf::IntRect(sf::Vector2i(0, 64 * _type), sf::Vector2i(32, 64)));
+
+	sf::Sprite tileRight(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	tileRight.setTextureRect(sf::IntRect(sf::Vector2i(32, 64 * _type), sf::Vector2i(32, 64)));
+
+	sf::Sprite halfTileLeft(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	halfTileLeft.setTextureRect(sf::IntRect(sf::Vector2i(64, 64 * _type), sf::Vector2i(32, 64)));
+
+	sf::Sprite halfTileRight(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	halfTileRight.setTextureRect(sf::IntRect(sf::Vector2i(96, 64 * _type), sf::Vector2i(32, 64)));
+
+	sf::Sprite middleHalfTileLeft(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	middleHalfTileLeft.setTextureRect(sf::IntRect(sf::Vector2i(128, 64 * _type), sf::Vector2i(32, 64)));
+
+	sf::Sprite middleHalfTileRight(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	middleHalfTileRight.setTextureRect(sf::IntRect(sf::Vector2i(160, 64 * _type), sf::Vector2i(32, 64)));
+
+	for (size_t k = 0; k < _rects.size(); k++) {
+		const auto& rectTiles = _rects[k];
+		auto bounds = _rect[k].getLocalBounds();
+
+		int cols = rectTiles.size.x / 2;
+		int rows = rectTiles.size.y - 1;
+		bool oddWidth = rectTiles.size.x % 2 != 0;
+
+		for (int i = 0; i < rows; i++) {
+
+			float offsetX = float(i % 2) * 16.f * scale;
+			float offsetY = float(i % 2) * 16.f * scale;
+
+			if (i % 2 == 1) {
+				float boundaryY = bounds.position.y + float(i) * 32.f * scale - 16.f * scale;
+				halfTileLeft.setPosition(sf::Vector2f(bounds.position.x - 16.f * scale, boundaryY));
+				rtex.draw(halfTileLeft);
+				halfTileRight.setPosition(sf::Vector2f(bounds.position.x + bounds.size.x - 16.f * scale, boundaryY));
+				rtex.draw(halfTileRight);
+			}
+
+			int drawCols = cols - i % 2;
+
+			if (oddWidth && i % 2 == 1)
+				drawCols++;
+
+			for (int j = 0; j < drawCols; j++) {
+
+				tileLeft.setPosition(sf::Vector2f(
+					bounds.position.x + float(j) * 32.f * scale + offsetX,
+					bounds.position.y + float(i - j) * 32.f * scale - 32.f * scale - offsetY
+				));
+
+				rtex.draw(tileLeft);
+
+				tileRight.setPosition(sf::Vector2f(
+					bounds.position.x + bounds.size.x - float(j + 1) * 32.f * scale - offsetX,
+					bounds.position.y + float(i - j) * 32.f * scale - 32.f * scale - offsetY
+				));
+
+				rtex.draw(tileRight);
+			}
+
+			if (!oddWidth && i % 2 == 1) {
+
+				int jMid = cols - 1;
+
+				middleHalfTileLeft.setPosition(sf::Vector2f(
+					bounds.position.x + float(jMid) * 32.f * scale + offsetX,
+					bounds.position.y + float(i - jMid) * 32.f * scale - 32.f * scale - offsetY
+				));
+
+				rtex.draw(middleHalfTileLeft);
+
+				middleHalfTileRight.setPosition(sf::Vector2f(
+					bounds.position.x + bounds.size.x - float(jMid + 1) * 32.f * scale - offsetX,
+					bounds.position.y + float(i - jMid) * 32.f * scale - 32.f * scale - offsetY
+				));
+
+				rtex.draw(middleHalfTileRight);
+			}
+
+			if (oddWidth && i % 2 == 0) {
+
+				int jMid = cols;
+				float middleX = bounds.position.x + bounds.size.x / 2.f - 16.f * scale;
+				float middleY = bounds.position.y + float(i - jMid) * 32.f * scale - 32.f * scale;
+
+				middleHalfTileLeft.setPosition(sf::Vector2f(middleX, middleY));
+				middleHalfTileRight.setPosition(sf::Vector2f(middleX, middleY));
+
+				rtex.draw(middleHalfTileLeft);
+				rtex.draw(middleHalfTileRight);
+			}
+
+		}
+	}
 	rtex.display();
 
 	_texture = rtex.getTexture();
@@ -268,28 +381,20 @@ int Roof2::getRoofHeight(float scale)
 
 	for (const auto& rect : _rects) {
 
-		float roofWidth =
-			rect.size.x * tileSize +
-			2.f * overhangX;
-
-		float roofHeight =
-			(roofWidth / 2.f) * (24.f / 32.f);
-
-		maxRoofHeight = std::max(
-			maxRoofHeight,
-			roofHeight
-		);
+		float roofWidth = rect.size.x * tileSize + 2.f * overhangX;
+		float roofHeight = (roofWidth / 2.f/* + 20.f*/);
+		maxRoofHeight = std::max(maxRoofHeight, roofHeight);
 	}
 
 	return maxRoofHeight;
 }
 
-int Roof2::getTopOffset(int wallHeight, float scale)
+int Roof2::getTopOffset(float scale)
 {
 	float tileSize = 32.f * scale;
 	float roofHeight = getRoofHeight(scale);
 	float topOffset =
-		wallHeight * tileSize +
+		(float)(_wallHeight) * tileSize +
 		_roofOverhangSize.y * scale +
 		roofHeight -
 		tileSize;
@@ -310,7 +415,7 @@ void Roof2::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position,
 
 void Roof2::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 	
-	float wallsHeight = 3.f * 32.f * scale;
+	float wallsHeight = float(_wallHeight) * 32.f * scale;
 
 	float roofHeight = getRoofHeight(scale);
 

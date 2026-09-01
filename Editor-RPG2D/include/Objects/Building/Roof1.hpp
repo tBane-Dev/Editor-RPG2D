@@ -68,7 +68,7 @@ public:
 	std::vector<std::vector<int>> _mask;
 	std::vector<std::shared_ptr<Roof1Part>> _parts;
 
-	Roof1();
+	Roof1(int type, int wallHeight);
 	~Roof1();
 
 	void generateMask(std::vector<std::vector<int>> tiles);

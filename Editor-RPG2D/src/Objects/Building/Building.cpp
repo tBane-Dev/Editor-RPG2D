@@ -68,6 +68,15 @@ BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) :
 		}
 	}
 
+	_wallHeight = other._wallHeight;
+
+	if (std::dynamic_pointer_cast<Roof1>(other._roof)) {
+		_roof = std::make_shared<Roof1>(other._roof->_type, other._roof->_wallHeight);
+	}
+	else if (std::dynamic_pointer_cast<Roof2>(other._roof)) {
+		_roof = std::make_shared<Roof2>(other._roof->_type, other._roof->_wallHeight);
+	}
+
 }
 
 BuildingPrefab::~BuildingPrefab() {
@@ -260,7 +269,7 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 
 				textureTopRect.position = wallset->_groups[id]->walls[i].get();
 
-				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), building, textureBottomRect, textureTopRect, 3));
+				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), building, textureBottomRect, textureTopRect, _wallHeight));
 				_wallsObjects.back()->setPosition(position + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
 			}
 			else
@@ -272,9 +281,11 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 
 void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
+	if (!_roof)
+		return;
 
-	_roof = std::make_shared<Roof1>();
 	_roof->generate(_walls, position, scale);
+
 }
 
 void BuildingPrefab::generateCollider(float scale) {
@@ -503,7 +514,7 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 
 	if (auto gableRoof = std::dynamic_pointer_cast<Roof2>(_roof)) {
 
-		int topOffset = gableRoof->getTopOffset(_wallHeight, scale);
+		int topOffset = gableRoof->getTopOffset(scale);
 		int width = floorSize.x + gableRoof->_roofOverhangSize.x * 2.f;
 		int height = floorSize.y + topOffset;
 

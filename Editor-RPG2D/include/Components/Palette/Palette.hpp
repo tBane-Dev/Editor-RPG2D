@@ -36,7 +36,7 @@ namespace Components {
 		Palette();
 		~Palette();
 
-		void createBuildingsPrefabs();
+		static void createBuildingsPrefabs(int floor, int wall, int height, int roof, int type);
 
 		sf::Vector2i getPosition();
 		sf::Vector2i getSize();

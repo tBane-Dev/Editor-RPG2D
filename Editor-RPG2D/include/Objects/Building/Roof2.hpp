@@ -11,7 +11,7 @@ public:
 	std::vector<sf::ConvexShape> _topTriangle;
 	std::vector<sf::ConvexShape> _rect;
 
-	Roof2();
+	Roof2(int type, int wallHeight);
 	~Roof2();
 
 	void generateMask(std::vector<std::vector<int>> tiles);
@@ -21,7 +21,7 @@ public:
 	void generateTexture(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale);
 	int getRoofHeight(float scale);
 
-	virtual int getTopOffset(int wallHeight, float scale);
+	virtual int getTopOffset(float scale);
 	virtual void generate(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale = 1.f);
 	virtual void draw(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f);
 };

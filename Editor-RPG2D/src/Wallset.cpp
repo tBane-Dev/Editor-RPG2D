@@ -9,14 +9,14 @@ Wallset::Wallset() {
 	std::shared_ptr<Group> stone_wall = std::make_shared<Group>(L"stone wall");
 	std::shared_ptr<Group> mulch_wall = std::make_shared<Group>(L"mulch wall");
 	std::shared_ptr<Group> mud_wall = std::make_shared<Group>(L"mud wall");
-	//std::shared_ptr<Group> brick_wall = std::make_shared<Group>(L"brick wall");
+	std::shared_ptr<Group> brick_wall = std::make_shared<Group>(L"brick wall");
 	//std::shared_ptr<Group> fortified_wall = std::make_shared<Group>(L"fortified wall");
 
 	_groups.push_back(wooden_wall);
 	_groups.push_back(stone_wall);
 	_groups.push_back(mulch_wall);
 	_groups.push_back(mud_wall);
-	//groups.push_back(brick_wall);
+	_groups.push_back(brick_wall);
 	//groups.push_back(fortified_wall);
 
 

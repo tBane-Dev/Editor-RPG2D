@@ -114,7 +114,7 @@ void Roof1Part::setPosition(sf::Vector2i position) {
 
 std::shared_ptr<Roof1set> roof1set = nullptr;
 
-Roof1::Roof1() : Roof() {
+Roof1::Roof1(int type, int wallHeight) : Roof(type, wallHeight) {
 	_roofOverhangSize = sf::Vector2i(4, 4);
 }
 
@@ -312,7 +312,7 @@ void Roof1::generateParts(sf::Vector2i position, float scale) {
 
 				textureRect.position = roof1set->_groups[id]->roofs[i].get();
 				std::shared_ptr<Roof1Part> part = std::make_shared<Roof1Part>(id, textureRect);
-				part->setPosition(sf::Vector2i(position.x + int((float)x * 32.f * scale), position.y + int(((float)y * 32.f - 96.0f) * scale)));
+				part->setPosition(sf::Vector2i(position.x + int((float)x * 32.f * scale), position.y + int(((float)y * 32.f - float(_wallHeight)* 32.0f) * scale)));
 				_parts.push_back(part);
 				
 			}
@@ -377,7 +377,7 @@ void Roof1::generateOverhang(sf::Vector2i position, float scale) {
 		}
 	}
 	
-	sf::Vector2i roofPosition(position.x, position.y - int(std::lround((128.f - 32) * scale)));
+	sf::Vector2i roofPosition(position.x, position.y - int(std::lround(float(_wallHeight) * 32.0f * scale)));
 	
 	auto appendTile = [&](int left, int top, int right, int bottom) {
 			float ts = static_cast<float>(miniSize);
@@ -420,7 +420,7 @@ void Roof1::generateOverhang(sf::Vector2i position, float scale) {
 void Roof1::generateTexture(sf::Vector2i position, float scale) {
 
 	const float tileSize = 32.f * scale;
-	const float topPadding = 96.f * scale;
+	const float topPadding = (float)(_wallHeight) * 32.f * scale;
 	const float overhangWidth = 4.f * scale;
 
 	sf::Vector2f textureOrigin(
@@ -446,7 +446,7 @@ void Roof1::generateTexture(sf::Vector2i position, float scale) {
 
 		sf::Sprite sprite(*roof1set->_texture->_texture);
 		sprite.setPosition(sf::Vector2f(part->_position) - textureOrigin);
-		sprite.setTextureRect(sf::IntRect(part->_textureRect.position + sf::Vector2i(0, 32), part->_textureRect.size)); // TO-DO - to delete 32 because _textureRect has already the correct position
+		sprite.setTextureRect(sf::IntRect(part->_textureRect.position + sf::Vector2i(0, _type*32), part->_textureRect.size)); // TO-DO - to delete 32 because _textureRect has already the correct position
 		sprite.setScale(sf::Vector2f(scale, scale));
 		rtex.draw(sprite);
 	}
@@ -472,7 +472,7 @@ void Roof1::generate(std::vector<std::vector<int>> tiles, sf::Vector2i position,
 
 void Roof1::draw(sf::RenderTarget& target, sf::Vector2i position, float scale) {
 
-	float topPadding = 96.f * scale;
+	float topPadding = float(_wallHeight) * 32.0f * scale;
 	float overhangWidth = _roofOverhangSize.x * scale;
 	float overhangHeight = _roofOverhangSize.y * scale;
 

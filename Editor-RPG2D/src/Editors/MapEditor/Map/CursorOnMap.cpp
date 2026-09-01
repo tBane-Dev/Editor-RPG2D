@@ -492,6 +492,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 frameHeight = bp->getPreviewOutsideTexture()->getSize().y;
             }
 
+
 			// position of object on the map, aligning to the grid
 			sf::Vector2i position;
 			position.x = (_globalPosition.x - (int)frameWidth / 2) / Tile::tileSize * Tile::tileSize;
@@ -506,7 +507,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
                 
                 position.x += bp->_roof->_roofOverhangSize.x;
-                position.y += bp->_roof->getTopOffset(bp->_wallHeight, 1.f);
+                position.y += bp->_roof->getTopOffset(1.f);
 
                 position.x = (position.x / Tile::tileSize) * Tile::tileSize;
                 position.y = (position.y / Tile::tileSize) * Tile::tileSize;
@@ -644,7 +645,7 @@ void CursorOnMap::draw()
             std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(prefab);
             sf::Vector2i offset(0, 0);
             offset.x = bp->_roof->_roofOverhangSize.x;
-            offset.y = bp->_roof->getTopOffset(bp->_wallHeight, 1.f);
+            offset.y = bp->_roof->getTopOffset(1.f) + bp->_roof->_roofOverhangSize.y;
 
 
             sf::Vector2i buildingPosition = position + offset;
