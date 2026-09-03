@@ -20,7 +20,7 @@ class ToolsBuilding : public Tools {
 public:
 
 	std::shared_ptr<ButtonWithSprite> _prevCategory, _nextCategory;
-	std::shared_ptr<ButtonWithTextAndSprite> _wallsType, _height, _roofShape, _roofType;
+	std::shared_ptr<ButtonWithTextAndSprite> _wallsType, _height, _roofShape, _roofType, _floor, _foundation, _skeleton;
 	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _categories;
 	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _visibleCategories;
 	int _visibleCategoriesCount;

@@ -203,6 +203,29 @@ void ToolsBuilding::createCategories() {
 	);
 	_categories.push_back(_roofType);
 
+	_floor = std::make_shared<ButtonWithTextAndSprite>(
+		L"floor",
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category_press.png")
+	);
+	_categories.push_back(_floor);
+
+	_foundation = std::make_shared<ButtonWithTextAndSprite>(
+		L"foundation",
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category_press.png")
+	);
+	_categories.push_back(_foundation);
+
+	_skeleton = std::make_shared<ButtonWithTextAndSprite>(
+		L"skeleton",
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_category_press.png")
+	);
+	_categories.push_back(_skeleton);
 
 	for (int i = 0; i < _categories.size(); i += 1) {
 		_categories[i]->_onclick_func = [this, i]() { 
