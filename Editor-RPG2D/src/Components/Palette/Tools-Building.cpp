@@ -60,7 +60,114 @@ int ToolsBuilding::getRoofType() {
 	return _selectedRoofTypeIndex;
 }
 
+void ToolsBuilding::createNavButtons() {
+	_prevCategory = std::make_shared<ButtonWithSprite>(
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev_press.png")
+	);
+
+	_nextCategory = std::make_shared<ButtonWithSprite>(
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next_press.png")
+	);
+
+	_prevCategory->_onclick_func = [this]() {
+		if (_startCategoryIndex > 0) {
+			_startCategoryIndex -= 1;
+			updateCategories();
+			selectCategory(_selectedCategoryIndex);
+			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
+		}
+		};
+
+	_nextCategory->_onclick_func = [this]() {
+		if (_startCategoryIndex + _visibleCategoriesCount < _categories.size()) {
+			_startCategoryIndex += 1;
+			updateCategories();
+			selectCategory(_selectedCategoryIndex);
+			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
+		}
+		};
+
+	_prevOption = std::make_shared<ButtonWithSprite>(
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev_press.png")
+	);
+
+	_nextOption = std::make_shared<ButtonWithSprite>(
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next_hover.png"),
+		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next_press.png")
+	);
+
+	_prevOption->_onclick_func = [this]() {
+
+		int* startIndex = nullptr;
+		int* selectedIndex = nullptr;
+
+		if (_categories[_selectedCategoryIndex] == _wallsType) {
+			startIndex = &_startWallTypeIndex;
+			selectedIndex = &_selectedWallTypeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _height) {
+			startIndex = &_startHeightIndex;
+			selectedIndex = &_selectedHeightIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofShape) {
+			startIndex = &_startRoofShapeIndex;
+			selectedIndex = &_selectedRoofShapeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofType) {
+			startIndex = &_startRoofTypeIndex;
+			selectedIndex = &_selectedRoofTypeIndex;
+		}
+
+		if (startIndex && selectedIndex && *startIndex > 0) {
+			*startIndex -= 1;
+			updateOptions();
+			selectOption(*selectedIndex);
+			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
+		}
+		};
+
+	_nextOption->_onclick_func = [this]() {
+
+		int* startIndex = nullptr;
+		int* selectedIndex = nullptr;
+
+		if (_categories[_selectedCategoryIndex] == _wallsType) {
+			startIndex = &_startWallTypeIndex;
+			selectedIndex = &_selectedWallTypeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _height) {
+			startIndex = &_startHeightIndex;
+			selectedIndex = &_selectedHeightIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofShape) {
+			startIndex = &_startRoofShapeIndex;
+			selectedIndex = &_selectedRoofShapeIndex;
+		}
+		else if (_categories[_selectedCategoryIndex] == _roofType) {
+			startIndex = &_startRoofTypeIndex;
+			selectedIndex = &_selectedRoofTypeIndex;
+		}
+
+		if (startIndex && selectedIndex && _visibleOptionsCount + *startIndex < _optionsCount) {
+			*startIndex += 1;
+			updateOptions();
+			selectOption(*selectedIndex);
+			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
+		}
+		};
+}
+
+
 void ToolsBuilding::createCategories() {
+
+	_visibleCategoriesCount = 3;
 
 	_categories.clear();
 
@@ -99,12 +206,25 @@ void ToolsBuilding::createCategories() {
 
 	for (int i = 0; i < _categories.size(); i += 1) {
 		_categories[i]->_onclick_func = [this, i]() { 
+			updateCategories();
 			selectCategory(i); 
 			updateOptions();
 			selectOption();
 			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin)); // Update positions of options
 			};
 	}
+
+	updateCategories();
+}
+
+void ToolsBuilding::updateCategories() {
+	
+	_visibleCategories.clear();
+	for(int i=_startCategoryIndex; i < _startCategoryIndex + _visibleCategoriesCount && i < _categories.size(); i++) {
+		_visibleCategories.push_back(_categories[i]);
+	}
+
+	std::wcout << L"\n\n\n";
 }
 
 void ToolsBuilding::selectCategory(int id) {
@@ -112,7 +232,7 @@ void ToolsBuilding::selectCategory(int id) {
 	if (id < 0 || id >= _categories.size())
 		return;
 
-	if (_selectedCategoryIndex > -1 && _selectedCategoryIndex < _categories.size()) {
+	if (_selectedCategoryIndex >= 0 && _selectedCategoryIndex < _categories.size()) {
 		std::shared_ptr<ButtonWithTextAndSprite> oldSelected = _categories[_selectedCategoryIndex];
 
 		if (oldSelected) {
@@ -137,79 +257,6 @@ void ToolsBuilding::selectCategory(int id) {
 	}
 }
 
-void ToolsBuilding::createNavButtons() {
-	_prev = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\prev_press.png")
-	);
-
-	_next = std::make_shared<ButtonWithSprite>(
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next_hover.png"),
-		textures_manager->getTexture(L"assets\\tex\\palette\\tools\\next_press.png")
-	);
-
-	_prev->_onclick_func = [this]() {
-
-		int* startIndex = nullptr;
-		int* selectedIndex = nullptr;
-
-		if (_categories[_selectedCategoryIndex] == _wallsType) {
-			startIndex = &_startWallTypeIndex;
-			selectedIndex = &_selectedWallTypeIndex;
-		}
-		else if (_categories[_selectedCategoryIndex] == _height) {
-			startIndex = &_startHeightIndex;
-			selectedIndex = &_selectedHeightIndex;
-		}
-		else if (_categories[_selectedCategoryIndex] == _roofShape) {
-			startIndex = &_startRoofShapeIndex;
-			selectedIndex = &_selectedRoofShapeIndex;
-		}
-		else if (_categories[_selectedCategoryIndex] == _roofType) {
-			startIndex = &_startRoofTypeIndex;
-			selectedIndex = &_selectedRoofTypeIndex;
-		}
-
-		if (startIndex && selectedIndex && *startIndex > 0) {
-			*startIndex -= 1;
-			updateOptions();
-			selectOption(*selectedIndex);
-			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
-		}
-	};
-
-	_next->_onclick_func = [this]() {
-
-		int* startIndex = nullptr;
-		int* selectedIndex = nullptr;
-
-		if (_categories[_selectedCategoryIndex] == _wallsType) {
-			startIndex = &_startWallTypeIndex;
-			selectedIndex = &_selectedWallTypeIndex;
-		}
-		else if (_categories[_selectedCategoryIndex] == _height) {
-			startIndex = &_startHeightIndex;
-			selectedIndex = &_selectedHeightIndex;
-		}
-		else if (_categories[_selectedCategoryIndex] == _roofShape) {
-			startIndex = &_startRoofShapeIndex;
-			selectedIndex = &_selectedRoofShapeIndex;
-		}
-		else if (_categories[_selectedCategoryIndex] == _roofType) {
-			startIndex = &_startRoofTypeIndex;
-			selectedIndex = &_selectedRoofTypeIndex;
-		}
-
-		if (startIndex && selectedIndex && _visibleOptionsCount + *startIndex < _optionsCount) {
-			*startIndex += 1;
-			updateOptions();
-			selectOption(*selectedIndex);
-			setPosition(getPosition() - sf::Vector2i(_outer_margin, _outer_margin));
-		}
-	};
-}
 
 void ToolsBuilding::createOptions() {
 	_wallTypes = { L"Wooden", L"Stone", L"Mulch", L"Mud", L"Brick" };
@@ -219,7 +266,7 @@ void ToolsBuilding::createOptions() {
 }
 
 void ToolsBuilding::updateOptions() {
-	_options.clear();
+	_visibleOptions.clear();
 	_visibleOptionsCount = 0;
 
 	if (_categories[_selectedCategoryIndex] == _wallsType) {
@@ -245,10 +292,10 @@ void ToolsBuilding::updateOptions() {
 				MapEditor::editor->_palette->_slots->updateObjects();
 				};
 			
-			_options.push_back(option);
+			_visibleOptions.push_back(option);
 		}
 
-		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prev->getSize().x - _next->getSize().x - _visibleOptionsCount * 112) / (_visibleOptionsCount + 1);
+		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prevOption->getSize().x - _nextOption->getSize().x - _visibleOptionsCount * 112) / (_visibleOptionsCount + 1);
 
 	}
 
@@ -270,10 +317,10 @@ void ToolsBuilding::updateOptions() {
 				Components::Palette::createBuildingsPrefabs(1, getWallType(), getHeight(), getRoofShape(), getRoofType());
 				MapEditor::editor->_palette->_slots->updateObjects();
 				};
-			_options.push_back(option);
+			_visibleOptions.push_back(option);
 		}
 
-		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prev->getSize().x - _next->getSize().x - _visibleOptionsCount * 64) / (_visibleOptionsCount + 1);
+		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prevOption->getSize().x - _nextOption->getSize().x - _visibleOptionsCount * 64) / (_visibleOptionsCount + 1);
 
 	}
 
@@ -296,10 +343,10 @@ void ToolsBuilding::updateOptions() {
 				Components::Palette::createBuildingsPrefabs(1, getWallType(), getHeight(), getRoofShape(), getRoofType());
 				MapEditor::editor->_palette->_slots->updateObjects();
 				};
-			_options.push_back(option);
+			_visibleOptions.push_back(option);
 		}
 
-		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prev->getSize().x - _next->getSize().x - _visibleOptionsCount * 112) / (_visibleOptionsCount + 1);
+		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prevOption->getSize().x - _nextOption->getSize().x - _visibleOptionsCount * 112) / (_visibleOptionsCount + 1);
 
 	}
 
@@ -322,10 +369,10 @@ void ToolsBuilding::updateOptions() {
 				Components::Palette::createBuildingsPrefabs(1, getWallType(), getHeight(), getRoofShape(), getRoofType());
 				MapEditor::editor->_palette->_slots->updateObjects();
 				};
-			_options.push_back(option);
+			_visibleOptions.push_back(option);
 		}
 
-		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prev->getSize().x - _next->getSize().x - _visibleOptionsCount * 72) / (_visibleOptionsCount + 1);
+		_inner_margin2 = (600 - 2 * _main_margin - 2 * _outer_margin - _prevOption->getSize().x - _nextOption->getSize().x - _visibleOptionsCount * 72) / (_visibleOptionsCount + 1);
 
 	}
 
@@ -356,7 +403,7 @@ void ToolsBuilding::selectOption() {
 	if (!selectedIndex || !startIndex)
 		return;
 
-	int optionsCount = *startIndex + static_cast<int>(_options.size());
+	int optionsCount = *startIndex + static_cast<int>(_visibleOptions.size());
 	int maxStartIndex = std::max(0, optionsCount - _visibleOptionsCount);
 
 	if (*selectedIndex < *startIndex) {
@@ -399,8 +446,8 @@ void ToolsBuilding::selectOption(int id) {
 
 	int localIndex = id - *startIndex;
 
-	if (localIndex < 0 || localIndex >= _options.size()) {
-		for (auto& option : _options) {
+	if (localIndex < 0 || localIndex >= _visibleOptions.size()) {
+		for (auto& option : _visibleOptions) {
 			option->setSelect(false);
 		}
 		return;
@@ -408,8 +455,8 @@ void ToolsBuilding::selectOption(int id) {
 
 	int oldLocalIndex = *selectedOptionIndex - *startIndex;
 
-	if (oldLocalIndex >= 0 && oldLocalIndex < _options.size()) {
-		auto oldSelected = _options[oldLocalIndex];
+	if (oldLocalIndex >= 0 && oldLocalIndex < _visibleOptions.size()) {
+		auto oldSelected = _visibleOptions[oldLocalIndex];
 
 		if (_categories[_selectedCategoryIndex] == _wallsType) {
 			oldSelected->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_walls_type.png");
@@ -440,11 +487,11 @@ void ToolsBuilding::selectOption(int id) {
 
 	*selectedOptionIndex = id;
 
-	for (int i = 0; i < _options.size(); i += 1) {
-		_options[i]->setSelect(i == localIndex);
+	for (int i = 0; i < _visibleOptions.size(); i += 1) {
+		_visibleOptions[i]->setSelect(i == localIndex);
 	}
 
-	auto newSelected = _options[localIndex];
+	auto newSelected = _visibleOptions[localIndex];
 
 	if (_categories[_selectedCategoryIndex] == _wallsType) {
 		newSelected->_texture = textures_manager->getTexture(L"assets\\tex\\palette\\tools\\building_walls_type_selected.png");
@@ -484,66 +531,82 @@ void ToolsBuilding::setPosition(sf::Vector2i position) {
 
 	y += _top_margin + _inner_margin;
 
-	for (auto& category : _categories) {
+	_prevCategory->setPosition(sf::Vector2i(x, y));
+	x += _prevCategory->getSize().x + _inner_margin;
+
+	for (auto& category : _visibleCategories) {
 		category->setPosition(sf::Vector2i(x, y));
 		x += category->_rect.size.x + _inner_margin;
 	}
 
+	x = _rect.position.x + _rect.size.x - 60 - _outer_margin;
+	_nextCategory->setPosition(sf::Vector2i(x, y));
+
 	y += 64 + _inner_margin;
+
 	x = _rect.position.x + _outer_margin;
 
-	_prev->setPosition(sf::Vector2i(x, y));
+	_prevOption->setPosition(sf::Vector2i(x, y));
 
-	x += _prev->getSize().x + _inner_margin2;
+	x += _prevOption->getSize().x + _inner_margin2;
 
-	for (int i = 0; i < _options.size() && i < _visibleOptionsCount; i += 1) {
-		_options[i]->setPosition(sf::Vector2i(x, y));
-		x += _options[i]->_rect.size.x + _inner_margin2;
+	for (int i = 0; i < _visibleOptions.size() && i < _visibleOptionsCount; i += 1) {
+		_visibleOptions[i]->setPosition(sf::Vector2i(x, y));
+		x += _visibleOptions[i]->_rect.size.x + _inner_margin2;
 	}
 
-	x = _rect.position.x + _rect.size.x - 64 - 2 * _outer_margin ;
-	_next->setPosition(sf::Vector2i(x, y));
+	x = _rect.position.x + _rect.size.x - 60 - _outer_margin ;
+	_nextOption->setPosition(sf::Vector2i(x, y));
 }
 
 void ToolsBuilding::cursorHover() {
 
-	_prev->cursorHover();
-	_next->cursorHover();
+	_prevCategory->cursorHover();
+	_nextCategory->cursorHover();
 
-	for (auto& category : _categories) {
-		category->cursorHover();
+	_prevOption->cursorHover();
+	_nextOption->cursorHover();
+
+	for (int i = 0; i < _visibleCategories.size() && i < _visibleCategoriesCount; i += 1) {
+		_visibleCategories[i]->cursorHover();
 	}
 
-	for (int i = 0; i < _options.size() && i < _visibleOptionsCount; i += 1) {
-		_options[i]->cursorHover();
+	for (int i = 0; i < _visibleOptions.size() && i < _visibleOptionsCount; i += 1) {
+		_visibleOptions[i]->cursorHover();
 	}
 }
 
 void ToolsBuilding::handleEvent(const sf::Event& event) {
 
-	_prev->handleEvent(event);
-	_next->handleEvent(event);
+	_prevCategory->handleEvent(event);
+	_nextCategory->handleEvent(event);
+	
+	_prevOption->handleEvent(event);
+	_nextOption->handleEvent(event);
 
-	for (auto& category : _categories) {
-		category->handleEvent(event);
+	for (int i = 0; i < _visibleCategories.size() && i < _visibleCategoriesCount; i += 1) {
+		_visibleCategories[i]->handleEvent(event);
 	}
 
-	for (int i = 0; i < _options.size() && i < _visibleOptionsCount; i += 1) {
-		_options[i]->handleEvent(event);
+	for (int i = 0; i < _visibleOptions.size() && i < _visibleOptionsCount; i += 1) {
+		_visibleOptions[i]->handleEvent(event);
 	}
 }
 
 void ToolsBuilding::update() {
 
-	_prev->update();
-	_next->update();
+	_prevCategory->update();
+	_nextCategory->update();
 
-	for (auto& category : _categories) {
-		category->update();
+	_prevOption->update();
+	_nextOption->update();
+
+	for (int i = 0; i < _visibleCategories.size() && i < _visibleCategoriesCount; i += 1) {
+		_visibleCategories[i]->update();
 	}
 
-	for (int i = 0; i < _options.size() && i < _visibleOptionsCount; i += 1) {
-		_options[i]->update();
+	for (int i = 0; i < _visibleOptions.size() && i < _visibleOptionsCount; i += 1) {
+		_visibleOptions[i]->update();
 	}
 }
 
@@ -559,14 +622,17 @@ void ToolsBuilding::draw() {
 
 	Main::render_window->draw(*_text);
 
-	_prev->draw();
-	_next->draw();
+	_prevCategory->draw();
+	_nextCategory->draw();
 
-	for (auto& category : _categories) {
-		category->draw();
+	_prevOption->draw();
+	_nextOption->draw();
+
+	for (int i = 0; i < _visibleCategories.size() && i < _visibleCategoriesCount; i += 1) {
+		_visibleCategories[i]->draw();
 	}
 
-	for (int i = 0; i < _options.size() && i < _visibleOptionsCount; i += 1) {
-		_options[i]->draw();
+	for (int i = 0; i < _visibleOptions.size() && i < _visibleOptionsCount; i += 1) {
+		_visibleOptions[i]->draw();
 	}
 }

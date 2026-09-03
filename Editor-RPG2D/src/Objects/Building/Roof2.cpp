@@ -187,8 +187,12 @@ void Roof2::generateShape(std::vector<std::vector<int>> tiles, sf::Vector2i posi
 {
 	float tileSize = 32.f * scale;
 
-	sf::Color roofColor(127, 15, 15);
-	sf::Color frontColor(95, 15, 15);
+	//sf::Color roofColor(127, 15, 15);
+	//sf::Color frontColor(95, 15, 15);
+
+	sf::Color roofColor = sf::Color::Transparent;
+	sf::Color frontColor = sf::Color::Transparent;
+
 
 	_topTriangle.resize(_rects.size());
 	_bottomTriangle.resize(_rects.size());

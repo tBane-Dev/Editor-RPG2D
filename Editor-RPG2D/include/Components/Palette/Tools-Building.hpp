@@ -19,18 +19,22 @@ public:
 class ToolsBuilding : public Tools {
 public:
 
+	std::shared_ptr<ButtonWithSprite> _prevCategory, _nextCategory;
 	std::shared_ptr<ButtonWithTextAndSprite> _wallsType, _height, _roofShape, _roofType;
 	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _categories;
+	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _visibleCategories;
+	int _visibleCategoriesCount;
 	int _selectedCategoryIndex = -1;
-	
-	std::shared_ptr<ButtonWithSprite> _prev, _next;
-	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _options;
-	int _visibleOptionsCount;
-	
+	int _startCategoryIndex = 0; // scrollbar offset for options
+
 	std::vector<std::wstring> _wallTypes;
 	std::vector<std::wstring> _heights;
 	std::vector<std::wstring> _roofShapes;
 	std::vector<std::wstring> _roofTypes;
+
+	std::shared_ptr<ButtonWithSprite> _prevOption, _nextOption;
+	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _visibleOptions;
+	int _visibleOptionsCount;
 
 	int _optionsCount = 0;
 
@@ -53,9 +57,12 @@ public:
 	int getRoofShape();
 	int getRoofType();
 
-	void createCategories();
-	void selectCategory(int id);
 	void createNavButtons();
+
+	void createCategories();
+	void updateCategories();
+	void selectCategory(int id);
+
 	void createOptions();
 	void updateOptions();
 	void selectOption();
