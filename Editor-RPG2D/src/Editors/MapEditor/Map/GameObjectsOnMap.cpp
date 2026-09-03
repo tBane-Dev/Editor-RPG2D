@@ -140,10 +140,31 @@ void GameObjectsOnMap::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std:
 
 void GameObjectsOnMap::sort() {
 
-	
-	std::sort(_visibleGameObjectsOnMap.begin(), _visibleGameObjectsOnMap.end(), [](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
+	std::vector<ObjectType> types = {
+		//ObjectType::BuildingSkeleton, // TO-DO: Add BuildingSkeleton type
+		ObjectType::WallMounted,
+		ObjectType::Window,
+		ObjectType::Door,
+		ObjectType::Roof,
+	};
 
-		// OBJECT A
+	auto getIndex = [&types](ObjectType type) -> int {
+		auto it = std::find(types.begin(), types.end(), type);
+		if (it != types.end())
+			return it - types.begin();
+
+		return -1; // other types
+		};
+
+	std::sort(_visibleGameObjectsOnMap.begin(), _visibleGameObjectsOnMap.end(), [&types,getIndex](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
+
+		int aIndex = getIndex(a->_type);	
+		int bIndex = getIndex(b->_type);
+
+		if (aIndex < bIndex) return true;
+		if (aIndex > bIndex) return false;
+
+		// OBJECT A - POSITION
 		sf::Vector2i posA = a->_position;
 
 		if (a->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
@@ -154,7 +175,7 @@ void GameObjectsOnMap::sort() {
 			posA += a->_prefab.lock()->getOrigin();
 		}
 		
-		// OBJECT B
+		// OBJECT B - POSITION
 		sf::Vector2i posB = b->_position;
 
 		if (b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
@@ -165,8 +186,7 @@ void GameObjectsOnMap::sort() {
 			posB += b->_prefab.lock()->getOrigin();
 		}
 
-		
-		
+
 		if (posA.y == posB.y)
 			return posA.x < posB.x;
 
