@@ -20,6 +20,7 @@ SkeletPrefab::SkeletPrefab(std::wstring name, std::weak_ptr<Animations> animatio
 	rtex.display();
 
 	_texture = rtex.getTexture();
+
 }
 
 SkeletPrefab::~SkeletPrefab() {

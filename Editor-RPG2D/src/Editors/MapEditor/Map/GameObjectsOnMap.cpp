@@ -179,7 +179,12 @@ void GameObjectsOnMap::sort() {
 		sf::Vector2i posA = a->_position;
 
 		if (!a->_prefab.expired()) {
-			if (a->_prefab.lock()->_collider && a->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+			if (a->_prefab.lock()->_type == ObjectType::Skelet) {
+				std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
+				posA.x += collider->_rect.position.x + collider->_rect.size.x / 2;
+				posA.y += collider->_rect.position.y;
+			}
+			else if (a->_prefab.lock()->_collider && a->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
 				std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
 				posA += collider->_rect.position + collider->_rect.size / 2;
 			}
@@ -192,7 +197,12 @@ void GameObjectsOnMap::sort() {
 		sf::Vector2i posB = b->_position;
 
 		if (!b->_prefab.expired()) {
-			if (b->_prefab.lock()->_collider && b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+			if (b->_prefab.lock()->_type == ObjectType::Skelet) {
+				std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
+				posB.x += collider->_rect.position.x + collider->_rect.size.x / 2;
+				posB.y += collider->_rect.position.y;
+			}
+			else if (b->_prefab.lock()->_collider && b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
 				std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
 				posB += collider->_rect.position + collider->_rect.size / 2;
 			}

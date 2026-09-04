@@ -841,16 +841,16 @@ void Building::generate(sf::Vector2i position) {
 
 	if (buildingPrefab) {
 		buildingPrefab->generate(position, 1.0f, std::dynamic_pointer_cast<Building>(shared_from_this()));
+
+		_outsideObject = std::make_shared<Outside>(std::dynamic_pointer_cast<Building>(shared_from_this()));
+		_outsideObject->setTexture(*buildingPrefab->getPreviewOutsideTexture());
+
+		int topOffset = buildingPrefab->_roof ? buildingPrefab->_roof->getTopOffset(1.0f) : 0;
+		int textureHeight = _outsideObject->_texture.getSize().y;
+
+		_outsideObject->setPosition(position + sf::Vector2i(0, textureHeight - topOffset));
 	}
-		
-	_outsideObject = std::make_shared<Outside>(std::dynamic_pointer_cast<Building>(shared_from_this()));
-	_outsideObject->setTexture(*buildingPrefab->getPreviewOutsideTexture());
 
-	int topOffset = buildingPrefab->_roof ? buildingPrefab->_roof->getTopOffset(1.0f) : 0;
-	int textureHeight = _outsideObject->_texture.getSize().y;
-
-	_outsideObject->setPosition(position + sf::Vector2i(0, textureHeight - topOffset)
-	);
 }
 
 void Building::setPosition(sf::Vector2i position) {
