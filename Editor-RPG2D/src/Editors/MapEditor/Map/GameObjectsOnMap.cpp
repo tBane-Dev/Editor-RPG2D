@@ -171,7 +171,7 @@ void GameObjectsOnMap::sort() {
 			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
 			posA += collider->_rect.position + collider->_rect.size / 2;
 		}
-		else if (!dynamic_pointer_cast<MonsterPrefab>(a->_prefab.lock())) {
+		else if (a->_prefab.lock()->_type != ObjectType::Monster) {
 			posA += a->_prefab.lock()->getOrigin();
 		}
 		
@@ -182,7 +182,7 @@ void GameObjectsOnMap::sort() {
 			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
 			posB += collider->_rect.position + collider->_rect.size / 2;
 		}
-		else if (!dynamic_pointer_cast<MonsterPrefab>(b->_prefab.lock())) {
+		else if (b->_prefab.lock()->_type != ObjectType::Monster) {
 			posB += b->_prefab.lock()->getOrigin();
 		}
 
