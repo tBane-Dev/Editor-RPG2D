@@ -100,10 +100,8 @@ void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_pt
 				building->_wallsObjects.push_back(nullptr);
 		}
 	}
-
-	generateSkelet(position, scale, building);
-
 	generateRoofs(position, scale);
+	generateSkelet(position, scale);
 	generateCollider(scale);
 	generateMesh(scale);
 	generatePreviewTextures();
@@ -277,15 +275,86 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 	}
 }
 
-void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
-	if (!building) return;
+	if (!_roof)
+		return;
+
+	_roof->generate(_walls, position, scale);
+
+}
+
+void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale) {
+
+	_skeletObjects.clear();
+
+	if (_walls.empty() || _walls[0].empty())
+		return;
 
 	std::vector<sf::IntRect> rects;
 
-	std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
-	int height = prefab->_walls.size();
-	int width = prefab->_walls[0].size();
+	int height = _walls.size();
+	int width = _walls[0].size();
+
+	/////////////////////////////
+	// Flood-fill obszaru znajdującego się poza ścianami.
+	int maskWidth = width + 2;
+	int maskHeight = height + 2;
+
+	std::vector<std::vector<bool>> outside(
+		maskHeight,
+		std::vector<bool>(maskWidth, false)
+	);
+
+	std::queue<sf::Vector2i> queue;
+	queue.push(sf::Vector2i(0, 0));
+	outside[0][0] = true;
+
+	const int dx[4] = { 1, -1, 0, 0 };
+	const int dy[4] = { 0, 0, 1, -1 };
+
+	while (!queue.empty()) {
+		sf::Vector2i point = queue.front();
+		queue.pop();
+
+		for (int direction = 0; direction < 4; ++direction) {
+			int nextX = point.x + dx[direction];
+			int nextY = point.y + dy[direction];
+
+			if (nextX < 0 || nextY < 0 ||
+				nextX >= maskWidth || nextY >= maskHeight) {
+				continue;
+			}
+
+			if (outside[nextY][nextX])
+				continue;
+
+			int wallX = nextX - 1;
+			int wallY = nextY - 1;
+
+			bool wall = false;
+
+			if (wallX >= 0 && wallY >= 0 &&
+				wallX < width && wallY < height) {
+				wall = _walls[wallY][wallX] >= 0;
+			}
+
+			if (wall)
+				continue;
+
+			outside[nextY][nextX] = true;
+			queue.push(sf::Vector2i(nextX, nextY));
+		}
+	}
+
+	// Pole jest wnętrzem, jeżeli nie ma tam ściany
+	// i flood-fill nie dostał się tam z zewnątrz.
+	auto isInside = [&](int x, int y) {
+		return _walls[y][x] == -1 &&
+			!outside[y + 1][x + 1];
+		};
+
+	/////////////////////////////
 
 	struct VerticalRun {
 		int y;
@@ -306,15 +375,14 @@ void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale, std::sha
 		int y = 0;
 
 		while (y < height) {
-
-			if (prefab->_walls[y][x] == 0) {
+			if (!isInside(x, y)) {
 				++y;
 				continue;
 			}
 
 			int startY = y;
 
-			while (y < height && prefab->_walls[y][x] != 0)
+			while (y < height && isInside(x, y))
 				++y;
 
 			runs.push_back({ startY, y - startY });
@@ -364,19 +432,60 @@ void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale, std::sha
 		rects.push_back(a.rect);
 
 	_skeletObjects.clear();
-	for(auto & rect : rects) {
-		_skeletObjects.push_back(std::make_shared<Skelet>(skeletset->getSkelet(0), sf::IntRect(sf::Vector2i(rect.position.x * 32, rect.position.y * 32), sf::Vector2i(rect.size.x * 32, _wallHeight * 32))));
+	int buildingBottom = _walls.size() * 32;
+
+	for (auto& rect : rects) {
+		sf::IntRect expandedRect = rect;
+
+		int bottomY =
+			rect.position.y + rect.size.y - 1;
+
+		int leftX =
+			rect.position.x - 1;
+
+		int rightX =
+			rect.position.x + rect.size.x;
+
+		bool hasLeftWall =
+			leftX >= 0 &&
+			_walls[bottomY][leftX] >= 0;
+
+		bool hasRightWall =
+			rightX < width &&
+			_walls[bottomY][rightX] >= 0;
+
+		if (hasLeftWall) {
+			expandedRect.position.x -= 1;
+			expandedRect.size.x += 1;
+		}
+
+		if (hasRightWall) {
+			expandedRect.size.x += 1;
+		}
+
+		int leftInset = hasLeftWall ? 0 : 32;
+		int rightInset = hasRightWall ? 0 : 32;
+
+		int rectBottom = (rect.position.y + rect.size.y + 1) * 32;
+
+		sf::Vector2i localBottomPosition(expandedRect.position.x * 32 + leftInset, rectBottom - buildingBottom);
+
+		sf::Vector2i skeletonSize(
+			expandedRect.size.x * 32 - leftInset - rightInset,
+			_wallHeight * 32 +
+			(std::dynamic_pointer_cast<Roof2>(_roof) ? 32 : 0) // Add 32 px to account for the slope of Roof2.
+		);
+
+		_skeletObjects.push_back(std::make_shared<Skelet>(
+			skeletset->getSkelet(1),
+			sf::IntRect(
+				localBottomPosition,
+				skeletonSize
+			)
+		));
 	}
 }
 
-void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
-
-	if (!_roof)
-		return;
-
-	_roof->generate(_walls, position, scale);
-
-}
 
 void BuildingPrefab::generateCollider(float scale) {
 	int border = 8;
@@ -546,10 +655,10 @@ void BuildingPrefab::drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i positi
 	}
 }
 
-void BuildingPrefab::drawOnlySkelet(sf::RenderTarget& target, sf::Vector2i position, float scale, int drawType) {
-	for(auto& skelet : _skeletObjects) {
+void BuildingPrefab::drawOnlySkelet(sf::RenderTarget& target, sf::Vector2i bottomPosition, float scale, int drawType) {
+	for (auto& skelet : _skeletObjects) {
 		if (skelet) {
-			skelet->setPosition(position);
+			skelet->setPosition(bottomPosition);
 			skelet->draw(target, scale, drawType);
 		}
 	}
@@ -585,7 +694,7 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 	);
 
 	sf::RenderTexture resultTexture = sf::RenderTexture();
-
+	
 	if (auto flatRoof = std::dynamic_pointer_cast<Roof1>(_roof)) {
 
 		int topOffset = _wallHeight * 32.0f;
@@ -634,6 +743,40 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 		}
 		else {
 			drawOnlyWalls(resultTexture, buildingPosition, scale, 2);
+
+			////////////////////////////////////////////////////////////////
+			// TO-DO - to delete, this is just for testing
+			sf::RenderTexture rtex;
+			rtex.resize(sf::Vector2u(width, height));
+			rtex.clear(sf::Color::Transparent);
+
+			sf::Texture wallTexture = *textures_manager->getTexture(L"assets\\tex\\wallset.png")->_texture;
+			sf::RenderTexture tileRtex;
+			tileRtex.resize(sf::Vector2u(32, 32));
+			tileRtex.clear(sf::Color::Transparent);
+			
+			sf::Sprite tileSprite(wallTexture);
+			tileSprite.setTextureRect(sf::IntRect(sf::Vector2i(1568, 0), sf::Vector2i(32, 32)));
+			tileRtex.draw(tileSprite);
+			tileRtex.display();
+			
+			sf::Texture repeatedTexture = tileRtex.getTexture();
+			repeatedTexture.setRepeated(true);
+			
+			for(int i=0; i < gableRoof->_rects.size(); i++) {
+				rtex.draw(gableRoof->_topTriangle[i]);
+				rtex.draw(gableRoof->_rect[i]);
+				gableRoof->_bottomTriangle[i].setFillColor(sf::Color::White);
+				gableRoof->_bottomTriangle[i].setTexture(&repeatedTexture);
+				gableRoof->_bottomTriangle[i].setTextureRect(sf::IntRect(sf::Vector2i(0, 0),sf::Vector2i(int(gableRoof->_bottomTriangle[i].getLocalBounds().size.x), int(gableRoof->_bottomTriangle[i].getLocalBounds().size.y))));
+				rtex.draw(gableRoof->_bottomTriangle[i]);
+			}
+			rtex.display();
+
+			sf::Sprite topWallSprite(rtex.getTexture());
+			resultTexture.draw(topWallSprite);
+			//////////////////////////////////////////////////////////////
+
 			drawOnlySkelet(resultTexture, buildingPosition + sf::Vector2i(0, floorSize.y), scale, 2);
 			
 			if (_roof) {

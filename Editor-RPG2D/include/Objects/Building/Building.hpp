@@ -33,8 +33,8 @@ public:
 
 	void generateFloorVertexArray(float scale = 1.0f);
 	void generateWalls(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
-	void generateSkelet(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 	void generateRoofs(sf::Vector2i position, float scale = 1.0f);
+	void generateSkelet(sf::Vector2i position, float scale = 1.0f);
 	void generateCollider(float scale = 1.0f);
 	void generateMesh(float scale = 1.0f);
 	void generatePreviewTexture(std::shared_ptr<sf::Texture>& texture, bool drawOutside = true);
@@ -45,7 +45,7 @@ public:
 	void drawOnlyCollider(sf::RenderTarget& target, sf::Vector2i position);
 	void drawOnlyFloor(sf::RenderTarget& target, sf::Vector2i position);
 	void drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, int drawType = -1);
-	void drawOnlySkelet(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, int drawType = -1);
+	void drawOnlySkelet(sf::RenderTarget& target, sf::Vector2i botttomPosition, float scale = 1.0f, int drawType = -1);
 	void drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 };
 

@@ -254,28 +254,6 @@ void Roof2::generateTexture(std::vector<std::vector<int>> tiles, sf::Vector2i po
 	rtex.resize(sf::Vector2u(width, height));
 	rtex.clear(sf::Color::Transparent);
 
-	// TO-DO - to delete, this is just for testing
-	sf::Texture wallTexture = *textures_manager->getTexture(L"assets\\tex\\wallset.png")->_texture;
-	sf::RenderTexture tileRtex;
-	tileRtex.resize(sf::Vector2u(32, 32));
-	tileRtex.clear(sf::Color::Transparent);
-	sf::Sprite tileSprite(wallTexture);
-	tileSprite.setTextureRect(sf::IntRect(sf::Vector2i(1568, 0), sf::Vector2i(32, 32)));
-	tileRtex.draw(tileSprite);
-	tileRtex.display();
-	sf::Texture repeatedTexture = tileRtex.getTexture();
-	repeatedTexture.setRepeated(true);
-	//
-
-	for(int i=0; i < _rects.size(); i++) {
-		rtex.draw(_topTriangle[i]);
-		rtex.draw(_rect[i]);
-		_bottomTriangle[i].setFillColor(sf::Color::White);
-		_bottomTriangle[i].setTexture(&repeatedTexture);
-		_bottomTriangle[i].setTextureRect(sf::IntRect(sf::Vector2i(0, 0),sf::Vector2i(int(_bottomTriangle[i].getLocalBounds().size.x), int(_bottomTriangle[i].getLocalBounds().size.y))));
-		rtex.draw(_bottomTriangle[i]);
-	}
-
 	sf::Sprite tileLeft(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
 	tileLeft.setTextureRect(sf::IntRect(sf::Vector2i(0, 64 * _type), sf::Vector2i(32, 64)));
 

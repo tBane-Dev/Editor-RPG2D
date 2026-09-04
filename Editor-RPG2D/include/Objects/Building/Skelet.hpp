@@ -6,6 +6,7 @@
 class SkeletPrefab : public GameObject {
 public:
 	int _id = -1;
+	sf::Texture _texture;
 
 	SkeletPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh, int id);
 	~SkeletPrefab();

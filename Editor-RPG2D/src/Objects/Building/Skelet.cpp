@@ -7,6 +7,18 @@
 SkeletPrefab::SkeletPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh, int id) : GameObject(name, animations, origin, collider, mesh) {
 	_type = ObjectType::Skelet;
 	_id = id;
+
+	// create texture from skeletset.png
+	sf::Texture skeletTexture = *textures_manager->getTexture(L"assets\\tex\\skeletset.png")->_texture;
+	sf::RenderTexture rtex;
+	rtex.resize(sf::Vector2u(16, 16));
+	rtex.clear(sf::Color::Transparent);
+	sf::Sprite spr(skeletTexture);
+	spr.setTextureRect(sf::IntRect(sf::Vector2i(16 * _id, 0), sf::Vector2i(16, 16)));
+	rtex.draw(spr);
+	rtex.display();
+
+	_texture = rtex.getTexture();
 }
 
 SkeletPrefab::~SkeletPrefab() {
@@ -48,7 +60,7 @@ Skelet::~Skelet() {
 }
 
 void Skelet::setPosition(sf::Vector2i position) {
-	_rect.position = position;
+	GameObjectOnMap::setPosition(position);
 }
 
 void Skelet::draw(sf::RenderTarget& target, float scale) {
@@ -61,17 +73,17 @@ void Skelet::draw(sf::RenderTarget& target, float scale) {
 	if (!skeletPrefab)
 		return;
 
-	DebugLog(L"draw the skelet");
-
-	sf::Sprite left(*textures_manager->getTexture(L"assets\\tex\\building_skelet.png")->_texture);
-	left.setPosition(sf::Vector2f(_rect.position));
-	left.setScale(sf::Vector2f(scale, scale));
-	target.draw(left);
+	//for(int i = 0; i < _rect.size.y/16; i+=1) {
+	//	sf::Sprite left(skeletset->getSkelet(skeletPrefab->_id)->_texture);
+	//	left.setOrigin(sf::Vector2f(0, 16));
+	//	left.setPosition(sf::Vector2f(_rect.position.x + _rect.size.x, _rect.position.y - i * 16));
+	//	left.setScale(sf::Vector2f(scale, scale));
+	//	target.draw(left);
+	//}
 
 }
 
 void Skelet::draw(sf::RenderTarget& target, float scale, int drawType) {
-
 	if (_prefab.expired())
 		return;
 
@@ -80,12 +92,29 @@ void Skelet::draw(sf::RenderTarget& target, float scale, int drawType) {
 	if (!skeletPrefab)
 		return;
 
-	DebugLog(L"draw the skelet with drawType: " + std::to_wstring(drawType));
+	float leftX = _position.x + _rect.position.x * scale;
+	float rightX = leftX + (_rect.size.x - 16) * scale;
+	float bottomY = _position.y + _rect.position.y * scale;
 
-	sf::Sprite left(*textures_manager->getTexture(L"assets\\tex\\building_skelet.png")->_texture);
-	left.setPosition(sf::Vector2f(_rect.position));
-	left.setScale(sf::Vector2f(scale, scale));
-	target.draw(left);
+	int maxI = 0;
+	if (drawType == 1) maxI = 2;
+	if (drawType == 2) maxI = _rect.size.y / 16;
+
+	for (int i = 0; i < maxI; ++i) {
+		float y = bottomY - i * 16.f * scale;
+
+		sf::Sprite left(skeletPrefab->_texture);
+		left.setOrigin(sf::Vector2f(0.f, 16.f));
+		left.setPosition(sf::Vector2f(leftX, y));
+		left.setScale(sf::Vector2f(scale, scale));
+		target.draw(left);
+
+		sf::Sprite right(skeletPrefab->_texture);
+		right.setOrigin(sf::Vector2f(0.f, 16.f));
+		right.setPosition(sf::Vector2f(rightX, y));
+		right.setScale(sf::Vector2f(scale, scale));
+		target.draw(right);
+	}
 }
 
 void Skelet::draw() {
