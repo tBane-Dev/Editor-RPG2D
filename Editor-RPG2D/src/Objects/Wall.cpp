@@ -36,8 +36,7 @@ void Wall::draw(sf::RenderTarget& target, float scale) {
 	if (_prefab.expired())
 		return;
 
-	std::shared_ptr<WallPrefab> wallPrefab =
-		std::dynamic_pointer_cast<WallPrefab>(_prefab.lock());
+	std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(_prefab.lock());
 
 	if (!wallPrefab)
 		return;
@@ -111,8 +110,7 @@ void Wall::draw(sf::RenderTarget& target, float scale, int drawType) {
 	if (_prefab.expired())
 		return;
 
-	std::shared_ptr<WallPrefab> wallPrefab =
-		std::dynamic_pointer_cast<WallPrefab>(_prefab.lock());
+	std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(_prefab.lock());
 
 	if (!wallPrefab)
 		return;

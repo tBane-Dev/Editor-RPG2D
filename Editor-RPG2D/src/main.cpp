@@ -18,6 +18,7 @@
 #include "ShadersManager.hpp"
 #include "Tileset.hpp"
 #include "Wallset.hpp"
+#include "Objects/Building/Skelet.hpp"
 #include "Objects/Building/Roof1.hpp"
 #include "PrefabsManager.hpp"
 
@@ -64,6 +65,7 @@ int main() {
 
 	tileset = std::make_shared<Tileset>();
 	wallset = std::make_shared<Wallset>();
+	skeletset = std::make_shared<SkeletSet>();
 	//floorset = std::make_shared<Floorset>();
 	roof1set = std::make_shared<Roof1set>();
 

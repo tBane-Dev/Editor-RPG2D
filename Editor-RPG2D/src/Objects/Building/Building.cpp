@@ -89,11 +89,8 @@ void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_pt
 	generateWalls(position, scale, building);
 
 	if (building) {
-
 		building->_wallsObjects.clear();
-
 		for (auto& wall : _wallsObjects) {
-
 			if (wall) {
 				std::shared_ptr<Wall> newWall = std::make_shared<Wall>(wall->_prefab, wall->_building, wall->_textureBottomRect, wall->_textureTopRect, wall->_height);
 				newWall->setPosition(sf::Vector2i(wall->_position.x, wall->_position.y));
@@ -103,6 +100,8 @@ void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_pt
 				building->_wallsObjects.push_back(nullptr);
 		}
 	}
+
+	generateSkelet(position, scale, building);
 
 	generateRoofs(position, scale);
 	generateCollider(scale);
@@ -278,6 +277,97 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 	}
 }
 
+void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+
+	if (!building) return;
+
+	std::vector<sf::IntRect> rects;
+
+	std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+	int height = prefab->_walls.size();
+	int width = prefab->_walls[0].size();
+
+	struct VerticalRun {
+		int y;
+		int height;
+	};
+
+	struct ActiveRect {
+		sf::IntRect rect;
+		bool continued = false;
+	};
+
+	std::vector<ActiveRect> active;
+
+	for (int x = 0; x < width; ++x) {
+
+		std::vector<VerticalRun> runs;
+
+		int y = 0;
+
+		while (y < height) {
+
+			if (prefab->_walls[y][x] == 0) {
+				++y;
+				continue;
+			}
+
+			int startY = y;
+
+			while (y < height && prefab->_walls[y][x] != 0)
+				++y;
+
+			runs.push_back({ startY, y - startY });
+		}
+
+		for (auto& a : active)
+			a.continued = false;
+
+		for (auto& run : runs) {
+
+			bool found = false;
+
+			for (auto& a : active) {
+
+				if (a.rect.position.y == run.y && a.rect.size.y == run.height && a.rect.position.x + a.rect.size.x == x) {
+					++a.rect.size.x;
+
+					a.continued = true;
+					found = true;
+
+					break;
+				}
+			}
+
+			if (!found) {
+				ActiveRect a;
+				a.rect.position = { x, run.y };
+				a.rect.size = { 1, run.height };
+				a.continued = true;
+
+				active.push_back(a);
+			}
+		}
+
+		for (auto it = active.begin(); it != active.end();) {
+			if (!it->continued) {
+				rects.push_back(it->rect);
+				it = active.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+	}
+
+	for (auto& a : active)
+		rects.push_back(a.rect);
+
+	_skeletObjects.clear();
+	for(auto & rect : rects) {
+		_skeletObjects.push_back(std::make_shared<Skelet>(skeletset->getSkelet(0), sf::IntRect(sf::Vector2i(rect.position.x * 32, rect.position.y * 32), sf::Vector2i(rect.size.x * 32, _wallHeight * 32))));
+	}
+}
 
 void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
@@ -456,6 +546,15 @@ void BuildingPrefab::drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i positi
 	}
 }
 
+void BuildingPrefab::drawOnlySkelet(sf::RenderTarget& target, sf::Vector2i position, float scale, int drawType) {
+	for(auto& skelet : _skeletObjects) {
+		if (skelet) {
+			skelet->setPosition(position);
+			skelet->draw(target, scale, drawType);
+		}
+	}
+}
+
 void BuildingPrefab::drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
 
 	if (!_roof)
@@ -502,14 +601,18 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 
 		if (!drawOutside) {
 			drawOnlyWalls(resultTexture, buildingPosition, scale, 1);
+			drawOnlySkelet(resultTexture, buildingPosition + sf::Vector2i(0, floorSize.y), scale, 1);
 		}
 		else {
 			drawOnlyWalls(resultTexture, buildingPosition, scale, 2);
+			drawOnlySkelet(resultTexture, buildingPosition + sf::Vector2i(0, floorSize.y), scale, 2);
 
 			if (_roof) {
 				_roof->draw(resultTexture, buildingPosition, scale);
 			}
 		}
+
+		
 	}
 
 	if (auto gableRoof = std::dynamic_pointer_cast<Roof2>(_roof)) {
@@ -527,9 +630,11 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 
 		if (!drawOutside) {
 			drawOnlyWalls(resultTexture, buildingPosition, scale, 1);
+			drawOnlySkelet(resultTexture, buildingPosition + sf::Vector2i(0, floorSize.y), scale, 1);
 		}
 		else {
 			drawOnlyWalls(resultTexture, buildingPosition, scale, 2);
+			drawOnlySkelet(resultTexture, buildingPosition + sf::Vector2i(0, floorSize.y), scale, 2);
 			
 			if (_roof) {
 				_roof->draw(resultTexture, buildingPosition, scale);

@@ -44,6 +44,7 @@ std::shared_ptr<Texture> TexturesManager::getTexture(std::wstring path) {
                     return t;
     }
 
+    DebugError(L"texture: " + path + L" no exists");
     return nullptr;
 }
 
@@ -67,6 +68,7 @@ void TexturesManager::loadAllTextures() {
 	texturePaths.push_back(L"assets\\tex\\roof1.png");
 	texturePaths.push_back(L"assets\\tex\\roof1_overhang.png");
 	texturePaths.push_back(L"assets\\tex\\roof2.png");
+	texturePaths.push_back(L"assets\\tex\\building_skelet.png");
 
 	// controls
     texturePaths.push_back(L"assets\\tex\\controls\\scrollbar32\\up.png");

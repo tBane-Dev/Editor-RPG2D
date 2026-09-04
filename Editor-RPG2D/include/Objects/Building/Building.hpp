@@ -3,6 +3,7 @@
 #include "Objects/GameObject.hpp"
 #include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 #include "Objects/Wall.hpp"
+#include "Objects/Building/Skelet.hpp"
 #include "Objects/Building/Roof.hpp"
 
 class BuildingPrefab : public GameObject {
@@ -14,9 +15,11 @@ public:
 	std::vector<std::vector<int>> _walls;
 
 	int _wallHeight = 3;
+	int _skeletType = 0;
 
 	sf::VertexArray _floorVertexArray;
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
+	std::vector<std::shared_ptr<Skelet>> _skeletObjects;
 	std::shared_ptr<Roof> _roof;
 
 	std::shared_ptr<sf::Texture> _insideTexture;
@@ -30,6 +33,7 @@ public:
 
 	void generateFloorVertexArray(float scale = 1.0f);
 	void generateWalls(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
+	void generateSkelet(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 	void generateRoofs(sf::Vector2i position, float scale = 1.0f);
 	void generateCollider(float scale = 1.0f);
 	void generateMesh(float scale = 1.0f);
@@ -41,6 +45,7 @@ public:
 	void drawOnlyCollider(sf::RenderTarget& target, sf::Vector2i position);
 	void drawOnlyFloor(sf::RenderTarget& target, sf::Vector2i position);
 	void drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, int drawType = -1);
+	void drawOnlySkelet(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, int drawType = -1);
 	void drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 };
 
