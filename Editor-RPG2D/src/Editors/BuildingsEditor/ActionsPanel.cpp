@@ -69,6 +69,8 @@ namespace BuildingsEditor {
 			
 				if (building && building->_prefab.lock() == oldPrefab) {
 					building->removeWallsFromGameObjects();
+					building->removeSkeletsFromGameObjects();
+					building->removeOutsideFromGameObjects();
 				}
 			}
 
@@ -95,6 +97,8 @@ namespace BuildingsEditor {
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 				if (building && building->_prefab.lock() == newPrefab) {
 					building->addWallsToGameObjects();
+					building->addSkeletsToGameObjects();
+					building->addOutsideToGameObjects();
 				}
 			}
 
@@ -124,6 +128,8 @@ namespace BuildingsEditor {
 					std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 					if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
 						building->removeWallsFromGameObjects();
+						building->removeSkeletsFromGameObjects();
+						building->removeOutsideFromGameObjects();
 						//DebugLog(L"Removed walls from objects" + building->_prefab.lock()->getName());
 						MapEditor::editor->_game_objects->removeGameObject(building);
 						//DebugLog(L"Removed building from objects: " + building->_prefab.lock()->getName());
@@ -136,6 +142,7 @@ namespace BuildingsEditor {
 						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 						if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
 							chunk->removeGameObjectOnMap(building);
+							chunk->removeGameObjectOnMap(building->_outsideObject);
 							//DebugLog(L"remove building from chunk: " + building->_prefab.lock()->getName());
 						}
 					}

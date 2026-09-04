@@ -35,7 +35,7 @@ public:
 	void generateFloorVertexArray(float scale = 1.0f);
 	void generateWalls(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 	void generateRoofs(sf::Vector2i position, float scale = 1.0f);
-	void generateSkelet(sf::Vector2i position, float scale = 1.0f);
+	void generateSkelet(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 	void generateCollider(float scale = 1.0f);
 	void generateMesh(float scale = 1.0f);
 	void generatePreviewTexture(std::shared_ptr<sf::Texture>& texture, bool drawOutside = true);
@@ -57,6 +57,7 @@ public:
 
 	bool _renderOutsideLook;
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
+	std::vector<std::shared_ptr<Skelet>> _skeletsObjects;
 	std::shared_ptr<Outside> _outsideObject;
 
 	Building(std::weak_ptr<GameObject> prefab);
@@ -70,12 +71,15 @@ public:
 	
 
 	void addWallsToGameObjects();
+	void addSkeletsToGameObjects();
 	void addOutsideToGameObjects();
 
 	void removeWallsFromGameObjects();
+	void removeSkeletsFromGameObjects();
 	void removeOutsideFromGameObjects();
 
 	void addWallsToVisibleGameObjects();	
+	void addSkeletsToVisibleGameObjects();
 	void addOutsideToVisibleGameObjects();
 
 	virtual void cursorHover();

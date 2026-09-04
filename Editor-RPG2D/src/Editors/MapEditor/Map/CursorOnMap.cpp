@@ -530,6 +530,8 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 objectOnMap->setPosition(position);
                 building->generate(position);
                 building->addWallsToGameObjects();
+                building->addSkeletsToGameObjects();
+                building->addOutsideToGameObjects();
                 prefabs_manager->addPrefab(buildingPrefab);
                 MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
                 MapEditor::editor->_map->setVisibleChunks();

@@ -3,6 +3,7 @@
 #include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "EditorsManager.hpp"
+#include "Objects/Building/Building.hpp"
 
 SkeletPrefab::SkeletPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh, int id) : GameObject(name, animations, origin, collider, mesh) {
 	_type = ObjectType::Skelet;
@@ -49,9 +50,10 @@ std::shared_ptr<SkeletPrefab> SkeletSet::getSkelet(int id) {
 
 std::shared_ptr<SkeletSet> skeletset = nullptr;
 
-Skelet::Skelet(std::weak_ptr<GameObject> prefab, sf::IntRect rect) : GameObjectOnMap(prefab) {
+Skelet::Skelet(std::weak_ptr<GameObject> prefab, sf::IntRect rect, std::weak_ptr<Building> building) : GameObjectOnMap(prefab) {
 	_type = ObjectType::Skelet;
 	_rect = rect;
+	_building = building;
 }
 
 
@@ -61,26 +63,6 @@ Skelet::~Skelet() {
 
 void Skelet::setPosition(sf::Vector2i position) {
 	GameObjectOnMap::setPosition(position);
-}
-
-void Skelet::draw(sf::RenderTarget& target, float scale) {
-
-	if (_prefab.expired())
-		return;
-
-	std::shared_ptr<SkeletPrefab> skeletPrefab = std::dynamic_pointer_cast<SkeletPrefab>(_prefab.lock());
-
-	if (!skeletPrefab)
-		return;
-
-	//for(int i = 0; i < _rect.size.y/16; i+=1) {
-	//	sf::Sprite left(skeletset->getSkelet(skeletPrefab->_id)->_texture);
-	//	left.setOrigin(sf::Vector2f(0, 16));
-	//	left.setPosition(sf::Vector2f(_rect.position.x + _rect.size.x, _rect.position.y - i * 16));
-	//	left.setScale(sf::Vector2f(scale, scale));
-	//	target.draw(left);
-	//}
-
 }
 
 void Skelet::draw(sf::RenderTarget& target, float scale, int drawType) {
@@ -118,5 +100,11 @@ void Skelet::draw(sf::RenderTarget& target, float scale, int drawType) {
 }
 
 void Skelet::draw() {
-	draw(*Main::render_window, 1.f);
+
+	if (_building.expired()) {
+		return;
+	}
+
+	if(!_building.lock()->_renderOutsideLook)
+		draw(*Main::render_window, 1.f, 1);
 }

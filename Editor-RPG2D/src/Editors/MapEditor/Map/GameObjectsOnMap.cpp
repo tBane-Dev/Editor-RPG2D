@@ -24,6 +24,7 @@ void GameObjectsOnMap::addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOn
 	if(gameObjectOnMap.lock()->_type == ObjectType::Building) {
 		std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(gameObjectOnMap.lock());
 		building->addWallsToVisibleGameObjects();
+		building->addSkeletsToVisibleGameObjects();
 		building->addOutsideToVisibleGameObjects();
 	}
 }
@@ -41,6 +42,18 @@ void GameObjectsOnMap::removeGameObject(std::weak_ptr<GameObjectOnMap> gameObjec
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectToRemove);
 				std::shared_ptr<Wall> wall = std::dynamic_pointer_cast<Wall>(object);
 				return wall->_building.lock() == building;
+			}
+
+			if (objectToRemove->_type == ObjectType::Building && object->_type == ObjectType::Skelet) {
+				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectToRemove);
+				std::shared_ptr<Skelet> skelet = std::dynamic_pointer_cast<Skelet>(object);
+				return skelet->_building.lock() == building;
+			}
+
+			if (objectToRemove->_type == ObjectType::Building && object->_type == ObjectType::Outside) {
+				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectToRemove);
+				std::shared_ptr<Outside> outside = std::dynamic_pointer_cast<Outside>(object);
+				return outside->_building.lock() == building;
 			}
 
 			return object == objectToRemove;
@@ -160,11 +173,7 @@ void GameObjectsOnMap::sort() {
 
 	std::sort(_visibleGameObjectsOnMap.begin(), _visibleGameObjectsOnMap.end(), [&types,getIndex](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
 
-		int aIndex = getIndex(a->_type);	
-		int bIndex = getIndex(b->_type);
-
-		if (aIndex < bIndex) return true;
-		if (aIndex > bIndex) return false;
+		
 
 		// OBJECT A - POSITION
 		sf::Vector2i posA = a->_position;
@@ -193,8 +202,18 @@ void GameObjectsOnMap::sort() {
 		}
 
 
-		if (posA.y == posB.y)
+		if (posA.y == posB.y) {
+
+			int aIndex = getIndex(a->_type);
+			int bIndex = getIndex(b->_type);
+
+			if (aIndex != -1 && bIndex != -1) {
+				if (aIndex < bIndex) return true;
+				if (aIndex > bIndex) return false;
+			}
+
 			return posA.x < posB.x;
+		}
 
 		return posA.y < posB.y;
 	});
@@ -360,6 +379,7 @@ void GameObjectsOnMap::draw() {
 		}
 	}
 
+	static int i = 0;
 	for (auto& object : _visibleGameObjectsOnMap) {
 		if(object->_type != ObjectType::Building) {
 			object->draw();

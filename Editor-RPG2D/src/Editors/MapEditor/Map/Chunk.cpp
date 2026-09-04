@@ -145,6 +145,7 @@ void Chunk::calculateGameObjectOnMapRect() {
 
 	for (auto& object : _gameObjectsOnMap) {
 
+
 		if (object->_type == ObjectType::Monster) 
 			continue;
 
@@ -189,10 +190,22 @@ void Chunk::addGameObjectOnMap(std::shared_ptr<GameObjectOnMap> object) {
 void Chunk::removeGameObjectOnMap(std::shared_ptr<GameObjectOnMap> object) {
 	std::erase_if(_gameObjectsOnMap, [&](const std::shared_ptr<GameObjectOnMap>& obj) {
 		
-		if (object->_type == ObjectType::Building && obj->_type == ObjectType::Wall) {
+		if (object->_type == ObjectType::Building && (obj->_type == ObjectType::Wall)) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			std::shared_ptr<Wall> wall = std::dynamic_pointer_cast<Wall>(obj);
 			return wall->_building.lock() == building;
+		}
+
+		if (object->_type == ObjectType::Building && (obj->_type == ObjectType::Skelet)) {
+			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+			std::shared_ptr<Skelet> skelet = std::dynamic_pointer_cast<Skelet>(obj);
+			return skelet->_building.lock() == building;
+		}
+
+		if (object->_type == ObjectType::Building && (obj->_type == ObjectType::Outside)) {
+			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+			std::shared_ptr<Outside> outside = std::dynamic_pointer_cast<Outside>(obj);
+			return outside->_building.lock() == building;
 		}
 
 		return obj == object;

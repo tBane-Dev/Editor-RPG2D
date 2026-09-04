@@ -7,10 +7,10 @@ class Building;
 
 class Outside : public GameObjectOnMap {
 public:
-	std::shared_ptr<Building> _building;
+	std::weak_ptr<Building> _building;
 	sf::Texture _texture;
 
-	Outside(std::shared_ptr<Building> building);
+	Outside(std::weak_ptr<Building> building = std::weak_ptr<Building>());
 	~Outside();
 
 	void setTexture(sf::Texture texture);

@@ -100,8 +100,23 @@ void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_pt
 				building->_wallsObjects.push_back(nullptr);
 		}
 	}
+
 	generateRoofs(position, scale);
-	generateSkelet(position, scale);
+	generateSkelet(position, scale, building);
+
+	if (building) {
+		building->_skeletsObjects.clear();
+
+		sf::Vector2i buildingBottom(position.x, position.y + int(_walls.size()) * 32);
+
+		for (auto& skelet : _skeletObjects) {
+			if (!skelet) continue;
+			std::shared_ptr<Skelet> newSkelet = std::make_shared<Skelet>(skelet->_prefab, skelet->_rect, building);
+			newSkelet->setPosition(buildingBottom);
+			building->_skeletsObjects.push_back(newSkelet);
+		}
+	}
+
 	generateCollider(scale);
 	generateMesh(scale);
 	generatePreviewTextures();
@@ -284,7 +299,7 @@ void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
 }
 
-void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale) {
+void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
 
 	_skeletObjects.clear();
 
@@ -481,7 +496,8 @@ void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale) {
 			sf::IntRect(
 				localBottomPosition,
 				skeletonSize
-			)
+			),
+			building
 		));
 	}
 }
@@ -858,10 +874,16 @@ void Building::setPosition(sf::Vector2i position) {
 			wall->setPosition(wall->getPosition() + delta);
 	}
 
+	for (auto& skelet : _skeletsObjects) {
+		if (skelet)
+			skelet->setPosition(skelet->getPosition() + delta);
+	}
+
 	buildingPrefab->generateRoofs(_position, scale);
 
-	if(_outsideObject)
+	if (_outsideObject) {
 		_outsideObject->setPosition(_outsideObject->getPosition() + delta);
+	}
 
 	buildingPrefab->generateCollider(scale);
 }
@@ -888,6 +910,23 @@ void Building::addWallsToGameObjects() {
 	}
 }
 
+void Building::addSkeletsToGameObjects() {
+
+	for (auto& skelet : _skeletsObjects) {
+
+		if (!skelet)
+			continue;
+
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+
+		if (chunk) {
+			chunk->addGameObjectOnMap(skelet);
+
+			MapEditor::editor->_game_objects->addGameObject(skelet);
+		}
+	}
+}
+
 void Building::addOutsideToGameObjects() {
 	if (!_outsideObject)
 		return;
@@ -901,22 +940,7 @@ void Building::addOutsideToGameObjects() {
 	}
 }
 
-void Building::addOutsideToVisibleGameObjects() {
-	if (_outsideObject) {
-		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(_outsideObject);
-	}
-}
 
-void Building::removeOutsideFromGameObjects() {
-	if (_outsideObject) {
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
-
-		if (chunk)
-			chunk->removeGameObjectOnMap(_outsideObject);
-
-		MapEditor::editor->_game_objects->removeGameObject(_outsideObject);
-	}
-}
 
 void Building::removeWallsFromGameObjects() {
 
@@ -934,6 +958,35 @@ void Building::removeWallsFromGameObjects() {
 	}
 }
 
+
+void Building::removeSkeletsFromGameObjects() {
+
+	for (auto& skelet : _skeletsObjects) {
+
+		if (!skelet)
+			continue;
+
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+
+		if (chunk)
+			chunk->removeGameObjectOnMap(skelet);
+
+		MapEditor::editor->_game_objects->removeGameObject(skelet);
+	}
+}
+
+void Building::removeOutsideFromGameObjects() {
+	if (_outsideObject) {
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+
+		if (chunk)
+			chunk->removeGameObjectOnMap(_outsideObject);
+
+		MapEditor::editor->_game_objects->removeGameObject(_outsideObject);
+	}
+}
+
+
 void Building::addWallsToVisibleGameObjects() {
 
 	for (auto& wall : _wallsObjects) {
@@ -942,6 +995,24 @@ void Building::addWallsToVisibleGameObjects() {
 			continue;
 
 		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(wall);
+	}
+}
+
+void Building::addSkeletsToVisibleGameObjects() {
+
+	for (auto& skelet : _skeletsObjects) {
+
+		if (!skelet)
+			continue;
+
+		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(skelet);
+	}
+}
+
+
+void Building::addOutsideToVisibleGameObjects() {
+	if (_outsideObject) {
+		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(_outsideObject);
 	}
 }
 
@@ -981,7 +1052,12 @@ void Building::update() {
 		
 		_renderOutsideLook = true;
 
-		if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock() == shared_from_this()) {
+		if(!MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.expired() && MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock()->_type == ObjectType::Building) {
+			if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock() == shared_from_this()) {
+				_renderOutsideLook = false;
+			}
+		}
+		else if (_prefab.lock()->getMesh()->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
 			_renderOutsideLook = false;
 		}
 	}

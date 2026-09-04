@@ -3,6 +3,8 @@
 #include "Objects/GameObject.hpp"
 #include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
 
+class Building;
+
 class SkeletPrefab : public GameObject {
 public:
 	int _id = -1;
@@ -27,13 +29,13 @@ extern std::shared_ptr<SkeletSet> skeletset;
 class Skelet : public GameObjectOnMap {
 public:
 	sf::IntRect _rect;
+	std::weak_ptr<Building> _building;
 
-	Skelet(std::weak_ptr<GameObject> prefab, sf::IntRect rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0)));
+	Skelet(std::weak_ptr<GameObject> prefab, sf::IntRect rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0)), std::weak_ptr<Building> building = std::weak_ptr<Building>());
 	~Skelet();
 
 	virtual void setPosition(sf::Vector2i position);
 
-	void draw(sf::RenderTarget& target, float scale = 1.f);
 	void draw(sf::RenderTarget& target, float scale, int drawType);
 	virtual void draw();
 };
