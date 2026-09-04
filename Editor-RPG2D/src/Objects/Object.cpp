@@ -34,7 +34,10 @@ std::wstring ObjectTypeToWString(ObjectType type) {
 			return L"Window";
 		case ObjectType::WallMounted:
 			return L"WallMounted";
-		
+		case ObjectType::Skelet:
+			return L"Skelet";
+		case ObjectType::Outside:
+			return L"Outside";
 		default:
 			return L"Unknown";
 	};
@@ -61,6 +64,10 @@ ObjectType WStringToObjectType(std::wstring type) {
 		return ObjectType::Window;
 	else if (type == L"WallMounted")
 		return ObjectType::WallMounted;
+	else if (type == L"Skelet")
+		return ObjectType::Skelet;
+	else if (type == L"Outside")
+		return ObjectType::Outside;
 	
 	else
 		return ObjectType::None;

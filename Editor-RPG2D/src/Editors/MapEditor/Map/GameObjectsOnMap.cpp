@@ -24,6 +24,7 @@ void GameObjectsOnMap::addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOn
 	if(gameObjectOnMap.lock()->_type == ObjectType::Building) {
 		std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(gameObjectOnMap.lock());
 		building->addWallsToVisibleGameObjects();
+		building->addOutsideToVisibleGameObjects();
 	}
 }
 
@@ -141,11 +142,12 @@ void GameObjectsOnMap::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std:
 void GameObjectsOnMap::sort() {
 
 	std::vector<ObjectType> types = {
-		//ObjectType::BuildingSkeleton, // TO-DO: Add BuildingSkeleton type
+		ObjectType::Skelet,
 		ObjectType::WallMounted,
 		ObjectType::Window,
 		ObjectType::Door,
 		ObjectType::Roof,
+		ObjectType::Outside
 	};
 
 	auto getIndex = [&types](ObjectType type) -> int {
@@ -167,23 +169,27 @@ void GameObjectsOnMap::sort() {
 		// OBJECT A - POSITION
 		sf::Vector2i posA = a->_position;
 
-		if (a->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
-			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
-			posA += collider->_rect.position + collider->_rect.size / 2;
-		}
-		else if (a->_prefab.lock()->_type != ObjectType::Monster) {
-			posA += a->_prefab.lock()->getOrigin();
+		if (!a->_prefab.expired()) {
+			if (a->_prefab.lock()->_collider && a->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+				std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
+				posA += collider->_rect.position + collider->_rect.size / 2;
+			}
+			else if (a->_prefab.lock()->_type != ObjectType::Monster) {
+				posA += a->_prefab.lock()->getOrigin();
+			}
 		}
 		
 		// OBJECT B - POSITION
 		sf::Vector2i posB = b->_position;
 
-		if (b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
-			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
-			posB += collider->_rect.position + collider->_rect.size / 2;
-		}
-		else if (b->_prefab.lock()->_type != ObjectType::Monster) {
-			posB += b->_prefab.lock()->getOrigin();
+		if (!b->_prefab.expired()) {
+			if (b->_prefab.lock()->_collider && b->_prefab.lock()->_collider->_type == ColliderType::Rectangular) {
+				std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
+				posB += collider->_rect.position + collider->_rect.size / 2;
+			}
+			else if (b->_prefab.lock()->_type != ObjectType::Monster) {
+				posB += b->_prefab.lock()->getOrigin();
+			}
 		}
 
 
@@ -360,14 +366,4 @@ void GameObjectsOnMap::draw() {
 		}
 	}
 
-	for (auto& object : _visibleGameObjectsOnMap) {
-		if (object->_type == ObjectType::Building) {
-			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
-			if (building) {
-				std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
-				if (buildingPrefab)
-					buildingPrefab->drawOnlyRoof(*Main::render_window, building->getPosition(), 1.0f, building);
-			}
-		}
-	}
 }

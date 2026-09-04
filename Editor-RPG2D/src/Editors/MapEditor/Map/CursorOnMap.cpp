@@ -92,6 +92,9 @@ void CursorOnMap::update() {
         if (_selectionRect.size.x != 0 || _selectionRect.size.y != 0) {
             std::vector<std::shared_ptr<GameObjectOnMap>> selectedGameObjects;
             for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
+
+                if (object->_prefab.expired()) continue;
+
                 std::shared_ptr<Mesh> mesh = object->_prefab.lock()->getMesh();
 
                 sf::Vector2i monsterOffset = sf::Vector2i(0, 0);
@@ -255,6 +258,9 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
                 std::shared_ptr<GameObjectOnMap> selectedGameObject = nullptr;
                 for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
+                    
+                    if (object->_prefab.expired()) continue;
+
                     std::shared_ptr<Mesh> mesh = object->_prefab.lock()->getMesh();
 
                     sf::Vector2i monsterOffset = sf::Vector2i(0, 0);

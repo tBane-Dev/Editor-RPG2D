@@ -5,6 +5,7 @@
 #include "Objects/Wall.hpp"
 #include "Objects/Building/Skelet.hpp"
 #include "Objects/Building/Roof.hpp"
+#include "Objects/Building/Outside.hpp"
 
 class BuildingPrefab : public GameObject {
 public:
@@ -47,6 +48,7 @@ public:
 	void drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, int drawType = -1);
 	void drawOnlySkelet(sf::RenderTarget& target, sf::Vector2i botttomPosition, float scale = 1.0f, int drawType = -1);
 	void drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
+	void drawOutsideLook(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 };
 
 class Building : public GameObjectOnMap {
@@ -55,7 +57,7 @@ public:
 
 	bool _renderOutsideLook;
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
-	
+	std::shared_ptr<Outside> _outsideObject;
 
 	Building(std::weak_ptr<GameObject> prefab);
 	~Building();
@@ -68,9 +70,13 @@ public:
 	
 
 	void addWallsToGameObjects();
+	void addOutsideToGameObjects();
+
 	void removeWallsFromGameObjects();
+	void removeOutsideFromGameObjects();
 
 	void addWallsToVisibleGameObjects();	
+	void addOutsideToVisibleGameObjects();
 
 	virtual void cursorHover();
 	virtual void update();

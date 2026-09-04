@@ -3,7 +3,7 @@
 
 enum class ObjectType { 
 	None, Terrain, Monster, Nature,
-	Building, Wall, Roof, Floor, Door, Window, WallMounted, Skelet
+	Building, Wall, Roof, Floor, Door, Window, WallMounted, Skelet, Outside
 	
 };
 

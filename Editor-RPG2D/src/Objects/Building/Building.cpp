@@ -672,11 +672,13 @@ void BuildingPrefab::drawOnlyRoof(sf::RenderTarget& target, sf::Vector2i positio
 	if (building->_renderOutsideLook) {
 		_roof->draw(target, position, scale);
 	}
+}
 
-	// draw the mesh
-	// std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
-	// bp->getMesh()->draw(position, sf::Color::Red);
-
+void BuildingPrefab::drawOutsideLook(sf::RenderTarget& target, sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+	drawOnlyFloor(target, position);
+	drawOnlyWalls(target, position, scale, 2);
+	drawOnlySkelet(target, position + sf::Vector2i(0, _walls.size() * 32.f * scale), scale, 2);
+	drawOnlyRoof(target, position, scale, building);
 }
 
 void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& texture, bool drawOutside) {
@@ -825,13 +827,18 @@ void Building::generate(sf::Vector2i position) {
 		buildingPrefab->generate(position, 1.0f, std::dynamic_pointer_cast<Building>(shared_from_this()));
 	}
 		
+	_outsideObject = std::make_shared<Outside>(std::dynamic_pointer_cast<Building>(shared_from_this()));
+	_outsideObject->setTexture(*buildingPrefab->getPreviewOutsideTexture());
 
+	int topOffset = buildingPrefab->_roof ? buildingPrefab->_roof->getTopOffset(1.0f) : 0;
+	int textureHeight = _outsideObject->_texture.getSize().y;
+
+	_outsideObject->setPosition(position + sf::Vector2i(0, textureHeight - topOffset)
+	);
 }
 
 void Building::setPosition(sf::Vector2i position) {
 	
-	
-
 	sf::Vector2i delta = position - getPosition();
 
 	GameObjectOnMap::setPosition(position);
@@ -852,6 +859,10 @@ void Building::setPosition(sf::Vector2i position) {
 	}
 
 	buildingPrefab->generateRoofs(_position, scale);
+
+	if(_outsideObject)
+		_outsideObject->setPosition(_outsideObject->getPosition() + delta);
+
 	buildingPrefab->generateCollider(scale);
 }
 
@@ -874,6 +885,36 @@ void Building::addWallsToGameObjects() {
 
 			MapEditor::editor->_game_objects->addGameObject(wall);
 		}
+	}
+}
+
+void Building::addOutsideToGameObjects() {
+	if (!_outsideObject)
+		return;
+
+	std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+
+	if (chunk) {
+		chunk->addGameObjectOnMap(_outsideObject);
+
+		MapEditor::editor->_game_objects->addGameObject(_outsideObject);
+	}
+}
+
+void Building::addOutsideToVisibleGameObjects() {
+	if (_outsideObject) {
+		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(_outsideObject);
+	}
+}
+
+void Building::removeOutsideFromGameObjects() {
+	if (_outsideObject) {
+		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+
+		if (chunk)
+			chunk->removeGameObjectOnMap(_outsideObject);
+
+		MapEditor::editor->_game_objects->removeGameObject(_outsideObject);
 	}
 }
 
