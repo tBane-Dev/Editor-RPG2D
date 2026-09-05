@@ -34,7 +34,7 @@
 #include "Objects/Object.hpp"
 #include "Objects/GameObject.hpp"
 #include "Objects/Monster.hpp"
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 
 #include <windows.h>
 #include <commdlg.h>

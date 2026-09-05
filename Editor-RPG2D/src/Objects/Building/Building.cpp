@@ -822,7 +822,7 @@ std::shared_ptr<sf::Texture> BuildingPrefab::getPreviewOutsideTexture() {
 	return _outsideTexture;
 }
 
-Building::Building(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
+Building::Building(std::weak_ptr<GameObject> prefab) : PlacedGameObject(prefab) {
 	_type = ObjectType::Building;
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefab.lock());
@@ -857,7 +857,7 @@ void Building::setPosition(sf::Vector2i position) {
 	
 	sf::Vector2i delta = position - getPosition();
 
-	GameObjectOnMap::setPosition(position);
+	PlacedGameObject::setPosition(position);
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
 	if (!buildingPrefab) return;
@@ -903,7 +903,7 @@ void Building::addWallsToGameObjects() {
 		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk) {
-			chunk->addGameObjectOnMap(wall);
+			chunk->addPlacedGameObject(wall);
 
 			MapEditor::editor->_game_objects->addGameObject(wall);
 		}
@@ -920,7 +920,7 @@ void Building::addSkeletsToGameObjects() {
 		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk) {
-			chunk->addGameObjectOnMap(skelet);
+			chunk->addPlacedGameObject(skelet);
 
 			MapEditor::editor->_game_objects->addGameObject(skelet);
 		}
@@ -934,7 +934,7 @@ void Building::addOutsideToGameObjects() {
 	std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 	if (chunk) {
-		chunk->addGameObjectOnMap(_outsideObject);
+		chunk->addPlacedGameObject(_outsideObject);
 
 		MapEditor::editor->_game_objects->addGameObject(_outsideObject);
 	}
@@ -952,7 +952,7 @@ void Building::removeWallsFromGameObjects() {
 		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk)
-			chunk->removeGameObjectOnMap(wall);
+			chunk->removePlacedGameObject(wall);
 
 		MapEditor::editor->_game_objects->removeGameObject(wall);
 	}
@@ -969,7 +969,7 @@ void Building::removeSkeletsFromGameObjects() {
 		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk)
-			chunk->removeGameObjectOnMap(skelet);
+			chunk->removePlacedGameObject(skelet);
 
 		MapEditor::editor->_game_objects->removeGameObject(skelet);
 	}
@@ -980,7 +980,7 @@ void Building::removeOutsideFromGameObjects() {
 		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk)
-			chunk->removeGameObjectOnMap(_outsideObject);
+			chunk->removePlacedGameObject(_outsideObject);
 
 		MapEditor::editor->_game_objects->removeGameObject(_outsideObject);
 	}
@@ -1033,13 +1033,13 @@ void Building::cursorHover() {
 			std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(_prefab.lock()->getCollider());
 			if (!collider) return;
 			if (collider->cursorHover(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
-				MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+				MapEditor::editor->_game_objects->_hoveredPlacedGameObject = shared_from_this();
 			}
 			return;
 		}
 
 		if(mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, getPosition())) {
-			MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+			MapEditor::editor->_game_objects->_hoveredPlacedGameObject = shared_from_this();
 		}
 	}
 
@@ -1052,8 +1052,8 @@ void Building::update() {
 		
 		_renderOutsideLook = true;
 
-		if(!MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.expired() && MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock()->_type == ObjectType::Building) {
-			if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock() == shared_from_this()) {
+		if(!MapEditor::editor->_game_objects->_hoveredPlacedGameObject.expired() && MapEditor::editor->_game_objects->_hoveredPlacedGameObject.lock()->_type == ObjectType::Building) {
+			if (MapEditor::editor->_game_objects->_hoveredPlacedGameObject.lock() == shared_from_this()) {
 				_renderOutsideLook = false;
 			}
 		}
@@ -1072,7 +1072,7 @@ void Building::update() {
 		}
 	}
 
-	GameObjectOnMap::update();
+	PlacedGameObject::update();
 }
 
 void Building::draw() {

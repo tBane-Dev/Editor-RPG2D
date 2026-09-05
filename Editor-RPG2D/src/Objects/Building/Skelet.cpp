@@ -51,7 +51,7 @@ std::shared_ptr<SkeletPrefab> SkeletSet::getSkelet(int id) {
 
 std::shared_ptr<SkeletSet> skeletset = nullptr;
 
-Skelet::Skelet(std::weak_ptr<GameObject> prefab, sf::IntRect rect, std::weak_ptr<Building> building) : GameObjectOnMap(prefab) {
+Skelet::Skelet(std::weak_ptr<GameObject> prefab, sf::IntRect rect, std::weak_ptr<Building> building) : PlacedGameObject(prefab) {
 	_type = ObjectType::Skelet;
 	_rect = rect;
 	_building = building;
@@ -63,7 +63,7 @@ Skelet::~Skelet() {
 }
 
 void Skelet::setPosition(sf::Vector2i position) {
-	GameObjectOnMap::setPosition(position);
+	PlacedGameObject::setPosition(position);
 }
 
 void Skelet::draw(sf::RenderTarget& target, float scale, int drawType) {

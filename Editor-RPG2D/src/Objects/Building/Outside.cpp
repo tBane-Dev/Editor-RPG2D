@@ -7,7 +7,7 @@
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
 #include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 
-Outside::Outside(std::weak_ptr<Building> building) : GameObjectOnMap(std::weak_ptr<GameObject>()){
+Outside::Outside(std::weak_ptr<Building> building) : PlacedGameObject(std::weak_ptr<GameObject>()){
 	_type = ObjectType::Outside;
 	_building = building;
 }

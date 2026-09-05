@@ -18,7 +18,7 @@ WallPrefab::~WallPrefab() {
 
 }
 
-Wall::Wall(std::weak_ptr<GameObject> prefab, std::weak_ptr<Building> building, sf::IntRect textureBottomRect, sf::IntRect textureTopRect, int height) : GameObjectOnMap(prefab) {
+Wall::Wall(std::weak_ptr<GameObject> prefab, std::weak_ptr<Building> building, sf::IntRect textureBottomRect, sf::IntRect textureTopRect, int height) : PlacedGameObject(prefab) {
 	_type = ObjectType::Wall;
 	_building = building;
 	_textureBottomRect = textureBottomRect;

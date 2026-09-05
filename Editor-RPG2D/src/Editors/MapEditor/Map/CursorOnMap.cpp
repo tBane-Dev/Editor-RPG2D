@@ -28,7 +28,7 @@ CursorOnMap::~CursorOnMap() {
 }
 
 void CursorOnMap::removeFromSelected(std::shared_ptr<GameObject> object) {
-    std::erase_if(_selectedObjects, [&](const std::shared_ptr<SelectedGameObjectOnMap>& obj) {
+    std::erase_if(_selectedObjects, [&](const std::shared_ptr<SelectedPlacedGameObject>& obj) {
 		return obj->_object.lock()->_prefab.lock() == object;
         });
 }
@@ -45,7 +45,7 @@ void CursorOnMap::update() {
                 if (object->_object.expired())
                     continue;
 
-                std::shared_ptr<GameObjectOnMap> gameObject = object->_object.lock();
+                std::shared_ptr<PlacedGameObject> gameObject = object->_object.lock();
 
                 sf::Vector2i oldPos =
                     (gameObject->_prefab.lock()->_type == ObjectType::Monster)
@@ -55,7 +55,7 @@ void CursorOnMap::update() {
                 std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(oldPos);
 
                 if (chunk)
-                    chunk->removeGameObjectOnMap(gameObject);
+                    chunk->removePlacedGameObject(gameObject);
 
                 sf::Vector2i newPos = MapEditor::editor->_cursor_on_map->_globalPosition - object->_offset;
 
@@ -68,7 +68,7 @@ void CursorOnMap::update() {
                 chunk = MapEditor::editor->_map->getChunkByGlobalPosition(newPos);
 
                 if (chunk)
-                    chunk->addGameObjectOnMap(gameObject);
+                    chunk->addPlacedGameObject(gameObject);
             }
 
             return;
@@ -90,7 +90,7 @@ void CursorOnMap::update() {
         }
 
         if (_selectionRect.size.x != 0 || _selectionRect.size.y != 0) {
-            std::vector<std::shared_ptr<GameObjectOnMap>> selectedGameObjects;
+            std::vector<std::shared_ptr<PlacedGameObject>> selectedGameObjects;
             for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
 
                 if (object->_prefab.expired()) continue;
@@ -133,7 +133,7 @@ void CursorOnMap::update() {
                     auto it = std::find_if(
                         _selectedObjects.begin(),
                         _selectedObjects.end(),
-                        [&](const std::shared_ptr<SelectedGameObjectOnMap>& selected) {
+                        [&](const std::shared_ptr<SelectedPlacedGameObject>& selected) {
                             return !selected->_object.expired() &&
                                 selected->_object.lock().get() == object.get();
                         }
@@ -141,7 +141,7 @@ void CursorOnMap::update() {
 
                     if (it == _selectedObjects.end()) {
                         object->_isSelected = true;
-                        _selectedObjects.push_back(std::make_shared<SelectedGameObjectOnMap>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
+                        _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
                     }
                 }
             }
@@ -168,7 +168,7 @@ void CursorOnMap::update() {
                     auto prevIt = std::find_if(
                         _prevSelectedObjects.begin(),
                         _prevSelectedObjects.end(),
-                        [&](const std::shared_ptr<SelectedGameObjectOnMap>& selected) {
+                        [&](const std::shared_ptr<SelectedPlacedGameObject>& selected) {
                             return !selected->_object.expired() &&
                                 selected->_object.lock().get() == object.get();
                         }
@@ -180,7 +180,7 @@ void CursorOnMap::update() {
                         auto it = std::find_if(
                             _selectedObjects.begin(),
                             _selectedObjects.end(),
-                            [&](const std::shared_ptr<SelectedGameObjectOnMap>& selected) {
+                            [&](const std::shared_ptr<SelectedPlacedGameObject>& selected) {
                                 return !selected->_object.expired() &&
                                     selected->_object.lock().get() == object.get();
                             }
@@ -192,14 +192,14 @@ void CursorOnMap::update() {
                     }
                     else {
                         object->_isSelected = true;
-                        _selectedObjects.push_back(std::make_shared<SelectedGameObjectOnMap>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
+                        _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
                     }
                 }
             }
             else {
                 for (auto& object : selectedGameObjects) {
                     object->_isSelected = true;
-                    _selectedObjects.push_back(std::make_shared<SelectedGameObjectOnMap>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
+                    _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
                 }
             }
 
@@ -256,7 +256,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
 
                 }
 
-                std::shared_ptr<GameObjectOnMap> selectedGameObject = nullptr;
+                std::shared_ptr<PlacedGameObject> selectedGameObject = nullptr;
                 for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
                     
                     if (object->_prefab.expired()) continue;
@@ -287,7 +287,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                             }
                         ) == _selectedObjects.end()) {
                             selectedGameObject->_isSelected = true;
-                            _selectedObjects.push_back(std::make_shared<SelectedGameObjectOnMap>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
                         }
                     }
                     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
@@ -306,7 +306,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                         }
                         else {
                             selectedGameObject->_isSelected = true;
-                            _selectedObjects.push_back(std::make_shared<SelectedGameObjectOnMap>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
                         }
                     }
                     else {
@@ -317,7 +317,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                         _selectedObjects.clear();
 
                         selectedGameObject->_isSelected = true;
-                        _selectedObjects.push_back(std::make_shared<SelectedGameObjectOnMap>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                        _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
                     }
 
 
@@ -520,7 +520,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
             }
 
 			// create object on map by type 
-			std::shared_ptr<GameObjectOnMap> objectOnMap;
+			std::shared_ptr<PlacedGameObject> objectOnMap;
 
             if (prefab->_type == ObjectType::Building) {
                 static int i = 0;
@@ -533,17 +533,17 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 building->addSkeletsToGameObjects();
                 building->addOutsideToGameObjects();
                 prefabs_manager->addPrefab(buildingPrefab);
-                MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
+                MapEditor::editor->_map->getChunkByGlobalPosition(position)->addPlacedGameObject(objectOnMap);
                 MapEditor::editor->_map->setVisibleChunks();
                 return;
             }
 			else if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
 			else if (prefab->_type == ObjectType::Nature) objectOnMap = std::make_shared<Nature>(prefab);
-			else objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
+			else objectOnMap = std::make_shared<PlacedGameObject>(prefab);
 
 			// positioning and adding object to map
 			objectOnMap->setPosition(position);
-			MapEditor::editor->_map->getChunkByGlobalPosition(position)->addGameObjectOnMap(objectOnMap);
+			MapEditor::editor->_map->getChunkByGlobalPosition(position)->addPlacedGameObject(objectOnMap);
             MapEditor::editor->_map->setVisibleChunks();
 			return;
 		}

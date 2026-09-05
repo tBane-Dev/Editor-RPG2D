@@ -188,7 +188,7 @@ sf::IntRect Map::getRect() {
 void Map::removeGameObjectsFromChunksByPrefab(std::shared_ptr<GameObject> object) {
 
 	for (auto& chunk : _chunks) {
-		std::erase_if(chunk->_gameObjectsOnMap, [&](const std::shared_ptr<GameObjectOnMap>& objectOnMap) {
+		std::erase_if(chunk->_gameObjectsOnMap, [&](const std::shared_ptr<PlacedGameObject>& objectOnMap) {
 			return objectOnMap->_prefab.lock().get() == object.get();
 		});
 	}

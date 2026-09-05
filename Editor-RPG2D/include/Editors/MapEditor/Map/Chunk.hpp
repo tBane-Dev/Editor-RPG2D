@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include "Editors/MapEditor/Map/Tile.hpp"
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 
 class Chunk : public std::enable_shared_from_this<Chunk> {
 public:
@@ -13,7 +13,7 @@ public:
 	bool _isVisible;
 	std::unique_ptr<sf::Text> _coordsText;
 
-	std::vector<std::shared_ptr<GameObjectOnMap>> _gameObjectsOnMap;
+	std::vector<std::shared_ptr<PlacedGameObject>> _gameObjectsOnMap;
 	sf::IntRect _gameObjectsOnMapRect;
 
 	Chunk(int x, int y);
@@ -35,11 +35,11 @@ public:
 	);
 
 	sf::IntRect getRect();
-	void calculateGameObjectOnMapRect();
+	void calculatePlacedGameObjectRect();
 	sf::IntRect getGameObjectsOnMapRect();
 
-	void addGameObjectOnMap(std::shared_ptr<GameObjectOnMap> gameObjectOnMap);
-	void removeGameObjectOnMap(std::shared_ptr<GameObjectOnMap> gameObjectOnMap);
+	void addPlacedGameObject(std::shared_ptr<PlacedGameObject> gameObjectOnMap);
+	void removePlacedGameObject(std::shared_ptr<PlacedGameObject> gameObjectOnMap);
 	
 	void setVisible();
 

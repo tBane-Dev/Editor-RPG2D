@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/GameObject.hpp"
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 #include "Objects/Wall.hpp"
 #include "Objects/Building/Skelet.hpp"
 #include "Objects/Building/Roof.hpp"
@@ -51,7 +51,7 @@ public:
 	void drawOutsideLook(sf::RenderTarget& target, sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 };
 
-class Building : public GameObjectOnMap {
+class Building : public PlacedGameObject {
 public:
 
 

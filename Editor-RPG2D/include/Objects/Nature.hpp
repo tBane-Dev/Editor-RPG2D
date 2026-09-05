@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/GameObject.hpp"
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 
 class NaturePrefab : public GameObject {
 public:
@@ -9,7 +9,7 @@ public:
 	~NaturePrefab();
 };
 
-class Nature : public GameObjectOnMap {
+class Nature : public PlacedGameObject {
 public:
 
 	Nature(std::weak_ptr<GameObject> prefab);

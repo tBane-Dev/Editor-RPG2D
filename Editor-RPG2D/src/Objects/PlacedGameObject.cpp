@@ -1,4 +1,4 @@
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 #include "RenderWindow.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "DebugLog.hpp"
@@ -6,7 +6,7 @@
 #include "Theme.hpp"
 #include "ShadersManager.hpp"
 
-GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
+PlacedGameObject::PlacedGameObject(std::weak_ptr<GameObject> prefab) : Object() {
 	_prefab = prefab;
 
 	if(_prefab.expired()) {
@@ -28,11 +28,11 @@ GameObjectOnMap::GameObjectOnMap(std::weak_ptr<GameObject> prefab) : Object() {
 	_text = std::make_unique<sf::Text>(basicFont, (_prefab.expired()) ? L"Unknown" : _prefab.lock()->getName(), 14);
 }
 
-GameObjectOnMap::~GameObjectOnMap() {
+PlacedGameObject::~PlacedGameObject() {
 
 }
 
-void GameObjectOnMap::drawFrame(sf::Color color) {
+void PlacedGameObject::drawFrame(sf::Color color) {
 
 	auto prefab = _prefab.lock();
 	if (!prefab)
@@ -133,15 +133,15 @@ void GameObjectOnMap::drawFrame(sf::Color color) {
 	
 }
 
-sf::Vector2i GameObjectOnMap::getPosition() {
+sf::Vector2i PlacedGameObject::getPosition() {
 	return _position;
 }
 
-void GameObjectOnMap::setPosition(sf::Vector2i position) {
+void PlacedGameObject::setPosition(sf::Vector2i position) {
 	_position = position;
 }
 
-void GameObjectOnMap::cursorHover() {
+void PlacedGameObject::cursorHover() {
 
 	if (!_animator)
 		return;
@@ -157,18 +157,18 @@ void GameObjectOnMap::cursorHover() {
 		if (!_prefab.expired()) {
 			std::shared_ptr<Mesh> mesh = _prefab.lock()->getMesh();
 			if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, _position)) {
-				MapEditor::editor->_game_objects->_hoveredGameObjectOnMap = shared_from_this();
+				MapEditor::editor->_game_objects->_hoveredPlacedGameObject = shared_from_this();
 			}
 		}
 			
 	}
 }
 
-void GameObjectOnMap::update() {
+void PlacedGameObject::update() {
 	_animator->update();
 }
 
-void GameObjectOnMap::draw() {
+void PlacedGameObject::draw() {
 
 	bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
 
@@ -205,7 +205,7 @@ void GameObjectOnMap::draw() {
 		sf::Sprite sprite(*animations->getTexture()->_texture);
 		sprite.setPosition(sf::Vector2f(_position));
 		sprite.setTextureRect(frameRect);
-		if (MapEditor::editor->_game_objects->_hoveredGameObjectOnMap.lock().get() == this)
+		if (MapEditor::editor->_game_objects->_hoveredPlacedGameObject.lock().get() == this)
 			sprite.setColor(sf::Color(255, 30+64, 45+64)); // TO-DO - must be a shader highlight
 		else if(_isSelected == true)
 			sprite.setColor(sf::Color(255, 30 + 64, 45 + 64));

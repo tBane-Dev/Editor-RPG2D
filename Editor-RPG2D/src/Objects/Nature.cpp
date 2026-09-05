@@ -9,7 +9,7 @@ NaturePrefab::~NaturePrefab() {
 
 }
 
-Nature::Nature(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
+Nature::Nature(std::weak_ptr<GameObject> prefab) : PlacedGameObject(prefab) {
 	_type = ObjectType::Nature;
 }
 

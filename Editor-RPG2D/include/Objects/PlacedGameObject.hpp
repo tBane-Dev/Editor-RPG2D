@@ -5,7 +5,7 @@
 
 
 
-class GameObjectOnMap : public Object, public std::enable_shared_from_this<GameObjectOnMap> {
+class PlacedGameObject : public Object, public std::enable_shared_from_this<PlacedGameObject> {
 public:
 
 	std::weak_ptr<GameObject> _prefab;
@@ -15,8 +15,8 @@ public:
 	bool _isSelected;
 	std::unique_ptr<sf::Text> _text;
 
-	GameObjectOnMap(std::weak_ptr<GameObject> prefab);
-	~GameObjectOnMap();
+	PlacedGameObject(std::weak_ptr<GameObject> prefab);
+	~PlacedGameObject();
 
 	void drawFrame(sf::Color color = sf::Color(127+64, 30, 45));
 

@@ -1,18 +1,18 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 #include <fstream>
 
 class GameObjectsOnMap {
 public:
-    std::vector<std::shared_ptr<GameObjectOnMap>> _visibleGameObjectsOnMap;
-    std::weak_ptr<GameObjectOnMap> _hoveredGameObjectOnMap;
+    std::vector<std::shared_ptr<PlacedGameObject>> _visibleGameObjectsOnMap;
+    std::weak_ptr<PlacedGameObject> _hoveredPlacedGameObject;
 
     GameObjectsOnMap();
     ~GameObjectsOnMap(); 
     
-	void addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap);
-    void removeGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap);
+	void addGameObject(std::weak_ptr<PlacedGameObject> gameObjectOnMap);
+    void removeGameObject(std::weak_ptr<PlacedGameObject> gameObjectOnMap);
     void removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefab);
     void removeGameObjectsByAnimations(int animationID);
     void replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab);

@@ -9,7 +9,7 @@
 
 GameObjectsOnMap::GameObjectsOnMap() {
 	_visibleGameObjectsOnMap.clear();
-	_hoveredGameObjectOnMap = std::weak_ptr<GameObjectOnMap>();
+	_hoveredPlacedGameObject = std::weak_ptr<PlacedGameObject>();
 	 
 	
 }
@@ -18,7 +18,7 @@ GameObjectsOnMap::~GameObjectsOnMap() {
 
 }
 
-void GameObjectsOnMap::addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap) {
+void GameObjectsOnMap::addGameObject(std::weak_ptr<PlacedGameObject> gameObjectOnMap) {
 
 	_visibleGameObjectsOnMap.push_back(gameObjectOnMap.lock());
 	if(gameObjectOnMap.lock()->_type == ObjectType::Building) {
@@ -29,14 +29,14 @@ void GameObjectsOnMap::addGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOn
 	}
 }
 
-void GameObjectsOnMap::removeGameObject(std::weak_ptr<GameObjectOnMap> gameObjectOnMap) {
-	std::shared_ptr<GameObjectOnMap> objectToRemove = gameObjectOnMap.lock();
+void GameObjectsOnMap::removeGameObject(std::weak_ptr<PlacedGameObject> gameObjectOnMap) {
+	std::shared_ptr<PlacedGameObject> objectToRemove = gameObjectOnMap.lock();
 	
 	if (!objectToRemove)
 		return;
 
 	std::erase_if(_visibleGameObjectsOnMap,
-		[&](const std::shared_ptr<GameObjectOnMap>& object)
+		[&](const std::shared_ptr<PlacedGameObject>& object)
 		{
 			if (objectToRemove->_type == ObjectType::Building && object->_type == ObjectType::Wall) {
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectToRemove);
@@ -68,7 +68,7 @@ void GameObjectsOnMap::removeGameObjectsByAnimations(int animationID)
 		return;
 
 	std::erase_if(_visibleGameObjectsOnMap,
-		[&](const std::weak_ptr<GameObjectOnMap>& weakObject)
+		[&](const std::weak_ptr<PlacedGameObject>& weakObject)
 		{
 			auto object = weakObject.lock();
 			if (!object)
@@ -94,7 +94,7 @@ void GameObjectsOnMap::removeGameObjectsByPrefab(std::weak_ptr<GameObject> prefa
         return;
 
     std::erase_if(_visibleGameObjectsOnMap,
-        [&](const std::shared_ptr<GameObjectOnMap>& object)
+        [&](const std::shared_ptr<PlacedGameObject>& object)
         {
             if (!object)
                 return true;
@@ -131,11 +131,11 @@ void GameObjectsOnMap::replacePrefab(std::shared_ptr<GameObject> oldPrefab, std:
 
 
 			// create a new object on the map with the new prefab
-			std::shared_ptr<GameObjectOnMap> newObjectOnMap;
+			std::shared_ptr<PlacedGameObject> newObjectOnMap;
 
 			if (newPrefab->_type == ObjectType::Monster) newObjectOnMap = std::make_shared<Monster>(newPrefab);
 			else if (newPrefab->_type == ObjectType::Nature) newObjectOnMap = std::make_shared<Nature>(newPrefab);
-			else newObjectOnMap = std::make_shared<GameObjectOnMap>(newPrefab);
+			else newObjectOnMap = std::make_shared<PlacedGameObject>(newPrefab);
 
 			// set the position
 			if (newObjectOnMap->_type == ObjectType::Monster) {
@@ -171,7 +171,7 @@ void GameObjectsOnMap::sort() {
 		return -1; // other types
 		};
 
-	std::sort(_visibleGameObjectsOnMap.begin(), _visibleGameObjectsOnMap.end(), [&types,getIndex](const std::shared_ptr<GameObjectOnMap>& a, const std::shared_ptr<GameObjectOnMap>& b) {
+	std::sort(_visibleGameObjectsOnMap.begin(), _visibleGameObjectsOnMap.end(), [&types,getIndex](const std::shared_ptr<PlacedGameObject>& a, const std::shared_ptr<PlacedGameObject>& b) {
 
 		
 
@@ -300,13 +300,13 @@ void GameObjectsOnMap::load(std::ifstream& loader) {
 		ObjectType type = (ObjectType)reader.read_int8();
 
 		if (type == ObjectType::None) {
-			std::shared_ptr<GameObjectOnMap> object = std::make_shared<GameObjectOnMap>(std::weak_ptr<GameObject>());
+			std::shared_ptr<PlacedGameObject> object = std::make_shared<PlacedGameObject>(std::weak_ptr<GameObject>());
 			object->setPosition(reader.read_Vector2i());
 			object->_animator->_animation = reader.read_int8();
 			object->_animator->_frame = reader.read_int8();
 			object->_animator->_timer = reader.read_float();
 			std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(object->_position);
-			if (chunk) chunk->addGameObjectOnMap(object);
+			if (chunk) chunk->addPlacedGameObject(object);
 		}
 
 		if( type == ObjectType::Nature) {
@@ -318,7 +318,7 @@ void GameObjectsOnMap::load(std::ifstream& loader) {
 			nature->_animator->_frame = reader.read_int8();
 			nature->_animator->_timer = reader.read_float();
 			std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(nature->_position);
-			if(chunk) chunk->addGameObjectOnMap(nature);
+			if(chunk) chunk->addPlacedGameObject(nature);
 		}
 
 		if( type == ObjectType::Monster) {
@@ -333,7 +333,7 @@ void GameObjectsOnMap::load(std::ifstream& loader) {
 			monster->_animator->_frame = reader.read_int8();
 			monster->_animator->_timer = reader.read_float();
 			std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(monster->_basePosition);
-			if (chunk) chunk->addGameObjectOnMap(monster);
+			if (chunk) chunk->addPlacedGameObject(monster);
 		}
 	}
 

@@ -14,7 +14,7 @@ MonsterPrefab::~MonsterPrefab() {
 
 }
 
-Monster::Monster(std::weak_ptr<GameObject> prefab) : GameObjectOnMap(prefab) {
+Monster::Monster(std::weak_ptr<GameObject> prefab) : PlacedGameObject(prefab) {
 
 	_type = ObjectType::Monster;
 
@@ -40,7 +40,7 @@ sf::Vector2i Monster::getPosition() {
 }
 
 void Monster::setPosition(sf::Vector2i position) {
-	GameObjectOnMap::setPosition(position);
+	PlacedGameObject::setPosition(position);
 
 	_basePosition = position;
 

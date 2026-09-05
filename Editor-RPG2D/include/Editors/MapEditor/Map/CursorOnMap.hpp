@@ -2,12 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include "Objects/Object.hpp"
 #include "Cursor.hpp"
-#include "Editors/MapEditor/Map/SelectedGameObjectOnMap.hpp"
+#include "Objects/SelectedPlacedGameObject.hpp"
 
 class CursorOnMap : public Cursors::CursorWithObject {
 public:
-    std::vector<std::shared_ptr<SelectedGameObjectOnMap>> _prevSelectedObjects;
-    std::vector<std::shared_ptr<SelectedGameObjectOnMap>> _selectedObjects;
+    std::vector<std::shared_ptr<SelectedPlacedGameObject>> _prevSelectedObjects;
+    std::vector<std::shared_ptr<SelectedPlacedGameObject>> _selectedObjects;
 	bool _isDragging = false;
 	bool _isSelecting = false;
 	sf::IntRect _selectionRect;

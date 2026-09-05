@@ -37,27 +37,27 @@ namespace MapEditor {
 		sf::IntRect mapRect = map->getRect();
 		sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations().lock()->getTexture()->_texture->getSize());
 
-		std::shared_ptr<GameObjectOnMap> tree_1 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		std::shared_ptr<PlacedGameObject> tree_1 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
 		tree_1->setPosition(sf::Vector2i(0, 0));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_1->getPosition())->addGameObjectOnMap(tree_1);
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_1->getPosition())->addPlacedGameObject(tree_1);
 
-		std::shared_ptr<GameObjectOnMap> tree_2 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		std::shared_ptr<PlacedGameObject> tree_2 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
 		tree_2->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, 0));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_2->getPosition())->addGameObjectOnMap(tree_2);
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_2->getPosition())->addPlacedGameObject(tree_2);
 
-		std::shared_ptr<GameObjectOnMap> tree_3 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		std::shared_ptr<PlacedGameObject> tree_3 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
 		tree_3->setPosition(sf::Vector2i(0, mapRect.size.y - texSize.y));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_3->getPosition())->addGameObjectOnMap(tree_3);
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_3->getPosition())->addPlacedGameObject(tree_3);
 
-		std::shared_ptr<GameObjectOnMap> tree_4 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
+		std::shared_ptr<PlacedGameObject> tree_4 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
 		tree_4->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, mapRect.size.y - texSize.y));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_4->getPosition())->addGameObjectOnMap(tree_4);
+		MapEditor::editor->_map->getChunkByGlobalPosition(tree_4->getPosition())->addPlacedGameObject(tree_4);
 
 
 		//for (int i = 0; i < 1000; i += 1) {
-		//	std::shared_ptr<GameObjectOnMap> boulder = std::make_shared<Nature>(prefabs_manager->getPrefab(L"boulder_1"));
+		//	std::shared_ptr<PlacedGameObject> boulder = std::make_shared<Nature>(prefabs_manager->getPrefab(L"boulder_1"));
 		//	boulder->setPosition(sf::Vector2i(rand() % mapRect.size.x, rand() % mapRect.size.y));
-		//	MapEditor::editor->_map->getChunkByGlobalPosition(boulder->getPosition())->addGameObjectOnMap(boulder);
+		//	MapEditor::editor->_map->getChunkByGlobalPosition(boulder->getPosition())->addPlacedGameObject(boulder);
 		//}
 		
 	}
@@ -92,7 +92,7 @@ namespace MapEditor {
 			return;
 		}
 
-		_game_objects->_hoveredGameObjectOnMap = std::weak_ptr<GameObjectOnMap>();
+		_game_objects->_hoveredPlacedGameObject = std::weak_ptr<PlacedGameObject>();
 		_game_objects->cursorHover();
 
 		_map->cursorHover();

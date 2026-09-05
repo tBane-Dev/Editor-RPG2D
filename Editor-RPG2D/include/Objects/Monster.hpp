@@ -1,5 +1,5 @@
 #pragma once
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 #include "Editors/MapEditor/Map/Path.hpp"
 #include "Animator.hpp"
 
@@ -14,7 +14,7 @@ public:
 	~MonsterPrefab();
 };
 
-class Monster : public GameObjectOnMap {
+class Monster : public PlacedGameObject {
 public:
 
 	MonsterState _state;

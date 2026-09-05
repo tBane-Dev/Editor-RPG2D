@@ -203,8 +203,8 @@ void CursorOnBuilding::handleEvent(const sf::Event& event) {
 			position.y = (_globalPosition.y - (int)frameHeight / 2) / floorSize * floorSize;
     
             // create object on map by type 
-            std::shared_ptr<GameObjectOnMap> objectOnMap;
-            objectOnMap = std::make_shared<GameObjectOnMap>(prefab);
+            std::shared_ptr<PlacedGameObject> objectOnMap;
+            objectOnMap = std::make_shared<PlacedGameObject>(prefab);
             // positioning and adding object to map
             objectOnMap->setPosition(position);
 

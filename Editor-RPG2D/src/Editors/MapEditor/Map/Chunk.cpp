@@ -139,7 +139,7 @@ sf::IntRect Chunk::getRect() {
 
 }
 
-void Chunk::calculateGameObjectOnMapRect() {
+void Chunk::calculatePlacedGameObjectRect() {
 
 	_gameObjectsOnMapRect = getRect();
 
@@ -182,13 +182,13 @@ sf::IntRect Chunk::getGameObjectsOnMapRect() {
 	return _gameObjectsOnMapRect;
 }
 
-void Chunk::addGameObjectOnMap(std::shared_ptr<GameObjectOnMap> object) {
+void Chunk::addPlacedGameObject(std::shared_ptr<PlacedGameObject> object) {
 	_gameObjectsOnMap.push_back(object);
-	calculateGameObjectOnMapRect();
+	calculatePlacedGameObjectRect();
 }
 
-void Chunk::removeGameObjectOnMap(std::shared_ptr<GameObjectOnMap> object) {
-	std::erase_if(_gameObjectsOnMap, [&](const std::shared_ptr<GameObjectOnMap>& obj) {
+void Chunk::removePlacedGameObject(std::shared_ptr<PlacedGameObject> object) {
+	std::erase_if(_gameObjectsOnMap, [&](const std::shared_ptr<PlacedGameObject>& obj) {
 		
 		if (object->_type == ObjectType::Building && (obj->_type == ObjectType::Wall)) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
@@ -211,7 +211,7 @@ void Chunk::removeGameObjectOnMap(std::shared_ptr<GameObjectOnMap> object) {
 		return obj == object;
 		});
 
-	calculateGameObjectOnMapRect();
+	calculatePlacedGameObjectRect();
 }
 
 void Chunk::setVisible() {

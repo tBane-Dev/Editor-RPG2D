@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/GameObject.hpp"
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 
 class Building;
 
@@ -14,7 +14,7 @@ public:
 	~WallPrefab();
 };
 
-class Wall : public GameObjectOnMap {
+class Wall : public PlacedGameObject {
 public:
 	std::weak_ptr<Building> _building;
 	sf::IntRect _textureBottomRect;

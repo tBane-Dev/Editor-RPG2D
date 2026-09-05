@@ -141,8 +141,8 @@ namespace BuildingsEditor {
 					for(auto& object : chunk->_gameObjectsOnMap) {
 						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 						if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
-							chunk->removeGameObjectOnMap(building);
-							chunk->removeGameObjectOnMap(building->_outsideObject);
+							chunk->removePlacedGameObject(building);
+							chunk->removePlacedGameObject(building->_outsideObject);
 							//DebugLog(L"remove building from chunk: " + building->_prefab.lock()->getName());
 						}
 					}

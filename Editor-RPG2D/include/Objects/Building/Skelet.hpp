@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/GameObject.hpp"
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 
 class Building;
 
@@ -26,7 +26,7 @@ public:
 
 extern std::shared_ptr<SkeletSet> skeletset;
 
-class Skelet : public GameObjectOnMap {
+class Skelet : public PlacedGameObject {
 public:
 	sf::IntRect _rect;
 	std::weak_ptr<Building> _building;

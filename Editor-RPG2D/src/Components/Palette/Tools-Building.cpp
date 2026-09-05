@@ -246,8 +246,6 @@ void ToolsBuilding::updateCategories() {
 	for(int i=_startCategoryIndex; i < _startCategoryIndex + _visibleCategoriesCount && i < _categories.size(); i++) {
 		_visibleCategories.push_back(_categories[i]);
 	}
-
-	std::wcout << L"\n\n\n";
 }
 
 void ToolsBuilding::selectCategory(int id) {

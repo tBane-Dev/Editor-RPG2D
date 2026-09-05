@@ -1,11 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Objects/GameObject.hpp"
-#include "Editors/MapEditor/Map/GameObjectOnMap.hpp"
+#include "Objects/PlacedGameObject.hpp"
 
 class Building;
 
-class Outside : public GameObjectOnMap {
+class Outside : public PlacedGameObject {
 public:
 	std::weak_ptr<Building> _building;
 	sf::Texture _texture;

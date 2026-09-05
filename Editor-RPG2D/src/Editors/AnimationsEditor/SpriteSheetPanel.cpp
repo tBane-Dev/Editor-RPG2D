@@ -35,8 +35,7 @@ namespace AnimationsEditor {
 				std::shared_ptr<sf::Image> image = std::make_shared<sf::Image>();
 				
 				if (!image->loadFromFile(fileDialog->getPathFile())) {
-					std::wcout << L"Nie udało się wczytać obrazka: "
-						<< fileDialog->getPathFile() << std::endl;
+					DebugError(L"Nie udało się wczytać obrazka: " + fileDialog->getPathFile());
 					return;
 				}
 
