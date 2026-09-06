@@ -400,48 +400,7 @@ namespace BuildingsEditor {
 			_building->update();
 	}
 
-	void EditableBuilding::drawOnlyShape() {
-		ResizableShape::drawOnlyRect();
-	}
-
-	
-	void EditableBuilding::drawOnlyEdgePoints() {
-		ResizableShape::drawOnlyEdgePoints();
-	}
-
 	void EditableBuilding::draw() {
-
-		if (BuildingsEditor::editor->_building_panel->_building.get() == this) {
-			sf::FloatRect fr;
-			fr.size = sf::Vector2f(BuildingsEditor::editor->_building_panel->_rect.size);
-			fr.position = sf::Vector2f(BuildingsEditor::editor->_building_panel->_rect.position);
-
-			sf::View view(fr);
-
-			sf::FloatRect vp(
-				sf::Vector2f(
-					fr.position.x / GUI_manager->_view.getSize().x,
-					fr.position.y / GUI_manager->_view.getSize().y
-				),
-
-				sf::Vector2f(
-					fr.size.x / GUI_manager->_view.getSize().x,
-					fr.size.y / GUI_manager->_view.getSize().y
-				)
-			);
-
-			view.setViewport(vp);
-			Main::render_window->setView(view);
-		}
-		
-		drawOnlyShape();
-		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
-		bp->drawOnlyFloor(*Main::render_window, _building->getPosition());
-		bp->drawOnlyWalls(*Main::render_window, _building->getPosition(), _scale);
-		bp->drawOnlyRoof(*Main::render_window, _building->getPosition(), _scale);
-		drawOnlyEdgePoints();
-
-		
-
+		ResizableShape::drawOnlyRect();
 	}
 }

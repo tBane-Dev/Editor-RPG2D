@@ -29,9 +29,6 @@ namespace BuildingsEditor {
 		virtual void cursorHover();
 		virtual void handleEvent(const sf::Event& event);
 		virtual void update();
-		void drawOnlyShape();
-		
-		void drawOnlyEdgePoints();
 		virtual void draw();
 	};
 }

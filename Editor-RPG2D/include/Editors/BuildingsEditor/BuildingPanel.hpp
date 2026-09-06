@@ -3,6 +3,7 @@
 #include "Editors/BuildingsEditor/EditableBuilding.hpp"
 #include "TexturesManager.hpp"
 #include "Editors/BuildingsEditor/CursorOnBuilding.hpp"
+#include "Editors/BuildingsEditor/PlacedGameObjects.hpp"
 
 namespace BuildingsEditor {
 
@@ -17,6 +18,7 @@ namespace BuildingsEditor {
 		std::shared_ptr<BuildingPrefab> _buildingPrefab;
 		std::shared_ptr<BuildingPrefab> _editablePrefab;
 		std::shared_ptr<EditableBuilding> _building;
+		std::shared_ptr<PlacedGameObjects> _game_objects;
 		std::shared_ptr<CursorOnBuilding> _cursorOnBuilding;
 
 		BuildingPanel(sf::Vector2i margin);

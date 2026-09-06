@@ -14,6 +14,7 @@ namespace BuildingsEditor {
 
 		_buildingPrefab = nullptr;
 		_cursorOnBuilding = std::make_shared<CursorOnBuilding>();
+		_game_objects = std::make_shared<PlacedGameObjects>();
 	}
 
 	BuildingPanel::~BuildingPanel() {
@@ -70,8 +71,8 @@ namespace BuildingsEditor {
 		Main::render_window->setView(view);
 
 		// draw building
-		//_building->_building->_prefab.lock()->getCollider()->draw(_building->_building->getPosition());
-		_building->drawOnlyShape();
+		_building->draw(); // draw only rect
+
 		std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_building->_building->_prefab.lock());
 		if (buildingPrefab) {
 			buildingPrefab->drawOnlyFloor(*Main::render_window, _building->_building->getPosition());

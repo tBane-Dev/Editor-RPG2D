@@ -3,13 +3,16 @@
 #include "Objects/Object.hpp"
 #include "Cursor.hpp"
 
-class CursorOnBuilding : public Cursors::CursorWithObject {
-public:
+namespace BuildingsEditor {
+	class CursorOnBuilding : public Cursors::CursorWithObject {
+	public:
 
-	CursorOnBuilding();
-	~CursorOnBuilding();
+		CursorOnBuilding();
+		~CursorOnBuilding();
 
-	virtual void update();
-	virtual void handleEvent(const sf::Event& event);
-	virtual void draw();
-};
+		virtual void update();
+		virtual void handleEvent(const sf::Event& event);
+		virtual void draw();
+	};
+
+}

@@ -1,3 +1,4 @@
+#include "Editors/MapEditor/Map/PlacedGameObjects.hpp"
 #include "DebugLog.hpp"
 #include "Objects/Nature.hpp"
 #include "Objects/Monster.hpp"
