@@ -900,7 +900,7 @@ void Building::addWallsToGameObjects() {
 		if (!wall)
 			continue;
 
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk) {
 			chunk->addPlacedGameObject(wall);
@@ -917,7 +917,7 @@ void Building::addSkeletsToGameObjects() {
 		if (!skelet)
 			continue;
 
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk) {
 			chunk->addPlacedGameObject(skelet);
@@ -931,7 +931,7 @@ void Building::addOutsideToGameObjects() {
 	if (!_outsideObject)
 		return;
 
-	std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+	std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 	if (chunk) {
 		chunk->addPlacedGameObject(_outsideObject);
@@ -949,7 +949,7 @@ void Building::removeWallsFromGameObjects() {
 		if (!wall)
 			continue;
 
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk)
 			chunk->removePlacedGameObject(wall);
@@ -966,7 +966,7 @@ void Building::removeSkeletsFromGameObjects() {
 		if (!skelet)
 			continue;
 
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk)
 			chunk->removePlacedGameObject(skelet);
@@ -977,7 +977,7 @@ void Building::removeSkeletsFromGameObjects() {
 
 void Building::removeOutsideFromGameObjects() {
 	if (_outsideObject) {
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 
 		if (chunk)
 			chunk->removePlacedGameObject(_outsideObject);

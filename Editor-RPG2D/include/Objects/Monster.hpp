@@ -21,7 +21,7 @@ public:
 	sf::Vector2i _basePosition;
 	Direction _direction;
 
-	std::shared_ptr<Path> _path;
+	std::shared_ptr<MapEditor::Path> _path;
 
 	Monster(std::weak_ptr<GameObject> prefab);
 	~Monster();

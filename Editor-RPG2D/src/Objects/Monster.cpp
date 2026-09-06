@@ -25,7 +25,7 @@ Monster::Monster(std::weak_ptr<GameObject> prefab) : PlacedGameObject(prefab) {
 
 	_animator->setRandFrame();
 
-	_path = std::make_shared<Path>();
+	_path = std::make_shared<MapEditor::Path>();
 	_path->setStartPoint(_position);
 	_path->setEndPoint(_position);
 	_path->generatePath();
@@ -61,8 +61,8 @@ void Monster::update() {
 				_path->setStartPoint(_position);
 				sf::Vector2i endPoint = _basePosition;
 				int r = 8;
-				endPoint.x += (rand() % (2 * r + 1) - r) * Tile::tileSize;
-				endPoint.y += (rand() % (2 * r + 1) - r) * Tile::tileSize;
+				endPoint.x += (rand() % (2 * r + 1) - r) * MapEditor::Tile::tileSize;
+				endPoint.y += (rand() % (2 * r + 1) - r) * MapEditor::Tile::tileSize;
 				_path->setEndPoint(endPoint);
 				_path->generatePath();
 
@@ -118,7 +118,7 @@ void Monster::update() {
 	}
 
 	if (MapEditor::editor->_camera->_visibleRect.findIntersection(colliderRect)) {
-		std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 		chunk->_isVisible = true;
 	}
 	

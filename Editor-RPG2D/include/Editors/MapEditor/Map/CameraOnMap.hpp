@@ -1,22 +1,24 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class CameraOnMap {
+namespace MapEditor {
+	class CameraOnMap {
 	public:
-	const static float moveSpeed;
+		const static float moveSpeed;
 
-	sf::Vector2f _position;
-	sf::View _view;
-	bool _isMoving;
+		sf::Vector2f _position;
+		sf::View _view;
+		bool _isMoving;
 
-	sf::IntRect _visibleRect;
+		sf::IntRect _visibleRect;
 
-	CameraOnMap();
-	~CameraOnMap();
+		CameraOnMap();
+		~CameraOnMap();
 
-	void setView();
+		void setView();
 
-	void handleEvent(const sf::Event& event);
-	void update();
+		void handleEvent(const sf::Event& event);
+		void update();
 
-};
+	};
+}
