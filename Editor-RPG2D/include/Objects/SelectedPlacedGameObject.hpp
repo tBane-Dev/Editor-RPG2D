@@ -1,6 +1,5 @@
 #pragma once
 #include "Objects/PlacedGameObject.hpp"
-#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
 
 class SelectedPlacedGameObject {
 public: 

@@ -36,10 +36,10 @@ public:
 
 	sf::IntRect getRect();
 	void calculatePlacedGameObjectRect();
-	sf::IntRect getGameObjectsOnMapRect();
+	sf::IntRect getPlacedGameObjectsRect();
 
-	void addPlacedGameObject(std::shared_ptr<PlacedGameObject> gameObjectOnMap);
-	void removePlacedGameObject(std::shared_ptr<PlacedGameObject> gameObjectOnMap);
+	void addPlacedGameObject(std::shared_ptr<PlacedGameObject> placedGameObject);
+	void removePlacedGameObject(std::shared_ptr<PlacedGameObject> placedGameObject);
 	
 	void setVisible();
 

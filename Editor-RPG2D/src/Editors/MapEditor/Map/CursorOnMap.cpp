@@ -12,7 +12,7 @@
 #include "Objects/Building/Roof1.hpp"
 #include "Objects/Building/Roof2.hpp"
 #include "PrefabsManager.hpp"
-#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include "Editors/MapEditor/Map/PlacedGameObjects.hpp"
 #include <typeinfo>
 #include "Animator.hpp"
 #include "DebugLog.hpp"
@@ -91,7 +91,7 @@ void CursorOnMap::update() {
 
         if (_selectionRect.size.x != 0 || _selectionRect.size.y != 0) {
             std::vector<std::shared_ptr<PlacedGameObject>> selectedGameObjects;
-            for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
+            for (auto& object : MapEditor::editor->_game_objects->_visiblePlacedGameObjects) {
 
                 if (object->_prefab.expired()) continue;
 
@@ -257,7 +257,7 @@ void CursorOnMap::handleEvent(const sf::Event& event) {
                 }
 
                 std::shared_ptr<PlacedGameObject> selectedGameObject = nullptr;
-                for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
+                for (auto& object : MapEditor::editor->_game_objects->_visiblePlacedGameObjects) {
                     
                     if (object->_prefab.expired()) continue;
 

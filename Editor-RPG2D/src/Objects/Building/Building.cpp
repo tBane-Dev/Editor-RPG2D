@@ -994,7 +994,7 @@ void Building::addWallsToVisibleGameObjects() {
 		if (!wall)
 			continue;
 
-		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(wall);
+		MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(wall);
 	}
 }
 
@@ -1005,14 +1005,14 @@ void Building::addSkeletsToVisibleGameObjects() {
 		if (!skelet)
 			continue;
 
-		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(skelet);
+		MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(skelet);
 	}
 }
 
 
 void Building::addOutsideToVisibleGameObjects() {
 	if (_outsideObject) {
-		MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.push_back(_outsideObject);
+		MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(_outsideObject);
 	}
 }
 

@@ -4,7 +4,7 @@
 #include "Editors/MapEditor/Map/Map.hpp"
 #include "Editors/MapEditor/Map/CameraOnMap.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
-#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include "Editors/MapEditor/Map/PlacedGameObjects.hpp"
 #include "Editors/MapEditor/MainMenu.hpp"
 #include "Editors/MapEditor/Palette.hpp"
 
@@ -15,7 +15,7 @@ namespace MapEditor {
 		std::shared_ptr<Palette> _palette;
 
 		std::shared_ptr<Map> _map;
-		std::shared_ptr<GameObjectsOnMap> _game_objects;
+		std::shared_ptr<PlacedGameObjects> _game_objects;
 		std::shared_ptr<CameraOnMap> _camera;
 		std::shared_ptr<CursorOnMap> _cursor_on_map;
 

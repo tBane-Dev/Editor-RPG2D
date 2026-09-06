@@ -31,7 +31,7 @@ namespace MapEditor {
 	}
 
 	void Editor::createGameObjects() {
-		_game_objects = std::make_shared<GameObjectsOnMap>();
+		_game_objects = std::make_shared<PlacedGameObjects>();
 
 		std::shared_ptr<Map> map = MapEditor::editor->_map;
 		sf::IntRect mapRect = map->getRect();

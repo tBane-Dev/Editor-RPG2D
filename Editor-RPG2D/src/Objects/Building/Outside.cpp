@@ -5,7 +5,7 @@
 #include "Objects/Building/Building.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "Editors/MapEditor/Map/CursorOnMap.hpp"
-#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include "Editors/MapEditor/Map/PlacedGameObjects.hpp"
 
 Outside::Outside(std::weak_ptr<Building> building) : PlacedGameObject(std::weak_ptr<GameObject>()){
 	_type = ObjectType::Outside;

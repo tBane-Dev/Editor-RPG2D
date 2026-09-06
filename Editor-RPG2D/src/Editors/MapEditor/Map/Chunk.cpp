@@ -178,7 +178,7 @@ void Chunk::calculatePlacedGameObjectRect() {
 	}
 }
 
-sf::IntRect Chunk::getGameObjectsOnMapRect() {
+sf::IntRect Chunk::getPlacedGameObjectsRect() {
 	return _gameObjectsOnMapRect;
 }
 
@@ -218,9 +218,9 @@ void Chunk::setVisible() {
 	_isVisible = true;
 	MapEditor::editor->_map->_visibleChunks.push_back(shared_from_this());
 
-	for (auto& gameObjectOnMap : _gameObjectsOnMap) {
-		if (gameObjectOnMap) {
-			MapEditor::editor->_game_objects->addGameObject(gameObjectOnMap);
+	for (auto& placedGameObject : _gameObjectsOnMap) {
+		if (placedGameObject) {
+			MapEditor::editor->_game_objects->addGameObject(placedGameObject);
 		};
 	}
 }

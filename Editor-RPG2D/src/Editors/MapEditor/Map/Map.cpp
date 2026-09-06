@@ -5,7 +5,7 @@
 #include "ShadersManager.hpp"
 #include "BinaryWriter.hpp"
 #include "BinaryReader.hpp"
-#include "Editors/MapEditor/Map/GameObjectsOnMap.hpp"
+#include "Editors/MapEditor/Map/PlacedGameObjects.hpp"
 #include "DebugLog.hpp"
 
 Map::Map() {
@@ -200,7 +200,7 @@ void Map::setVisibleChunks() {
 		chunk->_isVisible = false;
 
 	_visibleChunks.clear();
-	MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.clear();
+	MapEditor::editor->_game_objects->_visiblePlacedGameObjects.clear();
 	
 	for(auto& chunk : _chunks) {
 		
@@ -211,7 +211,7 @@ void Map::setVisibleChunks() {
 			}
 		}
 
-		if (MapEditor::editor->_camera->_visibleRect.findIntersection(chunk->getGameObjectsOnMapRect())) {
+		if (MapEditor::editor->_camera->_visibleRect.findIntersection(chunk->getPlacedGameObjectsRect())) {
 			chunk->setVisible();
 		}
 	}
@@ -238,7 +238,7 @@ void Map::load(std::ifstream& loader) {
 
 	// clear all
 	_chunks.clear();
-	MapEditor::editor->_game_objects->_visibleGameObjectsOnMap.clear();
+	MapEditor::editor->_game_objects->_visiblePlacedGameObjects.clear();
 
 	BinaryReader reader(loader);
 

@@ -63,7 +63,7 @@ namespace BuildingsEditor {
 
 			newPrefab->_name = BuildingsEditor::editor->_name_panel->_name->getText();
 
-			auto visibleObjects = MapEditor::editor->_game_objects->_visibleGameObjectsOnMap;
+			auto visibleObjects = MapEditor::editor->_game_objects->_visiblePlacedGameObjects;
 			for (auto& object : visibleObjects) {
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			
@@ -92,7 +92,7 @@ namespace BuildingsEditor {
 				}
 			}
 
-			visibleObjects = MapEditor::editor->_game_objects->_visibleGameObjectsOnMap;
+			visibleObjects = MapEditor::editor->_game_objects->_visiblePlacedGameObjects;
 			for (auto& object : visibleObjects) {
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 				if (building && building->_prefab.lock() == newPrefab) {
@@ -124,7 +124,7 @@ namespace BuildingsEditor {
 			int buildingID = editor->_list_panel->_selectedItemIndex;
 			if (buildingID >= 0) {
 
-				for (auto& object : MapEditor::editor->_game_objects->_visibleGameObjectsOnMap) {
+				for (auto& object : MapEditor::editor->_game_objects->_visiblePlacedGameObjects) {
 					std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 					if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
 						building->removeWallsFromGameObjects();
