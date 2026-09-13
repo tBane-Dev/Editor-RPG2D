@@ -15,6 +15,7 @@ namespace BuildingsEditor {
 		_buildingPrefab = nullptr;
 		_cursorOnBuilding = std::make_shared<CursorOnBuilding>();
 		_game_objects = std::make_shared<PlacedGameObjects>();
+
 	}
 
 	BuildingPanel::~BuildingPanel() {
@@ -24,6 +25,11 @@ namespace BuildingsEditor {
 	void BuildingPanel::init() {
 		_building = std::make_shared<EditableBuilding>();
 		_building->create(nullptr);
+		
+		_game_objects->_visiblePlacedGameObjects.clear();
+		_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+		_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+		_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
 	}
 
 	void BuildingPanel::cursorHover() {
@@ -72,12 +78,12 @@ namespace BuildingsEditor {
 
 		// draw building
 		_building->draw(); // draw only rect
+		std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(_building->_building->_prefab.lock());
+		if(prefab)
+			prefab->drawOnlyFloor(*Main::render_window, _building->_building->getPosition());
 
-		std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_building->_building->_prefab.lock());
-		if (buildingPrefab) {
-			buildingPrefab->drawOnlyFloor(*Main::render_window, _building->_building->getPosition());
-			buildingPrefab->drawOnlyWalls(*Main::render_window, _building->_building->getPosition(), _building->_scale);
-			buildingPrefab->drawOnlyRoof(*Main::render_window, _building->_building->getPosition(), _building->_scale, _building->_building);
+		for (auto& object : _game_objects->_visiblePlacedGameObjects) {
+			object->draw();
 		}
 
 		// draw grid

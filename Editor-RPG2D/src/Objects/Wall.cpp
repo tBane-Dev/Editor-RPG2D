@@ -171,5 +171,12 @@ void Wall::draw(sf::RenderTarget& target, float scale, int drawType) {
 }
 
 void Wall::draw() {
-	draw(*Main::render_window, 1.f);
+	
+	if (Main::editor_manager->get_back() == BuildingsEditor::editor) {
+		draw(*Main::render_window, BuildingsEditor::editor->_building_panel->_building->_scale);
+	}
+
+	if(Main::editor_manager->get_back() == MapEditor::editor) {
+		draw(*Main::render_window, 1.f);
+	}
 }

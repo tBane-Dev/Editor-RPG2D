@@ -6,6 +6,7 @@
 #include "Objects/Building/Skelet.hpp"
 #include "Objects/Building/Roof.hpp"
 #include "Objects/Building/Outside.hpp"
+#include "EditorsManager.hpp"
 
 class BuildingPrefab : public GameObject {
 public:
@@ -38,6 +39,11 @@ public:
 	void generateSkelet(sf::Vector2i position, float scale = 1.0f, std::shared_ptr<Building> building = nullptr);
 	void generateCollider(float scale = 1.0f);
 	void generateMesh(float scale = 1.0f);
+
+
+	void copyWallsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building);
+	void copySkeletFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building);
+
 	void generatePreviewTexture(std::shared_ptr<sf::Texture>& texture, bool drawOutside = true);
 	void generatePreviewTextures();
 	std::shared_ptr<sf::Texture> getPreviewInsideTexture();
@@ -63,24 +69,23 @@ public:
 	Building(std::weak_ptr<GameObject> prefab);
 	~Building();
 
-	void generate(sf::Vector2i position);
+	void generate();
 
 	virtual void setPosition(sf::Vector2i position);
 	
 	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
 	
+	void addWallsToGameObjects(std::shared_ptr<Main::Editor> editor);
+	void addSkeletsToGameObjects(std::shared_ptr<Main::Editor> editor);
+	void addOutsideToGameObjects(std::shared_ptr<Main::Editor> editor);
 
-	void addWallsToGameObjects();
-	void addSkeletsToGameObjects();
-	void addOutsideToGameObjects();
+	void removeWallsFromGameObjects(std::shared_ptr<Main::Editor> editor);
+	void removeSkeletsFromGameObjects(std::shared_ptr<Main::Editor> editor);
+	void removeOutsideFromGameObjects(std::shared_ptr<Main::Editor> editor);
 
-	void removeWallsFromGameObjects();
-	void removeSkeletsFromGameObjects();
-	void removeOutsideFromGameObjects();
-
-	void addWallsToVisibleGameObjects();	
-	void addSkeletsToVisibleGameObjects();
-	void addOutsideToVisibleGameObjects();
+	void addWallsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
+	void addSkeletsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
+	void addOutsideToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
 
 	virtual void cursorHover();
 	virtual void update();

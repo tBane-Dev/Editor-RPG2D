@@ -48,10 +48,18 @@ namespace BuildingsEditor {
 
             if (bp->_walls[ty][tx] != -1) {
                 bp->_walls[ty][tx] = -1;
+
                 std::shared_ptr<Building> building = BuildingsEditor::editor->_building_panel->_building->_building;
                 std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
-                buildingPrefab->generateWalls(building->_position, BuildingsEditor::editor->_building_panel->_building->_scale, building);
-                buildingPrefab->generateRoofs(building->_position, BuildingsEditor::editor->_building_panel->_building->_scale);
+				
+				buildingPrefab->generate(building->getPosition(), BuildingsEditor::editor->_building_panel->_building->_scale, building);
+                building->generate();
+                
+                BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+                BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+                BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+                BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
+
                 return;
             }
         }
@@ -174,10 +182,17 @@ namespace BuildingsEditor {
                 std::shared_ptr<Wall> wall = std::dynamic_pointer_cast<Wall>(_object.lock());
                 std::shared_ptr<WallPrefab> wallPrefab = std::dynamic_pointer_cast<WallPrefab>(wall->_prefab.lock());
 
-                bp->_walls[ty][tx] = wallPrefab->_id;
+                if(bp->_walls[ty][tx] == wallPrefab->_id)
+					return;
 
-                bp->generateWalls(bb->_position, building->_scale, bb);
-                bp->generateRoofs(bb->_position, building->_scale);
+                bp->_walls[ty][tx] = wallPrefab->_id;
+				bp->generate(bb->_position, building->_scale, bb);
+				bb->generate();
+
+                BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+                BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+                BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+                BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
             }
 
             return;

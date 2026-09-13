@@ -3,6 +3,8 @@
 #include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "EditorsManager.hpp"
+#include "Editors/MapEditor/Editor.hpp"
+#include "Editors/BuildingsEditor/Editor.hpp"
 #include "Objects/Building/Building.hpp"
 
 SkeletPrefab::SkeletPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh, int id) : GameObject(name, animations, origin, collider, mesh) {
@@ -106,6 +108,14 @@ void Skelet::draw() {
 		return;
 	}
 
-	if(!_building.lock()->_renderOutsideLook)
-		draw(*Main::render_window, 1.f, 1);
+	if (Main::editor_manager->get_back() == BuildingsEditor::editor) {
+		if (!_building.lock()->_renderOutsideLook)
+			draw(*Main::render_window, BuildingsEditor::editor->_building_panel->_building->_scale, (BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value > 0));
+	}
+
+	if (Main::editor_manager->get_back() == MapEditor::editor) {
+		if (!_building.lock()->_renderOutsideLook)
+			draw(*Main::render_window, 1.f, 1);
+	}
+	
 }

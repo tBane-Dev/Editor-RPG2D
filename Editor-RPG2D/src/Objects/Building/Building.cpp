@@ -84,42 +84,23 @@ BuildingPrefab::~BuildingPrefab() {
 }
 
 void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
-	generateFloorVertexArray(scale);
-
 	generateWalls(position, scale, building);
+	copyWallsFromPrefab(position, scale, building);
 
-	if (building) {
-		building->_wallsObjects.clear();
-		for (auto& wall : _wallsObjects) {
-			if (wall) {
-				std::shared_ptr<Wall> newWall = std::make_shared<Wall>(wall->_prefab, wall->_building, wall->_textureBottomRect, wall->_textureTopRect, wall->_height);
-				newWall->setPosition(sf::Vector2i(wall->_position.x, wall->_position.y));
-				building->_wallsObjects.push_back(newWall);
-			}
-			else
-				building->_wallsObjects.push_back(nullptr);
-		}
-	}
-
-	generateRoofs(position, scale);
 	generateSkelet(position, scale, building);
-
-	if (building) {
-		building->_skeletsObjects.clear();
-
-		sf::Vector2i buildingBottom(position.x, position.y + int(_walls.size()) * 32);
-
-		for (auto& skelet : _skeletObjects) {
-			if (!skelet) continue;
-			std::shared_ptr<Skelet> newSkelet = std::make_shared<Skelet>(skelet->_prefab, skelet->_rect, building);
-			newSkelet->setPosition(buildingBottom);
-			building->_skeletsObjects.push_back(newSkelet);
-		}
-	}
+	copySkeletFromPrefab(position, scale, building);
 
 	generateCollider(scale);
 	generateMesh(scale);
+
+	// Preview For Textures
+	generateFloorVertexArray(1.f);
+	generateRoofs(sf::Vector2i(0, 0), 1.f);
 	generatePreviewTextures();
+
+	// For Normal Use
+	generateFloorVertexArray(scale);
+	generateRoofs(position, scale);
 }
 
 void BuildingPrefab::generateFloorVertexArray(float scale) {
@@ -697,6 +678,39 @@ void BuildingPrefab::drawOutsideLook(sf::RenderTarget& target, sf::Vector2i posi
 	drawOnlyRoof(target, position, scale, building);
 }
 
+void BuildingPrefab::copyWallsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+	if (!building)
+		return;
+
+	building->_wallsObjects.clear();
+	for (auto& wall : _wallsObjects) {
+		if (wall) {
+
+			std::shared_ptr<Wall> newWall = std::make_shared<Wall>(wall->_prefab, wall->_building, wall->_textureBottomRect, wall->_textureTopRect, wall->_height);
+			newWall->setPosition(sf::Vector2i(wall->_position.x, wall->_position.y));
+			building->_wallsObjects.push_back(newWall);
+		}
+		else
+			building->_wallsObjects.push_back(nullptr);
+	}
+}
+
+void BuildingPrefab::copySkeletFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+	if (!building)
+		return;
+	
+	building->_skeletsObjects.clear();
+
+	sf::Vector2i buildingBottom(position.x, position.y + int(_walls.size() * 32.f * scale));
+
+	for (auto& skelet : _skeletObjects) {
+		if (!skelet) continue;
+		std::shared_ptr<Skelet> newSkelet = std::make_shared<Skelet>(skelet->_prefab, skelet->_rect, building);
+		newSkelet->setPosition(buildingBottom);
+		building->_skeletsObjects.push_back(newSkelet);
+	}
+}
+
 void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& texture, bool drawOutside) {
 
 	const float scale = 1.0f;
@@ -835,21 +849,20 @@ Building::~Building() {
 
 }
 
-void Building::generate(sf::Vector2i position) {
+void Building::generate() {
 
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_prefab.lock());
 
-	if (buildingPrefab) {
-		buildingPrefab->generate(position, 1.0f, std::dynamic_pointer_cast<Building>(shared_from_this()));
+	if (!buildingPrefab)
+		return;
 
-		_outsideObject = std::make_shared<Outside>(std::dynamic_pointer_cast<Building>(shared_from_this()));
-		_outsideObject->setTexture(*buildingPrefab->getPreviewOutsideTexture());
+	_outsideObject = std::make_shared<Outside>(std::dynamic_pointer_cast<Building>(shared_from_this()));
+	_outsideObject->setTexture(*buildingPrefab->getPreviewOutsideTexture());
 
-		int topOffset = buildingPrefab->_roof ? buildingPrefab->_roof->getTopOffset(1.0f) : 0;
-		int textureHeight = _outsideObject->_texture.getSize().y;
+	int topOffset = buildingPrefab->_roof ? buildingPrefab->_roof->getTopOffset(1.0f) : 0;
+	int textureHeight = _outsideObject->_texture.getSize().y;
 
-		_outsideObject->setPosition(position + sf::Vector2i(0, textureHeight - topOffset));
-	}
+	_outsideObject->setPosition(_position + sf::Vector2i(0, textureHeight - topOffset));
 
 }
 
@@ -893,127 +906,155 @@ void Building::loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab) {
 	setPosition(getPosition());
 }
 
-void Building::addWallsToGameObjects() {
+void Building::addWallsToGameObjects(std::shared_ptr<Main::Editor> editor) {
 
 	for (auto& wall : _wallsObjects) {
 
 		if (!wall)
 			continue;
 
-		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
-
-		if (chunk) {
-			chunk->addPlacedGameObject(wall);
-
-			MapEditor::editor->_game_objects->addGameObject(wall);
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk) {
+				chunk->addPlacedGameObject(wall);
+				MapEditor::editor->_game_objects->addGameObject(wall);
+			}
 		}
 	}
 }
 
-void Building::addSkeletsToGameObjects() {
+void Building::addSkeletsToGameObjects(std::shared_ptr<Main::Editor> editor) {
 
 	for (auto& skelet : _skeletsObjects) {
 
 		if (!skelet)
 			continue;
 
-		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
-
-		if (chunk) {
-			chunk->addPlacedGameObject(skelet);
-
-			MapEditor::editor->_game_objects->addGameObject(skelet);
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk) {
+				chunk->addPlacedGameObject(skelet);
+				MapEditor::editor->_game_objects->addGameObject(skelet);
+			}
 		}
 	}
 }
 
-void Building::addOutsideToGameObjects() {
+void Building::addOutsideToGameObjects(std::shared_ptr<Main::Editor> editor) {
 	if (!_outsideObject)
 		return;
 
-	std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+	std::wcout << L"Adding outside object to game objects" << std::endl;
 
-	if (chunk) {
-		chunk->addPlacedGameObject(_outsideObject);
-
-		MapEditor::editor->_game_objects->addGameObject(_outsideObject);
+	if (editor == MapEditor::editor) {
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		if (chunk) {
+			chunk->addPlacedGameObject(_outsideObject);
+			MapEditor::editor->_game_objects->addGameObject(_outsideObject);
+		}
 	}
+	
 }
 
 
 
-void Building::removeWallsFromGameObjects() {
+void Building::removeWallsFromGameObjects(std::shared_ptr<Main::Editor> editor) {
 
 	for (auto& wall : _wallsObjects) {
 
 		if (!wall)
 			continue;
 
-		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		if(editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk)
+				chunk->removePlacedGameObject(wall);
+			MapEditor::editor->_game_objects->removeGameObject(wall);
+		}
 
-		if (chunk)
-			chunk->removePlacedGameObject(wall);
-
-		MapEditor::editor->_game_objects->removeGameObject(wall);
 	}
 }
 
 
-void Building::removeSkeletsFromGameObjects() {
+void Building::removeSkeletsFromGameObjects(std::shared_ptr<Main::Editor> editor) {
 
 	for (auto& skelet : _skeletsObjects) {
 
 		if (!skelet)
 			continue;
 
-		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk)
+				chunk->removePlacedGameObject(skelet);
+			MapEditor::editor->_game_objects->removeGameObject(skelet);
+		}
 
-		if (chunk)
-			chunk->removePlacedGameObject(skelet);
-
-		MapEditor::editor->_game_objects->removeGameObject(skelet);
 	}
 }
 
-void Building::removeOutsideFromGameObjects() {
-	if (_outsideObject) {
-		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+void Building::removeOutsideFromGameObjects(std::shared_ptr<Main::Editor> editor) {
+	if (!_outsideObject)
+		return;
 
+	if (editor == MapEditor::editor) {
+		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
 		if (chunk)
 			chunk->removePlacedGameObject(_outsideObject);
-
 		MapEditor::editor->_game_objects->removeGameObject(_outsideObject);
 	}
+
 }
 
 
-void Building::addWallsToVisibleGameObjects() {
+void Building::addWallsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor) {
 
 	for (auto& wall : _wallsObjects) {
 
 		if (!wall)
 			continue;
 
-		MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(wall);
+		if (editor == MapEditor::editor) {
+			MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(wall);
+		}
+
+		if (editor == BuildingsEditor::editor) {
+			BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(wall);
+		}
 	}
 }
 
-void Building::addSkeletsToVisibleGameObjects() {
+void Building::addSkeletsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor) {
 
 	for (auto& skelet : _skeletsObjects) {
 
 		if (!skelet)
 			continue;
 
-		MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(skelet);
+		if (editor == MapEditor::editor) {
+			MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(skelet);
+		}
+
+		if(editor == BuildingsEditor::editor) {
+			BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(skelet);
+		}
+			
 	}
 }
 
 
-void Building::addOutsideToVisibleGameObjects() {
-	if (_outsideObject) {
+void Building::addOutsideToVisibleGameObjects(std::shared_ptr<Main::Editor> editor) {
+	if (!_outsideObject)
+		return;
+
+	if (editor == MapEditor::editor) {
 		MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(_outsideObject);
 	}
+	
+	if (editor == BuildingsEditor::editor) {
+		BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(_outsideObject);
+	}
+	
 }
 
 void Building::cursorHover() {

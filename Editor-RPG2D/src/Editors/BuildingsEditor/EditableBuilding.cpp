@@ -18,7 +18,7 @@ namespace BuildingsEditor {
 	void EditableBuilding::create(std::shared_ptr<BuildingPrefab> prefab) {
 
 		_building = std::make_shared<Building>(prefab);
-		_building->generate(_building->getPosition());
+		_building->generate();
 
 		sf::Vector2i panelSize = BuildingsEditor::editor->_building_panel->getSize();
 		sf::Vector2i panelPosition = BuildingsEditor::editor->_building_panel->getPosition();
@@ -38,7 +38,7 @@ namespace BuildingsEditor {
 		setMaxSize(sf::Vector2i(24 * 32, 24 * 32));
 
 		if (!prefab) return;
-
+		
 		sf::Vector2i buildingSize = sf::Vector2i(prefab->_walls[0].size() * 32, prefab->_walls.size() * 32);
 
 		ResizableShape::resize(buildingSize);
@@ -246,10 +246,10 @@ namespace BuildingsEditor {
 		}
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			 
+
 			if (GUI_manager->Element_hovered.get() == this) {
 				GUI_manager->Element_pressed = shared_from_this();
-		
+
 				//if (_editState == EditableBuildingEditStates::Floor) {
 				//	editTileUnderCursor();
 				//	return;
@@ -269,7 +269,7 @@ namespace BuildingsEditor {
 			}
 		}
 
-		if(const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
 			GUI_manager->Element_pressed = ResizableShape::shared_from_this();
 
 			//if(_editState == EditableBuildingEditStates::Floor) {
@@ -288,7 +288,7 @@ namespace BuildingsEditor {
 			//}
 		}
 
-		if(const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm) {
+		if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm) {
 			if (GUI_manager->Element_pressed.get() == this) {
 				//if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 				//	if (_editState == EditableBuildingEditStates::Floor) {
@@ -309,7 +309,7 @@ namespace BuildingsEditor {
 				//	}
 				//}
 			}
-			
+
 		}
 
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
@@ -346,9 +346,13 @@ namespace BuildingsEditor {
 				setPosition(sf::Vector2i(newPosition));
 				_building->setPosition(sf::Vector2i(newPosition));
 
-				bp->generateFloorVertexArray(_scale);
-				bp->generateWalls(_building->_position, _scale, _building);
-				bp->generateRoofs(_building->_position, _scale);
+				std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+				bp->generate(_building->getPosition(), _scale, _building);
+				BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+				BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+				BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+				BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
+				
 			}
 
 			generateEdgePoints();
@@ -384,7 +388,15 @@ namespace BuildingsEditor {
 					resize(point);
 					sf::Vector2i newPos = clampPosition(ResizableShape::getPosition());
 					ResizableShape::setPosition(newPos);
-					_building->update();
+
+					std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+					bp->generate(_building->getPosition(), _scale, _building);
+					_building->generate();
+					BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+					BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+					BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+					BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
+
 					return;
 				}
 			}

@@ -39,11 +39,13 @@ namespace BuildingsEditor {
 
 						auto panel = BuildingsEditor::editor->_building_panel;
 						std::shared_ptr<BuildingPrefab> editablePrefab = std::make_shared<BuildingPrefab>(buildingPrefab->getName(), *buildingPrefab);
-
+						
 						panel->_buildingPrefab = buildingPrefab;
 						panel->_editablePrefab = editablePrefab;
 						panel->_building->_building->loadPrefab(editablePrefab);
-						panel->_building->_building->generate(panel->_building->_building->getPosition());
+						editablePrefab->generate(panel->_building->_building->getPosition(), 1.0f, panel->_building->_building);
+						panel->_building->_building->generate();
+						panel->_building->setPosition(panel->_building->getPosition());
 
 						BuildingsEditor::editor->_name_panel->_name->setText(buildingPrefab->getName());
 
@@ -53,6 +55,11 @@ namespace BuildingsEditor {
 						panel->_building->_scale = 1.0f;
 						panel->_building->_building->setPosition(centeredPosition);
 						panel->_building->generateEdgePoints();
+
+						BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+						BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+						BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+						BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
 				};
 			}
 			else {

@@ -68,15 +68,14 @@ namespace BuildingsEditor {
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			
 				if (building && building->_prefab.lock() == oldPrefab) {
-					building->removeWallsFromGameObjects();
-					building->removeSkeletsFromGameObjects();
-					building->removeOutsideFromGameObjects();
+					building->removeWallsFromGameObjects(MapEditor::editor);
+					building->removeSkeletsFromGameObjects(MapEditor::editor);
+					building->removeOutsideFromGameObjects(MapEditor::editor);
 				}
 			}
 
 			prefabs_manager->replacePrefab(oldPrefab, newPrefab);
 
-			
 			int selectedID = BuildingsEditor::editor->_list_panel->_selectedItemIndex;
 			BuildingsEditor::editor->_list_panel->loadAll(prefabs_manager->getPrefabs(ObjectType::Building).size());
 			BuildingsEditor::editor->_list_panel->selectItem(selectedID);
@@ -96,16 +95,24 @@ namespace BuildingsEditor {
 			for (auto& object : visibleObjects) {
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 				if (building && building->_prefab.lock() == newPrefab) {
-					building->addWallsToGameObjects();
-					building->addSkeletsToGameObjects();
-					building->addOutsideToGameObjects();
+					
+					building->generate();
+
+					building->addWallsToGameObjects(MapEditor::editor);
+					building->addSkeletsToGameObjects(MapEditor::editor);
+					building->addOutsideToGameObjects(MapEditor::editor);
+
+					building->addWallsToVisibleGameObjects(MapEditor::editor);
+					building->addSkeletsToVisibleGameObjects(MapEditor::editor);
+					building->addOutsideToVisibleGameObjects(MapEditor::editor);
 				}
 			}
 
 			panel->_buildingPrefab = newPrefab;
 			panel->_editablePrefab = std::make_shared<BuildingPrefab>(newPrefab->getName(), *newPrefab);
 			panel->_building->_building->loadPrefab(panel->_editablePrefab);
-			panel->_building->_building->generate(panel->_building->getPosition());
+			panel->_editablePrefab->generate(panel->_building->getPosition(), panel->_building->_scale, panel->_building->_building);
+			panel->_building->_building->generate();
 		};
 
 		_addBtn->_onclick_func = [this]() {
@@ -127,9 +134,9 @@ namespace BuildingsEditor {
 				for (auto& object : MapEditor::editor->_game_objects->_visiblePlacedGameObjects) {
 					std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 					if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
-						building->removeWallsFromGameObjects();
-						building->removeSkeletsFromGameObjects();
-						building->removeOutsideFromGameObjects();
+						building->removeWallsFromGameObjects(MapEditor::editor);
+						building->removeSkeletsFromGameObjects(MapEditor::editor);
+						building->removeOutsideFromGameObjects(MapEditor::editor);
 						//DebugLog(L"Removed walls from objects" + building->_prefab.lock()->getName());
 						MapEditor::editor->_game_objects->removeGameObject(building);
 						//DebugLog(L"Removed building from objects: " + building->_prefab.lock()->getName());
@@ -142,7 +149,6 @@ namespace BuildingsEditor {
 						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 						if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
 							chunk->removePlacedGameObject(building);
-							chunk->removePlacedGameObject(building->_outsideObject);
 							//DebugLog(L"remove building from chunk: " + building->_prefab.lock()->getName());
 						}
 					}
@@ -167,7 +173,7 @@ namespace BuildingsEditor {
 					panel->_buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(prefabs[newID]);
 					panel->_editablePrefab = std::make_shared<BuildingPrefab>(panel->_buildingPrefab->getName(), *panel->_buildingPrefab);
 					panel->_building->_building->loadPrefab(panel->_buildingPrefab);
-					panel->_building->_building->generate(panel->_building->getPosition());
+					panel->_building->_building->generate();
 
 					sf::Vector2i floorSize(panel->_editablePrefab->_floor[0].size(), panel->_editablePrefab->_floor.size());
 					sf::Vector2i centeredPosition = panel->getPosition() + (panel->getSize() / 2 - floorSize * 16 / 2);

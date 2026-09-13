@@ -20,9 +20,9 @@ namespace BuildingsEditor {
 		_visiblePlacedGameObjects.push_back(placedGameObject.lock());
 		if (placedGameObject.lock()->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(placedGameObject.lock());
-			building->addWallsToVisibleGameObjects();
-			building->addSkeletsToVisibleGameObjects();
-			building->addOutsideToVisibleGameObjects();
+			building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+			building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+			building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
 		}
 	}
 

@@ -529,11 +529,13 @@ namespace MapEditor {
                     std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"building " + std::to_wstring(i++), *std::dynamic_pointer_cast<BuildingPrefab>(prefab));
                     objectOnMap = std::make_shared<Building>(buildingPrefab);
                     std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectOnMap);
+                    buildingPrefab->generate(sf::Vector2i(0,0), 1.f, building);
+                    
+                    building->generate();
                     objectOnMap->setPosition(position);
-                    building->generate(position);
-                    building->addWallsToGameObjects();
-                    building->addSkeletsToGameObjects();
-                    building->addOutsideToGameObjects();
+                    building->addWallsToGameObjects(MapEditor::editor);
+                    building->addSkeletsToGameObjects(MapEditor::editor);
+                    building->addOutsideToGameObjects(MapEditor::editor);
                     prefabs_manager->addPrefab(buildingPrefab);
                     MapEditor::editor->_map->getChunkByGlobalPosition(position)->addPlacedGameObject(objectOnMap);
                     MapEditor::editor->_map->setVisibleChunks();
