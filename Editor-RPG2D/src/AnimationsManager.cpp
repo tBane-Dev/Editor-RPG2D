@@ -17,9 +17,7 @@ Animations::Animations(std::wstring path, sf::Vector2i frameSize, int animations
 	_offsetX = offsetX;
 	_offsetY = offsetY;
 
-	if (!_texture) {
-        loadingStatus = false;
-    }
+	loadingStatus = (_texture)? true : false;
 
 	_interval = interval;
 

@@ -385,6 +385,7 @@ void Slots::loadObjects() {
 		return;
 	}
 
+
 	if (_type == ObjectType::Building) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
 			if (i < Components::Palette::buildings.size()) {
@@ -406,6 +407,25 @@ void Slots::loadObjects() {
 			if (i < wallset->_texture->_texture->getSize().y / 32) {
 				_slots[i]->_object = Components::Palette::walls[i];
 				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(true);
+			}
+			else {
+				_slots[i]->_object = std::weak_ptr<Object>();
+				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
+			}
+		}
+		return;
+	}
+
+	if (_type == ObjectType::Door) {
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i < Components::Palette::doors.size()) {
+				_slots[i]->_object = Components::Palette::doors[i];
+				if (!_slots[i]->_object.expired()) std::wcout << L"object exist";
+				_slots[i]->_animator = std::make_shared<Animator>(Components::Palette::doors[i]->_prefab.lock()->getAnimations());
+				if (!_slots[i]->_animator->getAnimations().expired()) std::wcout << L"animator exist";
+				_slots[i]->_animator->play();
 				_slots[i]->setActive(true);
 			}
 			else {
@@ -486,6 +506,26 @@ void Slots::updateObjects() {
 		return;
 	}
 
+	if (_type == ObjectType::Building) {
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i + startIndex < Components::Palette::buildings.size()) {
+				if (_slots[i]->_object.lock() != Components::Palette::buildings[i + startIndex]) {
+					_slots[i]->_object = Components::Palette::buildings[i + startIndex];
+					std::dynamic_pointer_cast<BuildingSlot>(_slots[i])->generate();
+					_slots[i]->_animator = nullptr;
+					_slots[i]->setActive(true);
+				}
+
+			}
+			else {
+				_slots[i]->_object = std::weak_ptr<Object>();
+				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
+			}
+		}
+		return;
+	}
+
 	if (_type == ObjectType::Wall) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
 			if (i + startIndex < wallset->_texture->_texture->getSize().y / 32) {
@@ -502,17 +542,13 @@ void Slots::updateObjects() {
 		return;
 	}
 
-
-	if (_type == ObjectType::Building) {
+	if (_type == ObjectType::Door) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i + startIndex < Components::Palette::buildings.size()) {
-				if (_slots[i]->_object.lock() != Components::Palette::buildings[i + startIndex]) {
-					_slots[i]->_object = Components::Palette::buildings[i + startIndex];
-					std::dynamic_pointer_cast<BuildingSlot>(_slots[i])->generate();
-					_slots[i]->_animator = nullptr;
-					_slots[i]->setActive(true);
-				}
-				
+			if (i < Components::Palette::doors.size()) {
+				_slots[i]->_object = Components::Palette::doors[i];
+				_slots[i]->_animator = std::make_shared<Animator>(Components::Palette::doors[i]->_prefab.lock()->getAnimations());
+				_slots[i]->_animator->play();
+				_slots[i]->setActive(true);
 			}
 			else {
 				_slots[i]->_object = std::weak_ptr<Object>();

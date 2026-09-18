@@ -9,6 +9,8 @@
 #include "DebugLog.hpp"
 #include "Time.hpp"
 
+#include "Intro.hpp"
+
 #include "Theme.hpp"
 
 #include "Tooltip.hpp" // to move
@@ -44,7 +46,20 @@
 int main() {
     (void)_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
 
-    Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D");
+
+    Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D", sf::State::Windowed);
+    ShowWindow(Main::render_window->getNativeHandle(), SW_MAXIMIZE);
+
+    Main::render_window->clear(sf::Color::Black);
+    Main::render_window->display();
+
+    while (std::optional event = Main::render_window->waitEvent()) {
+        if (const auto* kp = event->getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Space) {
+            break;
+        }
+    }
+
+    renderIntro();
 
     loadTheme();
 

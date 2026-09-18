@@ -5,9 +5,7 @@ Texture::Texture(std::wstring path, bool& loadingStatus) {
     _path = path;
     _texture = std::make_shared<sf::Texture>();
 
-    if (!_texture->loadFromFile(path)) {
-        loadingStatus = false;
-    }
+    loadingStatus = _texture->loadFromFile(path);
 }
 
 Texture::Texture(std::wstring path, std::shared_ptr<sf::Image> image) {
