@@ -68,6 +68,7 @@ namespace BuildingsEditor {
 				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 			
 				if (building && building->_prefab.lock() == oldPrefab) {
+					building->removeDoorsFromGameObjects(MapEditor::editor);
 					building->removeWallsFromGameObjects(MapEditor::editor);
 					building->removeSkeletsFromGameObjects(MapEditor::editor);
 					building->removeOutsideFromGameObjects(MapEditor::editor);
@@ -98,10 +99,12 @@ namespace BuildingsEditor {
 					
 					building->generate();
 
+					building->addDoorsToGameObjects(MapEditor::editor);
 					building->addWallsToGameObjects(MapEditor::editor);
 					building->addSkeletsToGameObjects(MapEditor::editor);
 					building->addOutsideToGameObjects(MapEditor::editor);
 
+					building->addDoorsToVisibleGameObjects(MapEditor::editor);
 					building->addWallsToVisibleGameObjects(MapEditor::editor);
 					building->addSkeletsToVisibleGameObjects(MapEditor::editor);
 					building->addOutsideToVisibleGameObjects(MapEditor::editor);
@@ -134,6 +137,7 @@ namespace BuildingsEditor {
 				for (auto& object : MapEditor::editor->_game_objects->_visiblePlacedGameObjects) {
 					std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
 					if (building && building->_prefab.lock() == BuildingsEditor::editor->_building_panel->_buildingPrefab) {
+						building->removeDoorsFromGameObjects(MapEditor::editor);
 						building->removeWallsFromGameObjects(MapEditor::editor);
 						building->removeSkeletsFromGameObjects(MapEditor::editor);
 						building->removeOutsideFromGameObjects(MapEditor::editor);

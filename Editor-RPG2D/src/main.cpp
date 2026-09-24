@@ -53,13 +53,19 @@ int main() {
     Main::render_window->clear(sf::Color::Black);
     Main::render_window->display();
 
-    while (std::optional event = Main::render_window->waitEvent()) {
+    while (const std::optional event = Main::render_window->waitEvent()) {
+
+        if (event->is<sf::Event::Closed>()) {
+            Main::render_window->close();
+            exit(0);
+        }
+
         if (const auto* kp = event->getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Space) {
             break;
         }
     }
 
-    renderIntro();
+    
 
     loadTheme();
 
@@ -67,7 +73,10 @@ int main() {
     animations_manager = std::make_shared<AnimationsManager>();
     prefabs_manager = std::make_shared<PrefabsManager>();
 
-    prefabs_manager->loadBasicPrefabs();
+	buildings_parts_animations_manager = std::make_shared<AnimationsManager>();
+    buildings_parts_animations_manager->loadBuildingsPartsAnimations();
+	buildings_parts_prefabs_manager = std::make_shared<PrefabsManager>();
+	buildings_parts_prefabs_manager->loadBuildingsPartsPrefabs();
 
     loadShaders();
 
@@ -83,6 +92,8 @@ int main() {
 	skeletset = std::make_shared<SkeletSet>();
 	//floorset = std::make_shared<Floorset>();
 	roof1set = std::make_shared<Roof1set>();
+
+    renderIntro();
 
     MapEditor::editor = std::make_shared<MapEditor::Editor>();
     Main::editor_manager->push_back(MapEditor::editor);

@@ -20,6 +20,43 @@ namespace BuildingsEditor {
 
     }
 
+    bool CursorOnBuilding::canPlaceDoor(sf::Vector2i wallPosition) {
+
+        std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(BuildingsEditor::editor->_building_panel->_building->_building->_prefab.lock());
+
+        bool isInsideWalls =
+            wallPosition.y >= 0 && wallPosition.y < bp->_walls.size() &&
+            wallPosition.x >= 0 && wallPosition.x < bp->_walls[wallPosition.y].size();
+
+        bool hasEmptyDoorSpace =
+            isInsideWalls &&
+            wallPosition.x - 1 >= 0 &&
+            bp->_walls[wallPosition.y][wallPosition.x - 1] < 0 &&
+            bp->_walls[wallPosition.y][wallPosition.x] < 0;
+
+        bool hasRequiredWalls =
+            isInsideWalls &&
+            bp->_walls[wallPosition.y][wallPosition.x] >= 0 &&
+            wallPosition.x - 2 >= 0 &&
+            bp->_walls[wallPosition.y][wallPosition.x - 2] >= 0 &&
+            wallPosition.x + 1 < bp->_walls[wallPosition.y].size() &&
+            bp->_walls[wallPosition.y][wallPosition.x + 1] >= 0;
+
+        bool hasFreeSpaceBelow = isInsideWalls &&
+            (
+                wallPosition.y + 1 >= bp->_walls.size() ||
+                (
+                    wallPosition.x - 1 >= 0 &&
+                    wallPosition.x < bp->_walls[wallPosition.y + 1].size() &&
+                    bp->_walls[wallPosition.y + 1][wallPosition.x - 1] == -1 &&
+                    bp->_walls[wallPosition.y + 1][wallPosition.x] == -1
+                    )
+                );
+
+        return hasEmptyDoorSpace || (hasRequiredWalls && hasFreeSpaceBelow);
+    }
+
+
     void CursorOnBuilding::update() {
         CursorWithObject::update();
     }
@@ -30,6 +67,32 @@ namespace BuildingsEditor {
 
         if (Main::windows_manager->get_back())
             return;
+
+        if (GUI_manager->Element_hovered == BuildingsEditor::editor->_building_panel->_building && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) && _object.expired()) {
+            std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(BuildingsEditor::editor->_building_panel->_building->_building->_prefab.lock());
+            bool conditionToRemoveDoors = false;
+            std::erase_if(bp->_doors, [&](const std::shared_ptr<Door>& door) {
+				bool condition = door->_prefab.lock()->getMesh()->isPointInside(_globalPosition, door->_position); // TO-DO - add the scale
+                if (condition) conditionToRemoveDoors = true;
+                return condition;
+                });
+            
+            if (conditionToRemoveDoors) {
+                std::shared_ptr<Building> building = BuildingsEditor::editor->_building_panel->_building->_building;
+                std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+
+                buildingPrefab->generate(building->getPosition(), BuildingsEditor::editor->_building_panel->_building->_scale, building);
+                building->generate();
+
+                BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+                BuildingsEditor::editor->_building_panel->_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
+                BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+                BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+                BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
+                return;
+            }
+                
+        }
 
         bool conditionToRemoveWalls = GUI_manager->Element_hovered == BuildingsEditor::editor->_building_panel->_building && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) && _object.expired();
 
@@ -56,6 +119,7 @@ namespace BuildingsEditor {
                 building->generate();
                 
                 BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+                BuildingsEditor::editor->_building_panel->_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
                 BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
                 BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
                 BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
@@ -190,6 +254,7 @@ namespace BuildingsEditor {
 				bb->generate();
 
                 BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+                BuildingsEditor::editor->_building_panel->_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
                 BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
                 BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
                 BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
@@ -198,7 +263,72 @@ namespace BuildingsEditor {
             return;
         }
 
+        
+
+
         if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+
+            if (_object.lock()->_type == ObjectType::Door) {
+
+                std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+                std::shared_ptr<Animations> animations = prefab->getAnimations().lock();
+
+                float frameWidth = 64;
+                float frameHeight = 64;
+                sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
+
+                if (animations) {
+                    frameRect = animations->getFrameRect(0, 0);
+                    frameWidth = (float)(frameRect.size.x);
+                    frameHeight = (float)(frameRect.size.y);
+                }
+
+                float scale = BuildingsEditor::editor->_building_panel->_building->_scale;
+                float gridSize = 32.f * scale;
+                sf::Vector2f buildingPosition(BuildingsEditor::editor->_building_panel->_building->getPosition());
+
+                sf::Vector2i wallPosition(
+                    std::round((_globalPosition.x - buildingPosition.x) / gridSize),
+                    std::floor((_globalPosition.y - buildingPosition.y) / gridSize)
+                );
+
+                
+
+                if (canPlaceDoor(wallPosition)) {
+                    
+
+                    std::shared_ptr<BuildingsEditor::EditableBuilding> building = BuildingsEditor::editor->_building_panel->_building;
+                    std::shared_ptr<Building> bb = std::dynamic_pointer_cast<Building>(building->_building);
+                    std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(bb->_prefab.lock());
+                    
+                    std::shared_ptr<Door> door = std::make_shared<Door>(prefab, bb);
+
+                    sf::Vector2i position(
+                        (int)((float)(float)wallPosition.x * gridSize - frameWidth * scale / 2.f),
+                        (int)((float)(float)wallPosition.y * gridSize - frameHeight * scale / 2.f)
+                    );
+
+                    door->setPosition(position);
+
+                    std::erase_if(bp->_doors, [&](const std::shared_ptr<Door>& door) {
+                        return door->_position == position || door->_position + sf::Vector2i(32, 0) == position || door->_position - sf::Vector2i(32,0) == position;
+                        });
+
+                    bp->_doors.push_back(door);
+
+                    bp->generate(bb->_position, building->_scale, bb);
+                    bb->generate();
+
+                    BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+                    BuildingsEditor::editor->_building_panel->_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
+                    BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+                    BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+                    BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
+                    return;
+                }
+
+                return;
+            }
 
             if (GUI_manager->Element_pressed == BuildingsEditor::editor->_building_panel->_building) {
                 std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
@@ -247,6 +377,54 @@ namespace BuildingsEditor {
             return;
 
         GUI_manager->setView();
+
+        if (_object.lock()->_type == ObjectType::Door) {
+
+            std::shared_ptr<GameObject> prefab = std::dynamic_pointer_cast<GameObject>(_object.lock());
+            std::shared_ptr<Animations> animations = prefab->getAnimations().lock();
+
+            float frameWidth = 64;
+            float frameHeight = 64;
+            sf::IntRect frameRect(sf::Vector2i(0, 0), sf::Vector2i(frameWidth, frameHeight));
+
+            if (animations) {
+                frameRect = animations->getFrameRect(0, 0);
+                frameWidth = (float)(frameRect.size.x);
+                frameHeight = (float)(frameRect.size.y);
+            }
+
+            float scale = BuildingsEditor::editor->_building_panel->_building->_scale;
+            float gridSize = 32.f * scale;
+            sf::Vector2f buildingPosition(BuildingsEditor::editor->_building_panel->_building->getPosition());
+
+            sf::Vector2i wallPosition(
+                std::round((_globalPosition.x - buildingPosition.x) / gridSize),
+                std::floor((_globalPosition.y - buildingPosition.y) / gridSize)
+            );
+
+            sf::Vector2f position(
+                buildingPosition.x + wallPosition.x * gridSize - frameWidth * scale / 2.f,
+                buildingPosition.y + wallPosition.y * gridSize - frameHeight * scale / 2.f
+            );
+
+            if (!canPlaceDoor(wallPosition)) {
+                sf::RectangleShape rect(sf::Vector2f(64.0f*scale, 64.0f*scale));
+                rect.setPosition(sf::Vector2f(position));
+                rect.setFillColor(sf::Color(255, 47, 47, 127));
+                Main::render_window->draw(rect);
+                return;
+            }
+                
+
+            if (animations) {
+                sf::Sprite sprite(*animations->getTexture()->_texture);
+                sprite.setTextureRect(frameRect);
+				sprite.setScale(sf::Vector2f(scale, scale));
+                sprite.setPosition(sf::Vector2f(position));
+                Main::render_window->draw(sprite);
+                return;
+            }
+        }
 
         if (_object.lock()->_type == ObjectType::Floor) {
 

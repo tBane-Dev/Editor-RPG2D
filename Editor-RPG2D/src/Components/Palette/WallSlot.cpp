@@ -1,5 +1,5 @@
 ﻿#include "Components/Palette/WallSlot.hpp"
-#include "Objects/Wall.hpp"
+#include "Objects/Building/Wall.hpp"
 #include "Wallset.hpp"
 #include "ShadersManager.hpp"
 #include "Time.hpp"

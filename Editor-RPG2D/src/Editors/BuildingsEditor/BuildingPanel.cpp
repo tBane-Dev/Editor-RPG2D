@@ -27,6 +27,7 @@ namespace BuildingsEditor {
 		_building->create(nullptr);
 		
 		_game_objects->_visiblePlacedGameObjects.clear();
+		_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
@@ -34,18 +35,28 @@ namespace BuildingsEditor {
 
 	void BuildingPanel::cursorHover() {
 		Components::Panel::cursorHover();
+
+		_game_objects->sort();
+
 		_building->cursorHover();
 	}
 
 	void BuildingPanel::handleEvent(const sf::Event& event) {
 		Components::Panel::handleEvent(event);
 		_cursorOnBuilding->handleEvent(event);
+
+		
 		_building->handleEvent(event);
 		
 	}
 
 	void BuildingPanel::update() {
 		Components::Panel::update();
+		
+		for (auto& object : _game_objects->_visiblePlacedGameObjects) {
+			object->update();
+		}
+
 		_cursorOnBuilding->update();
 		_building->update();
 		

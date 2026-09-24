@@ -38,11 +38,13 @@ public:
     void removeAnimations(int index);
     int getAnimationsCount();
 
-    void save(std::ofstream& saver);
-    void load(std::ifstream& loader);
+    void saveFromProject(std::ofstream& saver);
+    void loadFromProject(std::ifstream& loader);
 
-    void loadAnimations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount);
-    void loadAllAnimations();
+    void loadAnimations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount, float interval);
+    void loadBuildingsPartsAnimations();
 };
 
 extern std::shared_ptr<AnimationsManager> animations_manager;
+extern std::shared_ptr<AnimationsManager> buildings_parts_animations_manager;
+;

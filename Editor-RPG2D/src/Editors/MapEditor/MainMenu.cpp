@@ -53,10 +53,10 @@ namespace MapEditor {
 			std::function<void()> load_function = [load_window]() {
 				std::ifstream loader;
 				loader.open(load_window->getPathFile(), std::ios::in | std::ios::binary);
-				animations_manager->load(loader);
-				prefabs_manager->load(loader);
-				MapEditor::editor->_map->load(loader);
-				MapEditor::editor->_game_objects->load(loader);
+				animations_manager->loadFromProject(loader);
+				prefabs_manager->loadFromProject(loader);
+				MapEditor::editor->_map->loadFromProject(loader);
+				MapEditor::editor->_game_objects->loadFromProject(loader);
 				loader.close();
 
 				MapEditor::editor->_palette->_slots->updateObjects();
@@ -79,10 +79,10 @@ namespace MapEditor {
 			std::function<void()> save_function = [save_window]() {
 				std::ofstream saver;
 				saver.open(save_window->getPathFile(), std::ios::out | std::ios::trunc | std::ios::binary);
-				animations_manager->save(saver);
-				prefabs_manager->save(saver);
-				MapEditor::editor->_map->save(saver);
-				MapEditor::editor->_game_objects->save(saver);
+				animations_manager->saveFromProject(saver);
+				prefabs_manager->saveFromProject(saver);
+				MapEditor::editor->_map->saveFromProject(saver);
+				MapEditor::editor->_game_objects->saveFromProject(saver);
 				saver.close();
 
 			};

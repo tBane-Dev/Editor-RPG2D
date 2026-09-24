@@ -20,8 +20,8 @@ namespace MapEditor {
 
         void sort();
 
-        void save(std::ofstream& saver);
-        void load(std::ifstream& loader);
+        void saveFromProject(std::ofstream& saver);
+        void loadFromProject(std::ifstream& loader);
 
         virtual void cursorHover();
         virtual void update();

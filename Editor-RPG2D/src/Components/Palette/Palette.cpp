@@ -19,14 +19,6 @@ namespace Components {
 	std::vector<std::shared_ptr<Terrain>> Palette::terrains;
 	std::vector<std::shared_ptr<Floor>> Palette::floors;
 	std::vector<std::shared_ptr<Wall>> Palette::walls;
-
-	std::vector<std::shared_ptr<PlacedGameObject>> Palette::doors;	// TO-DO - type must be a door
-	std::shared_ptr<Texture> Palette::doors_texture;
-	std::shared_ptr<Animations> Palette::doors_animations;
-	std::shared_ptr<Collider> Palette::doors_collider;
-	std::shared_ptr<Mesh> Palette::doors_mesh;
-	std::shared_ptr<GameObject> Palette::doors_prefab;
-
 	std::vector<std::shared_ptr<BuildingPrefab>> Palette::buildings;
 
 	Palette::Palette() : Element() {
@@ -48,24 +40,6 @@ namespace Components {
 			for (int i = 0; i < wallset->_groups.size(); i += 1) {
 				Palette::walls.emplace_back(std::make_shared<Wall>(wallset->getPrefab(i)));
 			}
-		}
-
-		if(Palette::doors.empty()) {
-			// TO-DO - add doors prefabs and type must by a door
-			bool status = false;
-			doors_texture = std::make_shared<Texture>(L"assets\\tex\\BuildingsEditor\\doors\\wooden_door.png", status);
-			//(status) ? DebugLog(L"Doors texture loaded successfully") : DebugLog(L"Doors texture loading failed");
-			doors_animations = std::make_shared<Animations>(L"Wooden Door", doors_texture, sf::Vector2i(64, 64), 1, 1, 0, 0, 0.2f);
-			doors_collider = std::make_shared<RectangularCollider>(0, 0, 64, 64);
-			doors_mesh = std::make_shared<Mesh>(1.0f, 1.0f);
-			doors_mesh->addShape(std::make_shared<Shape>());
-			doors_mesh->getShape(0)->addPoint(sf::Vector2i(0, 0));
-			doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 0));
-			doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 64));
-			doors_mesh->getShape(0)->addPoint(sf::Vector2i(0, 64));
-			doors_prefab = std::make_shared<GameObject>(L"Wooden Door", doors_animations, sf::Vector2i(32, 32), doors_collider, doors_mesh);
-			std::shared_ptr<PlacedGameObject> doorPrefab = std::make_shared<PlacedGameObject>(doors_prefab);
-			Palette::doors.emplace_back(doorPrefab);
 		}
 
 		if(Palette::buildings.empty()) {

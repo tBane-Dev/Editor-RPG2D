@@ -26,6 +26,7 @@ namespace MapEditor {
 		_visiblePlacedGameObjects.push_back(placedGameObject.lock());
 		if (placedGameObject.lock()->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(placedGameObject.lock());
+			building->addDoorsToVisibleGameObjects(MapEditor::editor);
 			building->addWallsToVisibleGameObjects(MapEditor::editor);
 			building->addSkeletsToVisibleGameObjects(MapEditor::editor);
 			building->addOutsideToVisibleGameObjects(MapEditor::editor);
@@ -232,7 +233,7 @@ namespace MapEditor {
 			});
 	}
 
-	void PlacedGameObjects::save(std::ofstream& saver) {
+	void PlacedGameObjects::saveFromProject(std::ofstream& saver) {
 
 		BinaryWriter writer(saver);
 
@@ -291,7 +292,7 @@ namespace MapEditor {
 
 	}
 
-	void PlacedGameObjects::load(std::ifstream& loader) {
+	void PlacedGameObjects::loadFromProject(std::ifstream& loader) {
 
 		_visiblePlacedGameObjects.clear();
 

@@ -18,10 +18,11 @@ public:
     void removePrefabsByAnimations(int animationID);
     void replacePrefab(std::shared_ptr<GameObject> oldPrefab, std::shared_ptr<GameObject> newPrefab);
 
-	void save(std::ofstream& saver);
-	void load(std::ifstream& loader);
+	void saveFromProject(std::ofstream& saver);
+	void loadFromProject(std::ifstream& loader);
 
-    void loadBasicPrefabs();
+    void loadBuildingsPartsPrefabs();
 };
 
 extern std::shared_ptr<PrefabsManager> prefabs_manager;
+extern std::shared_ptr<PrefabsManager> buildings_parts_prefabs_manager;

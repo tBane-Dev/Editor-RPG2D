@@ -64,8 +64,6 @@ std::shared_ptr<Texture> Animations::getTexture() {
 
 AnimationsManager::AnimationsManager() {
 	_animations.clear();
-	
-	loadAllAnimations();
 }
 
 AnimationsManager::~AnimationsManager() {
@@ -121,7 +119,7 @@ int AnimationsManager::addAnimations(std::shared_ptr<Animations> animations) {
 	return _animations.size() - 1;
 }
 
-void AnimationsManager::save(std::ofstream& saver) {
+void AnimationsManager::saveFromProject(std::ofstream& saver) {
 
 	BinaryWriter writer(saver);
 
@@ -149,11 +147,13 @@ void AnimationsManager::save(std::ofstream& saver) {
 	}
 }
 
-void AnimationsManager::load(std::ifstream& loader) {
+void AnimationsManager::loadFromProject(std::ifstream& loader) {
 	BinaryReader reader(loader);
 
 	_animations.clear();
 
+	DebugLog(L"Loading animations:");
+	
 	int animationsCount = reader.read_int32();
 
 	for (int i = 0; i < animationsCount; i++) {
@@ -169,6 +169,8 @@ void AnimationsManager::load(std::ifstream& loader) {
 		std::shared_ptr<Animations> animations = std::make_shared<Animations>(path, texture, frameSize, animationsCount, framesCount, offsetX, offsetY, interval);
 		addAnimations(animations);
 
+		DebugStat(path);
+
 		//DebugLog(L"Loaded animations: " + path);
 		//DebugLog(L"Frame size: " + std::to_wstring(frameSize.x) + L"x" + std::to_wstring(frameSize.y));
 		//DebugLog(L"Animations count: " + std::to_wstring(animationsCount));
@@ -180,57 +182,49 @@ void AnimationsManager::load(std::ifstream& loader) {
 	}
 }
 
-void AnimationsManager::loadAnimations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount) {
+void AnimationsManager::loadAnimations(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount, float interval) {
 	
 	bool loadingStatus = true;
-    std::shared_ptr<Animations> animations = std::make_shared<Animations>(path, frameSize, animationsCount, framesCount,  loadingStatus);
+    std::shared_ptr<Animations> animations = std::make_shared<Animations>(path, frameSize, animationsCount, framesCount,  loadingStatus, 0, 0, interval);
     
     if(loadingStatus)
         _animations.push_back(animations);
 }
     
-void AnimationsManager::loadAllAnimations() {
+void AnimationsManager::loadBuildingsPartsAnimations() {
 	
 	struct Data {
 		std::wstring _path;
 		sf::Vector2i _frameSize;
 		int _animationsCount;
 		int _framesCount;
-		
-		Data(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount) {
+		float _interval;
+
+		Data(std::wstring path, sf::Vector2i frameSize, int animationsCount, int framesCount, float interval) {
 			_path = path;
 			_frameSize = frameSize;
 		    _animationsCount = animationsCount;
 		    _framesCount = framesCount;
+			_interval = interval;
 		}
 	};
         
 		
-	// textures
+	// datas
 	std::vector<Data> datas;
-
-    datas.emplace_back(L"assets\\tex\\monsters\\golem.png", sf::Vector2i(128,128), 4, 4);
-    datas.emplace_back(L"assets\\tex\\monsters\\troll.png", sf::Vector2i(128, 128), 4, 4);
-    datas.emplace_back(L"assets\\tex\\monsters\\dziobak.png", sf::Vector2i(128, 128), 4, 4);
-    datas.emplace_back(L"assets\\tex\\monsters\\deer.png", sf::Vector2i(128, 128), 4, 4);
-    datas.emplace_back(L"assets\\tex\\monsters\\goblin.png", sf::Vector2i(128, 128), 4, 4);
-    datas.emplace_back(L"assets\\tex\\monsters\\bies.png", sf::Vector2i(128, 128), 4, 4);
-    datas.emplace_back(L"assets\\tex\\monsters\\hero.png", sf::Vector2i(128, 208), 4, 4);
-    datas.emplace_back(L"assets\\tex\\monsters\\monster.png", sf::Vector2i(128, 128), 1, 1);
     
-    datas.emplace_back(L"assets\\tex\\tree_1.png", sf::Vector2i(256, 256), 1, 1);
-    datas.emplace_back(L"assets\\tex\\boulder_1.png", sf::Vector2i(128, 128), 1, 1);
-    datas.emplace_back(L"assets\\tex\\boulder_2.png", sf::Vector2i(128, 128), 1, 1);
+    datas.emplace_back(L"assets\\tex\\doors\\wooden_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
+    datas.emplace_back(L"assets\\tex\\doors\\stone_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
     
-    // load all textures
+    // load all animations
     for (auto& data : datas) {
-        loadAnimations(data._path, data._frameSize, data._animationsCount, data._framesCount);
+        loadAnimations(data._path, data._frameSize, data._animationsCount, data._framesCount, data._interval);
     }
     
-    // Loaded textures
+    // Loaded animations
     DebugLog(L"Loading animations:");
     for (auto& data : datas) {
-		if (getAnimations(data._path).expired()) {
+		if (!getAnimations(data._path).expired()) {
 			DebugStat(data._path);
         }
     }
@@ -254,3 +248,4 @@ void AnimationsManager::loadAllAnimations() {
 }
 
 std::shared_ptr<AnimationsManager> animations_manager = nullptr;
+std::shared_ptr<AnimationsManager> buildings_parts_animations_manager = nullptr;

@@ -2,7 +2,7 @@
 #include "Controls/Shapes/ResizableShape.hpp"
 #include "TexturesManager.hpp"
 #include "Objects/Building/Building.hpp"
-#include "Objects/Wall.hpp"
+#include "Objects/Building/Wall.hpp"
 
 namespace BuildingsEditor {
 

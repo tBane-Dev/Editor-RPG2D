@@ -10,6 +10,8 @@ namespace BuildingsEditor {
 		CursorOnBuilding();
 		~CursorOnBuilding();
 
+		bool canPlaceDoor(sf::Vector2i wallPosition);
+
 		virtual void update();
 		virtual void handleEvent(const sf::Event& event);
 		virtual void draw();

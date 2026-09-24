@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "TexturesManager.hpp"
 #include "AnimationsManager.hpp"
-#include "Objects/Wall.hpp"
+#include "Objects/Building/Wall.hpp"
 
 class Wallset {
 public:

@@ -218,7 +218,7 @@ namespace MapEditor {
 		}
 	}
 
-	void Map::save(std::ofstream& saver) {
+	void Map::saveFromProject(std::ofstream& saver) {
 		BinaryWriter writer(saver);
 
 		writer.write_int32((int32_t)_chunks.size());
@@ -235,7 +235,7 @@ namespace MapEditor {
 		}
 	}
 
-	void Map::load(std::ifstream& loader) {
+	void Map::loadFromProject(std::ifstream& loader) {
 
 		// clear all
 		_chunks.clear();

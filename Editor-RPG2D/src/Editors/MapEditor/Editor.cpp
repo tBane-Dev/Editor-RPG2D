@@ -32,34 +32,6 @@ namespace MapEditor {
 
 	void Editor::createGameObjects() {
 		_game_objects = std::make_shared<PlacedGameObjects>();
-
-		std::shared_ptr<Map> map = MapEditor::editor->_map;
-		sf::IntRect mapRect = map->getRect();
-		sf::Vector2i texSize = sf::Vector2i(prefabs_manager->getPrefab(L"tree_1")->getAnimations().lock()->getTexture()->_texture->getSize());
-
-		std::shared_ptr<PlacedGameObject> tree_1 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-		tree_1->setPosition(sf::Vector2i(0, 0));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_1->getPosition())->addPlacedGameObject(tree_1);
-
-		std::shared_ptr<PlacedGameObject> tree_2 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-		tree_2->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, 0));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_2->getPosition())->addPlacedGameObject(tree_2);
-
-		std::shared_ptr<PlacedGameObject> tree_3 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-		tree_3->setPosition(sf::Vector2i(0, mapRect.size.y - texSize.y));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_3->getPosition())->addPlacedGameObject(tree_3);
-
-		std::shared_ptr<PlacedGameObject> tree_4 = std::make_shared<Nature>(prefabs_manager->getPrefab(L"tree_1"));
-		tree_4->setPosition(sf::Vector2i(mapRect.size.x - texSize.x, mapRect.size.y - texSize.y));
-		MapEditor::editor->_map->getChunkByGlobalPosition(tree_4->getPosition())->addPlacedGameObject(tree_4);
-
-
-		//for (int i = 0; i < 1000; i += 1) {
-		//	std::shared_ptr<PlacedGameObject> boulder = std::make_shared<Nature>(prefabs_manager->getPrefab(L"boulder_1"));
-		//	boulder->setPosition(sf::Vector2i(rand() % mapRect.size.x, rand() % mapRect.size.y));
-		//	MapEditor::editor->_map->getChunkByGlobalPosition(boulder->getPosition())->addPlacedGameObject(boulder);
-		//}
-		
 	}
 
 	void Editor::createCamera() {
@@ -109,6 +81,8 @@ namespace MapEditor {
 
 		if (_main_menu->_state != Components::MainMenuStates::Closed)
 			return;
+
+		_camera->handleEvent(event);
 
 		_map->handleEvent(event);
 		_cursor_on_map->handleEvent(event);

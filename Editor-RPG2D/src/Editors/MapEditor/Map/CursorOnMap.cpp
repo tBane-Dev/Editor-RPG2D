@@ -29,9 +29,25 @@ namespace MapEditor {
 
     }
 
+    void CursorOnMap::addToSelected(std::shared_ptr<PlacedGameObject> object, sf::Vector2i offset) {
+
+        if (std::find_if(_selectedObjects.begin(), _selectedObjects.end(),
+            [&](const auto& selectedObject) {
+                return selectedObject->_object.lock() == object;
+            }
+        ) == _selectedObjects.end()) {
+			std::shared_ptr<SelectedPlacedGameObject> selectedObject = std::make_shared<SelectedPlacedGameObject>(object, offset);
+			selectedObject->_object.lock()->_isSelected = true;
+			_selectedObjects.push_back(selectedObject);
+        }
+	}
+
     void CursorOnMap::removeFromSelected(std::shared_ptr<GameObject> object) {
-        std::erase_if(_selectedObjects, [&](const std::shared_ptr<SelectedPlacedGameObject>& obj) {
-            return obj->_object.lock()->_prefab.lock() == object;
+        std::erase_if(_selectedObjects, [&](const std::shared_ptr<SelectedPlacedGameObject>& obj) { 
+            bool condition = obj->_object.lock()->_prefab.lock() == object;
+            if (condition)
+                obj->_object.lock()->_isSelected = false;
+            return condition;
             });
     }
 
@@ -41,11 +57,48 @@ namespace MapEditor {
         _globalPosition = sf::Vector2i(Main::render_window->mapPixelToCoords(_position));
 
         if (_isDragging || _isSelecting) {
-            if (_isDragging) {
+            if (_isDragging && _position != _prevPosition) {
+
+                _prevPosition = _position;
+
                 for (auto& object : _selectedObjects) {
 
                     if (object->_object.expired())
                         continue;
+                    
+                    if (object->_object.lock()->_type == ObjectType::Door) {
+						removeFromSelected(object->_object.lock()->_prefab.lock());
+						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Door>(object->_object.lock())->_building.lock();
+						sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
+                        addToSelected(building, offset);   
+                        continue;
+                    }
+
+                    if (object->_object.lock()->_type == ObjectType::Wall) {
+                        removeFromSelected(object->_object.lock()->_prefab.lock());
+                        std::shared_ptr<Building> building = std::dynamic_pointer_cast<Wall>(object->_object.lock())->_building.lock();
+                        sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
+                        addToSelected(building, offset);
+                        continue;
+                    }
+
+					// TO-DO - maybe under lines should be uncommented, but for now it is commented because it is required now
+
+                    //if (object->_object.lock()->_type == ObjectType::Skelet) {
+                    //    removeFromSelected(object->_object.lock()->_prefab.lock());
+                    //    std::shared_ptr<Building> building = std::dynamic_pointer_cast<Skeleton>(object->_object.lock())->_building.lock();
+                    //    sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
+                    //    addToSelected(building, offset);
+                    //    continue;
+                    //}
+
+                    //if (object->_object.lock()->_type == ObjectType::Roof) {
+                    //    removeFromSelected(object->_object.lock()->_prefab.lock());
+                    //    std::shared_ptr<Building> building = std::dynamic_pointer_cast<Roof>(object->_object.lock())->_building.lock();
+                    //    sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
+                    //    addToSelected(building, offset);
+                    //    continue;
+                    //}
 
                     std::shared_ptr<PlacedGameObject> gameObject = object->_object.lock();
 
@@ -213,62 +266,33 @@ namespace MapEditor {
     void CursorOnMap::handleEvent(const sf::Event& event) {
 
         if (_object.expired()) {
+
             if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
-                if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+
+                if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
+                    mbp && mbp->button == sf::Mouse::Button::Left) {
 
                     _isDragging = false;
                     _isSelecting = false;
-                    if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
-                        for (auto& object : _selectedObjects) {
 
-                            std::shared_ptr<Mesh> mesh = object->_object.lock()->_prefab.lock()->getMesh();
-
-                            sf::Vector2i monsterOffset = sf::Vector2i(0, 0);
-                            if (!object->_object.lock()->_prefab.expired()) {
-                                if (object->_object.lock()->_prefab.lock()->_type == ObjectType::Monster) {
-                                    std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(object->_object.lock());
-                                    if (monster->_prefab.lock()->getCollider()->_type == ColliderType::Circular) {
-                                        monsterOffset = monster->_prefab.lock()->getOrigin();
-                                    }
-                                }
-                            }
-
-                            if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, object->_object.lock()->_position - monsterOffset)) {
-
-                                _isDragging = true;
-
-                                for (auto& o : _selectedObjects) {
-                                    if (!o->_object.expired()) {
-                                        o->_offset = MapEditor::editor->_cursor_on_map->_globalPosition - o->_object.lock()->_position;
-                                    }
-                                }
-
-                                return;
-                            }
-                        }
-                    }
-
-                    if (!(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))) {
-                        for (auto& object : _selectedObjects) {
-                            if (!object->_object.expired()) {
-                                object->_object.lock()->_isSelected = false;
-                            }
-                        }
-                        _selectedObjects.clear();
-
-                    }
+                    bool ctrl = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl);
+                    bool shift = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift);
 
                     std::shared_ptr<PlacedGameObject> selectedGameObject = nullptr;
+
                     for (auto& object : MapEditor::editor->_game_objects->_visiblePlacedGameObjects) {
 
+                        if (!object) continue;
                         if (object->_prefab.expired()) continue;
 
-                        std::shared_ptr<Mesh> mesh = object->_prefab.lock()->getMesh();
+                        std::shared_ptr<GameObject> prefab = object->_prefab.lock();
+                        std::shared_ptr<Mesh> mesh = prefab->getMesh();
 
-                        sf::Vector2i monsterOffset = sf::Vector2i(0, 0);
-                        if (!object->_prefab.expired()) {
-                            if (object->_prefab.lock()->_type == ObjectType::Monster) {
-                                std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(object);
+                        sf::Vector2i monsterOffset(0, 0);
+                        if (prefab->_type == ObjectType::Monster) {
+
+                            std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(object);
+                            if (monster && !monster->_prefab.expired() && monster->_prefab.lock()->getCollider()) {
                                 if (monster->_prefab.lock()->getCollider()->_type == ColliderType::Circular) {
                                     monsterOffset = monster->_prefab.lock()->getOrigin();
                                 }
@@ -281,92 +305,111 @@ namespace MapEditor {
                     }
 
                     if (selectedGameObject) {
-
-                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
-                            if (std::find_if(_selectedObjects.begin(), _selectedObjects.end(),
-                                [&](const auto& selectedObject) {
-                                    return selectedObject->_object.lock() == selectedGameObject;
-                                }
-                            ) == _selectedObjects.end()) {
-                                selectedGameObject->_isSelected = true;
-                                _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
-                            }
-                        }
-                        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
-
-                            auto it = std::find_if(
+                        auto selectedIt =
+                            std::find_if(
                                 _selectedObjects.begin(),
                                 _selectedObjects.end(),
                                 [&](const auto& selectedObject) {
-                                    return selectedObject->_object.lock().get() == selectedGameObject.get();
+
+                                    return
+                                        !selectedObject->_object.expired() &&
+                                        selectedObject->_object.lock() ==
+                                        selectedGameObject;
                                 }
                             );
 
-                            if (it != _selectedObjects.end()) {
+                        bool alreadySelected = selectedIt != _selectedObjects.end();
+
+                        if (!ctrl && !shift) {
+                            if (alreadySelected) {
+
+                                _isDragging = true;
+                                _prevPosition = _position;
+
+                                for (auto& object : _selectedObjects) {
+                                    if (object->_object.expired()) continue;
+                                    object->_offset = MapEditor::editor->_cursor_on_map->_globalPosition - object->_object.lock()->_position;
+                                }
+                                return;
+                            }
+
+                            for (auto& object : _selectedObjects) {
+
+                                if (!object->_object.expired()) {
+                                    object->_object.lock()->_isSelected = false;
+                                }
+                            }
+
+                            _selectedObjects.clear();
+                            selectedGameObject->_isSelected = true;
+                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                            return;
+                        }
+
+                        if (shift) {
+                            if (!alreadySelected) {
+                                selectedGameObject->_isSelected = true;
+                                _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                            }
+                            return;
+                        }
+
+                        if (ctrl) {
+                            if (alreadySelected) {
                                 selectedGameObject->_isSelected = false;
-                                _selectedObjects.erase(it);
+                                _selectedObjects.erase(selectedIt);
                             }
                             else {
                                 selectedGameObject->_isSelected = true;
                                 _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
                             }
+                            return;
                         }
-                        else {
-                            // normal seletion
-                            for (auto& object : _selectedObjects)
-                                if (!object->_object.expired())
-                                    object->_object.lock()->_isSelected = false;
-                            _selectedObjects.clear();
-
-                            selectedGameObject->_isSelected = true;
-                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
-                        }
-
-
-                        //DebugLog(std::to_wstring(_selectedObjects.size()));
-
-                    }
-                    else {
-
-                        _isSelecting = true;
-
-                        _selectionRect.position =
-                            MapEditor::editor->_cursor_on_map->_globalPosition;
-
-                        _selectionRect.size = sf::Vector2i(0, 0);
                     }
 
+                    if (!ctrl && !shift) {
+                        for (auto& object : _selectedObjects) {
+                            if (!object->_object.expired()) {
+                                object->_object.lock()->_isSelected = false;
+                            }
+                        }
+                        _selectedObjects.clear();
+                    }
 
+                    _isSelecting = true;
+                    _selectionRect.position = MapEditor::editor->_cursor_on_map->_globalPosition;
+                    _selectionRect.size = sf::Vector2i(0, 0);
                 }
             }
-        }
 
-        if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
-            if (!_selectedObjects.empty()) {
+            if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
+                if (!_selectedObjects.empty()) {
+                    for (auto& object : _selectedObjects) {
+                        if (!object->_object.expired()) {
+                            object->_object.lock()->_isSelected = false;
+                        }
+                    }
+                    _selectedObjects.clear();
+                    return;
+                }
+            }
+
+            if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+                _prevSelectedObjects.clear();
+
                 for (auto& object : _selectedObjects) {
-                    if (!object->_object.expired()) {
-                        object->_object.lock()->_isSelected = false;
-                    }
-                }
-                _selectedObjects.clear();
-                return;
-            }
-        }
+                    if (object->_object.expired())
+                        continue;
 
-        if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-
-            _prevSelectedObjects.clear();
-            for (auto& object : _selectedObjects) {
-                if (!object->_object.expired()) {
                     if (object->_object.lock()->_isSelected) {
                         _prevSelectedObjects.push_back(object);
                     }
                 }
-            }
 
-            _isDragging = false;
-            _isSelecting = false;
-            _selectionRect.size = sf::Vector2i(0, 0);
+                _isDragging = false;
+                _isSelecting = false;
+                _selectionRect.size = sf::Vector2i(0, 0);
+            }
         }
 
         if (_object.expired())
@@ -533,6 +576,7 @@ namespace MapEditor {
                     
                     building->generate();
                     objectOnMap->setPosition(position);
+					building->addDoorsToGameObjects(MapEditor::editor);
                     building->addWallsToGameObjects(MapEditor::editor);
                     building->addSkeletsToGameObjects(MapEditor::editor);
                     building->addOutsideToGameObjects(MapEditor::editor);

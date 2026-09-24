@@ -59,6 +59,9 @@ BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) :
 		}
 	}
 
+	// copy the doorss
+	_doors = other._doors;
+
 	// copy the walls
 	_walls.clear();;
 	for (int y = 0; y < other._walls.size(); y += 1) {
@@ -84,6 +87,8 @@ BuildingPrefab::~BuildingPrefab() {
 }
 
 void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+	copyDoorsFromPrefab(position, scale, building);
+	
 	generateWalls(position, scale, building);
 	copyWallsFromPrefab(position, scale, building);
 
@@ -133,7 +138,7 @@ void BuildingPrefab::generateFloorVertexArray(float scale) {
 			_floorVertexArray.append(sf::Vertex(sf::Vector2f(px, py + a), sf::Color::White, sf::Vector2f(tx, ty + s)));
 		}
 	}
-}
+} 
 
 void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
 
@@ -263,7 +268,7 @@ void BuildingPrefab::generateWalls(sf::Vector2i position, float scale, std::shar
 				textureTopRect.position = wallset->_groups[id]->walls[i].get();
 
 				_wallsObjects.push_back(std::make_shared<Wall>(wallset->getPrefab(id), building, textureBottomRect, textureTopRect, _wallHeight));
-				_wallsObjects.back()->setPosition(position + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
+				_wallsObjects.back()->setPosition(sf::Vector2i(x, y));
 			}
 			else
 				_wallsObjects.push_back(nullptr);
@@ -620,34 +625,53 @@ void BuildingPrefab::drawOnlyFloor(sf::RenderTarget& target, sf::Vector2i positi
 
 void BuildingPrefab::drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i position, float scale, int drawType) {
 
-	if (drawType == -1) {
-		for (int y = 0; y < _walls.size(); y++) {
-			for (int x = 0; x < _walls[0].size(); x++) {
-				int index = y * _walls[0].size() + x;
-				if (index < _wallsObjects.size()) {
-					std::shared_ptr<Wall> wall = _wallsObjects[index];
-					if (wall) {
-						wall->setPosition(position + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
-						wall->draw(target, scale);
-					}
+	for (int y = 0; y < _walls.size(); y++) {
+		for (int x = 0; x < _walls[0].size(); x++) {
+
+			int index = y * _walls[0].size() + x;
+
+			if (index >= _wallsObjects.size())
+				continue;
+
+			std::shared_ptr<Wall> wall = _wallsObjects[index];
+
+			if (!wall)
+				continue;
+
+
+			sf::Vector2i wallPosition(position.x + int(x * 32.f * scale), position.y + int(y * 32.f * scale));
+			wall->setPosition(wallPosition);
+
+			bool collidedWithDoor = false;
+
+			sf::IntRect wallRect(wallPosition, sf::Vector2i(int(32.f * scale), int(32.f * scale)));
+
+			for (auto& door : _doors) {
+
+				if (!door)
+					continue;
+
+				sf::Vector2i doorPosition(
+					(float)position.x + (float)door->_position.x * scale,
+					(float)position.y + (float)(door->_position.y+32.f) * scale
+				);
+
+				sf::IntRect doorRect(
+					doorPosition,
+					sf::Vector2i(
+						64.f * scale,
+						32.f * scale
+					)
+				);
+
+				if (doorRect.findIntersection(wallRect)) {
+					collidedWithDoor = true;
+					break;
 				}
 			}
-		}
-	}
 
-	else {
 
-		for (int y = 0; y < _walls.size(); y++) {
-			for (int x = 0; x < _walls[0].size(); x++) {
-				int index = y * _walls[0].size() + x;
-				if (index < _wallsObjects.size()) {
-					std::shared_ptr<Wall> wall = _wallsObjects[index];
-					if (wall) {
-						wall->setPosition(position + sf::Vector2i((float)x * 32.f * scale, (float)y * 32.f * scale));
-						wall->draw(target, scale, drawType);
-					}
-				}
-			}
+			wall->draw(target, scale, drawType, collidedWithDoor);
 		}
 	}
 }
@@ -678,6 +702,22 @@ void BuildingPrefab::drawOutsideLook(sf::RenderTarget& target, sf::Vector2i posi
 	drawOnlyRoof(target, position, scale, building);
 }
 
+void BuildingPrefab::copyDoorsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+	if (!building)
+		return;
+
+	building->_doorsObjects.clear();
+	for (auto& door : _doors) {
+		if (door) {
+			std::shared_ptr<Door> newDoor = std::make_shared<Door>(door->_prefab, building);
+			newDoor->setPosition(building->_position + sf::Vector2i((float)door->_position.x * scale, (float)door->_position.y * scale));
+			building->_doorsObjects.push_back(newDoor);
+		}
+		else
+			building->_doorsObjects.push_back(nullptr);
+	}
+}
+
 void BuildingPrefab::copyWallsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
 	if (!building)
 		return;
@@ -686,8 +726,8 @@ void BuildingPrefab::copyWallsFromPrefab(sf::Vector2i position, float scale, std
 	for (auto& wall : _wallsObjects) {
 		if (wall) {
 
-			std::shared_ptr<Wall> newWall = std::make_shared<Wall>(wall->_prefab, wall->_building, wall->_textureBottomRect, wall->_textureTopRect, wall->_height);
-			newWall->setPosition(sf::Vector2i(wall->_position.x, wall->_position.y));
+			std::shared_ptr<Wall> newWall = std::make_shared<Wall>(wall->_prefab, building, wall->_textureBottomRect, wall->_textureTopRect, wall->_height);
+			newWall->setPosition(position + sf::Vector2i((float)wall->_position.x * 32.f * scale, (float)wall->_position.y * 32.0f * scale));
 			building->_wallsObjects.push_back(newWall);
 		}
 		else
@@ -738,9 +778,8 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 
 		sf::Vector2i buildingPosition(overhang.x, topOffset + overhang.y);
 
-		drawOnlyFloor(resultTexture, buildingPosition);
-
 		if (!drawOutside) {
+			drawOnlyFloor(resultTexture, buildingPosition);
 			drawOnlyWalls(resultTexture, buildingPosition, scale, 1);
 			drawOnlySkelet(resultTexture, buildingPosition + sf::Vector2i(0, floorSize.y), scale, 1);
 		}
@@ -767,9 +806,8 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 
 		sf::Vector2i buildingPosition(gableRoof->_roofOverhangSize.x, topOffset);
 
-		drawOnlyFloor(resultTexture, buildingPosition);
-
 		if (!drawOutside) {
+			drawOnlyFloor(resultTexture, buildingPosition);
 			drawOnlyWalls(resultTexture, buildingPosition, scale, 1);
 			drawOnlySkelet(resultTexture, buildingPosition + sf::Vector2i(0, floorSize.y), scale, 1);
 		}
@@ -882,6 +920,11 @@ void Building::setPosition(sf::Vector2i position) {
 
 	buildingPrefab->generateFloorVertexArray(scale);
 
+	for (auto& door : _doorsObjects) {
+		if (door)
+			door->setPosition(door->getPosition() + delta);
+	}
+
 	for(auto& wall : _wallsObjects) {
 		if (wall)
 			wall->setPosition(wall->getPosition() + delta);
@@ -905,6 +948,24 @@ void Building::loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab) {
 	_prefab = buildingPrefab;
 	setPosition(getPosition());
 }
+
+void Building::addDoorsToGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& door : _doorsObjects) {
+
+		if (!door)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk) {
+				chunk->addPlacedGameObject(door);
+				MapEditor::editor->_game_objects->addGameObject(door);
+			}
+		}
+	}
+}
+
 
 void Building::addWallsToGameObjects(std::shared_ptr<Main::Editor> editor) {
 
@@ -956,7 +1017,22 @@ void Building::addOutsideToGameObjects(std::shared_ptr<Main::Editor> editor) {
 	
 }
 
+void Building::removeDoorsFromGameObjects(std::shared_ptr<Main::Editor> editor) {
 
+	for (auto& door : _doorsObjects) {
+
+		if (!door)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk)
+				chunk->removePlacedGameObject(door);
+			MapEditor::editor->_game_objects->removeGameObject(door);
+		}
+
+	}
+}
 
 void Building::removeWallsFromGameObjects(std::shared_ptr<Main::Editor> editor) {
 
@@ -1006,6 +1082,22 @@ void Building::removeOutsideFromGameObjects(std::shared_ptr<Main::Editor> editor
 
 }
 
+void Building::addDoorsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& door : _doorsObjects) {
+
+		if (!door)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(door);
+		}
+
+		if (editor == BuildingsEditor::editor) {
+			BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(door);
+		}
+	}
+}
 
 void Building::addWallsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor) {
 

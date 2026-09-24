@@ -78,6 +78,14 @@ public:
 
 		while (state != intro_states::end) {
 
+			while (const std::optional event = Main::render_window->pollEvent()) {
+
+				if (event->is<sf::Event::Closed>()) {
+					Main::render_window->close();
+					exit(0);
+				}
+			}
+
 			if (state == intro_states::logo_entry_anim) {
 				float col_alpha = (clock.getElapsedTime() - start_time).asSeconds() * 50000.0f / 255.0f;
 				

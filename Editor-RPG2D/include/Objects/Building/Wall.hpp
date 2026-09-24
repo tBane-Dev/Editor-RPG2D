@@ -26,6 +26,6 @@ public:
 	~Wall();
 
 	void draw(sf::RenderTarget& target, float scale = 1.f);
-	void draw(sf::RenderTarget& target, float scale, int drawType);
+	void draw(sf::RenderTarget& target, float scale, int drawType, bool collidedWithDoor = false);
 	virtual void draw();
 };

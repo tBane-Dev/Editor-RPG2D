@@ -6,7 +6,7 @@
 #include "Theme.hpp"
 #include "ShadersManager.hpp"
 
-PlacedGameObject::PlacedGameObject(std::weak_ptr<GameObject> prefab) : Object() {
+PlacedGameObject::PlacedGameObject(std::weak_ptr<GameObject> prefab, bool play) : Object() {
 	_prefab = prefab;
 
 	if(_prefab.expired()) {
@@ -20,7 +20,9 @@ PlacedGameObject::PlacedGameObject(std::weak_ptr<GameObject> prefab) : Object() 
 
 	_animator->setRandFrame();
 	_animator->setRandTime();
-	_animator->play();
+	if(true) {
+		_animator->play();
+	}
 	_position = sf::Vector2i(0, 0);
 
 	_isSelected = false;

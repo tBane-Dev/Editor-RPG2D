@@ -20,6 +20,7 @@ namespace BuildingsEditor {
 		_visiblePlacedGameObjects.push_back(placedGameObject.lock());
 		if (placedGameObject.lock()->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(placedGameObject.lock());
+			building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
@@ -78,7 +79,7 @@ namespace BuildingsEditor {
 
 		std::sort(_visiblePlacedGameObjects.begin(), _visiblePlacedGameObjects.end(), [&types, getIndex](const std::shared_ptr<PlacedGameObject>& a, const std::shared_ptr<PlacedGameObject>& b) {
 
-
+			
 
 			// OBJECT A - POSITION
 			sf::Vector2i posA = a->_position;
@@ -115,7 +116,6 @@ namespace BuildingsEditor {
 					posB += b->_prefab.lock()->getOrigin();
 				}
 			}
-
 
 			if (posA.y == posB.y) {
 

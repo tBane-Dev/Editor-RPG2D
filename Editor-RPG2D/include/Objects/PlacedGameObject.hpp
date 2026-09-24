@@ -15,7 +15,7 @@ public:
 	bool _isSelected;
 	std::unique_ptr<sf::Text> _text;
 
-	PlacedGameObject(std::weak_ptr<GameObject> prefab);
+	PlacedGameObject(std::weak_ptr<GameObject> prefab, bool play = true);
 	~PlacedGameObject();
 
 	void drawFrame(sf::Color color = sf::Color(127+64, 30, 45));

@@ -31,8 +31,8 @@ namespace MapEditor {
 
 		void setVisibleChunks();
 
-		void save(std::ofstream& saver);
-		void load(std::ifstream& loader);
+		void saveFromProject(std::ofstream& saver);
+		void loadFromProject(std::ifstream& loader);
 
 		void cursorHover();
 		void handleEvent(const sf::Event& event);

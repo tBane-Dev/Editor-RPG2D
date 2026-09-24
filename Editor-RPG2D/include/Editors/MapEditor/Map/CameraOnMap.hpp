@@ -9,6 +9,7 @@ namespace MapEditor {
 		sf::Vector2f _position;
 		sf::View _view;
 		bool _isMoving;
+		float _zoom;
 
 		sf::IntRect _visibleRect;
 

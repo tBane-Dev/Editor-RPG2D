@@ -2,6 +2,7 @@
 #include "Objects/Terrain.hpp"
 #include "Objects/Floor.hpp"
 #include "Wallset.hpp"
+#include "Objects/Building/Door.hpp"
 #include "Components/Palette/Palette.hpp"
 #include "Components/Palette/TerrainSlot.hpp"
 #include "Components/Palette/GameObjectSlot.hpp"
@@ -197,7 +198,7 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 					slot->setIndex(index);
 					_slots.emplace_back(slot);
 				}
-				else if(_type == ObjectType::Wall) {
+				else if (_type == ObjectType::Wall) {
 
 					std::shared_ptr<WallSlot> slot = std::make_shared<WallSlot>(
 						slotTexture,
@@ -208,6 +209,15 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 					);
 					slot->_object = wallset->getPrefab(y * _slotsCount.x + x);
 					_slots.emplace_back(slot);
+				}
+				else if (_type == ObjectType::Door) {
+					_slots.emplace_back(std::make_shared<GameObjectSlot>(
+						slotTexture,
+						slotHoverTexture,
+						slotPressTexture,
+						slotInactiveTexture,
+						position
+					));
 				}
 				else {
 					_slots.emplace_back(std::make_shared<Slot>(
@@ -420,11 +430,9 @@ void Slots::loadObjects() {
 
 	if (_type == ObjectType::Door) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i < Components::Palette::doors.size()) {
-				_slots[i]->_object = Components::Palette::doors[i];
-				if (!_slots[i]->_object.expired()) std::wcout << L"object exist";
-				_slots[i]->_animator = std::make_shared<Animator>(Components::Palette::doors[i]->_prefab.lock()->getAnimations());
-				if (!_slots[i]->_animator->getAnimations().expired()) std::wcout << L"animator exist";
+			if (i < buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door).size()) {
+				_slots[i]->_object = buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door)[i];
+				_slots[i]->_animator = std::make_shared<Animator>(buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door)[i]->getAnimations());
 				_slots[i]->_animator->play();
 				_slots[i]->setActive(true);
 			}
@@ -544,9 +552,9 @@ void Slots::updateObjects() {
 
 	if (_type == ObjectType::Door) {
 		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
-			if (i < Components::Palette::doors.size()) {
-				_slots[i]->_object = Components::Palette::doors[i];
-				_slots[i]->_animator = std::make_shared<Animator>(Components::Palette::doors[i]->_prefab.lock()->getAnimations());
+			if (i < buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door).size()) {
+				_slots[i]->_object = buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door)[i];
+				_slots[i]->_animator = std::make_shared<Animator>(buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door)[i]->getAnimations());
 				_slots[i]->_animator->play();
 				_slots[i]->setActive(true);
 			}

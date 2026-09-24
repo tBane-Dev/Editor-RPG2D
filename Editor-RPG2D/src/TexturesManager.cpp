@@ -59,7 +59,7 @@ void TexturesManager::loadAllTextures() {
 
     std::vector<std::wstring> texturePaths;
 
-    // tileset
+    // sets
     texturePaths.push_back(L"assets\\tex\\tileset.png");
     texturePaths.push_back(L"assets\\tex\\floorset.png");
 	texturePaths.push_back(L"assets\\tex\\wallset.png");
@@ -67,6 +67,10 @@ void TexturesManager::loadAllTextures() {
 	texturePaths.push_back(L"assets\\tex\\roof1_overhang.png");
 	texturePaths.push_back(L"assets\\tex\\roof2.png");
 	texturePaths.push_back(L"assets\\tex\\skeletset.png");
+
+    // doors
+	texturePaths.push_back(L"assets\\tex\\doors\\wooden_door.png");
+	texturePaths.push_back(L"assets\\tex\\doors\\stone_door.png");
 
 	// controls
     texturePaths.push_back(L"assets\\tex\\controls\\scrollbar32\\up.png");

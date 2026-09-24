@@ -11,7 +11,7 @@
 #include "Components/Palette/Slots.hpp"
 #include "Objects/Terrain.hpp"
 #include "Objects/Floor.hpp"
-#include "Objects/Wall.hpp"
+#include "Objects/Building/Wall.hpp"
 #include "Objects/Building/Building.hpp"
 
 
@@ -22,14 +22,6 @@ namespace Components {
 		static std::vector<std::shared_ptr<Terrain>> terrains;
 		static std::vector<std::shared_ptr<Floor>> floors;
 		static std::vector<std::shared_ptr<Wall>> walls;
-
-		static std::vector<std::shared_ptr<PlacedGameObject>> doors;		// TO-DO - type must be a door
-		static std::shared_ptr<Texture> doors_texture;
-		static std::shared_ptr<Animations> doors_animations;
-		static std::shared_ptr<Collider> doors_collider;
-		static std::shared_ptr<Mesh> doors_mesh;
-		static std::shared_ptr<GameObject> doors_prefab;
-
 		static std::vector<std::shared_ptr<BuildingPrefab>> buildings;
 
 		sf::IntRect _rect;
