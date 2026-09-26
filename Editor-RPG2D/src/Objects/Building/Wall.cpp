@@ -43,9 +43,9 @@ void Wall::draw(sf::RenderTarget& target, float scale) {
 
 	if (BuildingsEditor::editor && BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value == 0) {
 		
-		sf::IntRect bottomWallRect = sf::IntRect(_position, sf::Vector2i(32, 32));
+		sf::IntRect bottomWallRect = sf::IntRect(_position, sf::Vector2i(32.f*scale, 32.f*scale));
 		for(auto& door : _building.lock()->_doorsObjects) {
-			sf::IntRect doorRect = sf::IntRect(door->_position, sf::Vector2i(64, 64));
+			sf::IntRect doorRect = sf::IntRect(door->_position, sf::Vector2i(64.f*scale, 64.f*scale));
 			if(doorRect.findIntersection(bottomWallRect)) {
 				return;
 			}
@@ -73,9 +73,9 @@ void Wall::draw(sf::RenderTarget& target, float scale) {
 	if (renderOutsideLook) {
 
 		bool collidedWithDoor = false;
-		sf::IntRect bottomWallRect = sf::IntRect(_position, sf::Vector2i(32, 32));
+		sf::IntRect bottomWallRect = sf::IntRect(_position, sf::Vector2i(32.f*scale, 32.f*scale));
 		for (auto& door : _building.lock()->_doorsObjects) {
-			sf::IntRect doorRect = sf::IntRect(door->_position, sf::Vector2i(64, 64));
+			sf::IntRect doorRect = sf::IntRect(door->_position, sf::Vector2i(64.f*scale, 64.f*scale));
 			if (doorRect.findIntersection(bottomWallRect)) {
 				collidedWithDoor = true;
 				break;
@@ -107,9 +107,9 @@ void Wall::draw(sf::RenderTarget& target, float scale) {
 	else {
 
 		bool collidedWithDoor = false;
-		sf::IntRect bottomWallRect = sf::IntRect(_position, sf::Vector2i(32, 32));
+		sf::IntRect bottomWallRect = sf::IntRect(_position, sf::Vector2i(32.f*scale, 32.f*scale));
 		for (auto& door : _building.lock()->_doorsObjects) {
-			sf::IntRect doorRect = sf::IntRect(door->_position, sf::Vector2i(64, 64));
+			sf::IntRect doorRect = sf::IntRect(door->_position, sf::Vector2i(64.f*scale, 64.f*scale));
 			if (doorRect.findIntersection(bottomWallRect)) {
 				return; 
 			}

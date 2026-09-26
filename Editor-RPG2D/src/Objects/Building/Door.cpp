@@ -40,6 +40,54 @@ void Door::draw() {
 	}
 
 	if (Main::editor_manager->get_back() == MapEditor::editor) {
-		draw(*Main::render_window, 1.f);
+		bool renderAllColliders = MapEditor::editor->_main_menu->_render_colliders->_checkbox->_value == 1;
+
+		sf::Vector2i pos = _position;
+
+		if (_prefab.expired()) return;
+
+		std::shared_ptr<Collider> collider = _prefab.lock()->getCollider();
+
+		if (renderAllColliders) {
+			if (collider->_type == ColliderType::Rectangular) {
+				collider->draw(_position);
+			}
+			else if (collider->_type == ColliderType::Circular) {
+				collider->draw(_position + _prefab.lock()->getOrigin());
+			}
+		}
+
+		if (_isSelected == true) {
+			drawFrame(sf::Color(255, 30, 45));
+		}
+		else if (MapEditor::editor->_main_menu->_render_sprites_outline->_checkbox->_value == 1) {
+			drawFrame();
+		}
+
+		if (_animator->_animations.expired())
+			return;
+
+		std::shared_ptr<Animations> animations = _animator->getAnimations().lock();
+
+		if (animations) {
+			sf::IntRect frameRect = animations->getFrameRect(_animator->_animation, _animator->_frame);
+
+			sf::Sprite sprite(*animations->getTexture()->_texture);
+			sprite.setPosition(sf::Vector2f(_position));
+			sprite.setTextureRect(frameRect);
+			if (MapEditor::editor->_game_objects->_hoveredPlacedGameObject.lock().get() == this)
+				sprite.setColor(sf::Color(255, 30 + 64, 45 + 64)); // TO-DO - must be a shader highlight
+			else if (_isSelected == true)
+				sprite.setColor(sf::Color(255, 30 + 64, 45 + 64));
+			else
+				sprite.setColor(sf::Color::White);
+			Main::render_window->draw(sprite);
+		}
+
+		if (MapEditor::editor->_main_menu->_render_meshes->_checkbox->_value == 1) {
+			if (_prefab.lock()->getMesh()) {
+				_prefab.lock()->getMesh()->draw(_position, sf::Color::Red);
+			}
+		}
 	}
 }
