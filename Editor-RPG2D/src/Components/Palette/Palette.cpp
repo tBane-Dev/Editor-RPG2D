@@ -31,7 +31,7 @@ namespace Components {
 		}
 
 		if (Palette::floors.empty()) {
-			for (int i = 0; i < textures_manager->getTexture(L"assets\\tex\\floorset.png")->_texture->getSize().x / 64; i += 1) {
+			for (int i = 0; i < textures_manager->getTexture(L"assets\\tex\\buildings\\floorset.png")->_texture->getSize().x / 64; i += 1) {
 				Palette::floors.emplace_back(std::make_shared<Floor>(i, sf::IntRect(sf::Vector2i(i * 64, 0), sf::Vector2i(64, 64))));
 			}
 		}

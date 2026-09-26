@@ -180,8 +180,8 @@ void PrefabsManager::loadBuildingsPartsPrefabs() {
 	};
     
     data doors_datas[] = {
-        { L"Wooden Door", L"assets\\tex\\doors\\wooden_door.png" },
-        { L"Stone Door", L"assets\\tex\\doors\\stone_door.png" },
+        { L"Wooden Door", L"assets\\tex\\buildings\\doors\\wooden_door.png" },
+        { L"Stone Door", L"assets\\tex\\buildings\\doors\\stone_door.png" },
 	};
 
     DebugLog(L"Loading buildings parts prefabs:");

@@ -5,7 +5,7 @@ std::shared_ptr<Texture> FloorSlot::_floorset = nullptr;
 
 FloorSlot::FloorSlot(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, std::shared_ptr<Texture> inactiveTexture, sf::Vector2i position, int index) : Slot(texture, hoverTexture, pressTexture, inactiveTexture, position) {
 	if(_floorset == nullptr)
-		_floorset = textures_manager->getTexture(L"assets\\tex\\floorset.png");
+		_floorset = textures_manager->getTexture(L"assets\\tex\\buildings\\floorset.png");
 
 	_index = index;
 }

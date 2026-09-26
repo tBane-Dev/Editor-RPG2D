@@ -2,7 +2,7 @@
 
 Wallset::Wallset() {
 
-	_texture = textures_manager->getTexture(L"assets\\tex\\wallset.png");
+	_texture = textures_manager->getTexture(L"assets\\tex\\buildings\\wallset.png");
 	_animations = std::make_shared<Animations>(L"wallset", _texture, sf::Vector2i(32, 32), _texture->getSize().y / 32, _texture->getSize().x / 32);
 
 	std::shared_ptr<Group> wooden_wall = std::make_shared<Group>(L"wooden wall");

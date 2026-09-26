@@ -16,7 +16,7 @@ std::shared_ptr<Texture> BuildingPrefab::_floorset = nullptr;
 BuildingPrefab::BuildingPrefab(std::wstring name, sf::Vector2i size) : GameObject(name) {
 
 	if(_floorset == nullptr)
-		_floorset = textures_manager->getTexture(L"assets\\tex\\floorset.png");
+		_floorset = textures_manager->getTexture(L"assets\\tex\\buildings\\floorset.png");
 
 	_type = ObjectType::Building;
 
@@ -820,7 +820,7 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 			rtex.resize(sf::Vector2u(width, height));
 			rtex.clear(sf::Color::Transparent);
 
-			sf::Texture wallTexture = *textures_manager->getTexture(L"assets\\tex\\wallset.png")->_texture;
+			sf::Texture wallTexture = *textures_manager->getTexture(L"assets\\tex\\buildings\\wallset.png")->_texture;
 			sf::RenderTexture tileRtex;
 			tileRtex.resize(sf::Vector2u(32, 32));
 			tileRtex.clear(sf::Color::Transparent);

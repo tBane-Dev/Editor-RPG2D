@@ -213,8 +213,8 @@ void AnimationsManager::loadBuildingsPartsAnimations() {
 	// datas
 	std::vector<Data> datas;
     
-    datas.emplace_back(L"assets\\tex\\doors\\wooden_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
-    datas.emplace_back(L"assets\\tex\\doors\\stone_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
+    datas.emplace_back(L"assets\\tex\\buildings\\doors\\wooden_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
+    datas.emplace_back(L"assets\\tex\\buildings\\doors\\stone_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
     
     // load all animations
     for (auto& data : datas) {

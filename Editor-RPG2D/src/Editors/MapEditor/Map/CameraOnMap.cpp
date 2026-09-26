@@ -20,6 +20,9 @@ namespace MapEditor {
 
 		_isMoving = false;
 		_zoom = 1.0f;
+
+		_isDragging = false;
+		_lastPosition = sf::Vector2i(-1, -1);
 	}
 
 	CameraOnMap::~CameraOnMap() {
@@ -37,8 +40,25 @@ namespace MapEditor {
 				if(_zoom > 0.5f)
 				_zoom -= 0.25;
 
+			_isZooming = true;
 			_view.setSize(sf::Vector2f(Main::render_window->getSize()) / _zoom);
-			Main::render_window->setView(_view);
+			_view.setCenter(sf::Vector2f(_position));
+		}
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
+			_isDragging = true;
+			_lastPosition = mbp->position;
+		}
+
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Middle) {
+			_isDragging = false;
+		}
+
+		if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && _isDragging) {
+			_position.x -= (mm->position.x - _lastPosition.x) / _zoom;
+			_position.y -= (mm->position.y - _lastPosition.y) / _zoom;
+			_lastPosition = mm->position;
+			_view.setCenter(sf::Vector2f(_position));
 		}
 	}
 
@@ -76,6 +96,15 @@ namespace MapEditor {
 			_position.x += moveSpeed * deltaTime.asSeconds() / _zoom;
 			_isMoving = true;
 
+		}
+
+		if (_isDragging) {
+			_isMoving = true;
+		}
+
+		if (_isZooming) {
+			_isZooming = false;
+			_isMoving = true;
 		}
 
 		_view.setSize(sf::Vector2f(Main::render_window->getSize()) / _zoom);

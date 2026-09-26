@@ -12,7 +12,7 @@ SkeletPrefab::SkeletPrefab(std::wstring name, std::weak_ptr<Animations> animatio
 	_id = id;
 
 	// create texture from skeletset.png
-	sf::Texture skeletTexture = *textures_manager->getTexture(L"assets\\tex\\skeletset.png")->_texture;
+	sf::Texture skeletTexture = *textures_manager->getTexture(L"assets\\tex\\buildings\\skeletset.png")->_texture;
 	sf::RenderTexture rtex;
 	rtex.resize(sf::Vector2u(16, 16));
 	rtex.clear(sf::Color::Transparent);

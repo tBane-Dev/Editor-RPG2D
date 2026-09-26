@@ -254,22 +254,22 @@ void Roof2::generateTexture(std::vector<std::vector<int>> tiles, sf::Vector2i po
 	rtex.resize(sf::Vector2u(width, height));
 	rtex.clear(sf::Color::Transparent);
 
-	sf::Sprite tileLeft(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	sf::Sprite tileLeft(*textures_manager->getTexture(L"assets\\tex\\buildings\\roof2.png")->_texture);
 	tileLeft.setTextureRect(sf::IntRect(sf::Vector2i(0, 64 * _type), sf::Vector2i(32, 64)));
 
-	sf::Sprite tileRight(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	sf::Sprite tileRight(*textures_manager->getTexture(L"assets\\tex\\buildings\\roof2.png")->_texture);
 	tileRight.setTextureRect(sf::IntRect(sf::Vector2i(32, 64 * _type), sf::Vector2i(32, 64)));
 
-	sf::Sprite halfTileLeft(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	sf::Sprite halfTileLeft(*textures_manager->getTexture(L"assets\\tex\\buildings\\roof2.png")->_texture);
 	halfTileLeft.setTextureRect(sf::IntRect(sf::Vector2i(64, 64 * _type), sf::Vector2i(32, 64)));
 
-	sf::Sprite halfTileRight(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	sf::Sprite halfTileRight(*textures_manager->getTexture(L"assets\\tex\\buildings\\roof2.png")->_texture);
 	halfTileRight.setTextureRect(sf::IntRect(sf::Vector2i(96, 64 * _type), sf::Vector2i(32, 64)));
 
-	sf::Sprite middleHalfTileLeft(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	sf::Sprite middleHalfTileLeft(*textures_manager->getTexture(L"assets\\tex\\buildings\\roof2.png")->_texture);
 	middleHalfTileLeft.setTextureRect(sf::IntRect(sf::Vector2i(128, 64 * _type), sf::Vector2i(32, 64)));
 
-	sf::Sprite middleHalfTileRight(*textures_manager->getTexture(L"assets\\tex\\roof2.png")->_texture);
+	sf::Sprite middleHalfTileRight(*textures_manager->getTexture(L"assets\\tex\\buildings\\roof2.png")->_texture);
 	middleHalfTileRight.setTextureRect(sf::IntRect(sf::Vector2i(160, 64 * _type), sf::Vector2i(32, 64)));
 
 	for (size_t k = 0; k < _rects.size(); k++) {

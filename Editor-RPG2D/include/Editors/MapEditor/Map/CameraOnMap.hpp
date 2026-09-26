@@ -10,6 +10,9 @@ namespace MapEditor {
 		sf::View _view;
 		bool _isMoving;
 		float _zoom;
+		bool _isZooming;
+		bool _isDragging;			// for move with using scroll button
+		sf::Vector2i _lastPosition; // for move with using scroll button
 
 		sf::IntRect _visibleRect;
 

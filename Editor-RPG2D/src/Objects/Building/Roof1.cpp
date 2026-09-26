@@ -5,8 +5,8 @@
 
 Roof1set::Roof1set() {
 
-	_texture = textures_manager->getTexture(L"assets\\tex\\roof1.png");
-	_overhangTexture = textures_manager->getTexture(L"assets\\tex\\roof1_overhang.png");
+	_texture = textures_manager->getTexture(L"assets\\tex\\buildings\\roof1.png");
+	_overhangTexture = textures_manager->getTexture(L"assets\\tex\\buildings\\roof1_overhang.png");
 
 	_animations = std::make_shared<Animations>(L"roof1set", _texture, sf::Vector2i(32, 32), _texture->getSize().y / 32, _texture->getSize().x / 32);
 

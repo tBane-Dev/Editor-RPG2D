@@ -61,16 +61,15 @@ void TexturesManager::loadAllTextures() {
 
     // sets
     texturePaths.push_back(L"assets\\tex\\tileset.png");
-    texturePaths.push_back(L"assets\\tex\\floorset.png");
-	texturePaths.push_back(L"assets\\tex\\wallset.png");
-	texturePaths.push_back(L"assets\\tex\\roof1.png");
-	texturePaths.push_back(L"assets\\tex\\roof1_overhang.png");
-	texturePaths.push_back(L"assets\\tex\\roof2.png");
-	texturePaths.push_back(L"assets\\tex\\skeletset.png");
-
+    texturePaths.push_back(L"assets\\tex\\buildings\\floorset.png");
+	texturePaths.push_back(L"assets\\tex\\buildings\\wallset.png");
+	texturePaths.push_back(L"assets\\tex\\buildings\\roof1.png");
+	texturePaths.push_back(L"assets\\tex\\buildings\\roof1_overhang.png");
+	texturePaths.push_back(L"assets\\tex\\buildings\\roof2.png");
+	texturePaths.push_back(L"assets\\tex\\buildings\\skeletset.png");
     // doors
-	texturePaths.push_back(L"assets\\tex\\doors\\wooden_door.png");
-	texturePaths.push_back(L"assets\\tex\\doors\\stone_door.png");
+	texturePaths.push_back(L"assets\\tex\\buildings\\doors\\wooden_door.png");
+	texturePaths.push_back(L"assets\\tex\\buildings\\doors\\stone_door.png");
 
 	// controls
     texturePaths.push_back(L"assets\\tex\\controls\\scrollbar32\\up.png");
