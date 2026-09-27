@@ -304,8 +304,8 @@ namespace BuildingsEditor {
                     std::shared_ptr<Door> door = std::make_shared<Door>(prefab, bb);
 
                     sf::Vector2i position(
-                        (int)((float)(float)wallPosition.x * gridSize - frameWidth * scale / 2.f),
-                        (int)((float)(float)wallPosition.y * gridSize - frameHeight * scale / 2.f + 48.f * scale)
+                        (int)(wallPosition.x * 32.f - frameWidth / 2.f),
+                        (int)(wallPosition.y * 32.f - frameHeight / 2.f + 48.f)
                     );
 
                     door->setPosition(position);
