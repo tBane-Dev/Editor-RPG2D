@@ -653,7 +653,7 @@ void BuildingPrefab::drawOnlyWalls(sf::RenderTarget& target, sf::Vector2i positi
 
 				sf::Vector2i doorPosition(
 					(float)position.x + (float)door->_position.x * scale,
-					(float)position.y + (float)(door->_position.y+32.f) * scale
+					(float)position.y + (float)(door->_position.y) * scale
 				);
 
 				sf::IntRect doorRect(

@@ -63,20 +63,20 @@ namespace MapEditor {
 
                 for (auto& object : _selectedObjects) {
 
-                    if (object->_object.expired())
-                        continue;
+                    if  (!object) continue;
+                    if (object->_object.expired())continue;
                     
                     if (object->_object.lock()->_type == ObjectType::Door) {
-						removeFromSelected(object->_object.lock()->_prefab.lock());
 						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Door>(object->_object.lock())->_building.lock();
+                        removeFromSelected(object->_object.lock()->_prefab.lock());
 						sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
                         addToSelected(building, offset);   
                         continue;
                     }
 
                     if (object->_object.lock()->_type == ObjectType::Wall) {
-                        removeFromSelected(object->_object.lock()->_prefab.lock());
                         std::shared_ptr<Building> building = std::dynamic_pointer_cast<Wall>(object->_object.lock())->_building.lock();
+                        removeFromSelected(object->_object.lock()->_prefab.lock());
                         sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
                         addToSelected(building, offset);
                         continue;
@@ -85,16 +85,16 @@ namespace MapEditor {
 					// TO-DO - maybe under lines should be uncommented, but for now it is commented because it is required now
 
                     //if (object->_object.lock()->_type == ObjectType::Skelet) {
-                    //    removeFromSelected(object->_object.lock()->_prefab.lock());
                     //    std::shared_ptr<Building> building = std::dynamic_pointer_cast<Skeleton>(object->_object.lock())->_building.lock();
+                    //    removeFromSelected(object->_object.lock()->_prefab.lock());
                     //    sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
                     //    addToSelected(building, offset);
                     //    continue;
                     //}
 
                     //if (object->_object.lock()->_type == ObjectType::Roof) {
-                    //    removeFromSelected(object->_object.lock()->_prefab.lock());
                     //    std::shared_ptr<Building> building = std::dynamic_pointer_cast<Roof>(object->_object.lock())->_building.lock();
+                    //    removeFromSelected(object->_object.lock()->_prefab.lock());
                     //    sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
                     //    addToSelected(building, offset);
                     //    continue;
@@ -280,8 +280,7 @@ namespace MapEditor {
 
             if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
 
-                if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
-                    mbp && mbp->button == sf::Mouse::Button::Left) {
+                if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
                     _isDragging = false;
                     _isSelecting = false;
@@ -296,7 +295,31 @@ namespace MapEditor {
 
                         if (!object) continue;
                         if (object->_prefab.expired()) continue;
+                        if (object->_type != ObjectType::Building) continue;
+                        std::shared_ptr<GameObject> prefab = object->_prefab.lock();
+                        std::shared_ptr<Mesh> mesh = prefab->getMesh();
 
+                        sf::Vector2i monsterOffset(0, 0);
+                        if (prefab->_type == ObjectType::Monster) {
+
+                            std::shared_ptr<Monster> monster = std::dynamic_pointer_cast<Monster>(object);
+                            if (monster && !monster->_prefab.expired() && monster->_prefab.lock()->getCollider()) {
+                                if (monster->_prefab.lock()->getCollider()->_type == ColliderType::Circular) {
+                                    monsterOffset = monster->_prefab.lock()->getOrigin();
+                                }
+                            }
+                        }
+
+                        if (mesh && mesh->isPointInside(MapEditor::editor->_cursor_on_map->_globalPosition, object->_position - monsterOffset)) {
+                            selectedGameObject = object;
+                        }
+                    }
+
+                    for (auto& object : MapEditor::editor->_game_objects->_visiblePlacedGameObjects) {
+
+                        if (!object) continue;
+                        if (object->_prefab.expired()) continue;
+                        if (object->_type == ObjectType::Building) continue;
                         std::shared_ptr<GameObject> prefab = object->_prefab.lock();
                         std::shared_ptr<Mesh> mesh = prefab->getMesh();
 
