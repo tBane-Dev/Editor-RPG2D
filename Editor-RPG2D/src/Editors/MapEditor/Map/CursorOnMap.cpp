@@ -267,6 +267,17 @@ namespace MapEditor {
 
         if (_object.expired()) {
 
+            if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+                if (!_isDragging) {
+                    if (!_isSelecting) {
+                        _selectionRect.position = _globalPosition;
+                        _isSelecting = true;
+                    }
+                    _selectionRect.size = sf::Vector2i(_globalPosition.x - _selectionRect.position.x, _globalPosition.y - _selectionRect.position.y);
+                    return;
+                }
+            }
+
             if (GUI_manager->Element_pressed == MapEditor::editor->_map) {
 
                 if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>();
@@ -274,6 +285,7 @@ namespace MapEditor {
 
                     _isDragging = false;
                     _isSelecting = false;
+                    
 
                     bool ctrl = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl);
                     bool shift = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift);
