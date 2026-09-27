@@ -187,13 +187,13 @@ void PrefabsManager::loadBuildingsPartsPrefabs() {
     DebugLog(L"Loading buildings parts prefabs:");
 
     for (auto& data : doors_datas) {
-        std::shared_ptr<Collider> doors_collider = std::make_shared<RectangularCollider>(0, 48, 64, 16);
+        std::shared_ptr<Collider> doors_collider = std::make_shared<RectangularCollider>(0, 0, 64, 16);
         std::shared_ptr<Mesh> doors_mesh = std::make_shared<Mesh>(1.0f, 1.0f);
         doors_mesh->addShape(std::make_shared<Shape>());
-        doors_mesh->getShape(0)->addPoint(sf::Vector2i(0, 0));
-        doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 0));
-        doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 64));
-        doors_mesh->getShape(0)->addPoint(sf::Vector2i(0, 64));
+        doors_mesh->getShape(0)->addPoint(sf::Vector2i(0, 0-48));
+        doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 0-48));
+        doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 64-48));
+        doors_mesh->getShape(0)->addPoint(sf::Vector2i(0, 64-48));
         std::shared_ptr<GameObject> doors_prefab = std::make_shared<GameObject>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), doors_collider, doors_mesh);
         doors_prefab->_type = ObjectType::Door;
         addPrefab(doors_prefab);

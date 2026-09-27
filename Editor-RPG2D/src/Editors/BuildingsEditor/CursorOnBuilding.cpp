@@ -305,7 +305,7 @@ namespace BuildingsEditor {
 
                     sf::Vector2i position(
                         (int)((float)(float)wallPosition.x * gridSize - frameWidth * scale / 2.f),
-                        (int)((float)(float)wallPosition.y * gridSize - frameHeight * scale / 2.f)
+                        (int)((float)(float)wallPosition.y * gridSize - frameHeight * scale / 2.f + 48.f * scale)
                     );
 
                     door->setPosition(position);
@@ -404,7 +404,7 @@ namespace BuildingsEditor {
 
             sf::Vector2f position(
                 buildingPosition.x + wallPosition.x * gridSize - frameWidth * scale / 2.f,
-                buildingPosition.y + wallPosition.y * gridSize - frameHeight * scale / 2.f
+                buildingPosition.y + wallPosition.y * gridSize - frameHeight * scale / 2.f + 48.f * scale
             );
 
             if (!canPlaceDoor(wallPosition)) {
@@ -421,6 +421,7 @@ namespace BuildingsEditor {
                 sprite.setTextureRect(frameRect);
 				sprite.setScale(sf::Vector2f(scale, scale));
                 sprite.setPosition(sf::Vector2f(position));
+                sprite.setOrigin(sf::Vector2f(0, 48));
                 Main::render_window->draw(sprite);
                 return;
             }

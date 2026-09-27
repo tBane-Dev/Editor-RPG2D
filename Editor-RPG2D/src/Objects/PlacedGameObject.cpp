@@ -53,6 +53,10 @@ void PlacedGameObject::drawFrame(sf::Color color) {
 		objectPosition.y -= prefab->getOrigin().y;
 	}
 
+	if (prefab->_type == ObjectType::Door) {
+		objectPosition.y -= 48;
+	}
+
 	auto animations = prefab->getAnimations().lock();
 
 	if (animations) {

@@ -13,6 +13,8 @@ public:
 	Outside(std::weak_ptr<Building> building = std::weak_ptr<Building>());
 	~Outside();
 
+
 	void setTexture(sf::Texture texture);
+	virtual void cursorHover();
 	virtual void draw();
 };

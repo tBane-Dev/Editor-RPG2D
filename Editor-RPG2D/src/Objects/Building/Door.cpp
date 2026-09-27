@@ -20,6 +20,7 @@ Door::~Door() {
 
 }
 
+
 void Door::draw(sf::RenderTarget& target, float scale) {
 
 	if (_prefab.expired())
@@ -28,6 +29,7 @@ void Door::draw(sf::RenderTarget& target, float scale) {
 	
 	sf::Sprite sprite(*_animator->getAnimations().lock()->getTexture()->_texture);
 	sprite.setPosition(sf::Vector2f(_position));
+	sprite.setOrigin(sf::Vector2f(0, 48));
 	sprite.setTextureRect(_animator->getAnimations().lock()->getFrameRect(_animator->_animation, _animator->_frame));
 	sprite.setScale(sf::Vector2f(scale, scale));
 	target.draw(sprite);
@@ -74,6 +76,7 @@ void Door::draw() {
 
 			sf::Sprite sprite(*animations->getTexture()->_texture);
 			sprite.setPosition(sf::Vector2f(_position));
+			sprite.setOrigin(sf::Vector2f(0, 48));
 			sprite.setTextureRect(frameRect);
 			if (MapEditor::editor->_game_objects->_hoveredPlacedGameObject.lock().get() == this)
 				sprite.setColor(sf::Color(255, 30 + 64, 45 + 64)); // TO-DO - must be a shader highlight

@@ -356,6 +356,12 @@ namespace MapEditor {
 				object->cursorHover();
 			}
 		}
+
+		if (!MapEditor::editor->_game_objects->_hoveredPlacedGameObject.expired()) {
+			std::string className = typeid(*MapEditor::editor->_game_objects->_hoveredPlacedGameObject.lock()).name();		// get class name
+			std::wstring wClassName(className.begin(), className.end());	// convert to wide_string
+			DebugLog(wClassName);
+		}
 	}
 
 	void PlacedGameObjects::update() {

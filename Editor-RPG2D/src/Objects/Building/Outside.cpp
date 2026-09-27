@@ -21,6 +21,10 @@ void Outside::setTexture(sf::Texture texture) {
 	_texture = texture;
 }
 
+void Outside::cursorHover() {
+
+}
+
 void Outside::draw() {
 	
 	std::shared_ptr<BuildingPrefab> buildingPrefab = std::dynamic_pointer_cast<BuildingPrefab>(_building.lock()->_prefab.lock());
