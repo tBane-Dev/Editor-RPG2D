@@ -32,17 +32,32 @@ namespace MapEditor {
 	void CameraOnMap::handleEvent(const sf::Event& event) {
 		if (const auto* ms = event.getIf<sf::Event::MouseWheelScrolled>()) {
 			
-			if (ms->delta > 0)
-				if(_zoom < 2.0f)
-					_zoom += 0.25f;
-			
-			if (ms->delta < 0)
-				if(_zoom > 0.5f)
-				_zoom -= 0.25;
+			if (GUI_manager->Element_hovered == editor->_map) {
 
-			_isZooming = true;
-			_view.setSize(sf::Vector2f(Main::render_window->getSize()) / _zoom);
-			_view.setCenter(sf::Vector2f(_position));
+				float oldScale = _zoom;
+				sf::Vector2f oldPosition = sf::Vector2f(_position);
+
+				if (ms->delta > 0) {
+					if (_zoom < 2.0f)
+						_zoom += 0.25f;
+				}
+
+				if (ms->delta < 0) {
+					if (_zoom > 0.5f)
+						_zoom -= 0.25f;
+				}
+
+				float newScale = _zoom;
+				sf::Vector2f cursorPosition(editor->_cursor_on_map->_globalPosition);
+
+				float scaleFactor = oldScale / newScale;
+
+				_position = cursorPosition + (oldPosition - cursorPosition) * scaleFactor;
+
+				_isZooming = true;
+				_view.setSize(sf::Vector2f(Main::render_window->getSize()) / _zoom);
+				_view.setCenter(sf::Vector2f(_position));
+			}
 		}
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {

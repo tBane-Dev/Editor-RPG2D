@@ -209,6 +209,12 @@ namespace MapEditor {
 				return outside->_building.lock() == building;
 			}
 
+			if (object->_type == ObjectType::Building && (obj->_type == ObjectType::Door)) {
+				std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+				std::shared_ptr<Door> door = std::dynamic_pointer_cast<Door>(obj);
+				return door->_building.lock() == building;
+			}
+
 			return obj == object;
 			});
 
