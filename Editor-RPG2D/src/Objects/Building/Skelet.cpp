@@ -77,9 +77,9 @@ void Skelet::draw(sf::RenderTarget& target, float scale, int drawType) {
 	if (!skeletPrefab)
 		return;
 
-	float leftX = _position.x + _rect.position.x * scale;
-	float rightX = leftX + (_rect.size.x - 16) * scale;
-	float bottomY = _position.y + _rect.position.y * scale;
+	float leftX = (float)_position.x + (float)_rect.position.x * scale;
+	float rightX = leftX + (float)(_rect.size.x - 16) * scale;
+	float bottomY = (float)_position.y + (float)_rect.position.y * scale;
 
 	int maxI = 0;
 	if (drawType == 1) maxI = 2;
@@ -108,14 +108,19 @@ void Skelet::draw() {
 		return;
 	}
 
+	if (_building.lock()->_renderOutsideLook)
+		return;
+
 	if (Main::editor_manager->get_back() == BuildingsEditor::editor) {
-		if (!_building.lock()->_renderOutsideLook)
-			draw(*Main::render_window, BuildingsEditor::editor->_building_panel->_building->_scale, (BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value > 0));
+		draw(
+			*Main::render_window,
+			BuildingsEditor::editor->_building_panel->_building->_scale,
+			BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value
+		);
 	}
 
 	if (Main::editor_manager->get_back() == MapEditor::editor) {
-		if (!_building.lock()->_renderOutsideLook)
-			draw(*Main::render_window, 1.f, 1);
+		draw(*Main::render_window, 1.f, 1);
 	}
 	
 }

@@ -37,6 +37,7 @@ extern sf::Color optionbox_select_color;
 extern sf::Color optionbox_idle_color;
 extern sf::Color optionbox_hover_color;
 extern sf::Color optionbox_press_color;
+extern sf::Color optionbox_inactive_color;
 
 // buttons
 extern sf::Color button_inactive_color;

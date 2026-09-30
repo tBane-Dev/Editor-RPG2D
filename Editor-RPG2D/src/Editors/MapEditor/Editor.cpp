@@ -77,6 +77,24 @@ namespace MapEditor {
 		if (Main::windows_manager->get_back())
 			return;
 
+		if(const auto& kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Delete) {
+			
+			if (!_cursor_on_map->_selectedObjects.empty()) {
+
+				for(auto& selectedObject : _cursor_on_map->_selectedObjects) {
+					if (auto object = selectedObject->_object.lock()) {
+						_game_objects->removeGameObject(object);
+						for(auto& chunk : _map->_chunks) {
+							chunk->removePlacedGameObject(object);
+						}
+					}
+				}
+
+				return;
+			}
+			
+		}
+
 		_main_menu->handleEvent(event);
 
 		if (_main_menu->_state != Components::MainMenuStates::Closed)

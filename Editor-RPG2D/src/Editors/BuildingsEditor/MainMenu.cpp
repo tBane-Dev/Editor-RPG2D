@@ -3,6 +3,7 @@
 #include "Controls/OptionWithIcon.hpp"
 #include "EditorsManager.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
+#include "DebugLog.hpp"
 
 namespace BuildingsEditor {
 
@@ -72,5 +73,11 @@ namespace BuildingsEditor {
 	void MainMenu::handleEvent(const sf::Event& event) {
 		Components::MainMenu::handleEvent(event);
 
+	}
+
+	void MainMenu::update() {
+
+		_render_walls_look->_isActive = (editor->_palette->_categories->_selectedCategory->_type != ObjectType::Window);
+		Components::MainMenu::update();
 	}
 }

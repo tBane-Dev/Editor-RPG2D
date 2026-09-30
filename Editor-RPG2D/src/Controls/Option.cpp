@@ -9,6 +9,7 @@ Option::Option(std::wstring text, std::wstring shortcut, sf::Vector2i position) 
 	_rectIdleColor = optionbox_idle_color;
 	_rectHoverColor = optionbox_hover_color;
 	_rectPressColor = optionbox_press_color;
+	_rectInactiveColor = optionbox_inactive_color;
 
 	_rectSelectIdleColor = optionbox_select_color;
 	_rectSelectHoverColor = optionbox_select_color;

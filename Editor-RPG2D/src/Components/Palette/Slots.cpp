@@ -110,8 +110,25 @@ void Slots::setPosition(sf::Vector2i position) {
 void Slots::createSlots(sf::Vector2i slotsCount) {
 	_slots.clear();
 
+	// Palette slots title
+	std::wstring t = L"Palette";
+	switch (_type) {
+	case ObjectType::Terrain: t = L"Terrain"; break;
+	case ObjectType::Floor: t = L"Floor"; break;
+	case ObjectType::Nature: t = L"Nature"; break;
+	case ObjectType::Monster: t = L"Monsters"; break;
+	case ObjectType::Building: t = L"Buildings"; break;
+	case ObjectType::Wall: t = L"Walls"; break;
+	case ObjectType::Door: t = L"Doors"; break;
+	case ObjectType::Window: t = L"Windows"; break;
+	case ObjectType::WallMounted: t = L"Walls Mounted"; break;
+	default: t = L"Other"; break;
+	}
+	_text->setString(t);
+
 	_slotsCount = slotsCount;
 
+	// create slots
 	std::shared_ptr<Texture> slotTexture;
 	std::shared_ptr<Texture> slotHoverTexture;
 	std::shared_ptr<Texture> slotPressTexture;
@@ -210,7 +227,7 @@ void Slots::createSlots(sf::Vector2i slotsCount) {
 					slot->_object = wallset->getPrefab(y * _slotsCount.x + x);
 					_slots.emplace_back(slot);
 				}
-				else if (_type == ObjectType::Door) {
+				else if (_type == ObjectType::Door || _type == ObjectType::Window) {
 					_slots.emplace_back(std::make_shared<GameObjectSlot>(
 						slotTexture,
 						slotHoverTexture,
@@ -445,6 +462,23 @@ void Slots::loadObjects() {
 		return;
 	}
 
+	if (_type == ObjectType::Window) {
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i < buildings_parts_prefabs_manager->getPrefabs(ObjectType::Window).size()) {
+				_slots[i]->_object = buildings_parts_prefabs_manager->getPrefabs(ObjectType::Window)[i];
+				_slots[i]->_animator = std::make_shared<Animator>(buildings_parts_prefabs_manager->getPrefabs(ObjectType::Window)[i]->getAnimations());
+				_slots[i]->_animator->play();
+				_slots[i]->setActive(true);
+			}
+			else {
+				_slots[i]->_object = std::weak_ptr<Object>();
+				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
+			}
+		}
+		return;
+	}
+
 	std::vector<std::shared_ptr<GameObject>> prefabs = prefabs_manager->getPrefabs(_type);
 
 	for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y+1); i++) {
@@ -555,6 +589,23 @@ void Slots::updateObjects() {
 			if (i < buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door).size()) {
 				_slots[i]->_object = buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door)[i];
 				_slots[i]->_animator = std::make_shared<Animator>(buildings_parts_prefabs_manager->getPrefabs(ObjectType::Door)[i]->getAnimations());
+				_slots[i]->_animator->play();
+				_slots[i]->setActive(true);
+			}
+			else {
+				_slots[i]->_object = std::weak_ptr<Object>();
+				_slots[i]->_animator = nullptr;
+				_slots[i]->setActive(false);
+			}
+		}
+		return;
+	}
+
+	if (_type == ObjectType::Window) {
+		for (int i = 0; i < (_slotsCount.x) * (_slotsCount.y + 1); i++) {
+			if (i < buildings_parts_prefabs_manager->getPrefabs(ObjectType::Window).size()) {
+				_slots[i]->_object = buildings_parts_prefabs_manager->getPrefabs(ObjectType::Window)[i];
+				_slots[i]->_animator = std::make_shared<Animator>(buildings_parts_prefabs_manager->getPrefabs(ObjectType::Window)[i]->getAnimations());
 				_slots[i]->_animator->play();
 				_slots[i]->setActive(true);
 			}

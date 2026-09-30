@@ -41,11 +41,11 @@ void Outside::draw() {
 			float scale = BuildingsEditor::editor->_building_panel->_building->_scale;
 
 			sf::Vector2f buildingPosition(_building.lock()->getPosition());
-			float topOffset = roof ? roof->getTopOffset(1.f) : 0.f;
+			float topOffset = roof ? roof->getTopOffset(scale) : 0.f;
 
 			sf::Vector2f position(
 				buildingPosition.x - (float)(roofOverhangSize.x) * scale,
-				buildingPosition.y - (float)(topOffset + roofOverhangSize.y) * scale
+				buildingPosition.y -  topOffset - (float)(roofOverhangSize.y) * scale
 			);
 
 

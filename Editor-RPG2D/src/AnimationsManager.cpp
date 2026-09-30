@@ -215,7 +215,13 @@ void AnimationsManager::loadBuildingsPartsAnimations() {
     
     datas.emplace_back(L"assets\\tex\\buildings\\doors\\wooden_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
     datas.emplace_back(L"assets\\tex\\buildings\\doors\\stone_door.png", sf::Vector2i(64, 64), 1, 4, 0.5f);
+
+    datas.emplace_back(L"assets\\tex\\buildings\\windows\\wooden_window_1.png", sf::Vector2i(32, 32), 1, 1, 0.5f);
+    datas.emplace_back(L"assets\\tex\\buildings\\windows\\wooden_window_2.png", sf::Vector2i(32, 32), 1, 1, 0.5f);
+    datas.emplace_back(L"assets\\tex\\buildings\\windows\\wooden_window_3.png", sf::Vector2i(32, 32), 1, 1, 0.5f);
     
+	datas.emplace_back(L"assets\\tex\\buildings\\wall_mounted\\lit_torch.png", sf::Vector2i(32, 32), 1, 2, 0.2f);
+
     // load all animations
     for (auto& data : datas) {
         loadAnimations(data._path, data._frameSize, data._animationsCount, data._framesCount, data._interval);

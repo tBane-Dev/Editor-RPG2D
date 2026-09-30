@@ -59,8 +59,10 @@ BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) :
 		}
 	}
 
-	// copy the doorss
+	// copy the doors and windows
 	_doors = other._doors;
+	_windows = other._windows;
+	_skeletType = other._skeletType;
 
 	// copy the walls
 	_walls.clear();;
@@ -89,6 +91,8 @@ BuildingPrefab::~BuildingPrefab() {
 void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
 	copyDoorsFromPrefab(position, scale, building);
 	
+	copyWindowsFromPrefab(position, scale, building);
+
 	generateWalls(position, scale, building);
 	copyWallsFromPrefab(position, scale, building);
 
@@ -718,6 +722,22 @@ void BuildingPrefab::copyDoorsFromPrefab(sf::Vector2i position, float scale, std
 	}
 }
 
+void BuildingPrefab::copyWindowsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+	if (!building)
+		return;
+
+	building->_windowsObjects.clear();
+	for (auto& window : _windows) {
+		if (window) {
+			std::shared_ptr<Window> newWindow = std::make_shared<Window>(window->_prefab, building, window->_level);
+			newWindow->setPosition(building->_position + sf::Vector2i((float)window->_position.x * scale, (float)window->_position.y * scale));
+			building->_windowsObjects.push_back(newWindow);
+		}
+		else
+			building->_windowsObjects.push_back(nullptr);
+	}
+}
+
 void BuildingPrefab::copyWallsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
 	if (!building)
 		return;
@@ -925,7 +945,12 @@ void Building::setPosition(sf::Vector2i position) {
 			door->setPosition(door->getPosition() + delta);
 	}
 
-	for(auto& wall : _wallsObjects) {
+	for (auto& window : _windowsObjects) {
+		if (window)
+			window->setPosition(window->getPosition() + delta);
+	}
+
+	for (auto& wall : _wallsObjects) {
 		if (wall)
 			wall->setPosition(wall->getPosition() + delta);
 	}
@@ -966,6 +991,22 @@ void Building::addDoorsToGameObjects(std::shared_ptr<Main::Editor> editor) {
 	}
 }
 
+void Building::addWindowsToGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& window : _windowsObjects) {
+
+		if (!window)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk) {
+				chunk->addPlacedGameObject(window);
+				MapEditor::editor->_game_objects->addGameObject(window);
+			}
+		}
+	}
+}
 
 void Building::addWallsToGameObjects(std::shared_ptr<Main::Editor> editor) {
 
@@ -1005,7 +1046,7 @@ void Building::addOutsideToGameObjects(std::shared_ptr<Main::Editor> editor) {
 	if (!_outsideObject)
 		return;
 
-	std::wcout << L"Adding outside object to game objects" << std::endl;
+	//std::wcout << L"Adding outside object to game objects" << std::endl;
 
 	if (editor == MapEditor::editor) {
 		std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
@@ -1029,6 +1070,23 @@ void Building::removeDoorsFromGameObjects(std::shared_ptr<Main::Editor> editor) 
 			if (chunk)
 				chunk->removePlacedGameObject(door);
 			MapEditor::editor->_game_objects->removeGameObject(door);
+		}
+
+	}
+}
+
+void Building::removeWindowsFromGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& window : _windowsObjects) {
+
+		if (!window)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk)
+				chunk->removePlacedGameObject(window);
+			MapEditor::editor->_game_objects->removeGameObject(window);
 		}
 
 	}
@@ -1095,6 +1153,23 @@ void Building::addDoorsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor
 
 		if (editor == BuildingsEditor::editor) {
 			BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(door);
+		}
+	}
+}
+
+void Building::addWindowsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& window : _windowsObjects) {
+
+		if (!window)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(window);
+		}
+
+		if (editor == BuildingsEditor::editor) {
+			BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(window);
 		}
 	}
 }
@@ -1197,7 +1272,7 @@ void Building::update() {
 
 	if (BuildingsEditor::editor && Main::editor_manager->get_back() == BuildingsEditor::editor) {
 
-		if (BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value == 2) {
+		if (BuildingsEditor::editor->_main_menu->_render_walls_look->_checkbox->_value == 2 || BuildingsEditor::editor->_palette->_categories->_selectedCategory->_type == ObjectType::Window) {
 			_renderOutsideLook = true;
 		}
 		else {

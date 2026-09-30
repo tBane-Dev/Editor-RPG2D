@@ -21,6 +21,7 @@ namespace BuildingsEditor {
 		if (placedGameObject.lock()->_type == ObjectType::Building) {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(placedGameObject.lock());
 			building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
+			building->addWindowsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
@@ -61,12 +62,13 @@ namespace BuildingsEditor {
 	void PlacedGameObjects::sort() {
 
 		std::vector<ObjectType> types = {
+			ObjectType::Wall,
 			ObjectType::Skelet,
-			ObjectType::WallMounted,
-			ObjectType::Window,
 			ObjectType::Door,
 			ObjectType::Roof,
-			ObjectType::Outside
+			ObjectType::Outside,
+			ObjectType::Window,
+			ObjectType::WallMounted
 		};
 
 		auto getIndex = [&types](ObjectType type) -> int {
@@ -83,9 +85,23 @@ namespace BuildingsEditor {
 
 			// OBJECT A - POSITION
 			sf::Vector2i posA = a->_position;
-
-			if (!a->_prefab.expired()) {
-				if (a->_prefab.lock()->_type == ObjectType::Skelet) {
+			if (a->_type == ObjectType::Outside) {
+				std::shared_ptr<Outside> outside = std::dynamic_pointer_cast<Outside>(a);
+				std::shared_ptr<Building> building = outside->_building.lock();
+				std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+				std::shared_ptr<Roof> roof = prefab->_roof;
+				float scale = editor->_building_panel->_building->_scale;
+				sf::Vector2i overhang = roof ? roof->_roofOverhangSize : sf::Vector2i(0, 0);
+				sf::Vector2i localPosition = outside->_position - building->_position - overhang;
+				posA = building->_position + sf::Vector2i(int(localPosition.x * scale), int(localPosition.y * scale));
+				//DebugLog(L"Outside::" + std::to_wstring(posA.y));
+			}
+			else if (!a->_prefab.expired()) {
+				if (a->_type == ObjectType::Window) {
+					posA.y += 32.0f * editor->_building_panel->_building->_scale;
+					//DebugLog(L"Window::" + std::to_wstring(posA.y));
+				}
+				else if (a->_prefab.lock()->_type == ObjectType::Skelet) {
 					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
 					posA.x += collider->_rect.position.x + collider->_rect.size.x / 2;
 					posA.y += collider->_rect.position.y;
@@ -101,9 +117,24 @@ namespace BuildingsEditor {
 
 			// OBJECT B - POSITION
 			sf::Vector2i posB = b->_position;
-
-			if (!b->_prefab.expired()) {
-				if (b->_prefab.lock()->_type == ObjectType::Skelet) {
+			if (b->_type == ObjectType::Outside) {
+				std::shared_ptr<Outside> outside = std::dynamic_pointer_cast<Outside>(b);
+				std::shared_ptr<Building> building = outside->_building.lock();
+				std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+				std::shared_ptr<Roof> roof = prefab->_roof;
+				
+				float scale = editor->_building_panel->_building->_scale;
+				sf::Vector2i overhang = roof ? roof->_roofOverhangSize : sf::Vector2i(0, 0);
+				sf::Vector2i localPosition = outside->_position - building->_position - overhang;
+				posB = building->_position + sf::Vector2i(int(localPosition.x * scale), int(localPosition.y * scale));
+				//DebugLog(L"Outside::" + std::to_wstring(posB.y));
+			}
+			else if (!b->_prefab.expired()) {
+				if (b->_type == ObjectType::Window) {
+					posB.y += 32.0f * editor->_building_panel->_building->_scale;
+					//DebugLog(L"Window::" + std::to_wstring(posB.y));
+				}
+				else if (b->_prefab.lock()->_type == ObjectType::Skelet) {
 					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
 					posB.x += collider->_rect.position.x + collider->_rect.size.x / 2;
 					posB.y += collider->_rect.position.y;

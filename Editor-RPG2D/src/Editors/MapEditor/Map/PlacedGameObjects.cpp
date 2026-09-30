@@ -60,6 +60,12 @@ namespace MapEditor {
 					return outside->_building.lock() == building;
 				}
 
+				if (objectToRemove->_type == ObjectType::Building && object->_type == ObjectType::Door) {
+					std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectToRemove);
+					std::shared_ptr<Door> door = std::dynamic_pointer_cast<Door>(object);
+					return door->_building.lock() == building;
+				}
+
 				return object == objectToRemove;
 			});
 	}
@@ -159,12 +165,13 @@ namespace MapEditor {
 	void PlacedGameObjects::sort() {
 
 		std::vector<ObjectType> types = {
+			ObjectType::Wall,
 			ObjectType::Skelet,
-			ObjectType::WallMounted,
-			ObjectType::Window,
 			ObjectType::Door,
 			ObjectType::Roof,
-			ObjectType::Outside
+			ObjectType::Outside,
+			ObjectType::Window,
+			ObjectType::WallMounted
 		};
 
 		auto getIndex = [&types](ObjectType type) -> int {
@@ -182,8 +189,20 @@ namespace MapEditor {
 			// OBJECT A - POSITION
 			sf::Vector2i posA = a->_position;
 
-			if (!a->_prefab.expired()) {
-				if (a->_prefab.lock()->_type == ObjectType::Skelet) {
+			if (a->_type == ObjectType::Outside) {
+				std::shared_ptr<Outside> outside = std::dynamic_pointer_cast<Outside>(a);
+				std::shared_ptr<Building> building = outside->_building.lock();
+				std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+				std::shared_ptr<Roof> roof = prefab->_roof;
+				posA -= roof->_roofOverhangSize;
+				//DebugLog(L"Outside::" + std::to_wstring(posA.y));
+			}
+			else if (!a->_prefab.expired()) {
+				if (a->_type == ObjectType::Window) {
+					posA.y += 32.0f;
+					//DebugLog(L"Window::" + std::to_wstring(posA.y));
+				}
+				else if (a->_prefab.lock()->_type == ObjectType::Skelet) {
 					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(a->_prefab.lock()->getCollider());
 					posA.x += collider->_rect.position.x + collider->_rect.size.x / 2;
 					posA.y += collider->_rect.position.y;
@@ -200,8 +219,20 @@ namespace MapEditor {
 			// OBJECT B - POSITION
 			sf::Vector2i posB = b->_position;
 
-			if (!b->_prefab.expired()) {
-				if (b->_prefab.lock()->_type == ObjectType::Skelet) {
+			if (b->_type == ObjectType::Outside) {
+				std::shared_ptr<Outside> outside = std::dynamic_pointer_cast<Outside>(b);
+				std::shared_ptr<Building> building = outside->_building.lock();
+				std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+				std::shared_ptr<Roof> roof = prefab->_roof;
+				posB  -= roof->_roofOverhangSize;
+				//DebugLog(L"Outside::" + std::to_wstring(posB.y));
+			}
+			else if (!b->_prefab.expired()) {
+				if (b->_type == ObjectType::Window) {
+					posB.y += 32.0f;
+					//DebugLog(L"Window::" + std::to_wstring(posB.y));
+				}
+				else if (b->_prefab.lock()->_type == ObjectType::Skelet) {
 					std::shared_ptr<RectangularCollider> collider = std::dynamic_pointer_cast<RectangularCollider>(b->_prefab.lock()->getCollider());
 					posB.x += collider->_rect.position.x + collider->_rect.size.x / 2;
 					posB.y += collider->_rect.position.y;

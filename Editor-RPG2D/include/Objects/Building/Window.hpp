@@ -3,7 +3,7 @@
 #include "Objects/GameObject.hpp"
 #include "Objects/PlacedGameObject.hpp"
 
-class Wall;
+class Building;
 
 class WindowPrefab : public GameObject {
 public:
@@ -13,10 +13,10 @@ public:
 
 class Window : public PlacedGameObject {
 public:
-	std::weak_ptr<Wall> _wall;
+	std::weak_ptr<Building> _building;
 	int _level = -1;
 
-	Window(std::weak_ptr<GameObject> prefab, std::weak_ptr<Wall> wall, int level);
+	Window(std::weak_ptr<GameObject> prefab, std::weak_ptr<Building> building, int level);
 	~Window();
 	void draw(sf::RenderTarget& target, float scale);
 	virtual void draw();

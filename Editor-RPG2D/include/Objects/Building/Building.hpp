@@ -4,6 +4,7 @@
 #include "Objects/PlacedGameObject.hpp"
 #include "Objects/Building/Wall.hpp"
 #include "Objects/Building/Door.hpp"
+#include "Objects/Building/Window.hpp"
 #include "Objects/Building/Skelet.hpp"
 #include "Objects/Building/Roof.hpp"
 #include "Objects/Building/Outside.hpp"
@@ -17,6 +18,7 @@ public:
 	std::vector<std::vector<int>> _floor;
 	std::vector<std::vector<int>> _walls;
 	std::vector<std::shared_ptr<Door>> _doors;
+	std::vector<std::shared_ptr<Window>> _windows;
 
 	int _wallHeight = 3;
 	int _skeletType = 0;
@@ -45,6 +47,7 @@ public:
 
 
 	void copyDoorsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building);
+	void copyWindowsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building);
 	void copyWallsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building);
 	void copySkeletFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building);
 
@@ -67,6 +70,7 @@ public:
 
 	bool _renderOutsideLook;
 	std::vector<std::shared_ptr<Door>> _doorsObjects;
+	std::vector<std::shared_ptr<Window>> _windowsObjects;
 	std::vector<std::shared_ptr<Wall>> _wallsObjects;
 	std::vector<std::shared_ptr<Skelet>> _skeletsObjects;
 	std::shared_ptr<Outside> _outsideObject;
@@ -81,21 +85,24 @@ public:
 	void loadPrefab(std::shared_ptr<BuildingPrefab> buildingPrefab);
 	
 	void addDoorsToGameObjects(std::shared_ptr<Main::Editor> editor);
+	void addWindowsToGameObjects(std::shared_ptr<Main::Editor> editor);
 	void addWallsToGameObjects(std::shared_ptr<Main::Editor> editor);
 	void addSkeletsToGameObjects(std::shared_ptr<Main::Editor> editor);
 	void addOutsideToGameObjects(std::shared_ptr<Main::Editor> editor);
 
 	void removeDoorsFromGameObjects(std::shared_ptr<Main::Editor> editor);
+	void removeWindowsFromGameObjects(std::shared_ptr<Main::Editor> editor);
 	void removeWallsFromGameObjects(std::shared_ptr<Main::Editor> editor);
 	void removeSkeletsFromGameObjects(std::shared_ptr<Main::Editor> editor);
 	void removeOutsideFromGameObjects(std::shared_ptr<Main::Editor> editor);
 
 	void addDoorsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
+	void addWindowsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
 	void addWallsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
 	void addSkeletsToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
 	void addOutsideToVisibleGameObjects(std::shared_ptr<Main::Editor> editor);
 
 	virtual void cursorHover();
 	virtual void update();
-	virtual void draw(); // draw only roof
+	virtual void draw(); // draw only frame
 };

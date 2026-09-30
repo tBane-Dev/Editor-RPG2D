@@ -348,8 +348,10 @@ namespace BuildingsEditor {
 
 				std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
 				bp->generate(_building->getPosition(), _scale, _building);
+				_building->generate();
 				BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
 				BuildingsEditor::editor->_building_panel->_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
+				BuildingsEditor::editor->_building_panel->_building->_building->addWindowsToVisibleGameObjects(BuildingsEditor::editor);
 				BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 				BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 				BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
@@ -378,6 +380,7 @@ namespace BuildingsEditor {
 			std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
 			bp->generateFloorVertexArray(_scale);
 			bp->generateWalls(_building->_position, _scale, _building);
+			bp->generateSkelet(_building->_position, _scale, _building);
 			bp->generateRoofs(_building->_position, _scale);
 			bp->generateCollider(_scale);
 			return;

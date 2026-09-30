@@ -38,6 +38,7 @@ sf::Color optionbox_select_color;
 sf::Color optionbox_idle_color;
 sf::Color optionbox_hover_color;
 sf::Color optionbox_press_color;
+sf::Color optionbox_inactive_color;
 
 // buttons
 sf::Color button_inactive_color;
@@ -90,6 +91,7 @@ void loadTheme() {
 	optionbox_idle_color = sf::Color(31, 31, 31);
 	optionbox_hover_color = sf::Color(47, 47, 47);
 	optionbox_press_color = sf::Color(39, 39, 39);
+	optionbox_inactive_color = sf::Color(63, 63, 63);
 
 	// buttons
 	button_inactive_color = sf::Color(15, 15, 15);

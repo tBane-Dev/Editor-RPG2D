@@ -190,11 +190,17 @@ bool Shape::isInsideRect(sf::IntRect rect, sf::Vector2i position) {
 		if (rect.contains(a) || rect.contains(b) || rect.contains(c))
 			return true;
 
-		if(
-			isPointInTriangle(sf::Vector2i(rect.position.x, rect.position.y), a, b, c) ||
-			isPointInTriangle(sf::Vector2i(rect.position.x + rect.size.x, rect.position.y), a, b, c) ||
-			isPointInTriangle(sf::Vector2i(rect.position.x, rect.position.y + rect.size.y), a, b, c) ||
-			isPointInTriangle(sf::Vector2i(rect.position.x + rect.size.x, rect.position.y + rect.size.y), a, b, c)) {
+		sf::Vector2i topLeft = rect.position - position;
+		sf::Vector2i topRight(rect.position.x + rect.size.x - position.x, rect.position.y - position.y);
+		sf::Vector2i bottomLeft(rect.position.x - position.x, rect.position.y + rect.size.y - position.y);
+		sf::Vector2i bottomRight(rect.position.x + rect.size.x - position.x, rect.position.y + rect.size.y - position.y);
+
+		if (
+			pointInShape(topLeft) ||
+			pointInShape(topRight) ||
+			pointInShape(bottomLeft) ||
+			pointInShape(bottomRight)
+			) {
 			return true;
 		}
 

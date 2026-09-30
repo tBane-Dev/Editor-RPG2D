@@ -612,6 +612,7 @@ namespace MapEditor {
                     building->generate();
                     objectOnMap->setPosition(position);
 					building->addDoorsToGameObjects(MapEditor::editor);
+					building->addWindowsToGameObjects(MapEditor::editor);
                     building->addWallsToGameObjects(MapEditor::editor);
                     building->addSkeletsToGameObjects(MapEditor::editor);
                     building->addOutsideToGameObjects(MapEditor::editor);

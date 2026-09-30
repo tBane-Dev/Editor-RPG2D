@@ -184,6 +184,16 @@ void PrefabsManager::loadBuildingsPartsPrefabs() {
         { L"Stone Door", L"assets\\tex\\buildings\\doors\\stone_door.png" },
 	};
 
+    data windows_datas[] = {
+        { L"Wooden Window 1", L"assets\\tex\\buildings\\windows\\wooden_window_1.png" },
+        { L"Wooden Window 2", L"assets\\tex\\buildings\\windows\\wooden_window_2.png" },
+        { L"Wooden Window 3", L"assets\\tex\\buildings\\windows\\wooden_window_3.png" },
+    };
+
+    data wall_mounted_datas[] = {
+        { L"Lit Torch", L"assets\\tex\\buildings\\wall_mounted\\lit_torch.png" },
+    };
+
     DebugLog(L"Loading buildings parts prefabs:");
 
     for (auto& data : doors_datas) {
@@ -194,13 +204,40 @@ void PrefabsManager::loadBuildingsPartsPrefabs() {
         doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 0-48));
         doors_mesh->getShape(0)->addPoint(sf::Vector2i(64, 64-48));
         doors_mesh->getShape(0)->addPoint(sf::Vector2i(0, 64-48));
-        std::shared_ptr<GameObject> doors_prefab = std::make_shared<GameObject>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), doors_collider, doors_mesh);
+        std::shared_ptr<GameObject> doors_prefab = std::make_shared<DoorPrefab>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), doors_collider, doors_mesh);
         doors_prefab->_type = ObjectType::Door;
         addPrefab(doors_prefab);
 		DebugStat(data.name);
     }
-    
 
+    for (auto& data : windows_datas) {
+        std::shared_ptr<Collider> window_collider = std::make_shared<RectangularCollider>(0, 0, 32, 32);
+        std::shared_ptr<Mesh> window_mesh = std::make_shared<Mesh>(1.0f, 1.0f);
+        window_mesh->addShape(std::make_shared<Shape>());
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(0, 0));
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 0));
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 32));
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(0, 32));
+        std::shared_ptr<GameObject> window_prefab = std::make_shared<GameObject>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), window_collider, window_mesh);
+        window_prefab->_type = ObjectType::Window;
+        addPrefab(window_prefab);
+        DebugStat(data.name);
+    }
+    
+    // TO-DO - upgrade to wall mounted
+    for (auto& data : wall_mounted_datas) { 
+        std::shared_ptr<Collider> window_collider = std::make_shared<RectangularCollider>(0, 0, 32, 32);
+        std::shared_ptr<Mesh> window_mesh = std::make_shared<Mesh>(1.0f, 1.0f);
+        window_mesh->addShape(std::make_shared<Shape>());
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(0, 0));
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 0));
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 32));
+        window_mesh->getShape(0)->addPoint(sf::Vector2i(0, 32));
+        std::shared_ptr<GameObject> window_prefab = std::make_shared<GameObject>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), window_collider, window_mesh);
+        window_prefab->_type = ObjectType::Window;
+        addPrefab(window_prefab);
+        DebugStat(data.name);
+    }
 }
 
 std::shared_ptr<PrefabsManager> prefabs_manager = nullptr;

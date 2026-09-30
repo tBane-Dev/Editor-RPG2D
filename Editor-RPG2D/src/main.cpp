@@ -42,10 +42,87 @@
 #include <commdlg.h>
 #include <iostream>
 
+void converter(std::wstring mask, std::wstring dictionary) {
+
+    // TO-DO - test function - to delete
+
+    std::wcout << dictionary << L"\n";
+    std::vector<std::wstring> names = { L"wooden", L"red", L"stone", L"green", L"blue", L"sand" };
+
+    std::vector<sf::Image> images_light;
+    for (int i = 0; i < names.size(); i++) {
+        std::wstring name = dictionary + L"\\" + names[i] + L"_light.png";
+        std::wcout << name << "\n";
+        sf::Image img(name);
+        images_light.push_back(img);
+    }
+
+    std::vector<sf::Image> images_dark;
+    for (int i = 0; i < names.size(); i++) {
+        std::wstring name = dictionary + L"\\" + names[i] + L"_dark.png";
+        std::wcout << name << "\n";
+        sf::Image img(name);
+        images_dark.push_back(img);
+    }
+
+    sf::Image maskImage(mask);
+    
+    sf::Image resultImage;
+    resultImage.resize(sf::Vector2u(maskImage.getSize().x, maskImage.getSize().y * names.size()));
+    
+        for (int i = 0; i < names.size(); i += 1) {
+            for (int y = 0; y < maskImage.getSize().y; y += 1) {
+                for (int x = 0; x < maskImage.getSize().x; x += 1) {
+                    
+                    sf::Color maskColor = maskImage.getPixel(sf::Vector2u(x, y));
+
+                    sf::Color newColor = maskColor;
+                    int px = x % 32;
+                    int py = y % 32;
+                    
+                    if (maskColor == sf::Color(97, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(98, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(99, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(100, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(101, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(102, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(103, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(104, 0, 15)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    
+                    if (maskColor == sf::Color(103, 0, 16)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(104, 0, 16)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+
+                    if (maskColor == sf::Color(129, 0, 20)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(130, 0, 20)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(131, 0, 20)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+
+                    if (maskColor == sf::Color(129, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(130, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(131, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(132, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(133, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(134, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(135, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+                    if (maskColor == sf::Color(136, 0, 21)) newColor = images_light[i].getPixel(sf::Vector2u(px, py));
+
+                    if (maskColor == sf::Color(61, 0, 10)) newColor = images_dark[i].getPixel(sf::Vector2u(px, py));
+
+                    int xx = x;
+                    int yy = i * maskImage.getSize().y + y;
+
+                    resultImage.setPixel(sf::Vector2u(xx, yy), newColor);
+                }
+            }
+        }
+
+        resultImage.saveToFile(dictionary + L"\\result.png");
+}
 
 int main() {
     (void)_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
 
+	// TO-DO - test function - to delete
+    //converter(L"C:\\Users\\tBane\\Desktop\\roofs\\0_mask.png", L"C:\\Users\\tBane\\Desktop\\roofs");
 
     Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D", sf::State::Windowed);
     ShowWindow(Main::render_window->getNativeHandle(), SW_MAXIMIZE);
@@ -119,7 +196,6 @@ int main() {
     sf::Clock FPSClock;
     int frames = 0;
     float elapsed = 0.0f;
-
 
     while (Main::render_window->isOpen()) {
 

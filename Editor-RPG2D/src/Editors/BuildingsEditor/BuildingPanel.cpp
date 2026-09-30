@@ -28,6 +28,7 @@ namespace BuildingsEditor {
 		
 		_game_objects->_visiblePlacedGameObjects.clear();
 		_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
+		_building->_building->addWindowsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);

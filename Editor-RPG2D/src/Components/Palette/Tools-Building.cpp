@@ -282,8 +282,8 @@ void ToolsBuilding::selectCategory(int id) {
 void ToolsBuilding::createOptions() {
 	_wallTypes = { L"Wooden", L"Stone", L"Mulch", L"Mud", L"Brick" };
 	_heights = { L"2", L"3", L"4", L"5", L"6", L"7", L"8" };
-	_roofShapes = { L"flat", L"gable", L"flanks", L"gable2" };
-	_roofTypes = { L"red", L"stone", L"green", L"blue", L"sand" };
+	_roofShapes = { L"Flat", L"Gable", L"Flanks", L"Gable2" };
+	_roofTypes = { L"Wooden", L"Red", L"Stone", L"Green", L"Blue", L"Sand"};
 }
 
 void ToolsBuilding::updateOptions() {
