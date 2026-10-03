@@ -108,6 +108,26 @@ namespace BuildingsEditor {
 		bp->generateWalls(_building->_position, _scale, _building);
 	}
 
+	void EditableBuilding::resizeDoors(int offsetX, int offsetY) {
+
+		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+		if (!bp) return;
+
+		for (auto& door : bp->_doors) {
+			door->setPosition(door->getPosition() + sf::Vector2i(offsetX * 32, offsetY * 32));
+		}
+	}
+	void EditableBuilding::resizeWindows(int offsetX, int offsetY) {
+
+		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+		if (!bp) return;
+
+		for (auto& window : bp->_windows) {
+			window->setPosition(window->getPosition() + sf::Vector2i(offsetX * 32, offsetY * 32));
+		}
+	}
+
+
 	void EditableBuilding::resizeRoof() {
 
 		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
@@ -191,6 +211,8 @@ namespace BuildingsEditor {
 
 		resizeFloor(offsetX, offsetY);
 		resizeWalls(offsetX/2, offsetY/2);
+		resizeDoors(offsetX/2, offsetY/2);
+		resizeWindows(offsetX/2, offsetY/2);
 		resizeRoof();
 		std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
 		bp->generateCollider(_scale);
@@ -355,7 +377,7 @@ namespace BuildingsEditor {
 				BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 				BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 				BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
-				
+				BuildingsEditor::editor->_building_panel->_game_objects->sort();
 			}
 
 			generateEdgePoints();
@@ -389,19 +411,25 @@ namespace BuildingsEditor {
 		if (_state == EditableBuildingStates::Resizing) {
 			for (auto& point : _edgePoints) {
 				if(point == GUI_manager->Element_pressed) {
+					sf::IntRect oldRect = ResizableShape::_rect;
 					resize(point);
-					sf::Vector2i newPos = clampPosition(ResizableShape::getPosition());
-					ResizableShape::setPosition(newPos);
+					sf::IntRect newRect = ResizableShape::_rect;
+					if (oldRect != newRect) {
+						sf::Vector2i newPos = clampPosition(ResizableShape::getPosition());
+						ResizableShape::setPosition(newPos);
 
-					std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
-					bp->generate(_building->getPosition(), _scale, _building);
-					_building->generate();
-					BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
-					BuildingsEditor::editor->_building_panel->_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
-					BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
-					BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
-					BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
-
+						std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(_building->_prefab.lock());
+						bp->generate(_building->getPosition(), _scale, _building);
+						_building->generate();
+						BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.clear();
+						BuildingsEditor::editor->_building_panel->_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
+						BuildingsEditor::editor->_building_panel->_building->_building->addWindowsToVisibleGameObjects(BuildingsEditor::editor);
+						BuildingsEditor::editor->_building_panel->_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
+						BuildingsEditor::editor->_building_panel->_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
+						BuildingsEditor::editor->_building_panel->_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
+						BuildingsEditor::editor->_building_panel->_game_objects->sort();
+					}
+					
 					return;
 				}
 			}

@@ -25,6 +25,7 @@ namespace BuildingsEditor {
 			building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
+			BuildingsEditor::editor->_building_panel->_game_objects->sort();
 		}
 	}
 

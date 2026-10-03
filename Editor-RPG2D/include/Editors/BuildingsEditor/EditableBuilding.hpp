@@ -20,6 +20,8 @@ namespace BuildingsEditor {
 		void create(std::shared_ptr<BuildingPrefab> prefab);
 		void resizeFloor(int offsetX, int offsetY);
 		void resizeWalls(int offsetX, int offsetY);
+		void resizeDoors(int offsetX, int offsetY);
+		void resizeWindows(int offsetX, int offsetY);
 		void resizeRoof();
 
 		virtual void resize(std::shared_ptr<EdgePoint> edgePoint);

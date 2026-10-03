@@ -14,6 +14,8 @@ DoorPrefab::~DoorPrefab() {
 Door::Door(std::weak_ptr<GameObject> prefab, std::weak_ptr<Building> building) : PlacedGameObject(prefab) {
 	_type = ObjectType::Door;
 	_building = building;
+	_animator->_frame = 0;
+	_animator->stop();
 }
 
 Door::~Door() {

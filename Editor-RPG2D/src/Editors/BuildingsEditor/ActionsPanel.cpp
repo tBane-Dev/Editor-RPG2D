@@ -107,9 +107,12 @@ namespace BuildingsEditor {
 					building->addOutsideToGameObjects(MapEditor::editor);
 
 					building->addDoorsToVisibleGameObjects(MapEditor::editor);
+					building->addWindowsToVisibleGameObjects(MapEditor::editor);
 					building->addWallsToVisibleGameObjects(MapEditor::editor);
 					building->addSkeletsToVisibleGameObjects(MapEditor::editor);
 					building->addOutsideToVisibleGameObjects(MapEditor::editor);
+
+					MapEditor::editor->_game_objects->sort();
 				}
 			}
 
