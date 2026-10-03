@@ -652,6 +652,15 @@ void Slots::setCategory(ObjectType type) {
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (120 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
 	}
 	else if (_type == ObjectType::Building) {
+		std::shared_ptr<ToolsBuilding> tools = std::dynamic_pointer_cast<ToolsBuilding>(MapEditor::editor->_palette->_tools);
+		Components::Palette::createBuildingsPrefabs(
+			1,
+			tools->getWallType(),
+			tools->getHeight(),
+			tools->getRoofShape(),
+			tools->getRoofType()
+		);
+
 		createSlots(sf::Vector2i(2, 2));
 		_rect.size = sf::Vector2i(600 - 2 * _main_margin, _slotsCount.y * (240 + _inner_margin) + 2 * _main_margin + _top_margin + _outer_margin);
 	}

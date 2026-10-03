@@ -71,9 +71,17 @@ namespace MapEditor {
 
 	void Palette::addTools() {
 
-		_tools = nullptr;
-
 		if (!_categories || !_categories->_selectedCategory) return;
+
+		// same tools are ignored
+		if (_categories->_selectedCategory->_type == ObjectType::Terrain && std::dynamic_pointer_cast<ToolsTerrain>(_tools))
+			return;
+
+		if (_categories->_selectedCategory->_type == ObjectType::Building && std::dynamic_pointer_cast<ToolsBuilding>(_tools))
+			return;
+
+		// new tools
+		_tools = nullptr;
 
 		if(_categories->_selectedType == ObjectType::Terrain) {
 			std::shared_ptr<ToolsTerrain> t = std::make_shared<ToolsTerrain>();

@@ -287,6 +287,7 @@ void ToolsBuilding::createOptions() {
 }
 
 void ToolsBuilding::updateOptions() {
+
 	_visibleOptions.clear();
 	_visibleOptionsCount = 0;
 
