@@ -547,10 +547,23 @@ namespace BuildingsEditor {
             );
 
             if (!canPlaceDoor(wallPosition)) {
-                sf::RectangleShape rect(sf::Vector2f(64.0f*scale, 64.0f*scale));
-                rect.setPosition(sf::Vector2f(position));
-                rect.setFillColor(sf::Color(255, 47, 47, 127));
-                Main::render_window->draw(rect);
+
+                std::shared_ptr<EditableBuilding> building = BuildingsEditor::editor->_building_panel->_building;
+                sf::IntRect area = building->_rect;
+                area.position.x += 32;
+                area.position.y += 48;
+                area.size.x -= 64;
+                area.size.y += - 48;
+                
+                area.size.x = (float)area.size.x * scale;
+                area.size.y = (float)area.size.y * scale;
+
+                if (area.findIntersection(sf::IntRect(sf::Vector2i(position.x, position.y), sf::Vector2i(64.f*scale, 64.f*scale)))) {
+                    sf::RectangleShape rect(sf::Vector2f(64.0f * scale, 64.0f * scale));
+                    rect.setPosition(sf::Vector2f(position.x, position.y - 48.f * scale));
+                    rect.setFillColor(sf::Color(255, 47, 47, 127));
+                    Main::render_window->draw(rect);
+                }
                 return;
             }
                 
@@ -589,11 +602,25 @@ namespace BuildingsEditor {
                 buildingPosition.y + windowPosition.y * gridSize
             );
 
+
             if (!canPlaceWindow(windowPosition)) {
-                sf::RectangleShape rect(sf::Vector2f(32.f * scale, 32.f * scale));
-                rect.setPosition(sf::Vector2f(position));
-                rect.setFillColor(sf::Color(255, 47, 47, 127));
-                Main::render_window->draw(rect);
+                std::shared_ptr<EditableBuilding> building = BuildingsEditor::editor->_building_panel->_building;
+                std::shared_ptr<BuildingPrefab> prefab = std::dynamic_pointer_cast<BuildingPrefab>(BuildingsEditor::editor->_building_panel->_building->_building->_prefab.lock());
+                
+                sf::IntRect area = building->_rect;
+                area.position.y -= prefab->_wallHeight * 32;
+                area.size.y += prefab->_wallHeight * 32;
+
+                area.size.x = (float)area.size.x * scale;
+                area.size.y = (float)area.size.y * scale;
+
+                if (area.findIntersection(sf::IntRect(sf::Vector2i(position), sf::Vector2i(32.f * scale, 32.f * scale)))) {
+                    sf::RectangleShape rect(sf::Vector2f(32.f * scale, 32.f * scale));
+                    rect.setPosition(sf::Vector2f(position));
+                    rect.setFillColor(sf::Color(255, 47, 47, 127));
+                    Main::render_window->draw(rect);
+                }
+                
                 return;
             }
 
