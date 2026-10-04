@@ -22,6 +22,7 @@ public:
 	void loadFromProject(std::ifstream& loader);
 
     void loadBuildingsPartsPrefabs();
+
 };
 
 extern std::shared_ptr<PrefabsManager> prefabs_manager;

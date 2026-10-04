@@ -115,7 +115,6 @@ void PrefabsManager::saveFromProject(std::ofstream& saver) {
             writer.write_Vector2i(monsterPrefab->_origin);
             writer.write_int32(monsterPrefab->_stepSize);
             writer.write_wstring((!monsterPrefab->_animations.expired()) ? monsterPrefab->_animations.lock()->_path : L"");
-
         }
         
         if (prefab->_type == ObjectType::Nature) {
@@ -126,10 +125,12 @@ void PrefabsManager::saveFromProject(std::ofstream& saver) {
 			saveMesh(naturePrefab->getMesh(), saver);
 			writer.write_Vector2i(naturePrefab->_origin);
             writer.write_wstring((!naturePrefab->_animations.expired()) ? naturePrefab->_animations.lock()->_path : L"");
-
-
         }
+
+        
+
     }
+
 }
 
 void PrefabsManager::loadFromProject(std::ifstream& loader) {
@@ -171,6 +172,10 @@ void PrefabsManager::loadFromProject(std::ifstream& loader) {
             addPrefab(prefab);
             DebugStat(name);
 		}
+
+        
+
+        
     }
 }
 
@@ -225,7 +230,6 @@ void PrefabsManager::loadBuildingsPartsPrefabs() {
         DebugStat(data.name);
     }
     
-    // TO-DO - upgrade to wall mounted
     for (auto& data : wall_mounted_datas) { 
         std::shared_ptr<Collider> wall_mounted_collider = std::make_shared<RectangularCollider>(0, 0, 32, 32);
         std::shared_ptr<Mesh> wall_mounted_mesh = std::make_shared<Mesh>(1.0f, 1.0f);

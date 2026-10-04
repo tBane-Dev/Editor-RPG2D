@@ -2,6 +2,9 @@
 #include "DebugLog.hpp"
 #include "Objects/Nature.hpp"
 #include "Objects/Monster.hpp"
+#include "Objects/Building/Building.hpp"
+#include "Objects/Building/Roof1.hpp"
+#include "Objects/Building/Roof2.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include <typeinfo>
 #include "PrefabsManager.hpp"
@@ -274,8 +277,16 @@ namespace MapEditor {
 		int32_t count = 0;
 		for (auto& chunk : MapEditor::editor->_map->_chunks) {
 			for (auto& object : chunk->_gameObjectsOnMap) {
-				if (object)
+
+				if (!object)
+					continue;
+
+				if (object->_type == ObjectType::None ||
+					object->_type == ObjectType::Nature ||
+					object->_type == ObjectType::Monster ||
+					object->_type == ObjectType::Building) {
 					count++;
+				}
 			}
 		}
 
@@ -321,6 +332,63 @@ namespace MapEditor {
 					}
 				}
 
+				else if (object->_type == ObjectType::Building) {
+					std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(object);
+					std::shared_ptr<BuildingPrefab> bp = std::dynamic_pointer_cast<BuildingPrefab>(building->_prefab.lock());
+
+					writer.write_int8((int8_t)bp->_type);
+					writer.write_wstring(bp->_name);
+					writer.write_int8(bp->_wallHeight);
+					writer.write_int8(bp->_skeletType);
+					int roof = 0;
+					if (std::dynamic_pointer_cast<Roof1>(bp->_roof)) roof = 1;
+					if (std::dynamic_pointer_cast<Roof2>(bp->_roof)) roof = 2;
+					writer.write_int8(roof);
+					writer.write_int8((int)bp->_roof->_type);
+
+					writer.write_Vector2i(sf::Vector2i(bp->_floor[0].size(), bp->_floor.size()));
+					writer.write_Vector2i(sf::Vector2i(bp->_walls[0].size(), bp->_walls.size()));
+
+					// save floor
+					for (int y = 0; y < bp->_floor.size(); y += 1) {
+						for (int x = 0; x < bp->_floor[y].size(); x += 1) {
+							writer.write_int8(bp->_floor[y][x]);
+						}
+					}
+
+					// save walls
+					for (int y = 0; y < bp->_walls.size(); y += 1) {
+						for (int x = 0; x < bp->_walls[y].size(); x += 1) {
+							writer.write_int8(bp->_walls[y][x]);
+						}
+					}
+
+					// save doors
+					writer.write_int32(bp->_doors.size());
+					for (auto& door : bp->_doors) {
+						writer.write_wstring(door->_prefab.lock()->_name);
+						writer.write_Vector2i(door->_position);
+					}
+
+					// save windows
+					writer.write_int32(bp->_windows.size());
+					for (auto& window : bp->_windows) {
+						writer.write_wstring(window->_prefab.lock()->_name);
+						writer.write_Vector2i(window->_position);
+						writer.write_int8(window->_level);
+					}
+
+					// save wall mounter
+					writer.write_int32(bp->_wallMounted.size());
+					for (auto& wallMounted : bp->_wallMounted) {
+						writer.write_wstring(wallMounted->_prefab.lock()->_name);
+						writer.write_Vector2i(wallMounted->_position);
+						writer.write_int8(wallMounted->_level);
+					}
+
+					// save position
+					writer.write_Vector2i(building->_position);
+				}
 			}
 		}
 
@@ -336,6 +404,13 @@ namespace MapEditor {
 
 		for (int i = 0; i < objectsCount; i++) {
 			ObjectType type = (ObjectType)reader.read_int8();
+
+			DebugLog(
+				L"LOAD OBJECT: " +
+				std::to_wstring(i) +
+				L" TYPE: " +
+				std::to_wstring((int)type)
+			);
 
 			if (type == ObjectType::None) {
 				std::shared_ptr<PlacedGameObject> object = std::make_shared<PlacedGameObject>(std::weak_ptr<GameObject>());
@@ -373,9 +448,102 @@ namespace MapEditor {
 				std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(monster->_basePosition);
 				if (chunk) chunk->addPlacedGameObject(monster);
 			}
+
+			if (type == ObjectType::Building) {
+				std::wstring name = reader.read_wstring();
+				int wallHeight = reader.read_int8();
+				int skeletType = reader.read_int8();
+				int roof = reader.read_int8();
+				int roofType = reader.read_int8();
+
+				sf::Vector2i floorSize = reader.read_Vector2i();
+				sf::Vector2i wallsSize = reader.read_Vector2i();
+				std::shared_ptr<BuildingPrefab> bp = std::make_shared<BuildingPrefab>(name, floorSize);
+				prefabs_manager->addPrefab(bp);
+
+				// load floor
+				for (int y = 0; y < floorSize.y; y += 1) {
+					for (int x = 0; x < floorSize.x; x += 1) {
+						bp->_floor[y][x] = reader.read_int8();
+					}
+				}
+
+				// load walls
+				for (int y = 0; y < wallsSize.y; y += 1) {
+					for (int x = 0; x < wallsSize.x; x += 1) {
+						bp->_walls[y][x] = reader.read_int8();
+					}
+				}
+
+				// parameters
+				bp->_wallHeight = wallHeight;
+				bp->_skeletType = skeletType;
+
+				std::shared_ptr<Building> building = std::make_shared<Building>(bp);
+
+				// load doors
+				int doorsCount = reader.read_int32();
+				for (int i = 0; i < doorsCount; i += 1) {
+					std::wstring name = reader.read_wstring();
+					std::shared_ptr<Door> door = std::make_shared<Door>(buildings_parts_prefabs_manager->getPrefab(name), building);
+					sf::Vector2i pos = reader.read_Vector2i();
+					door->setPosition(pos);
+					bp->_doors.push_back(door);
+				}
+
+				// load windows
+				int windowsCount = reader.read_int32();
+				for (int i = 0; i < windowsCount; i += 1) {
+					std::wstring name = reader.read_wstring();
+					sf::Vector2i pos = reader.read_Vector2i();
+					int level = reader.read_int8();
+					std::shared_ptr<Window> window = std::make_shared<Window>(buildings_parts_prefabs_manager->getPrefab(name), building, level);
+					window->setPosition(pos);
+					bp->_windows.push_back(window);
+				}
+
+				// load wall mounted
+				int wallMountedCount = reader.read_int32();
+				for (int i = 0; i < wallMountedCount; i += 1) {
+					std::wstring name = reader.read_wstring();
+					sf::Vector2i pos = reader.read_Vector2i();
+					int level = reader.read_int8();
+					std::shared_ptr<WallMounted> wallMounted = std::make_shared<WallMounted>(buildings_parts_prefabs_manager->getPrefab(name), building, level);
+					wallMounted->setPosition(pos);
+					bp->_wallMounted.push_back(wallMounted);
+				}
+
+				// position
+				sf::Vector2i pos = reader.read_Vector2i();
+
+				if (roof == 1) {
+					bp->_roof = std::make_shared<Roof1>(roofType, bp->_wallHeight);
+				}
+				else if (roof == 2) {
+					bp->_roof = std::make_shared<Roof2>(roofType, bp->_wallHeight);
+				}
+				else {
+					bp->_roof = std::make_shared<Roof1>(roofType, bp->_wallHeight);
+				}
+
+				bp->_roof->generate(bp->_walls, pos, 1.0f);
+
+				bp->generate(pos, 1.0f, building);
+				building->generate();
+				building->setPosition(pos);
+				std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(building->getPosition());
+				if (chunk) chunk->addPlacedGameObject(building);
+			}
 		}
 
+		DebugLog(L"PLACED GAME OBJECTS LOADED");
+
 		MapEditor::editor->_map->setVisibleChunks();
+
+		DebugLog(
+			L"CHUNKS: " +
+			std::to_wstring(MapEditor::editor->_map->_chunks.size())
+		);
 	}
 
 	void PlacedGameObjects::cursorHover() {
