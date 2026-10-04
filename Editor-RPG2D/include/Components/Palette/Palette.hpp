@@ -44,8 +44,8 @@ namespace Components {
 		virtual void loadAll(ObjectType type);
 		void setPosition(sf::Vector2i position);
 
-		void cursorHover();
-		void handleEvent(const sf::Event& event);
+		virtual void cursorHover();
+		virtual void handleEvent(const sf::Event& event);
 		void update();
 		virtual void draw();
 	};

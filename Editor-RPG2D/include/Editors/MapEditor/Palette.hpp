@@ -10,6 +10,9 @@ namespace MapEditor {
 
 		virtual void addTools();
 		virtual void loadAll(ObjectType type);
+
+		virtual void cursorHover();
+		virtual void handleEvent(const sf::Event& event);
 		virtual void draw();
 	};
 

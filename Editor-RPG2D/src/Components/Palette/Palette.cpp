@@ -375,9 +375,7 @@ namespace Components {
 	}
 
 	void Palette::cursorHover() {
-		if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value != 0)
-			return;
-
+		
 		if (_rect.contains(Cursors::cursor->_position)) {
 			GUI_manager->Element_hovered = shared_from_this();
 		}
@@ -392,9 +390,6 @@ namespace Components {
 	}
 
 	void Palette::handleEvent(const sf::Event& event) {
-
-		if (MapEditor::editor->_main_menu->_tool_palette->_checkbox->_value != 0)
-			return;
 
 		if (GUI_manager->Element_hovered.get() == this) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
