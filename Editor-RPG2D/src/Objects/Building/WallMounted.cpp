@@ -50,10 +50,6 @@ void WallMounted::draw() {
 	if(_building.expired())
 		return;
 
-	if (_building.lock()->_renderOutsideLook) {
-		return;
-	}
-
 	if (Main::editor_manager->get_back() == BuildingsEditor::editor) {
 		draw(*Main::render_window, BuildingsEditor::editor->_building_panel->_building->_scale);
 		return;

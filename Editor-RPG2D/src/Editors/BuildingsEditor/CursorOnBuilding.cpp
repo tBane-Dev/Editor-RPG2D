@@ -565,10 +565,7 @@ namespace BuildingsEditor {
                 wallMounted->setPosition(wallMountedPosition);
 
                 std::erase_if(bp->_wallMounted, [&](const std::shared_ptr<WallMounted>& wallMounted) {
-                    return
-                        (wallMounted->_position == wallMountedPosition && wallMounted->_level == level) ||
-                        (wallMounted->_position + sf::Vector2i(32, 0) == wallMountedPosition && wallMounted->_level == level) ||
-                        (wallMounted->_position - sf::Vector2i(32, 0) == wallMountedPosition && wallMounted->_level == level);
+                    return wallMounted->_position == wallMountedPosition && wallMounted->_level == level;
                     });
 
                 bp->_wallMounted.push_back(wallMounted);

@@ -80,10 +80,20 @@ namespace PrefabsEditor {
 
 			std::shared_ptr<Collider> collider;
 			if (PrefabsEditor::editor->_collider_panel->_type->getText() == L"Rectangular") {
-				collider = std::make_shared<RectangularCollider>(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()));
+				collider = std::make_shared<RectangularCollider>(
+					PrefabsEditor::editor->_collider_panel->_x->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_y->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_w->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_h->getNumber()
+				);
 			}
 			else if (PrefabsEditor::editor->_collider_panel->_type->getText() == L"Circular") {
-				collider = std::make_shared<CircularCollider>(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()) / 2, std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()) / 2);
+				collider = std::make_shared<CircularCollider>(
+					PrefabsEditor::editor->_collider_panel->_x->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_y->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_w->getNumber() / 2, 
+					PrefabsEditor::editor->_collider_panel->_h->getNumber() / 2
+					);
 			}
 
 			std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(*PrefabsEditor::editor->_mesh);
@@ -99,7 +109,7 @@ namespace PrefabsEditor {
 				prefab = std::make_shared<MonsterPrefab>(
 					_name->getText(),
 					PrefabsEditor::editor->_animator->getAnimations(),
-					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					sf::Vector2i(PrefabsEditor::editor->_collider_panel->_x->getNumber(), PrefabsEditor::editor->_collider_panel->_y->getNumber()),
 					4,
 					collider,
 					mesh
@@ -109,7 +119,7 @@ namespace PrefabsEditor {
 				prefab = std::make_shared<NaturePrefab>(
 					_name->getText(),
 					PrefabsEditor::editor->_animator->getAnimations(),
-					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					sf::Vector2i(PrefabsEditor::editor->_collider_panel->_x->getNumber(), PrefabsEditor::editor->_collider_panel->_y->getNumber()),
 					collider,
 					mesh
 				);
@@ -143,10 +153,20 @@ namespace PrefabsEditor {
 
 			std::shared_ptr<Collider> collider;
 			if (PrefabsEditor::editor->_collider_panel->_type->getText() == L"Rectangular") {
-				collider = std::make_shared<RectangularCollider>(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()));
+				collider = std::make_shared<RectangularCollider>(
+					PrefabsEditor::editor->_collider_panel->_x->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_y->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_w->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_h->getNumber()
+				);
 			}
 			else if (PrefabsEditor::editor->_collider_panel->_type->getText() == L"Circular") {
-				collider = std::make_shared<CircularCollider>(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()) / 2, std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()) / 2);
+				collider = std::make_shared<CircularCollider>(
+					PrefabsEditor::editor->_collider_panel->_x->getNumber(),
+					PrefabsEditor::editor->_collider_panel->_y->getNumber(), 
+					PrefabsEditor::editor->_collider_panel->_w->getNumber() / 2, 
+					PrefabsEditor::editor->_collider_panel->_h->getNumber() / 2
+				);
 			}
 
 			std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(*PrefabsEditor::editor->_mesh);
@@ -157,7 +177,7 @@ namespace PrefabsEditor {
 				prefab = std::make_shared<MonsterPrefab>(
 					_name->getText(),
 					PrefabsEditor::editor->_animator->getAnimations(),
-					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					sf::Vector2i(PrefabsEditor::editor->_collider_panel->_x->getNumber(), PrefabsEditor::editor->_collider_panel->_y->getNumber()),
 					4,
 					collider,
 					mesh
@@ -167,7 +187,7 @@ namespace PrefabsEditor {
 				prefab = std::make_shared<NaturePrefab>(
 					_name->getText(),
 					PrefabsEditor::editor->_animator->getAnimations(),
-					sf::Vector2i(std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()), std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText())),
+					sf::Vector2i(PrefabsEditor::editor->_collider_panel->_x->getNumber(), PrefabsEditor::editor->_collider_panel->_y->getNumber()),
 					collider,
 					mesh
 				);
@@ -335,16 +355,16 @@ namespace PrefabsEditor {
 			if (!rectCollider)
 				return false;
 
-			if (rectCollider->_rect.position.x != std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()))
+			if (rectCollider->_rect.position.x != PrefabsEditor::editor->_collider_panel->_x->getNumber())
 				return true;
 
-			if (rectCollider->_rect.position.y != std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()))
+			if (rectCollider->_rect.position.y != PrefabsEditor::editor->_collider_panel->_y->getNumber())
 				return true;
 
-			if (rectCollider->_rect.size.x != std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()))
+			if (rectCollider->_rect.size.x != PrefabsEditor::editor->_collider_panel->_w->getNumber())
 				return true;
 
-			if (rectCollider->_rect.size.y != std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()))
+			if (rectCollider->_rect.size.y != PrefabsEditor::editor->_collider_panel->_h->getNumber())
 				return true;
 		}
 		else if (collider->_type == ColliderType::Circular) {
@@ -357,16 +377,16 @@ namespace PrefabsEditor {
 			if (!circCollider)
 				return false;
 
-			if (circCollider->_x != std::stoi(PrefabsEditor::editor->_collider_panel->_x->getText()))
+			if (circCollider->_x != PrefabsEditor::editor->_collider_panel->_x->getNumber())
 				return true;
 
-			if (circCollider->_y != std::stoi(PrefabsEditor::editor->_collider_panel->_y->getText()))
+			if (circCollider->_y != PrefabsEditor::editor->_collider_panel->_y->getNumber())
 				return true;
 
-			if (circCollider->_radiusX * 2 != std::stoi(PrefabsEditor::editor->_collider_panel->_w->getText()))
+			if (circCollider->_radiusX * 2 != PrefabsEditor::editor->_collider_panel->_w->getNumber())
 				return true;
 
-			if (circCollider->_radiusY * 2 != std::stoi(PrefabsEditor::editor->_collider_panel->_h->getText()))
+			if (circCollider->_radiusY * 2 != PrefabsEditor::editor->_collider_panel->_h->getNumber())
 				return true;
 		}
 

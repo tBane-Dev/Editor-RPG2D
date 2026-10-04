@@ -1,6 +1,7 @@
 #pragma once
 #include "Components/Panel.hpp"
 #include "Controls/TextInput.hpp"
+#include "Controls/NumberInput.hpp"
 #include "Objects/Collider.hpp"
 
 namespace PrefabsEditor {
@@ -17,10 +18,10 @@ namespace PrefabsEditor {
 
 		std::shared_ptr<TextInput> _type;
 
-		std::shared_ptr<TextInput> _x;
-		std::shared_ptr<TextInput> _y;
-		std::shared_ptr<TextInput> _w;
-		std::shared_ptr<TextInput> _h;
+		std::shared_ptr<NumberInput> _x;
+		std::shared_ptr<NumberInput> _y;
+		std::shared_ptr<NumberInput> _w;
+		std::shared_ptr<NumberInput> _h;
 
 		ColliderPanel(sf::Vector2i margin);
 		~ColliderPanel();

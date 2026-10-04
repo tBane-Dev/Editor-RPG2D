@@ -16,19 +16,19 @@ namespace PrefabsEditor {
 		_type->setPosition(sf::Vector2i(_rect.position.x + 84, _rect.position.y + margin.y + 192 + 16));
 		_type->setText(L"Circular");
 
-		_x = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"x", 24, 18);
+		_x = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"x", 24, 18);
 		_x->setPosition(sf::Vector2i(_rect.position.x + 84, _type->getPosition().y + _type->getSize().y + 8));
 		_x->setText(L"0");
 		
-		_y = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"y", 24, 18);
+		_y = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"y", 24, 18);
 		_y->setPosition(sf::Vector2i(_rect.position.x + 84, _x->getPosition().y + _x->getSize().y + 8));
 		_y->setText(L"0");
 
-		_w = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"width", 24, 18);
+		_w = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"width", 24, 18);
 		_w->setPosition(sf::Vector2i(_rect.position.x + 84, _y->getPosition().y + _y->getSize().y + 8));
 		_w->setText(L"0");
 
-		_h = std::make_shared<TextInput>(sf::Vector2i(256, 30), L"height", 24, 18);
+		_h = std::make_shared<NumberInput>(sf::Vector2i(256, 30), L"height", 24, 18);
 		_h->setPosition(sf::Vector2i(_rect.position.x + 84, _w->getPosition().y + _w->getSize().y + 8));
 		_h->setText(L"0");
 
@@ -155,14 +155,14 @@ namespace PrefabsEditor {
 
 				if (_type->getText() == L"Rectangular") {
 
-					std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
+					std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(_x->getNumber(), _y->getNumber(), _w->getNumber(), _h->getNumber());
 					editor->_collider = rectCollider;
 					sf::Vector2i colliderPosition = canvasRect.position + sf::Vector2i((canvasRect.size.x - animations->getFrameRect(0, 0).size.x * spriteScale) / 2, (canvasRect.size.y - animations->getFrameRect(0, 0).size.y * spriteScale) / 2);
 					editor->_collider->draw(colliderPosition, sf::Vector2f(spriteScale, spriteScale));
 				}
 				else if (_type->getText() == L"Circular") {
 
-					std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
+					std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(_x->getNumber(), _y->getNumber(), _w->getNumber() / 2, _h->getNumber() / 2);
 					editor->_collider = circularCollider;
 					sf::Vector2i colliderPosition(
 						rect.getPosition().x + (float)(circularCollider->_x) * spriteScale,
@@ -176,14 +176,14 @@ namespace PrefabsEditor {
 
 				if (_type->getText() == L"Rectangular") {
 
-					std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()), std::stoi(_h->getText()));
+					std::shared_ptr<RectangularCollider> rectCollider = std::make_shared<RectangularCollider>(_x->getNumber(), _y->getNumber(), _w->getNumber(), _h->getNumber());
 					editor->_collider = rectCollider;
 					sf::Vector2i colliderPosition = canvasRect.position + sf::Vector2i((canvasRect.size.x - animations->getFrameRect(0, 0).size.x * spriteScale) / 2, (canvasRect.size.y - animations->getFrameRect(0, 0).size.y * spriteScale) / 2);
 					editor->_collider->draw(colliderPosition, sf::Vector2f(spriteScale, spriteScale));
 				}
 				else if (_type->getText() == L"Circular") {
 
-					std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(std::stoi(_x->getText()), std::stoi(_y->getText()), std::stoi(_w->getText()) / 2, std::stoi(_h->getText()) / 2);
+					std::shared_ptr<CircularCollider> circularCollider = std::make_shared<CircularCollider>(_x->getNumber(), _y->getNumber(), _w->getNumber() / 2, _h->getNumber() / 2);
 					editor->_collider = circularCollider;
 					sf::Vector2i colliderPosition(
 						rect.getPosition().x + (float)(circularCollider->_x) * spriteScale,
