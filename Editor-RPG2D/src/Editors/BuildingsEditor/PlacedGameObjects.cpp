@@ -22,6 +22,7 @@ namespace BuildingsEditor {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(placedGameObject.lock());
 			building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addWindowsToVisibleGameObjects(BuildingsEditor::editor);
+			building->addWallMountedToVisibleGameObjects(BuildingsEditor::editor);
 			building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 			building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);
@@ -98,7 +99,7 @@ namespace BuildingsEditor {
 				//DebugLog(L"Outside::" + std::to_wstring(posA.y));
 			}
 			else if (!a->_prefab.expired()) {
-				if (a->_type == ObjectType::Window) {
+				if (a->_type == ObjectType::Window || a->_type == ObjectType::WallMounted) {
 					posA.y += 32.0f * editor->_building_panel->_building->_scale;
 					//DebugLog(L"Window::" + std::to_wstring(posA.y));
 				}
@@ -131,7 +132,7 @@ namespace BuildingsEditor {
 				//DebugLog(L"Outside::" + std::to_wstring(posB.y));
 			}
 			else if (!b->_prefab.expired()) {
-				if (b->_type == ObjectType::Window) {
+				if (b->_type == ObjectType::Window || b->_type == ObjectType::WallMounted) {
 					posB.y += 32.0f * editor->_building_panel->_building->_scale;
 					//DebugLog(L"Window::" + std::to_wstring(posB.y));
 				}

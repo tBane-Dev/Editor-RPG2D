@@ -59,9 +59,10 @@ BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) :
 		}
 	}
 
-	// copy the doors and windows
+	// copy the doors, windowsm wall mounted and skelets
 	_doors = other._doors;
 	_windows = other._windows;
+	_wallMounted = other._wallMounted;
 	_skeletType = other._skeletType;
 
 	// copy the walls
@@ -89,9 +90,10 @@ BuildingPrefab::~BuildingPrefab() {
 }
 
 void BuildingPrefab::generate(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+
 	copyDoorsFromPrefab(position, scale, building);
-	
 	copyWindowsFromPrefab(position, scale, building);
+	copyWallMountedFromPrefab(position, scale, building);
 
 	generateWalls(position, scale, building);
 	copyWallsFromPrefab(position, scale, building);
@@ -738,6 +740,22 @@ void BuildingPrefab::copyWindowsFromPrefab(sf::Vector2i position, float scale, s
 	}
 }
 
+void BuildingPrefab::copyWallMountedFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
+	if (!building)
+		return;
+
+	building->_wallMountedObjects.clear();
+	for (auto& wallMounted : _wallMounted) {
+		if (wallMounted) {
+			std::shared_ptr<WallMounted> newWallMounted = std::make_shared<WallMounted>(wallMounted->_prefab, building, wallMounted->_level);
+			newWallMounted->setPosition(building->_position + sf::Vector2i((float)wallMounted->_position.x * scale, (float)wallMounted->_position.y * scale));
+			building->_wallMountedObjects.push_back(newWallMounted);
+		}
+		else
+			building->_wallMountedObjects.push_back(nullptr);
+	}
+}
+
 void BuildingPrefab::copyWallsFromPrefab(sf::Vector2i position, float scale, std::shared_ptr<Building> building) {
 	if (!building)
 		return;
@@ -950,6 +968,11 @@ void Building::setPosition(sf::Vector2i position) {
 			window->setPosition(window->getPosition() + delta);
 	}
 
+	for (auto& wallMounted : _wallMountedObjects) {
+		if (wallMounted)
+			wallMounted->setPosition(wallMounted->getPosition() + delta);
+	}
+
 	for (auto& wall : _wallsObjects) {
 		if (wall)
 			wall->setPosition(wall->getPosition() + delta);
@@ -1003,6 +1026,23 @@ void Building::addWindowsToGameObjects(std::shared_ptr<Main::Editor> editor) {
 			if (chunk) {
 				chunk->addPlacedGameObject(window);
 				MapEditor::editor->_game_objects->addGameObject(window);
+			}
+		}
+	}
+}
+
+void Building::addWallMountedToGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& wallMounted : _wallMountedObjects) {
+
+		if (!wallMounted)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk) {
+				chunk->addPlacedGameObject(wallMounted);
+				MapEditor::editor->_game_objects->addGameObject(wallMounted);
 			}
 		}
 	}
@@ -1092,6 +1132,23 @@ void Building::removeWindowsFromGameObjects(std::shared_ptr<Main::Editor> editor
 	}
 }
 
+void Building::removeWallMountedFromGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& wallMounted : _wallMountedObjects) {
+
+		if (!wallMounted)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			std::shared_ptr<MapEditor::Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(_position);
+			if (chunk)
+				chunk->removePlacedGameObject(wallMounted);
+			MapEditor::editor->_game_objects->removeGameObject(wallMounted);
+		}
+
+	}
+}
+
 void Building::removeWallsFromGameObjects(std::shared_ptr<Main::Editor> editor) {
 
 	for (auto& wall : _wallsObjects) {
@@ -1170,6 +1227,23 @@ void Building::addWindowsToVisibleGameObjects(std::shared_ptr<Main::Editor> edit
 
 		if (editor == BuildingsEditor::editor) {
 			BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(window);
+		}
+	}
+}
+
+void Building::addWallMountedToVisibleGameObjects(std::shared_ptr<Main::Editor> editor) {
+
+	for (auto& wallMounted : _wallMountedObjects) {
+
+		if (!wallMounted)
+			continue;
+
+		if (editor == MapEditor::editor) {
+			MapEditor::editor->_game_objects->_visiblePlacedGameObjects.push_back(wallMounted);
+		}
+
+		if (editor == BuildingsEditor::editor) {
+			BuildingsEditor::editor->_building_panel->_game_objects->_visiblePlacedGameObjects.push_back(wallMounted);
 		}
 	}
 }

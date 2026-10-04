@@ -3,6 +3,8 @@
 #include "Objects/Monster.hpp"
 #include "Objects/Nature.hpp"
 #include "Objects/Building/Wall.hpp"
+#include "Objects/Building/Window.hpp"
+#include "Objects/Building/WallMounted.hpp"
 #include "Objects/Building/Building.hpp"
 #include "BinaryWriter.hpp"
 #include "BinaryReader.hpp"
@@ -218,24 +220,22 @@ void PrefabsManager::loadBuildingsPartsPrefabs() {
         window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 0));
         window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 32));
         window_mesh->getShape(0)->addPoint(sf::Vector2i(0, 32));
-        std::shared_ptr<GameObject> window_prefab = std::make_shared<GameObject>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), window_collider, window_mesh);
-        window_prefab->_type = ObjectType::Window;
+        std::shared_ptr<WindowPrefab> window_prefab = std::make_shared<WindowPrefab>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), window_collider, window_mesh);
         addPrefab(window_prefab);
         DebugStat(data.name);
     }
     
     // TO-DO - upgrade to wall mounted
     for (auto& data : wall_mounted_datas) { 
-        std::shared_ptr<Collider> window_collider = std::make_shared<RectangularCollider>(0, 0, 32, 32);
-        std::shared_ptr<Mesh> window_mesh = std::make_shared<Mesh>(1.0f, 1.0f);
-        window_mesh->addShape(std::make_shared<Shape>());
-        window_mesh->getShape(0)->addPoint(sf::Vector2i(0, 0));
-        window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 0));
-        window_mesh->getShape(0)->addPoint(sf::Vector2i(32, 32));
-        window_mesh->getShape(0)->addPoint(sf::Vector2i(0, 32));
-        std::shared_ptr<GameObject> window_prefab = std::make_shared<GameObject>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), window_collider, window_mesh);
-        window_prefab->_type = ObjectType::Window;
-        addPrefab(window_prefab);
+        std::shared_ptr<Collider> wall_mounted_collider = std::make_shared<RectangularCollider>(0, 0, 32, 32);
+        std::shared_ptr<Mesh> wall_mounted_mesh = std::make_shared<Mesh>(1.0f, 1.0f);
+        wall_mounted_mesh->addShape(std::make_shared<Shape>());
+        wall_mounted_mesh->getShape(0)->addPoint(sf::Vector2i(0, 0));
+        wall_mounted_mesh->getShape(0)->addPoint(sf::Vector2i(32, 0));
+        wall_mounted_mesh->getShape(0)->addPoint(sf::Vector2i(32, 32));
+        wall_mounted_mesh->getShape(0)->addPoint(sf::Vector2i(0, 32));
+        std::shared_ptr<WallMountedPrefab> wall_mounted_prefab = std::make_shared<WallMountedPrefab>(data.name, buildings_parts_animations_manager->getAnimations(data.animationsPath), sf::Vector2i(32, 32), wall_mounted_collider, wall_mounted_mesh);
+        addPrefab(wall_mounted_prefab);
         DebugStat(data.name);
     }
 }

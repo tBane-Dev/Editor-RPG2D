@@ -30,6 +30,7 @@ namespace BuildingsEditor {
 
 		_building->_building->addDoorsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addWindowsToVisibleGameObjects(BuildingsEditor::editor);
+		_building->_building->addWallMountedToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addWallsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addSkeletsToVisibleGameObjects(BuildingsEditor::editor);
 		_building->_building->addOutsideToVisibleGameObjects(BuildingsEditor::editor);

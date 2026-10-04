@@ -13,7 +13,8 @@ namespace BuildingsEditor {
 		bool canPlaceDoor(sf::Vector2i wallPosition);
 		int getBottomWallY(int x);
 		bool canPlaceWindow(sf::Vector2i windowPosition);
-
+		bool canPlaceWallMounted(sf::Vector2i windowPosition);
+	
 		virtual void update();
 		virtual void handleEvent(const sf::Event& event);
 		virtual void draw();

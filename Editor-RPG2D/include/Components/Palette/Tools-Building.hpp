@@ -65,8 +65,8 @@ public:
 
 	void createOptions();
 	void updateOptions();
-	void selectOption();
-	void selectOption(int id);
+	void unselectOptions();
+	bool selectOption(int id, bool force);
 
 	virtual void setPosition(sf::Vector2i position);
 

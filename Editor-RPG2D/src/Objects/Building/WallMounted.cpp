@@ -1,29 +1,29 @@
 #pragma once
-#include "Objects/Building/Window.hpp"
+#include "Objects/Building/WallMounted.hpp"
 #include "EditorsManager.hpp"
 #include "Editors/MapEditor/Editor.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include <DebugLog.hpp>
 
-WindowPrefab::WindowPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh) : GameObject(name, animations, origin, collider, mesh) {
-	_type = ObjectType::Window;
+WallMountedPrefab::WallMountedPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh) : GameObject(name, animations, origin, collider, mesh) {
+	_type = ObjectType::WallMounted;
 }
 
-WindowPrefab::~WindowPrefab() {
+WallMountedPrefab::~WallMountedPrefab() {
 
 }
 
-Window::Window(std::weak_ptr<GameObject> prefab, std::weak_ptr<Building> building, int level) : PlacedGameObject(prefab) {
-	_type = ObjectType::Window;
+WallMounted::WallMounted(std::weak_ptr<GameObject> prefab, std::weak_ptr<Building> building, int level) : PlacedGameObject(prefab) {
+	_type = ObjectType::WallMounted;
 	_building = building;
 	_level = level;
 }
 
-Window::~Window() {
+WallMounted::~WallMounted() {
 
 }
 
-void Window::draw(sf::RenderTarget& target, float scale) {
+void WallMounted::draw(sf::RenderTarget& target, float scale) {
 
 	if (_prefab.expired())
 		return;
@@ -45,12 +45,12 @@ void Window::draw(sf::RenderTarget& target, float scale) {
 
 }
 
-void Window::draw() {
+void WallMounted::draw() {
 
 	if(_building.expired())
 		return;
 
-	if(!_building.lock()->_renderOutsideLook) {
+	if (_building.lock()->_renderOutsideLook) {
 		return;
 	}
 

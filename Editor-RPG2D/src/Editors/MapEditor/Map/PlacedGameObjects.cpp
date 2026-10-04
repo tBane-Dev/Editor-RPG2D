@@ -28,6 +28,7 @@ namespace MapEditor {
 			std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(placedGameObject.lock());
 			building->addDoorsToVisibleGameObjects(MapEditor::editor);
 			building->addWindowsToVisibleGameObjects(MapEditor::editor);
+			building->addWallMountedToVisibleGameObjects(MapEditor::editor);
 			building->addWallsToVisibleGameObjects(MapEditor::editor);
 			building->addSkeletsToVisibleGameObjects(MapEditor::editor);
 			building->addOutsideToVisibleGameObjects(MapEditor::editor);
@@ -200,7 +201,7 @@ namespace MapEditor {
 				//DebugLog(L"Outside::" + std::to_wstring(posA.y));
 			}
 			else if (!a->_prefab.expired()) {
-				if (a->_type == ObjectType::Window) {
+				if (a->_type == ObjectType::Window || a->_type == ObjectType::WallMounted) {
 					posA.y += 32.0f;
 					//DebugLog(L"Window::" + std::to_wstring(posA.y));
 				}
@@ -230,7 +231,7 @@ namespace MapEditor {
 				//DebugLog(L"Outside::" + std::to_wstring(posB.y));
 			}
 			else if (!b->_prefab.expired()) {
-				if (b->_type == ObjectType::Window) {
+				if (b->_type == ObjectType::Window || b->_type == ObjectType::WallMounted) {
 					posB.y += 32.0f;
 					//DebugLog(L"Window::" + std::to_wstring(posB.y));
 				}
