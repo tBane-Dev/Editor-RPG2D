@@ -67,10 +67,10 @@ namespace BuildingsEditor {
 			ObjectType::Wall,
 			ObjectType::Skelet,
 			ObjectType::Door,
-			ObjectType::Roof,
 			ObjectType::Outside,
 			ObjectType::Window,
-			ObjectType::WallMounted
+			ObjectType::WallMounted,
+			ObjectType::Roof,
 		};
 
 		auto getIndex = [&types](ObjectType type) -> int {

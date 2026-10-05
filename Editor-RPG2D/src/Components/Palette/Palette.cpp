@@ -43,7 +43,7 @@ namespace Components {
 		}
 
 		if(Palette::buildings.empty()) {
-			createBuildingsPrefabs(1, 0, 3, 0, 0);
+			createBuildingsPrefabs(1, 0, 3, 0, 0, 0, 0);
 		}
 
 		sf::Vector2i size;
@@ -126,7 +126,7 @@ namespace Components {
 
 	}
 
-	void Palette::createBuildingsPrefabs(int floor, int wall, int height, int roof, int type) {
+	void Palette::createBuildingsPrefabs(int floor, int wall, int height, int roof, int type, int wallRoof, int skeleton) {
 
 		auto generateFloor = [](std::vector<std::vector<int>> walls, int tile) {
 			if (walls.empty() || walls[0].empty())
@@ -217,24 +217,25 @@ namespace Components {
 			return floor;
 			};
 
-		auto addBuildingPrefab = [generateFloor](std::wstring name, std::vector<std::vector<int>>walls, int floor, int height, int roof, int type) {
+		auto addBuildingPrefab = [generateFloor](std::wstring name, std::vector<std::vector<int>>walls, int floor, int height, int roof, int type, int wallRoof, int skeleton) {
 			std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(name, sf::Vector2i(walls[0].size(), walls.size()));
 
 			buildingPrefab->_walls = walls;
 			buildingPrefab->_floor = generateFloor(buildingPrefab->_walls, floor);
 			buildingPrefab->_wallHeight = height;
+			buildingPrefab->_skeletType = skeleton;
 
 			if (roof == 0) {
-				buildingPrefab->_roof = std::make_shared<Roof1>(type, buildingPrefab->_wallHeight);
+				buildingPrefab->_roof = std::make_shared<Roof1>(type, buildingPrefab->_wallHeight, wallRoof);
 			}
 			else if (roof == 1) {
-				buildingPrefab->_roof = std::make_shared<Roof2>(type, buildingPrefab->_wallHeight);
+				buildingPrefab->_roof = std::make_shared<Roof2>(type, buildingPrefab->_wallHeight, wallRoof);
 			}
 			else {
-				buildingPrefab->_roof = std::make_shared<Roof1>(type, buildingPrefab->_wallHeight);
+				buildingPrefab->_roof = std::make_shared<Roof1>(type, buildingPrefab->_wallHeight, wallRoof);
 			}
 
-			buildingPrefab->_roof->generate(buildingPrefab->_walls, sf::Vector2i(0, 0), 1.0f);
+			buildingPrefab->generate(sf::Vector2i(0, 0));
 			Palette::buildings.emplace_back(buildingPrefab);
 		};
 
@@ -253,7 +254,7 @@ namespace Components {
 			{ X, O, O, O, O, O, O, X },
 			{ X, O, O, O, O, O, O, X },
 			{ X, X, X, X, X, X, X, X }
-			}, floor, height, roof, type);
+			}, floor, height, roof, type, wallRoof, skeleton);
 
 		addBuildingPrefab(
 			L"New Building1", {
@@ -269,7 +270,7 @@ namespace Components {
 			{ X, O, O, O, O, X},
 			{ X, O, O, O, O, X},
 			{ X, X, X, X, X, X}
-			}, floor, height, roof, type);
+			}, floor, height, roof, type, wallRoof, skeleton);
 
 		addBuildingPrefab(
 			L"New Building2", {
@@ -281,7 +282,7 @@ namespace Components {
 			{ X, O, O, O, O, O, O, O, O, O, O, X},
 			{ X, O, O, O, O, O, O, O, O, O, O, X},
 			{ X, X, X, X, X, X, X, X, X, X, X, X}
-			}, floor, height, roof, type);
+			}, floor, height, roof, type, wallRoof, skeleton);
 
 		addBuildingPrefab(
 			L"New Building3", {
@@ -293,7 +294,7 @@ namespace Components {
 			{ X, O, O, O, O, X, O, O, O, O},
 			{ X, O, O, O, O, X, O, O, O, O},
 			{ X, X, X, X, X, X, O, O, O, O}
-			}, floor, height, roof, type);
+			}, floor, height, roof, type, wallRoof, skeleton);
 
 		addBuildingPrefab(
 			L"New Building4", {
@@ -305,7 +306,7 @@ namespace Components {
 			{ O, O, O, O, X, O, O, O, O, X},
 			{ O, O, O, O, X, O, O, O, O, X},
 			{ O, O, O, O, X, X, X, X, X, X}
-			}, floor, height, roof, type);
+			}, floor, height, roof, type, wallRoof, skeleton);
 
 		addBuildingPrefab(
 			L"New Building5", {
@@ -317,7 +318,7 @@ namespace Components {
 			{ O, O, O, O, O, X, O, O, O, O, X, O, O, O, O, O },
 			{ O, O, O, O, O, X, O, O, O, O, X, O, O, O, O, O },
 			{ O, O, O, O, O, X, X, X, X, X, X, O, O, O, O, O }
-			}, floor, height, roof, type);
+			}, floor, height, roof, type, wallRoof, skeleton);
 
 		addBuildingPrefab(
 			L"New Building6", {
@@ -329,7 +330,7 @@ namespace Components {
 			{ X, O, O, O, O, X, O, O, O, O, X, O, O, O, O, X },
 			{ X, O, O, O, O, X, O, O, O, O, X, O, O, O, O, X },
 			{ X, X, X, X, X, X, O, O, O, O, X, X, X, X, X, X }
-			}, floor, height, roof, type);
+			}, floor, height, roof, type, wallRoof, skeleton);
 	}
 	
 

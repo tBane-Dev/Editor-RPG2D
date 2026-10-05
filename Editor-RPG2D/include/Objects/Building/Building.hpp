@@ -35,6 +35,7 @@ public:
 	std::shared_ptr<sf::Texture> _insideTexture;
 	std::shared_ptr<sf::Texture> _outsideTexture;
 
+	BuildingPrefab(std::wstring name);
 	BuildingPrefab(std::wstring name, sf::Vector2i size);
 	BuildingPrefab(std::wstring name, const BuildingPrefab& other);
 	~BuildingPrefab();

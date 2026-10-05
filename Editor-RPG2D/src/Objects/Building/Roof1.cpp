@@ -114,7 +114,7 @@ void Roof1Part::setPosition(sf::Vector2i position) {
 
 std::shared_ptr<Roof1set> roof1set = nullptr;
 
-Roof1::Roof1(int type, int wallHeight) : Roof(type, wallHeight) {
+Roof1::Roof1(int type, int wallHeight, int wallsRoof) : Roof(type, wallHeight, wallsRoof) {
 	_roofOverhangSize = sf::Vector2i(4, 4);
 }
 

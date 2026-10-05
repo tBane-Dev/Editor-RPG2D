@@ -20,7 +20,7 @@ class ToolsBuilding : public Tools {
 public:
 
 	std::shared_ptr<ButtonWithSprite> _prevCategory, _nextCategory;
-	std::shared_ptr<ButtonWithTextAndSprite> _wallsType, _height, _roofShape, _roofType, _floor, _foundation, _skeleton;
+	std::shared_ptr<ButtonWithTextAndSprite> _wallsType, _height, _roofShape, _roofType, _wallsRoof, _floor, _skeleton, _foundation;
 	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _categories;
 	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _visibleCategories;
 	int _visibleCategoriesCount;
@@ -31,6 +31,9 @@ public:
 	std::vector<std::wstring> _heights;
 	std::vector<std::wstring> _roofShapes;
 	std::vector<std::wstring> _roofTypes;
+	std::vector<std::wstring> _wallsRoofs;
+	std::vector<std::wstring> _floors;
+	std::vector<std::wstring> _skeletons;
 
 	std::shared_ptr<ButtonWithSprite> _prevOption, _nextOption;
 	std::vector<std::shared_ptr<ButtonWithTextAndSprite>> _visibleOptions;
@@ -38,15 +41,24 @@ public:
 
 	int _optionsCount = 0;
 
-	int _startWallTypeIndex = 0; // scrollbar offset for options
+	// scrollbar offset for options
+	int _startWallTypeIndex = 0; 
 	int _startHeightIndex = 0;
 	int _startRoofShapeIndex = 0;
 	int _startRoofTypeIndex = 0;
+	int _startWallsRoofIndex = 0;
+	int _startFloorIndex = 0;
+	int _startSkeletonIndex = 0;
 
+	// selected index for options
 	int _selectedWallTypeIndex = -1;
 	int _selectedHeightIndex = -1;
 	int _selectedRoofShapeIndex = -1;
 	int _selectedRoofTypeIndex = -1;
+	int _selectedWallsRoofIndex = -1;
+	int _selectedFloorIndex = -1;
+	int _selectedSkeletonIndex = -1;
+
 	int _inner_margin2;
 
 	ToolsBuilding();
@@ -56,6 +68,9 @@ public:
 	int getHeight();
 	int getRoofShape();
 	int getRoofType();
+	int getFloor();
+	int getWallsRoof();
+	int getSkeleton();
 
 	void createNavButtons();
 
@@ -65,7 +80,6 @@ public:
 
 	void createOptions();
 	void updateOptions();
-	void unselectOptions();
 	bool selectOption(int id, bool force);
 
 	virtual void setPosition(sf::Vector2i position);

@@ -228,6 +228,13 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type_selected_hover.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_roof_type_selected_press.png");
 
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_roof.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_roof_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_roof_press.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_roof_selected.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_roof_selected_hover.png");
+    texturePaths.push_back(L"assets\\tex\\palette\\tools\\building_walls_roof_selected_press.png");
+
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\cursor.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\circle.png");
     texturePaths.push_back(L"assets\\tex\\palette\\tools\\rect.png");

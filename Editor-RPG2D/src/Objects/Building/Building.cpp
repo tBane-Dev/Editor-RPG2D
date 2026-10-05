@@ -13,6 +13,26 @@
 
 std::shared_ptr<Texture> BuildingPrefab::_floorset = nullptr;	
 
+BuildingPrefab::BuildingPrefab(std::wstring name) : GameObject(name) {
+
+	if (_floorset == nullptr)
+		_floorset = textures_manager->getTexture(L"assets\\tex\\buildings\\floorset.png");
+
+	_type = ObjectType::Building;
+
+	_wallHeight = 3;
+	_skeletType = -1;
+
+	_floor.clear();
+	_walls.clear();
+	_doors.clear();
+	_windows.clear();
+	_wallMounted.clear();
+
+	_wallsObjects.clear();
+
+}
+
 BuildingPrefab::BuildingPrefab(std::wstring name, sf::Vector2i size) : GameObject(name) {
 
 	if(_floorset == nullptr)
@@ -77,10 +97,10 @@ BuildingPrefab::BuildingPrefab(std::wstring name, const BuildingPrefab& other) :
 	_wallHeight = other._wallHeight;
 
 	if (std::dynamic_pointer_cast<Roof1>(other._roof)) {
-		_roof = std::make_shared<Roof1>(other._roof->_type, other._roof->_wallHeight);
+		_roof = std::make_shared<Roof1>(other._roof->_type, other._roof->_wallHeight, other._roof->_wallsRoof);
 	}
 	else if (std::dynamic_pointer_cast<Roof2>(other._roof)) {
-		_roof = std::make_shared<Roof2>(other._roof->_type, other._roof->_wallHeight);
+		_roof = std::make_shared<Roof2>(other._roof->_type, other._roof->_wallHeight, other._roof->_wallsRoof);
 	}
 
 }
@@ -286,7 +306,7 @@ void BuildingPrefab::generateRoofs(sf::Vector2i position, float scale) {
 
 	if (!_roof)
 		return;
-
+	
 	_roof->generate(_walls, position, scale);
 
 }
@@ -484,7 +504,7 @@ void BuildingPrefab::generateSkelet(sf::Vector2i position, float scale, std::sha
 		);
 
 		_skeletObjects.push_back(std::make_shared<Skelet>(
-			skeletset->getSkelet(1),
+			skeletset->getSkelet(_skeletType),
 			sf::IntRect(
 				localBottomPosition,
 				skeletonSize
@@ -864,7 +884,7 @@ void BuildingPrefab::generatePreviewTexture(std::shared_ptr<sf::Texture>& textur
 			tileRtex.clear(sf::Color::Transparent);
 			
 			sf::Sprite tileSprite(wallTexture);
-			tileSprite.setTextureRect(sf::IntRect(sf::Vector2i(1568, 0), sf::Vector2i(32, 32)));
+			tileSprite.setTextureRect(sf::IntRect(sf::Vector2i(1568, 32*_roof->_wallsRoof), sf::Vector2i(32, 32)));
 			tileRtex.draw(tileSprite);
 			tileRtex.display();
 			

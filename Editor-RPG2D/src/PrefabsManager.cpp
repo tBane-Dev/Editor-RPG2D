@@ -102,7 +102,20 @@ void PrefabsManager::saveFromProject(std::ofstream& saver) {
 
 	BinaryWriter writer(saver);
 
-    writer.write_int32(_prefabs.size());
+    int32_t count = 0;
+
+    for (auto& prefab : _prefabs) {
+
+        if (!prefab)
+            continue;
+
+        if (prefab->_type == ObjectType::Monster ||
+            prefab->_type == ObjectType::Nature) {
+            count++;
+        }
+    }
+
+    writer.write_int32(count);
     
     for (auto& prefab : _prefabs) {
         

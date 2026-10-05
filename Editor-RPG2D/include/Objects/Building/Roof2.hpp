@@ -11,7 +11,7 @@ public:
 	std::vector<sf::ConvexShape> _topTriangle;
 	std::vector<sf::ConvexShape> _rect;
 
-	Roof2(int type, int wallHeight);
+	Roof2(int type, int wallHeight, int wallsRoof);
 	~Roof2();
 
 	void generateMask(std::vector<std::vector<int>> tiles);

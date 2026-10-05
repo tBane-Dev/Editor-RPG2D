@@ -688,11 +688,13 @@ void Slots::setCategory(ObjectType type) {
 	else if (_type == ObjectType::Building) {
 		std::shared_ptr<ToolsBuilding> tools = std::dynamic_pointer_cast<ToolsBuilding>(MapEditor::editor->_palette->_tools);
 		Components::Palette::createBuildingsPrefabs(
-			1,
+			tools->getFloor(),
 			tools->getWallType(),
 			tools->getHeight(),
 			tools->getRoofShape(),
-			tools->getRoofType()
+			tools->getRoofType(),
+			tools->getWallsRoof(),
+			tools->getSkeleton()
 		);
 
 		createSlots(sf::Vector2i(2, 2));

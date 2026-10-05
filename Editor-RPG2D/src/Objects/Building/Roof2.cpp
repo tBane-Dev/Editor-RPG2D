@@ -5,7 +5,7 @@
 #include "DebugLog.hpp"
 #include "TexturesManager.hpp"
 
-Roof2::Roof2(int type, int wallHeight) : Roof(type, wallHeight) {
+Roof2::Roof2(int type, int wallHeight, int wallsRoof) : Roof(type, wallHeight, wallsRoof) {
 
 }
 

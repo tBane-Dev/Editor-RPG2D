@@ -174,10 +174,10 @@ namespace MapEditor {
 			ObjectType::Wall,
 			ObjectType::Skelet,
 			ObjectType::Door,
-			ObjectType::Roof,
 			ObjectType::Outside,
 			ObjectType::Window,
-			ObjectType::WallMounted
+			ObjectType::WallMounted,
+			ObjectType::Roof,
 		};
 
 		auto getIndex = [&types](ObjectType type) -> int {
@@ -344,7 +344,8 @@ namespace MapEditor {
 					if (std::dynamic_pointer_cast<Roof1>(bp->_roof)) roof = 1;
 					if (std::dynamic_pointer_cast<Roof2>(bp->_roof)) roof = 2;
 					writer.write_int8(roof);
-					writer.write_int8((int)bp->_roof->_type);
+					writer.write_int8((int8_t)bp->_roof->_type);
+					writer.write_int8((int8_t)bp->_roof->_wallsRoof);
 
 					writer.write_Vector2i(sf::Vector2i(bp->_floor[0].size(), bp->_floor.size()));
 					writer.write_Vector2i(sf::Vector2i(bp->_walls[0].size(), bp->_walls.size()));
@@ -405,13 +406,6 @@ namespace MapEditor {
 		for (int i = 0; i < objectsCount; i++) {
 			ObjectType type = (ObjectType)reader.read_int8();
 
-			DebugLog(
-				L"LOAD OBJECT: " +
-				std::to_wstring(i) +
-				L" TYPE: " +
-				std::to_wstring((int)type)
-			);
-
 			if (type == ObjectType::None) {
 				std::shared_ptr<PlacedGameObject> object = std::make_shared<PlacedGameObject>(std::weak_ptr<GameObject>());
 				object->setPosition(reader.read_Vector2i());
@@ -455,21 +449,28 @@ namespace MapEditor {
 				int skeletType = reader.read_int8();
 				int roof = reader.read_int8();
 				int roofType = reader.read_int8();
+				int wallsRoof = reader.read_int8();
 
 				sf::Vector2i floorSize = reader.read_Vector2i();
 				sf::Vector2i wallsSize = reader.read_Vector2i();
-				std::shared_ptr<BuildingPrefab> bp = std::make_shared<BuildingPrefab>(name, floorSize);
+				std::shared_ptr<BuildingPrefab> bp = std::make_shared<BuildingPrefab>(name);
 				prefabs_manager->addPrefab(bp);
 
+
+				
 				// load floor
+				bp->_floor.clear();
 				for (int y = 0; y < floorSize.y; y += 1) {
+					bp->_floor.push_back(std::vector<int>(floorSize.x, 0));
 					for (int x = 0; x < floorSize.x; x += 1) {
 						bp->_floor[y][x] = reader.read_int8();
 					}
 				}
 
 				// load walls
+				bp->_walls.clear();
 				for (int y = 0; y < wallsSize.y; y += 1) {
+					bp->_walls.push_back(std::vector<int>(wallsSize.x, -1));
 					for (int x = 0; x < wallsSize.x; x += 1) {
 						bp->_walls[y][x] = reader.read_int8();
 					}
@@ -517,33 +518,29 @@ namespace MapEditor {
 				sf::Vector2i pos = reader.read_Vector2i();
 
 				if (roof == 1) {
-					bp->_roof = std::make_shared<Roof1>(roofType, bp->_wallHeight);
+					bp->_roof = std::make_shared<Roof1>(roofType, bp->_wallHeight, wallsRoof);
 				}
 				else if (roof == 2) {
-					bp->_roof = std::make_shared<Roof2>(roofType, bp->_wallHeight);
+					bp->_roof = std::make_shared<Roof2>(roofType, bp->_wallHeight, wallsRoof);
 				}
 				else {
-					bp->_roof = std::make_shared<Roof1>(roofType, bp->_wallHeight);
+					bp->_roof = std::make_shared<Roof1>(roofType, bp->_wallHeight, wallsRoof);
 				}
 
-				bp->_roof->generate(bp->_walls, pos, 1.0f);
+				bp->_roof->generate(bp->_walls, sf::Vector2i(0,0), 1.0f);
+
+				building->setPosition(pos);
 
 				bp->generate(pos, 1.0f, building);
 				building->generate();
-				building->setPosition(pos);
+				
 				std::shared_ptr<Chunk> chunk = MapEditor::editor->_map->getChunkByGlobalPosition(building->getPosition());
 				if (chunk) chunk->addPlacedGameObject(building);
 			}
 		}
 
-		DebugLog(L"PLACED GAME OBJECTS LOADED");
-
 		MapEditor::editor->_map->setVisibleChunks();
 
-		DebugLog(
-			L"CHUNKS: " +
-			std::to_wstring(MapEditor::editor->_map->_chunks.size())
-		);
 	}
 
 	void PlacedGameObjects::cursorHover() {
