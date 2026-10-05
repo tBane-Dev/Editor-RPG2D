@@ -44,6 +44,32 @@ namespace MapEditor {
 
 	void Editor::setVisibleChunks() {
 		_map->setVisibleChunks();
+
+		auto& visibleObjects = MapEditor::editor->_game_objects->_visiblePlacedGameObjects;
+
+		for (const auto& selectedObject :
+			MapEditor::editor->_cursor_on_map->_selectedObjects) {
+
+			auto object = selectedObject->_object;
+			if (!object)
+				continue;
+
+			if (
+				std::find(visibleObjects.begin(), visibleObjects.end(), object) == visibleObjects.end()) {
+				
+				visibleObjects.push_back(selectedObject->_object);
+
+				if (selectedObject->_object->_type == ObjectType::Building) {
+					std::shared_ptr<Building> b = std::dynamic_pointer_cast<Building>(selectedObject->_object);
+					b->addDoorsToVisibleGameObjects(MapEditor::editor);
+					b->addWallsToVisibleGameObjects(MapEditor::editor);
+					b->addWindowsToVisibleGameObjects(MapEditor::editor);
+					b->addSkeletsToVisibleGameObjects(MapEditor::editor);
+					b->addWallMountedToVisibleGameObjects(MapEditor::editor);
+					b->addOutsideToVisibleGameObjects(MapEditor::editor);
+				}
+			}
+		}
 	}
 
 	void Editor::createMainMenu() {
@@ -82,7 +108,7 @@ namespace MapEditor {
 			if (!_cursor_on_map->_selectedObjects.empty()) {
 
 				for(auto& selectedObject : _cursor_on_map->_selectedObjects) {
-					if (auto object = selectedObject->_object.lock()) {
+					if (auto object = selectedObject->_object) {
 						_game_objects->removeGameObject(object);
 						for(auto& chunk : _map->_chunks) {
 							chunk->removePlacedGameObject(object);

@@ -208,7 +208,7 @@ namespace MapEditor {
 			for (auto& object : chunk->_gameObjectsOnMap) {
 				if (object->_isSelected) {
 					chunk->setVisible();
-					break;;
+					break;
 				}
 			}
 
@@ -273,7 +273,7 @@ namespace MapEditor {
 			);
 		}
 
-		setVisibleChunks();
+		editor->setVisibleChunks();
 	}
 
 	void Map::cursorHover() {
@@ -308,7 +308,7 @@ namespace MapEditor {
 		_ghostChunk->update();
 
 		if (MapEditor::editor->_camera->_isMoving)
-			setVisibleChunks();
+			editor->setVisibleChunks();
 	}
 
 	void Map::draw() {

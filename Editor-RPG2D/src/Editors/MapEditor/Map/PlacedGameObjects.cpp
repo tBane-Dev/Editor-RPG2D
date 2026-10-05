@@ -165,6 +165,9 @@ namespace MapEditor {
 		}
 
 		MapEditor::editor->setVisibleChunks();
+		
+		
+
 		sort();
 	}
 
@@ -539,7 +542,7 @@ namespace MapEditor {
 			}
 		}
 
-		MapEditor::editor->_map->setVisibleChunks();
+		MapEditor::editor->setVisibleChunks();
 
 	}
 

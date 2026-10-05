@@ -33,20 +33,20 @@ namespace MapEditor {
 
         if (std::find_if(_selectedObjects.begin(), _selectedObjects.end(),
             [&](const auto& selectedObject) {
-                return selectedObject->_object.lock() == object;
+                return selectedObject->_object == object;
             }
         ) == _selectedObjects.end()) {
 			std::shared_ptr<SelectedPlacedGameObject> selectedObject = std::make_shared<SelectedPlacedGameObject>(object, offset);
-			selectedObject->_object.lock()->_isSelected = true;
+			selectedObject->_object->_isSelected = true;
 			_selectedObjects.push_back(selectedObject);
         }
 	}
 
     void CursorOnMap::removeFromSelected(std::shared_ptr<GameObject> object) {
         std::erase_if(_selectedObjects, [&](const std::shared_ptr<SelectedPlacedGameObject>& obj) { 
-            bool condition = obj->_object.lock()->_prefab.lock() == object;
+            bool condition = obj->_object->_prefab.lock() == object;
             if (condition)
-                obj->_object.lock()->_isSelected = false;
+                obj->_object->_isSelected = false;
             return condition;
             });
     }
@@ -82,26 +82,26 @@ namespace MapEditor {
         _globalPosition = sf::Vector2i(Main::render_window->mapPixelToCoords(_position));
 
         if (_isDragging || _isSelecting) {
-            if (_isDragging || _position != _prevPosition) {
+            if (_isDragging) {
 
                 _prevPosition = _position;
 
                 for (auto& object : _selectedObjects) {
 
                     if  (!object) continue;
-                    if (object->_object.expired())continue;
+                    if (!object->_object) continue;
                     
-                    if (object->_object.lock()->_type == ObjectType::Door) {
-						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Door>(object->_object.lock())->_building.lock();
-                        removeFromSelected(object->_object.lock()->_prefab.lock());
+                    if (object->_object->_type == ObjectType::Door) {
+						std::shared_ptr<Building> building = std::dynamic_pointer_cast<Door>(object->_object)->_building.lock();
+                        removeFromSelected(object->_object->_prefab.lock());
 						sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
                         addToSelected(building, offset);   
                         continue;
                     }
 
-                    if (object->_object.lock()->_type == ObjectType::Wall) {
-                        std::shared_ptr<Building> building = std::dynamic_pointer_cast<Wall>(object->_object.lock())->_building.lock();
-                        removeFromSelected(object->_object.lock()->_prefab.lock());
+                    if (object->_object->_type == ObjectType::Wall) {
+                        std::shared_ptr<Building> building = std::dynamic_pointer_cast<Wall>(object->_object)->_building.lock();
+                        removeFromSelected(object->_object->_prefab.lock());
                         sf::Vector2i offset = MapEditor::editor->_cursor_on_map->_globalPosition - building->getPosition();
                         addToSelected(building, offset);
                         continue;
@@ -125,7 +125,7 @@ namespace MapEditor {
                     //    continue;
                     //}
 
-                    std::shared_ptr<PlacedGameObject> gameObject = object->_object.lock();
+                    std::shared_ptr<PlacedGameObject> gameObject = object->_object;
 
                     sf::Vector2i oldPos =
                         (gameObject->_prefab.lock()->_type == ObjectType::Monster)
@@ -162,8 +162,8 @@ namespace MapEditor {
 
             if (!(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))) {
                 for (auto& object : _selectedObjects) {
-                    if (!object->_object.expired()) {
-                        object->_object.lock()->_isSelected = false;
+                    if (object->_object) {
+                        object->_object->_isSelected = false;
                     }
                 }
                 _selectedObjects.clear();
@@ -194,16 +194,16 @@ namespace MapEditor {
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
                     for (auto& selected : _selectedObjects) {
-                        if (!selected->_object.expired()) {
-                            selected->_object.lock()->_isSelected = false;
+                        if (selected->_object) {
+                            selected->_object->_isSelected = false;
                         }
                     }
 
                     _selectedObjects.clear();
 
                     for (auto& prev : _prevSelectedObjects) {
-                        if (!prev->_object.expired()) {
-                            prev->_object.lock()->_isSelected = true;
+                        if (prev->_object) {
+                            prev->_object->_isSelected = true;
                             _selectedObjects.push_back(prev);
                         }
                     }
@@ -214,8 +214,7 @@ namespace MapEditor {
                             _selectedObjects.begin(),
                             _selectedObjects.end(),
                             [&](const std::shared_ptr<SelectedPlacedGameObject>& selected) {
-                                return !selected->_object.expired() &&
-                                    selected->_object.lock().get() == object.get();
+                                return selected->_object && selected->_object.get() == object.get();
                             }
                         );
 
@@ -228,8 +227,8 @@ namespace MapEditor {
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
 
                     for (auto& selected : _selectedObjects) {
-                        if (!selected->_object.expired()) {
-                            selected->_object.lock()->_isSelected = false;
+                        if (selected->_object) {
+                            selected->_object->_isSelected = false;
                         }
                     }
 
@@ -237,10 +236,10 @@ namespace MapEditor {
 
 
                     for (auto& prev : _prevSelectedObjects) {
-                        if (prev->_object.expired())
+                        if (!prev->_object)
                             continue;
 
-                        prev->_object.lock()->_isSelected = true;
+                        prev->_object->_isSelected = true;
                         _selectedObjects.push_back(prev);
                     }
 
@@ -249,8 +248,7 @@ namespace MapEditor {
                             _prevSelectedObjects.begin(),
                             _prevSelectedObjects.end(),
                             [&](const std::shared_ptr<SelectedPlacedGameObject>& selected) {
-                                return !selected->_object.expired() &&
-                                    selected->_object.lock().get() == object.get();
+                                return selected->_object && selected->_object.get() == object.get();
                             }
                         );
 
@@ -261,8 +259,7 @@ namespace MapEditor {
                                 _selectedObjects.begin(),
                                 _selectedObjects.end(),
                                 [&](const std::shared_ptr<SelectedPlacedGameObject>& selected) {
-                                    return !selected->_object.expired() &&
-                                        selected->_object.lock().get() == object.get();
+                                    return selected->_object && selected->_object.get() == object.get();
                                 }
                             );
 
@@ -370,11 +367,7 @@ namespace MapEditor {
                                 _selectedObjects.begin(),
                                 _selectedObjects.end(),
                                 [&](const auto& selectedObject) {
-
-                                    return
-                                        !selectedObject->_object.expired() &&
-                                        selectedObject->_object.lock() ==
-                                        selectedGameObject;
+                                    return selectedObject->_object && selectedObject->_object == selectedGameObject;
                                 }
                             );
 
@@ -387,16 +380,16 @@ namespace MapEditor {
                                 _prevPosition = _position;
 
                                 for (auto& object : _selectedObjects) {
-                                    if (object->_object.expired()) continue;
-                                    object->_offset = MapEditor::editor->_cursor_on_map->_globalPosition - object->_object.lock()->_position;
+                                    if (!object->_object) continue;
+                                    object->_offset = MapEditor::editor->_cursor_on_map->_globalPosition - object->_object->_position;
                                 }
                                 return;
                             }
 
                             for (auto& object : _selectedObjects) {
 
-                                if (!object->_object.expired()) {
-                                    object->_object.lock()->_isSelected = false;
+                                if (object->_object) {
+                                    object->_object->_isSelected = false;
                                 }
                             }
 
@@ -429,8 +422,8 @@ namespace MapEditor {
 
                     if (!ctrl && !shift) {
                         for (auto& object : _selectedObjects) {
-                            if (!object->_object.expired()) {
-                                object->_object.lock()->_isSelected = false;
+                            if (object->_object) {
+                                object->_object->_isSelected = false;
                             }
                         }
                         _selectedObjects.clear();
@@ -445,8 +438,8 @@ namespace MapEditor {
             if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Right) {
                 if (!_selectedObjects.empty()) {
                     for (auto& object : _selectedObjects) {
-                        if (!object->_object.expired()) {
-                            object->_object.lock()->_isSelected = false;
+                        if (object->_object) {
+                            object->_object->_isSelected = false;
                         }
                     }
                     _selectedObjects.clear();
@@ -458,10 +451,10 @@ namespace MapEditor {
                 _prevSelectedObjects.clear();
 
                 for (auto& object : _selectedObjects) {
-                    if (object->_object.expired())
+                    if (!object->_object)
                         continue;
 
-                    if (object->_object.lock()->_isSelected) {
+                    if (object->_object->_isSelected) {
                         _prevSelectedObjects.push_back(object);
                     }
                 }
@@ -644,7 +637,7 @@ namespace MapEditor {
                     building->addOutsideToGameObjects(MapEditor::editor);
                     prefabs_manager->addPrefab(buildingPrefab);
                     MapEditor::editor->_map->getChunkByGlobalPosition(position)->addPlacedGameObject(objectOnMap);
-                    MapEditor::editor->_map->setVisibleChunks();
+                    MapEditor::editor->setVisibleChunks();
                     return;
                 }
                 else if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
@@ -654,7 +647,7 @@ namespace MapEditor {
                 // positioning and adding object to map
                 objectOnMap->setPosition(position);
                 MapEditor::editor->_map->getChunkByGlobalPosition(position)->addPlacedGameObject(objectOnMap);
-                MapEditor::editor->_map->setVisibleChunks();
+                MapEditor::editor->setVisibleChunks();
                 return;
             }
 

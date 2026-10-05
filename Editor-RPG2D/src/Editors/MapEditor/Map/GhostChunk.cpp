@@ -132,7 +132,7 @@ namespace MapEditor {
 					);
 				}
 
-				map->setVisibleChunks();
+				editor->setVisibleChunks();
 				};
 
 			if (_rect.contains(MapEditor::editor->_cursor_on_map->_globalPosition)) {
