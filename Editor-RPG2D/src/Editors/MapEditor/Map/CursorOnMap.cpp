@@ -82,7 +82,7 @@ namespace MapEditor {
         _globalPosition = sf::Vector2i(Main::render_window->mapPixelToCoords(_position));
 
         if (_isDragging || _isSelecting) {
-            if (_isDragging && _position != _prevPosition) {
+            if (_isDragging || _position != _prevPosition) {
 
                 _prevPosition = _position;
 
