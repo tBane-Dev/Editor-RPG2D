@@ -20,6 +20,8 @@ namespace MapEditor {
 		void addToSelected(std::shared_ptr<PlacedGameObject> object, sf::Vector2i offset);
 		void removeFromSelected(std::shared_ptr<GameObject> object);
 
+		int nextBuildingId();
+
 		virtual void update();
 		virtual void handleEvent(const sf::Event& event);
 		virtual void draw();

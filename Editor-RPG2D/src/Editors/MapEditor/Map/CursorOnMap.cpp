@@ -51,6 +51,31 @@ namespace MapEditor {
             });
     }
 
+    int CursorOnMap::nextBuildingId() {
+
+        int i = 0;
+        std::vector<std::shared_ptr<Building>> buildings;
+        for (auto& chunk : MapEditor::editor->_map->_chunks) {
+            for (auto& object : chunk->_gameObjectsOnMap) {
+                if (object->_type == ObjectType::Building) {
+                    buildings.push_back(std::dynamic_pointer_cast<Building>(object));
+                }
+            }
+        }
+
+        while (std::find_if(
+            buildings.begin(), 
+            buildings.end(),
+            [i](const auto& building) {
+                return building->_prefab.lock()->_name == L"building " + std::to_wstring(i);
+            }
+        ) != buildings.end()) {
+            ++i;
+        }
+
+        return i;
+    }
+
     void CursorOnMap::update() {
         Cursor::update();
         Main::render_window->setView(MapEditor::editor->_camera->_view);
@@ -603,8 +628,8 @@ namespace MapEditor {
                 std::shared_ptr<PlacedGameObject> objectOnMap;
 
                 if (prefab->_type == ObjectType::Building) {
-                    static int i = 0;
-                    std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"building " + std::to_wstring(i++), *std::dynamic_pointer_cast<BuildingPrefab>(prefab));
+                    int i = nextBuildingId();
+                    std::shared_ptr<BuildingPrefab> buildingPrefab = std::make_shared<BuildingPrefab>(L"building " + std::to_wstring(i), *std::dynamic_pointer_cast<BuildingPrefab>(prefab));
                     objectOnMap = std::make_shared<Building>(buildingPrefab);
                     std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(objectOnMap);
                     buildingPrefab->generate(sf::Vector2i(0,0), 1.f, building);
