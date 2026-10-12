@@ -4,6 +4,7 @@
 #include "Objects/Nature.hpp"
 #include "PrefabsManager.hpp"
 #include "WindowsManager.hpp"
+#include "History.hpp"
 
 namespace MapEditor {
 
@@ -115,6 +116,9 @@ namespace MapEditor {
 						}
 					}
 				}
+
+				std::shared_ptr<RemoveGameObjectsOnMap> step = std::make_shared<RemoveGameObjectsOnMap>(_cursor_on_map->_selectedObjects);
+				history->addStep(step);
 
 				return;
 			}

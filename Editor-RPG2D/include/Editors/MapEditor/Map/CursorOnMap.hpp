@@ -3,6 +3,7 @@
 #include "Objects/Object.hpp"
 #include "Cursor.hpp"
 #include "Objects/SelectedPlacedGameObject.hpp"
+#include <map>
 
 namespace MapEditor {
 	class CursorOnMap : public Cursors::CursorWithObject {
@@ -13,6 +14,14 @@ namespace MapEditor {
 		bool _isDragging = false;
 		bool _isSelecting = false;
 		sf::IntRect _selectionRect;
+
+		struct TileValues { int oldValue; int newValue; };
+		struct Vector2iCompare {
+			bool operator()(const sf::Vector2i& a, const sf::Vector2i& b) const {
+				return a.x < b.x || (a.x == b.x && a.y < b.y);
+			}
+		};
+		std::map<sf::Vector2i, MapEditor::CursorOnMap::TileValues, Vector2iCompare> _editedTiles;
 
 		CursorOnMap();
 		~CursorOnMap();

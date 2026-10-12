@@ -14,7 +14,6 @@ Roof2::~Roof2() {
 }
 
 void Roof2::generateOverhang(std::vector<std::vector<int>> tiles, sf::Vector2i position, float scale) {
-	//_roofOverhangSize = sf::Vector2i(16, 12);
 	_roofOverhangSize = sf::Vector2i(0, 0);
 }
 

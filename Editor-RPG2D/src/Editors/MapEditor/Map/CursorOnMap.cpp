@@ -18,11 +18,13 @@
 #include "DebugLog.hpp"
 #include <set>
 #include "WindowsManager.hpp"
+#include "History.hpp"
 
 namespace MapEditor {
 
     CursorOnMap::CursorOnMap() : CursorWithObject() {
         _selectionRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
+
     }
 
     CursorOnMap::~CursorOnMap() {
@@ -36,7 +38,7 @@ namespace MapEditor {
                 return selectedObject->_object == object;
             }
         ) == _selectedObjects.end()) {
-			std::shared_ptr<SelectedPlacedGameObject> selectedObject = std::make_shared<SelectedPlacedGameObject>(object, offset);
+			std::shared_ptr<SelectedPlacedGameObject> selectedObject = std::make_shared<SelectedPlacedGameObject>(object, object->_position, offset);
 			selectedObject->_object->_isSelected = true;
 			_selectedObjects.push_back(selectedObject);
         }
@@ -220,7 +222,7 @@ namespace MapEditor {
 
                         if (it == _selectedObjects.end()) {
                             object->_isSelected = true;
-                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
+                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, object->_position, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
                         }
                     }
                 }
@@ -269,14 +271,14 @@ namespace MapEditor {
                         }
                         else {
                             object->_isSelected = true;
-                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
+                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, object->_position, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
                         }
                     }
                 }
                 else {
                     for (auto& object : selectedGameObjects) {
                         object->_isSelected = true;
-                        _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
+                        _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(object, object->_position, MapEditor::editor->_cursor_on_map->_globalPosition - object->_position));
                     }
                 }
 
@@ -380,8 +382,13 @@ namespace MapEditor {
                                 _prevPosition = _position;
 
                                 for (auto& object : _selectedObjects) {
-                                    if (!object->_object) continue;
-                                    object->_offset = MapEditor::editor->_cursor_on_map->_globalPosition - object->_object->_position;
+                                    if (!object->_object)
+                                        continue;
+
+                                    object->_prevPosition = object->_object->_position;
+
+                                    object->_offset =
+                                        _globalPosition - object->_object->_position;
                                 }
                                 return;
                             }
@@ -395,14 +402,14 @@ namespace MapEditor {
 
                             _selectedObjects.clear();
                             selectedGameObject->_isSelected = true;
-                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                            _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, selectedGameObject->_position, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
                             return;
                         }
 
                         if (shift) {
                             if (!alreadySelected) {
                                 selectedGameObject->_isSelected = true;
-                                _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                                _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, selectedGameObject->_position, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
                             }
                             return;
                         }
@@ -414,7 +421,7 @@ namespace MapEditor {
                             }
                             else {
                                 selectedGameObject->_isSelected = true;
-                                _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
+                                _selectedObjects.push_back(std::make_shared<SelectedPlacedGameObject>(selectedGameObject, selectedGameObject->_position, MapEditor::editor->_cursor_on_map->_globalPosition - selectedGameObject->_position));
                             }
                             return;
                         }
@@ -458,6 +465,12 @@ namespace MapEditor {
                         _prevSelectedObjects.push_back(object);
                     }
                 }
+
+                if (_isDragging) {
+                    std::shared_ptr<MoveGameObjectsOnMap> step = std::make_shared<MoveGameObjectsOnMap>(_prevSelectedObjects);
+                    history->addStep(step);
+                }
+                
 
                 _isDragging = false;
                 _isSelecting = false;
@@ -538,13 +551,25 @@ namespace MapEditor {
                             int tileX = tileCoords.x + (xx - brush[yy].size() / 2);
                             int tileY = tileCoords.y + (yy - brush.size() / 2);
 
+                            
+
                             std::shared_ptr<Chunk> c = mapa->getChunkByTileGlobalCoords(tileX, tileY);
                             if (!c) continue;
 
                             std::shared_ptr<Tile> t = c->getTileByTileGlobalCoords(tileX, tileY);
                             if (!t) continue;
 
+                            sf::Vector2i pos(tileX, tileY);
+
+                            auto [it, inserted] = _editedTiles.try_emplace(
+                                pos, TileValues{ t->_type, type }
+                            );
+
+                            if (!inserted)
+                                it->second.newValue = type;
+                            
                             t->_type = type;
+                            
                             chunksToEdit.insert(c);
 
                             if (mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1)) chunksToEdit.insert(mapa->getChunkByCoords(c->_coords.x - 1, c->_coords.y - 1));
@@ -572,8 +597,16 @@ namespace MapEditor {
                     _state = Cursors::CursorWithObjectState::Drawing;
             }
 
+            if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+                std::shared_ptr<EditTerrain> step = std::make_shared<EditTerrain>(_editedTiles);
+                history->addStep(step);
+                _editedTiles.clear();
+            }
+
             return;
         }
+
+        
 
         if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
@@ -635,9 +668,15 @@ namespace MapEditor {
                     building->addWallsToGameObjects(MapEditor::editor);
                     building->addSkeletsToGameObjects(MapEditor::editor);
                     building->addOutsideToGameObjects(MapEditor::editor);
+
+                    std::shared_ptr<AddGameObjectOnMap> step = std::make_shared<AddGameObjectOnMap>(objectOnMap, position);
+                    history->addStep(step);
+
                     prefabs_manager->addPrefab(buildingPrefab);
                     MapEditor::editor->_map->getChunkByGlobalPosition(position)->addPlacedGameObject(objectOnMap);
                     MapEditor::editor->setVisibleChunks();
+
+                   
                     return;
                 }
                 else if (prefab->_type == ObjectType::Monster) objectOnMap = std::make_shared<Monster>(prefab);
@@ -647,6 +686,10 @@ namespace MapEditor {
                 // positioning and adding object to map
                 objectOnMap->setPosition(position);
                 MapEditor::editor->_map->getChunkByGlobalPosition(position)->addPlacedGameObject(objectOnMap);
+
+                std::shared_ptr<AddGameObjectOnMap> step = std::make_shared<AddGameObjectOnMap>(objectOnMap, position);
+                history->addStep(step);
+
                 MapEditor::editor->setVisibleChunks();
                 return;
             }

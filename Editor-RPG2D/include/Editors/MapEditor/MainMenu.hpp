@@ -9,6 +9,7 @@ namespace MapEditor {
 	public:
 
 		std::shared_ptr<Components::MenuButton> _file;
+		std::shared_ptr<Components::MenuButton> _edit;
 		std::shared_ptr<Components::MenuButton> _render;
 		std::shared_ptr<Components::MenuButton> _tools;
 		std::shared_ptr<Components::MenuButton> _settings;
@@ -18,6 +19,10 @@ namespace MapEditor {
 		std::shared_ptr<OptionWithIcon> _file_open_project;
 		std::shared_ptr<OptionWithIcon> _file_save_project;
 		std::shared_ptr<OptionWithIcon> _file_exit;
+
+		// EDIT
+		std::shared_ptr<OptionWithIcon> _undo;
+		std::shared_ptr<OptionWithIcon> _redo;
 
 		// RENDER
 		std::shared_ptr<OptionWithCheckbox>	_render_chunks_info;

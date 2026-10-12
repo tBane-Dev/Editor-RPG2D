@@ -6,6 +6,7 @@
 #include "Editors/MapEditor/Editor.hpp"
 #include "Editors/BuildingsEditor/Editor.hpp"
 #include "Objects/Building/Building.hpp"
+#include "Objects/Building/Roof2.hpp"
 
 SkeletPrefab::SkeletPrefab(std::wstring name, std::weak_ptr<Animations> animations, sf::Vector2i origin, std::shared_ptr<Collider> collider, std::shared_ptr<Mesh> mesh, int id) : GameObject(name, animations, origin, collider, mesh) {
 	_type = ObjectType::Skelet;
@@ -31,12 +32,16 @@ SkeletPrefab::~SkeletPrefab() {
 
 SkeletSet::SkeletSet() {
 
-	_skelets.clear();
+	sf::Vector2i origin = sf::Vector2i(8, 8);
+	int w = 16;
+	int h = 16;
 
-	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet1", std::weak_ptr<Animations>(), sf::Vector2i(8, 8), std::make_shared<RectangularCollider>(0, 0, 16, 16), nullptr, 0));
-	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet2", std::weak_ptr<Animations>(), sf::Vector2i(8, 8), std::make_shared<RectangularCollider>(0, 0, 16, 16), nullptr, 1));
-	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet3", std::weak_ptr<Animations>(), sf::Vector2i(8, 8), std::make_shared<RectangularCollider>(0, 0, 16, 16), nullptr, 2));
-	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet4", std::weak_ptr<Animations>(), sf::Vector2i(8, 8), std::make_shared<RectangularCollider>(0, 0, 16, 16), nullptr, 3));
+	_skelets.clear();
+	_skelets.push_back(std::make_shared<SkeletPrefab>(L"empty", std::weak_ptr<Animations>(), origin, std::make_shared<RectangularCollider>(0, 0, w, h), nullptr, 0));
+	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet1", std::weak_ptr<Animations>(), origin, std::make_shared<RectangularCollider>(0, 0, w, h), nullptr, 1));
+	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet2", std::weak_ptr<Animations>(), origin, std::make_shared<RectangularCollider>(0, 0, w, h), nullptr, 2));
+	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet3", std::weak_ptr<Animations>(), origin, std::make_shared<RectangularCollider>(0, 0, w, h), nullptr, 3));
+	_skelets.push_back(std::make_shared<SkeletPrefab>(L"skelet4", std::weak_ptr<Animations>(), origin, std::make_shared<RectangularCollider>(0, 0, w, h), nullptr, 4));
 }
 
 SkeletSet::~SkeletSet() {
@@ -77,13 +82,14 @@ void Skelet::draw(sf::RenderTarget& target, float scale, int drawType) {
 	if (!skeletPrefab)
 		return;
 
-	float leftX = (float)_position.x + (float)_rect.position.x * scale;
+	float leftX = (float)_position.x + (float)(_rect.position.x) * scale;
 	float rightX = leftX + (float)(_rect.size.x - 16) * scale;
-	float bottomY = (float)_position.y + (float)_rect.position.y * scale;
+	float bottomY = (float)_position.y + (float)(_rect.position.y) * scale;
 
 	int maxI = 0;
 	if (drawType == 1) maxI = 2;
 	if (drawType == 2) maxI = _rect.size.y / 16;
+	
 
 	for (int i = 0; i < maxI; ++i) {
 		float y = bottomY - i * 16.f * scale;

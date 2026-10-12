@@ -10,16 +10,19 @@
 #include <fstream>
 #include "Editors/MapEditor/Editor.hpp"
 #include "Editors/MapEditor/Map/Map.hpp"
+#include "History.hpp"
 
 namespace MapEditor {
 
 	MainMenu::MainMenu() : Components::MainMenu() {
 		_file = std::make_shared<Components::MenuButton>(std::make_shared<Components::MainMenu>(*this), L"File");
+		_edit = std::make_shared<Components::MenuButton>(std::make_shared<Components::MainMenu>(*this), L"Edit");
 		_render = std::make_shared<Components::MenuButton>(std::make_shared<Components::MainMenu>(*this), L"Render");
 		_tools = std::make_shared<Components::MenuButton>(std::make_shared<Components::MainMenu>(*this), L"Tools");
 		_settings = std::make_shared<Components::MenuButton>(std::make_shared<Components::MainMenu>(*this), L"Settings");
 
 		_menu_boxes.push_back(_file);
+		_menu_boxes.push_back(_edit);
 		_menu_boxes.push_back(_render);
 		_menu_boxes.push_back(_tools);
 		_menu_boxes.push_back(_settings);
@@ -59,6 +62,7 @@ namespace MapEditor {
 				MapEditor::editor->_game_objects->loadFromProject(loader);
 				loader.close();
 
+				history = std::make_shared<History>();
 				MapEditor::editor->_palette->_slots->updateObjects();
 			};
 
@@ -100,6 +104,33 @@ namespace MapEditor {
 		_file->addOption(_file_open_project);
 		_file->addOption(_file_save_project);
 		_file->addOption(_file_exit);
+
+		// EDIT
+
+		_undo = std::make_shared<OptionWithIcon>(
+			L"Undo",
+			textures_manager->getTexture(L"assets\\tex\\main_menu\\new_project.png"),
+			textures_manager->getTexture(L"assets\\tex\\main_menu\\new_project.png"),
+			L"Ctrl+Z"
+		);
+
+		_undo->_onclick_func = [this]() {
+			history->undo();
+			};
+
+		_redo = std::make_shared<OptionWithIcon>(
+			L"Redo",
+			textures_manager->getTexture(L"assets\\tex\\main_menu\\new_project.png"),
+			textures_manager->getTexture(L"assets\\tex\\main_menu\\new_project.png"),
+			L"Ctrl+Y"
+		);
+
+		_redo->_onclick_func = [this]() {
+			history->redo();
+			};
+
+		_edit->addOption(_undo);
+		_edit->addOption(_redo);
 
 		// RENDER
 
@@ -190,9 +221,18 @@ namespace MapEditor {
 
 
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
-			//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
 			if (kp->code == sf::Keyboard::Key::B) {
 				_tool_palette->_checkbox->_value = (_tool_palette->_checkbox->_value == 0) ? 1 : 0;
+				return;
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::Z) {
+				_undo->_onclick_func();
+				return;
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::Y) {
+				_redo->_onclick_func();
 				return;
 			}
 		}

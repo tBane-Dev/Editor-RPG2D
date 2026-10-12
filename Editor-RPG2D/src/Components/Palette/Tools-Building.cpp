@@ -350,7 +350,7 @@ void ToolsBuilding::createOptions() {
 	_roofTypes = { L"Wooden", L"Red", L"Stone", L"Green", L"Blue", L"Sand"};
 	_wallsRoofs = _wallTypes;
 	_floors = { L"empty", L"1", L"2", L"3", L"4", L"5" };
-	_skeletons = { L"empty", L"1", L"2" };
+	_skeletons = { L"empty", L"1", L"2", L"3", L"4" };
 }
 
 void ToolsBuilding::updateOptions() {

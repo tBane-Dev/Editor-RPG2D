@@ -24,6 +24,7 @@
 #include "Objects/Building/Roof1.hpp"
 #include "PrefabsManager.hpp"
 
+
 #include "Cursor.hpp"
 #include "WindowsManager.hpp"
 
@@ -37,6 +38,8 @@
 #include "Objects/GameObject.hpp"
 #include "Objects/Monster.hpp"
 #include "Objects/PlacedGameObject.hpp"
+
+#include "History.hpp"
 
 #include <windows.h>
 #include <commdlg.h>
@@ -188,6 +191,10 @@ int main() {
     camPos.y = MapEditor::editor->_camera->_position.y;
     MapEditor::editor->_camera->_position = camPos;
     MapEditor::editor->_camera->update();
+    //
+
+    //
+    history = std::make_shared<History>();
     //
 
     MapEditor::editor->setVisibleChunks();
