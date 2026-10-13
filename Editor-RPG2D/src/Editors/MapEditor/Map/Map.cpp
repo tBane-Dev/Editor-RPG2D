@@ -328,17 +328,19 @@ namespace MapEditor {
 		if (map_editor->_main_menu->_render_chunks_info->_checkbox->_value == 1) {
 
 			float gridWidth = 2.0f;
+			float zoom = MapEditor::editor->_camera->_zoom;
 
 			// render grid
 			sf::Vector2f position_rect;
-			position_rect.x = std::max((float)map_editor->_map->getRect().position.x, map_editor->_camera->_position.x - (float)Main::render_window->getSize().x / 2);
-			position_rect.y = std::max((float)map_editor->_map->getRect().position.y, map_editor->_camera->_position.y - (float)Main::render_window->getSize().y / 2);
-			position_rect -= sf::Vector2f(gridWidth, gridWidth);
+			position_rect.x = std::max((float)map_editor->_map->getRect().position.x, map_editor->_camera->_view.getCenter().x - map_editor->_camera->_view.getSize().x / 2);
+			position_rect.y = std::max((float)map_editor->_map->getRect().position.y, map_editor->_camera->_view.getCenter().y - map_editor->_camera->_view.getSize().y / 2);
 
 			sf::Vector2f size_rect;
-			size_rect.x = std::min((float)Main::render_window->getSize().x, (float)(map_editor->_map->getRect().position.x + map_editor->_map->getRect().size.x - position_rect.x));
-			size_rect.y = std::min((float)Main::render_window->getSize().y, (float)(map_editor->_map->getRect().position.y + map_editor->_map->getRect().size.y - position_rect.y));
-			size_rect += sf::Vector2f(gridWidth, gridWidth);
+			size_rect.x = std::min((float)(map_editor->_map->getRect().position.x + map_editor->_map->getRect().size.x), map_editor->_camera->_view.getCenter().x + map_editor->_camera->_view.getSize().x / 2) - position_rect.x;
+			size_rect.y = std::min((float)(map_editor->_map->getRect().position.y + map_editor->_map->getRect().size.y), map_editor->_camera->_view.getCenter().y + map_editor->_camera->_view.getSize().y / 2) - position_rect.y;
+
+			size_rect.x = std::max(0.f, size_rect.x);
+			size_rect.y = std::max(0.f, size_rect.y);
 
 			sf::Vector2f mapStart;
 			mapStart.x = (float)map_editor->_map->getRect().position.x;
