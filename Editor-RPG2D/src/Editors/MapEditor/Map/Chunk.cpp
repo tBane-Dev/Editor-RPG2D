@@ -172,8 +172,8 @@ namespace MapEditor {
 				maxY = object->_position.y + circularCollider->_radiusY;
 			}
 
-			if (minX < _gameObjectsOnMapRect.position.x) _gameObjectsOnMapRect.position.x = minX;
-			if (minY < _gameObjectsOnMapRect.position.y) _gameObjectsOnMapRect.position.y = minY;
+			if (minX < _gameObjectsOnMapRect.position.x) { _gameObjectsOnMapRect.size.x += _gameObjectsOnMapRect.position.x - minX; _gameObjectsOnMapRect.position.x = minX; }
+			if (minY < _gameObjectsOnMapRect.position.y) { _gameObjectsOnMapRect.size.y += _gameObjectsOnMapRect.position.y - minY; _gameObjectsOnMapRect.position.y = minY; }
 			if (maxX > _gameObjectsOnMapRect.position.x + _gameObjectsOnMapRect.size.x) _gameObjectsOnMapRect.size.x = maxX - _gameObjectsOnMapRect.position.x;
 			if (maxY > _gameObjectsOnMapRect.position.y + _gameObjectsOnMapRect.size.y) _gameObjectsOnMapRect.size.y = maxY - _gameObjectsOnMapRect.position.y;
 		}
