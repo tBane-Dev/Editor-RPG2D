@@ -222,6 +222,10 @@ namespace MapEditor {
 	}
 
 	void Chunk::setVisible() {
+
+		if (_isVisible) 
+			return;
+
 		_isVisible = true;
 		MapEditor::editor->_map->_visibleChunks.push_back(shared_from_this());
 
