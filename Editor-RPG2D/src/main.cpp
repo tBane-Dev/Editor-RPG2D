@@ -185,17 +185,34 @@ int main() {
     MapEditor::editor->createMainMenu();
     MapEditor::editor->createPalette();
 
-	// TO-DO - to delete (center the camera on the map at the start of the program)
-    sf::Vector2f camPos;
-	camPos.x = MapEditor::editor->_map->getRect().size.x / 2 + MapEditor::editor->_palette->getSize().x/2;
-    camPos.y = MapEditor::editor->_camera->_position.y;
-    MapEditor::editor->_camera->_position = camPos;
-    MapEditor::editor->_camera->update();
-    //
+    sf::Vector2f camPos = sf::Vector2f(0,0);
+    sf::Vector2f camOffset = sf::Vector2f(0, 0);
 
-    //
+    // load the test-map
+    if (std::filesystem::exists(L"..\\test_map.rpg2d")) {
+        std::ifstream loader;
+        loader.open(L"..\\test_map.rpg2d", std::ios::in | std::ios::binary);
+        animations_manager->loadFromProject(loader);
+        prefabs_manager->loadFromProject(loader);
+        MapEditor::editor->_map->loadFromProject(loader);
+        MapEditor::editor->_game_objects->loadFromProject(loader);
+        loader.close();
+        camOffset.x -= 512;
+        camOffset.y += 512 - 64;
+
+    }
+    // load the test-map
+
+    MapEditor::editor->_palette->_slots->updateObjects();
+    
+	// TO-DO - to delete (center the camera on the map at the start of the program)
+	camPos.x = MapEditor::editor->_map->getRect().size.x / 2 + MapEditor::editor->_palette->getSize().x / 2;
+    camPos.y = MapEditor::editor->_map->getRect().size.y / 2;
+
+    MapEditor::editor->_camera->_position = camPos + camOffset;
+    MapEditor::editor->_camera->update();
+
     history = std::make_shared<History>();
-    //
 
     MapEditor::editor->setVisibleChunks();
 
