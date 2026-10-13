@@ -70,10 +70,10 @@ namespace Components {
 		void openMenuButton(std::shared_ptr<MenuButton> menuBox);
 		bool cursorOnAnyMenuButton();
 
-		void cursorHover();
-		void handleEvent(const sf::Event& event);
-		void update();
-		void draw();
+		virtual void cursorHover();
+		virtual void handleEvent(const sf::Event& event);
+		virtual void update();
+		virtual void draw();
 	};
 
 }

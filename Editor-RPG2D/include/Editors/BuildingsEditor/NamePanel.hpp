@@ -14,10 +14,10 @@ namespace BuildingsEditor {
 		NamePanel(sf::Vector2i margin);
 		~NamePanel();
 
-		void cursorHover();
-		void handleEvent(const sf::Event& event);
-		void update();
-		void draw();
+		virtual void cursorHover();
+		virtual void handleEvent(const sf::Event& event);
+		virtual void update();
+		virtual void draw();
 
 	};
 }

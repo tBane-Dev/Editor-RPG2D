@@ -40,6 +40,7 @@ namespace MapEditor {
 		MainMenu();
 		~MainMenu();
 
-		void handleEvent(const sf::Event& event);
+		virtual void handleEvent(const sf::Event& event);
+		virtual void update();
 	};
 }

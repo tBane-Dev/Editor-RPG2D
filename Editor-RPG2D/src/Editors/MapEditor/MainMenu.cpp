@@ -240,4 +240,12 @@ namespace MapEditor {
 		Components::MainMenu::handleEvent(event);
 
 	}
+
+	void MainMenu::update() {
+
+		_undo->_isActive = history->canUndo();
+		_redo->_isActive = history->canRedo();
+
+		Components::MainMenu::update();
+	}
 }
