@@ -119,7 +119,10 @@ namespace MapEditor {
 
 				std::shared_ptr<RemoveGameObjectsOnMap> step = std::make_shared<RemoveGameObjectsOnMap>(_cursor_on_map->_selectedObjects);
 				history->addStep(step);
-
+				for (auto& selected : _cursor_on_map->_selectedObjects) {
+					selected->_object->_isSelected = false;
+				}
+				_cursor_on_map->_selectedObjects.clear();
 				return;
 			}
 			
