@@ -11,14 +11,23 @@ ButtonWithTextSpriteAndIcon::ButtonWithTextSpriteAndIcon(std::wstring text,
 	_text = std::make_unique<sf::Text>(basicFont, text, basic_text_size);
 	_text->setFillColor(basic_text_color);
 	
-	_text->setPosition(sf::Vector2f(
-		position.x + (getSize().x - _text->getLocalBounds().size.x) / 2, 
-		position.y + (getSize().y - _text->getFont().getLineSpacing(_text->getCharacterSize())) / 2
-	));
-
 	_icon_texture = icon_texture;
 	_icon_hoverTexture = icon_hoverTexture;
 	_icon_pressTexture = icon_pressTexture;
+
+	sf::Vector2i size;
+	size.x = size.y = (_texture->getSize().y - _icon_texture->getSize().y);
+
+	sf::Vector2i iconPos;
+	iconPos.x = _rect.position.x + size.x / 2;
+	iconPos.y = _rect.position.y + size.y / 2 + 2;
+
+	_text->setPosition(sf::Vector2f(
+		iconPos.x + _icon_texture->getSize().x,
+		position.y + (getSize().y - _text->getFont().getLineSpacing(_text->getCharacterSize())) / 2
+	));
+
+	
 }
 
 ButtonWithTextSpriteAndIcon::~ButtonWithTextSpriteAndIcon() {
