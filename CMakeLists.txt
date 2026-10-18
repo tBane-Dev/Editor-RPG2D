@@ -42,6 +42,9 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 # set the SFML lib
 set(SFML_DIR "C:/SFML-3.1.0/lib/cmake/SFML")
 
+# set the packages OpenGL
+find_package(OpenGL REQUIRED)
+
 # set the packages SFML
 find_package(SFML 3.1.0 COMPONENTS Graphics Window System Audio REQUIRED)
 target_link_libraries(${PROJECT_NAME} 
@@ -49,6 +52,8 @@ target_link_libraries(${PROJECT_NAME}
         SFML::Window
         SFML::System
 	SFML::Audio
+	OpenGL::GL
+	glu32
 )
 
 # set the working directory (assets)

@@ -238,6 +238,7 @@ namespace MapEditor {
 	void Map::loadFromProject(std::ifstream& loader) {
 
 		// clear all
+		_visibleChunks.clear();
 		_chunks.clear();
 		MapEditor::editor->_game_objects->_visiblePlacedGameObjects.clear();
 

@@ -4,11 +4,15 @@
 #include <stdio.h>   // stdout
 
 // includes :-) 
+#include "SFML/Window.hpp"
 #include <SFML/Graphics.hpp>
+#include "SFML/OpenGL.hpp"
+#include "gl/glu.h"
 #include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Time.hpp"
 
+#include "CheckCharactersSets.hpp"
 #include "Intro.hpp"
 
 #include "Theme.hpp"
@@ -126,8 +130,16 @@ int main() {
 
 	// TO-DO - test function - to delete
     //converter(L"C:\\Users\\tBane\\Desktop\\roofs\\0_mask.png", L"C:\\Users\\tBane\\Desktop\\roofs");
+    //if (checkCharactersSets() != 0)
+    //    exit(0);
 
-    Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D", sf::State::Windowed);
+    sf::ContextSettings settings;
+    settings.depthBits = 24;
+    settings.stencilBits = 8;
+    settings.majorVersion = 3;
+    settings.minorVersion = 3;
+
+    Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D", sf::State::Windowed, settings);
     ShowWindow(Main::render_window->getNativeHandle(), SW_MAXIMIZE);
 
     Main::render_window->clear(sf::Color::Black);
@@ -206,10 +218,10 @@ int main() {
     MapEditor::editor->_palette->_slots->updateObjects();
     
 	// TO-DO - to delete (center the camera on the map at the start of the program)
-	camPos.x = MapEditor::editor->_map->getRect().size.x / 2 + MapEditor::editor->_palette->getSize().x / 2;
-    camPos.y = MapEditor::editor->_map->getRect().size.y / 2;
+	//camPos.x = MapEditor::editor->_map->getRect().size.x / 2 + MapEditor::editor->_palette->getSize().x / 2;
+    //camPos.y = MapEditor::editor->_map->getRect().size.y / 2;
 
-    MapEditor::editor->_camera->_position = camPos + camOffset;
+    //MapEditor::editor->_camera->_position = camPos + camOffset;
     MapEditor::editor->_camera->update();
 
     history = std::make_shared<History>();
@@ -220,6 +232,13 @@ int main() {
     sf::Clock FPSClock;
     int frames = 0;
     float elapsed = 0.0f;
+
+    // OpenGL init
+    glClearDepth(1.f);
+    glClearColor(0.25f, 0.25f, 0.25f, 1.f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
 
     while (Main::render_window->isOpen()) {
 
@@ -281,6 +300,7 @@ int main() {
         //DebugStat(L"I am The One ..");
 
         // draw
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Main::render_window->clear(sf::Color(47, 47, 47));
         Main::editor_manager->draw();
         Main::windows_manager->draw();

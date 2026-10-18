@@ -243,6 +243,11 @@ namespace MapEditor {
 
 	void Chunk::draw() {
 
+		if (_vertexArray.getVertexCount() != 16 * 16 * 6) {
+			DebugError(L"INVALID CHUNK: " + std::to_wstring(_coords.x) + L"x" + std::to_wstring(_coords.y) + L" vertices: " + std::to_wstring(_vertexArray.getVertexCount()));
+			return;
+		}
+
 		sf::RenderStates states;
 		std::shared_ptr<Texture> texture = textures_manager->getTexture(L"assets\\tex\\tileset.png");
 		terrain_shader->setUniform("resolution", sf::Vector2f(Main::render_window->getSize()));
