@@ -6,13 +6,10 @@
 // includes :-) 
 #include "SFML/Window.hpp"
 #include <SFML/Graphics.hpp>
-#include "SFML/OpenGL.hpp"
-#include "gl/glu.h"
 #include "RenderWindow.hpp"
 #include "DebugLog.hpp"
 #include "Time.hpp"
 
-#include "CheckCharactersSets.hpp"
 #include "Intro.hpp"
 
 #include "Theme.hpp"
@@ -233,13 +230,6 @@ int main() {
     int frames = 0;
     float elapsed = 0.0f;
 
-    // OpenGL init
-    glClearDepth(1.f);
-    glClearColor(0.25f, 0.25f, 0.25f, 1.f);
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LESS);
-
     while (Main::render_window->isOpen()) {
 
         prevTime = currentTime;
@@ -300,7 +290,6 @@ int main() {
         //DebugStat(L"I am The One ..");
 
         // draw
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Main::render_window->clear(sf::Color(47, 47, 47));
         Main::editor_manager->draw();
         Main::windows_manager->draw();

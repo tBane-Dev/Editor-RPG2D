@@ -5,7 +5,6 @@
 #include "PrefabsManager.hpp"
 #include "WindowsManager.hpp"
 #include "History.hpp"
-#include <SFML/OpenGL.hpp>
 
 namespace MapEditor {
 
@@ -162,121 +161,10 @@ namespace MapEditor {
 	void Editor::draw() {
 
 		_camera->setView();
+		
 		_map->draw();
 		_game_objects->draw();
 		_cursor_on_map->draw();
-		
-		Main::render_window->pushGLStates();
-
-		struct Vertice {
-			float x;
-			float y;
-			float z;
-			float rx;
-			float ry;
-			float rz;
-			float u;
-			float v;
-		};
-
-		float size = 64.0f;
-		size /= 2.0f;
-		std::vector<Vertice> vertices;
-		// Front face
-		vertices.emplace_back(-size, -size, size, 0.f, 0.f, 1.f, 0.f, 0.f);
-		vertices.emplace_back(size, -size, size, 0.f, 0.f, 1.f, 1.f, 0.f);
-		vertices.emplace_back(size, size, size, 0.f, 0.f, 1.f, 1.f, 1.f);
-		vertices.emplace_back(-size, -size, size, 0.f, 0.f, 1.f, 0.f, 0.f);
-		vertices.emplace_back(size, size, size, 0.f, 0.f, 1.f, 1.f, 1.f);
-		vertices.emplace_back(-size, size, size, 0.f, 0.f, 1.f, 0.f, 1.f);
-		// Back face
-		vertices.emplace_back(-size, -size, -size, 0.f, 0.f, -1.f, 1.f, 0.f);
-		vertices.emplace_back(size, -size, -size, 0.f, 0.f, -1.f, 0.f, 0.f);
-		vertices.emplace_back(size, size, -size, 0.f, 0.f, -1.f, 0.f, 1.f);
-		vertices.emplace_back(-size, -size, -size, 0.f, 0.f, -1.f, 1.f, 0.f);
-		vertices.emplace_back(size, size, -size, 0.f, 0.f, -1.f, 0.f, 1.f);
-		vertices.emplace_back(-size, size, -size, 0.f, 0.f, -1.f, 1.f, 1.f);
-		// Left face
-		vertices.emplace_back(-size, -size, -size, -1., 0., 0., 0., 0.);
-		vertices.emplace_back(-size, -size, size, -1., 0., 0., 1., 0.);
-		vertices.emplace_back(-size, size, size, -1., 0., 0., 1., 1.);
-		vertices.emplace_back(-size, -size, -size, -1., 0., 0., 0., 0.);
-		vertices.emplace_back(-size, size, size, -1., 0., 0., 1., 1.);
-		vertices.emplace_back(-size, size, -size, -1., 0., 0., 0., 1.);
-		// Right face
-		vertices.emplace_back(size, -size, -size, 1., 0., 0., 1., 0.);
-		vertices.emplace_back(size, -size, size, 1., 0., 0., 0., 0.);
-		vertices.emplace_back(size, size, size, 1., 0., 0., 0., 1.);
-		vertices.emplace_back(size, -size, -size, 1., 0., 0., 1., 0.);
-		vertices.emplace_back(size, size, size, 1., 0., 0., 0., 1.);
-		vertices.emplace_back(size, size, -size, 1., 0., 0., 1., 1.);
-		// Top face
-		vertices.emplace_back(-size, size, -size, 0., 1., 0., 0., 1.);
-		vertices.emplace_back(size, size, size, 0., 1., 0., 1., 0.);
-		vertices.emplace_back(-size, size, size, 0., 1., 0., 0., 0.);
-		vertices.emplace_back(-size, size, -size, 0., 1., 0., 0., 1.);
-		vertices.emplace_back(size, size, size, 0., 1., 0., 1., 0.);
-		vertices.emplace_back(size, size, -size, 0., 1., 0., 1., 1.);
-		// Bottom face
-		vertices.emplace_back(-size, -size, -size, 0., -1., 0., 1., 1.);
-		vertices.emplace_back(-size, -size, size, 0., -1., 0., 1., 0.);
-		vertices.emplace_back(size, -size, size, 0., -1., 0., 0., 0.);
-		vertices.emplace_back(-size, -size, -size, 0., -1., 0., 1., 1.);
-		vertices.emplace_back(size, -size, size, 0., -1., 0., 0., 0.);
-		vertices.emplace_back(size, -size, -size, 0., -1., 0., 0., 1.);
-
-		// PROJECTION
-
-		float halfWidth = Main::render_window->getSize().x / (2.0f * MapEditor::editor->_camera->_zoom);
-		float halfHeight = Main::render_window->getSize().y / (2.0f * MapEditor::editor->_camera->_zoom);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-halfWidth, halfWidth, halfHeight, -halfHeight, -1000.0, 1000.0);
-
-		// ModelView
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		
-		// Transform
-		glTranslatef(-MapEditor::editor->_camera->_position.x, -MapEditor::editor->_camera->_position.y, -15.0f);
-
-		// Cube position on tile
-		sf::Vector2i tilePos(4*16, 4*16);
-		glTranslatef(tilePos.x * 16.0f + 8.0f, tilePos.y * 16.0f + 8.0f, 0.0f);
-
-		static float rotY = 0.0f;
-		glRotatef(25.0f, 1.0f, 0.0f, 0.0f);
-		glRotatef(rotY, 0.0f, 1.0f, 0.0f);
-		rotY += 0.1;
-		if (rotY >= 360.0f)
-			rotY = rotY - 360.0f;
-
-		//glEnable(GL_TEXTURE_2D);
-		// OpenGL states for cube
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-		glDisable(GL_LIGHTING);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_SCISSOR_TEST);
-		glDisable(GL_DEPTH_TEST);
-		glColor4f(0.5f, 0.5f, 0.5f, 1.f);
-		//glBindTexture(GL_TEXTURE_2D, _texture ? _texture->_texture->getNativeHandle() : 0);
-
-		glBegin(GL_TRIANGLES);
-
-		for (auto& vertex : vertices) {
-
-			glNormal3f(vertex.rx, vertex.ry, vertex.rz);
-			//glTexCoord2f(vertex.u, 1.0f - vertex.v);
-			glVertex3f(vertex.x, vertex.y, vertex.z);
-
-		}
-
-		glEnd();
-
-		Main::render_window->popGLStates();
-		Main::render_window->resetGLStates();
 
 		GUI_manager->setView();
 		_main_menu->draw();

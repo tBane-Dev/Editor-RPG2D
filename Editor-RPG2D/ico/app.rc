@@ -1,3 +1,1 @@
-#include "ico.hpp"
-
-IDI_ICON1 ICON "Editor-RPG2D.ico"
+1 ICON "Editor-RPG2D.ico"
