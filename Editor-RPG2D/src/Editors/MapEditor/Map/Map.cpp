@@ -275,6 +275,7 @@ namespace MapEditor {
 		}
 
 		editor->setVisibleChunks();
+
 	}
 
 	void Map::cursorHover() {

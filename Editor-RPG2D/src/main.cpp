@@ -130,13 +130,7 @@ int main() {
     //if (checkCharactersSets() != 0)
     //    exit(0);
 
-    sf::ContextSettings settings;
-    settings.depthBits = 24;
-    settings.stencilBits = 8;
-    settings.majorVersion = 3;
-    settings.minorVersion = 3;
-
-    Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D", sf::State::Windowed, settings);
+    Main::render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "Editor-RPG2D", sf::State::Windowed);
     ShowWindow(Main::render_window->getNativeHandle(), SW_MAXIMIZE);
 
     Main::render_window->clear(sf::Color::Black);

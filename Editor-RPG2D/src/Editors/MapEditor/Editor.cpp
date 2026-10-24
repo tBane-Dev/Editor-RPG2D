@@ -48,8 +48,7 @@ namespace MapEditor {
 
 		auto& visibleObjects = MapEditor::editor->_game_objects->_visiblePlacedGameObjects;
 
-		for (const auto& selectedObject :
-			MapEditor::editor->_cursor_on_map->_selectedObjects) {
+		for (const auto& selectedObject : MapEditor::editor->_cursor_on_map->_selectedObjects) {
 
 			auto object = selectedObject->_object;
 			if (!object)
