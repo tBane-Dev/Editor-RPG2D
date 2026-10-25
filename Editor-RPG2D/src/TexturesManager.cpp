@@ -323,20 +323,6 @@ void TexturesManager::loadAllTextures() {
     texturePaths.push_back(L"assets\\tex\\editors_ui\\largeButton_hover.png");
     texturePaths.push_back(L"assets\\tex\\editors_ui\\largeButton_press.png");
     texturePaths.push_back(L"assets\\tex\\editors_ui\\largeButton_inactive.png");
-    
-    // prefabs
-    texturePaths.push_back(L"assets\\tex\\monsters\\golem.png");
-    texturePaths.push_back(L"assets\\tex\\monsters\\troll.png");
-    texturePaths.push_back(L"assets\\tex\\monsters\\dziobak.png");
-    texturePaths.push_back(L"assets\\tex\\monsters\\deer.png");
-    texturePaths.push_back(L"assets\\tex\\monsters\\goblin.png");
-    texturePaths.push_back(L"assets\\tex\\monsters\\bies.png");
-    texturePaths.push_back(L"assets\\tex\\monsters\\hero.png");
-    texturePaths.push_back(L"assets\\tex\\monsters\\monster.png");
-
-	texturePaths.push_back(L"assets\\tex\\tree_1.png");
-	texturePaths.push_back(L"assets\\tex\\boulder_1.png");
-	texturePaths.push_back(L"assets\\tex\\boulder_2.png");
 
     // Ghost Chunks
 	texturePaths.push_back(L"assets\\tex\\ghost_chunk_plus.png");

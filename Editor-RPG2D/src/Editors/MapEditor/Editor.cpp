@@ -5,6 +5,7 @@
 #include "PrefabsManager.hpp"
 #include "WindowsManager.hpp"
 #include "History.hpp"
+#include <SFML/OpenGL.hpp>
 
 namespace MapEditor {
 
